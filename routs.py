@@ -17,7 +17,7 @@ def probability_distributions():
 
 @app.route('/卡方分布.html')
 def chi_square():
-    return render_template('卡方分布.html')
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
