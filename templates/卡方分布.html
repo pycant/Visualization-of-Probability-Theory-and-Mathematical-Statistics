@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡方分布可视化工具</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.5/dist/jstat.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/卡方分布.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>卡方分布可视化工具</h1>
+            <p class="subtitle">交互式探索卡方分布的特性：调整自由度参数，观察概率密度函数、累积分布函数的变化，比较不同自由度下的分布差异，并通过随机抽样理解实际分布情况。</p>
+        </header>
+        
+        <section class="control-panel">
+            <div class="slider-container">
+                <label for="df">自由度 (k):</label>
+                <input type="range" id="df" min="1" max="20" value="5" step="1">
+                <input type="number" id="df-value" min="1" max="20" value="5">
+            </div>
+            
+            <div class="slider-container">
+                <label for="x-max">X轴范围:</label>
+                <input type="range" id="x-max" min="10" max="50" value="20" step="1">
+                <input type="number" id="x-max-value" min="10" max="50" value="20">
+            </div>
+        </section>
+        
+        <section class="chart-container">
+            <div class="chart-box">
+                <div class="chart-title">概率密度函数 (PDF)</div>
+                <div class="chart-wrapper">
+                    <canvas id="pdf-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-box">
+                <div class="chart-title">累积分布函数 (CDF)</div>
+                <div class="chart-wrapper">
+                    <canvas id="cdf-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-box">
+                <div class="chart-title">不同自由度比较</div>
+                <div class="chart-wrapper">
+                    <canvas id="compare-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-box">
+                <div class="chart-title">随机抽样分布</div>
+                <div class="chart-wrapper">
+                    <canvas id="sample-chart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <section class="info-panel">
+            <h2 class="info-title">卡方分布特性</h2>
+            
+            <div class="formula">
+                f(x; k) = \frac{1}{2^{k/2} \Gamma(k/2)} x^{k/2-1} e^{-x/2} \quad \text{for} \quad x &gt; 0$
+            </div>
+            
+            <div class="properties">
+                <div class="property-card">
+                    <div class="property-title">定义</div>
+                    <p>卡方分布是k个独立标准正态随机变量的平方和的分布，是统计学中重要的概率分布之一。</p>
+                </div>
+                
+                <div class="property-card">
+                    <div class="property-title">参数</div>
+                    <p>自由度k是唯一的参数，决定了分布的形状。k必须是正整数。</p>
+                </div>
+                
+                <div class="property-card">
+                    <div class="property-title">均值与方差</div>
+                    <p>均值: μ = k<br>方差: σ² = 2k</p>
+                </div>
+                
+                <div class="property-card">
+                    <div class="property-title">应用领域</div>
+                    <p>假设检验、置信区间估计、拟合优度检验、独立性检验等。</p>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>卡方分布可视化工具 | 使用Chart.js和jStat库 | 交互式统计教学</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/卡方分布.js') }}"></script>
+</body>
+</html>

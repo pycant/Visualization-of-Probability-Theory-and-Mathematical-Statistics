@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>概率维度 | Probability Dimensions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
+
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "neon-blue": "#00f3ff",
+              "neon-purple": "#bf00ff",
+              "neon-green": "#00ff66",
+              "dark-bg": "#050a1a",
+              "dark-card": "#0f1730",
+            },
+            fontFamily: {
+              future: ["Orbitron", "sans-serif"],
+              data: ["Rajdhani", "sans-serif"],
+            },
+            animation: {
+              "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              glow: "glow 2s ease-in-out infinite alternate",
+            },
+            keyframes: {
+              glow: {
+                "0%": {
+                  textShadow:
+                    "0 0 5px #fff, 0 0 10px #00f3ff, 0 0 15px #00f3ff",
+                },
+                "100%": {
+                  textShadow:
+                    "0 0 10px #fff, 0 0 20px #00f3ff, 0 0 30px #00f3ff, 0 0 40px #00f3ff",
+                },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .text-shadow-neon {
+          text-shadow: 0 0 10px rgba(0, 243, 255, 0.7),
+            0 0 20px rgba(0, 243, 255, 0.5);
+        }
+        .text-shadow-purple {
+          text-shadow: 0 0 10px rgba(191, 0, 255, 0.7),
+            0 0 20px rgba(191, 0, 255, 0.5);
+        }
+        .border-glow {
+          box-shadow: 0 0 5px theme("colors.neon-blue"),
+            0 0 10px theme("colors.neon-blue/30");
+        }
+        .bg-grid {
+          background-image: linear-gradient(
+              rgba(0, 243, 255, 0.1) 1px,
+              transparent 1px
+            ),
+            linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+          background-size: 20px 20px;
+        }
+        .clip-path-slant {
+          clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+        .glass-effect {
+          backdrop-filter: blur(10px);
+          background-color: rgba(15, 23, 48, 0.6);
+        }
+      }
+    </style>
+
+    <!-- 引入Google字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-dark-bg text-gray-200 font-data overflow-x-hidden">
+    <!-- 粒子背景容器 -->
+    <div id="particles-container" class="fixed inset-0 z-0 opacity-30"></div>
+
+    <!-- 导航栏 -->
+    <nav
+      class="glass-effect fixed w-full z-50 transition-all duration-300"
+      id="main-nav"
+    >
+      <div
+        class="container mx-auto px-4 py-3 flex justify-between items-center"
+      >
+        <div class="flex items-center space-x-2">
+          <div
+            class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center"
+          >
+            <i class="fa fa-calculator text-white text-xl"></i>
+          </div>
+          <h1 class="text-xl md:text-2xl font-future font-bold text-white">
+            <span class="text-neon-blue">概率</span
+            ><span class="text-white">维度</span>
+          </h1>
+        </div>
+
+        <!-- 桌面导航 -->
+        <div class="hidden md:flex items-center space-x-8">
+          <a
+            href="#concepts"
+            class="hover:text-neon-blue transition-colors duration-300"
+            >核心概念</a
+          >
+          <a
+            href="#simulations"
+            class="hover:text-neon-blue transition-colors duration-300"
+            >概率模拟</a
+          >
+          <a
+            href="#visualizations"
+            class="hover:text-neon-blue transition-colors duration-300"
+            >数据可视化</a
+          >
+          <a
+            href="#applications"
+            class="hover:text-neon-blue transition-colors duration-300"
+            >应用场景</a
+          >
+        </div>
+
+        <!-- 移动端菜单按钮 -->
+        <button class="md:hidden text-white text-2xl" id="menu-toggle">
+          <i class="fa fa-bars"></i>
+        </button>
+      </div>
+
+      <!-- 移动端导航菜单 -->
+      <div
+        class="md:hidden hidden glass-effect absolute w-full"
+        id="mobile-menu"
+      >
+        <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+          <a
+            href="#concepts"
+            class="hover:text-neon-blue transition-colors duration-300 py-2"
+            >核心概念</a
+          >
+          <a
+            href="#simulations"
+            class="hover:text-neon-blue transition-colors duration-300 py-2"
+            >概率模拟</a
+          >
+          <a
+            href="#visualizations"
+            class="hover:text-neon-blue transition-colors duration-300 py-2"
+            >数据可视化</a
+          >
+          <a
+            href="#applications"
+            class="hover:text-neon-blue transition-colors duration-300 py-2"
+            >应用场景</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header
+      class="relative min-h-screen flex items-center justify-center overflow-hidden bg-grid pt-16"
+    >
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-dark-bg/70 via-dark-bg/50 to-dark-bg"
+      ></div>
+
+      <!-- 动态图形元素 -->
+      <div
+        class="absolute w-64 h-64 rounded-full bg-neon-blue/20 blur-3xl -top-20 -left-20 animate-pulse-slow"
+      ></div>
+      <div
+        class="absolute w-96 h-96 rounded-full bg-neon-purple/20 blur-3xl -bottom-40 -right-20 animate-pulse-slow"
+        style="animation-delay: 1s"
+      ></div>
+
+      <div class="container mx-auto px-4 z-10 text-center">
+        <h1
+          class="text-[clamp(2.5rem,8vw,5rem)] font-future font-bold leading-tight mb-6 animate-glow"
+        >
+          <span class="block text-white">概率与</span>
+          <span class="text-neon-blue">数理统计</span>
+        </h1>
+        <p
+          class="text-[clamp(1rem,3vw,1.5rem)] text-gray-300 max-w-3xl mx-auto mb-10"
+        >
+          探索数据背后的规律，揭示宇宙的概率法则，预测未来的可能路径
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a
+            href="#simulations"
+            class="px-8 py-3 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-white transition-all duration-300 transform hover:scale-105 border-glow"
+          >
+            开始模拟 <i class="fa fa-rocket ml-2"></i>
+          </a>
+          <a
+            href="#concepts"
+            class="px-8 py-3 bg-transparent border border-neon-blue text-neon-blue font-bold rounded-md hover:bg-neon-blue/10 transition-all duration-300"
+          >
+            了解概念 <i class="fa fa-book ml-2"></i>
+          </a>
+        </div>
+
+        <!-- 滚动指示器 -->
+        <div
+          class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce"
+        >
+          <i class="fa fa-angle-down text-neon-blue text-3xl"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- 核心概念部分 -->
+    <section id="concepts" class="py-20 relative">
+      <div class="absolute inset-0 bg-grid opacity-20"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            <span class="text-neon-blue">核心</span>概念
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            探索概率论与数理统计的基础构建模块，这些概念是理解随机世界的关键
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- 概念卡片1 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors"
+            >
+              <i class="fa fa-random text-neon-blue text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              随机变量
+            </h3>
+            <p class="text-gray-400">
+              表示随机现象结果的变量，是概率理论的基础。分为离散型和连续型，描述了不确定性的数学表达。
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a
+                href="random_variables.html"
+                class="text-neon-blue hover:text-white transition-colors flex items-center"
+              >
+                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 概念卡片2 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors"
+            >
+              <i class="fa fa-area-chart text-neon-purple text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              概率分布
+            </h3>
+            <p class="text-gray-400">
+              描述随机变量取值的概率规律，如正态分布、泊松分布等。是数据分析和预测的核心工具。
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a
+                href="probability_distributions.html"
+                class="text-neon-purple hover:text-white transition-colors flex items-center"
+              >
+                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 概念卡片3 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors"
+            >
+              <i class="fa fa-calculator text-neon-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              期望与方差
+            </h3>
+            <p class="text-gray-400">
+              描述随机变量的集中趋势和离散程度，是概率分布的重要数字特征，用于风险评估和决策分析。
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a
+                href="expectation_variance.html"
+                class="text-neon-green hover:text-white transition-colors flex items-center"
+              >
+                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 概念卡片4 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors"
+            >
+              <i class="fa fa-flask text-neon-blue text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              假设检验
+            </h3>
+            <p class="text-gray-400">
+              统计推断的重要方法，通过样本数据判断关于总体的假设是否成立，是科学研究的关键工具。
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a
+                href="#"
+                class="text-neon-blue hover:text-white transition-colors flex items-center"
+              >
+                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 概念卡片5 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors"
+            >
+              <i class="fa fa-line-chart text-neon-purple text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              回归分析
+            </h3>
+            <p class="text-gray-400">
+              研究变量之间关系的统计方法，用于预测和建模，广泛应用于数据分析和机器学习领域。
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a
+                href="#"
+                class="text-neon-purple hover:text-white transition-colors flex items-center"
+              >
+                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 概念卡片6 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors"
+            >
+              <i class="fa fa-random text-neon-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              大数定律
+            </h3>
+            <p class="text-gray-400">
+              描述大量重复试验中随机现象的统计规律性，是频率趋近于概率的理论基础，支撑着统计推断。
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a
+                href="#"
+                class="text-neon-green hover:text-white transition-colors flex items-center"
+              >
+                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 概率模拟部分 -->
+    <section
+      id="simulations"
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50 clip-path-slant"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            概率<span class="text-neon-purple">模拟</span>实验室
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            通过交互式模拟实验，直观感受概率规律的神奇之处
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- 掷骰子模拟器 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-dice text-neon-purple mr-3"></i> 掷骰子模拟
+            </h3>
+
+            <div class="mb-6">
+              <label class="block text-gray-300 mb-2">试验次数:</label>
+              <div class="flex items-center">
+                <input
+                  type="range"
+                  id="dice-trials"
+                  min="10"
+                  max="10000"
+                  step="10"
+                  value="1000"
+                  class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                />
+                <span
+                  id="dice-trials-value"
+                  class="ml-4 text-neon-purple font-bold"
+                  >1000</span
+                >
+              </div>
+            </div>
+
+            <div class="flex justify-center mb-6">
+              <button
+                id="roll-dice"
+                class="px-6 py-2 bg-neon-purple text-white font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300 transform hover:scale-105"
+              >
+                开始模拟 <i class="fa fa-play ml-2"></i>
+              </button>
+            </div>
+
+            <div class="h-64">
+              <canvas id="dice-chart"></canvas>
+            </div>
+
+            <div
+              class="mt-6 pt-4 border-t border-gray-800 text-sm text-gray-400"
+            >
+              <p>
+                模拟掷骰子的随机过程，随着试验次数增加，各点数出现的频率会逐渐趋近于理论概率(1/6)。
+              </p>
+            </div>
+          </div>
+
+          <!-- 正态分布模拟器 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-bell text-neon-blue mr-3"></i> 正态分布生成
+            </h3>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <label class="block text-gray-300 mb-2">均值 (μ):</label>
+                <div class="flex items-center">
+                  <input
+                    type="range"
+                    id="normal-sim-mean"
+                    min="-10"
+                    max="10"
+                    step="0.5"
+                    value="0"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                  <span
+                    id="normal-sim-mean-value"
+                    class="ml-4 text-neon-blue font-bold"
+                    >0</span
+                  >
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">标准差 (σ):</label>
+                <div class="flex items-center">
+                  <input
+                    type="range"
+                    id="normal-sim-std"
+                    min="0.5"
+                    max="5"
+                    step="0.5"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                  <span
+                    id="normal-sim-std-value"
+                    class="ml-4 text-neon-blue font-bold"
+                    >1</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-center mb-6">
+              <button
+                id="generate-normal"
+                class="px-6 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300 transform hover:scale-105"
+              >
+                生成分布 <i class="fa fa-refresh ml-2"></i>
+              </button>
+            </div>
+
+            <div class="h-64">
+              <canvas id="normal-chart"></canvas>
+            </div>
+
+            <div
+              class="mt-6 pt-4 border-t border-gray-800 text-sm text-gray-400"
+            >
+              <p>
+                正态分布是自然界中最常见的分布之一，由均值和标准差决定其形状，呈现典型的"钟形曲线"。
+              </p>
+            </div>
+          </div>
+
+          <!-- 蒙特卡洛模拟 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 lg:col-span-2"
+          >
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-calculator text-neon-green mr-3"></i> 蒙特卡洛 π
+              值计算
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div class="md:col-span-1">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2">样本数量:</label>
+                  <div class="flex items-center">
+                    <input
+                      type="range"
+                      id="monte-carlo-samples"
+                      min="100"
+                      max="10000"
+                      step="100"
+                      value="1000"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                    <span
+                      id="monte-carlo-samples-value"
+                      class="ml-4 text-neon-green font-bold"
+                      >1000</span
+                    >
+                  </div>
+                </div>
+
+                <div class="flex justify-center mb-6">
+                  <button
+                    id="calculate-pi"
+                    class="px-6 py-2 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-neon-green/80 transition-all duration-300 transform hover:scale-105"
+                  >
+                    计算 π 值 <i class="fa fa-calculator ml-2"></i>
+                  </button>
+                </div>
+
+                <div class="bg-dark-bg rounded-lg p-4 border border-gray-700">
+                  <h4 class="text-gray-300 mb-2 font-semibold">计算结果:</h4>
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-400">估计值:</span>
+                    <span id="pi-estimate" class="text-neon-green font-bold"
+                      >3.1416</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-400">精确值:</span>
+                    <span class="text-white font-bold">3.1415926535</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-400">误差:</span>
+                    <span id="pi-error" class="text-neon-green font-bold"
+                      >0.0000%</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="md:col-span-2 h-64">
+                <canvas id="monte-carlo-chart"></canvas>
+              </div>
+            </div>
+
+            <div
+              class="mt-6 pt-4 border-t border-gray-800 text-sm text-gray-400"
+            >
+              <p>
+                蒙特卡洛方法通过随机采样估算π值：在正方形内随机生成点，计算落在四分之一圆内的点的比例，乘以4即可得到π的近似值。样本量越大，结果越精确。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 数据可视化部分 -->
+    <section id="visualizations" class="py-20 relative">
+      <div class="absolute inset-0 bg-grid opacity-20"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            数据<span class="text-neon-green">可视化</span>
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            通过直观的图表展示概率统计的核心理论和应用
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- 分布比较 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-bar-chart text-neon-green mr-3"></i> 概率分布比较
+            </h3>
+
+            <div class="mb-6">
+              <label class="block text-gray-300 mb-3">选择分布:</label>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <button
+                  class="distribution-btn active px-3 py-2 bg-neon-green/20 text-neon-green rounded-md hover:bg-neon-green/30 transition-colors text-sm"
+                  data-distribution="normal"
+                >
+                  正态分布
+                </button>
+                <button
+                  class="distribution-btn px-3 py-2 bg-gray-800 text-gray-300 rounded-md hover:bg-gray-700 transition-colors text-sm"
+                  data-distribution="poisson"
+                >
+                  泊松分布
+                </button>
+                <button
+                  class="distribution-btn px-3 py-2 bg-gray-800 text-gray-300 rounded-md hover:bg-gray-700 transition-colors text-sm"
+                  data-distribution="binomial"
+                >
+                  二项分布
+                </button>
+                <button
+                  class="distribution-btn px-3 py-2 bg-gray-800 text-gray-300 rounded-md hover:bg-gray-700 transition-colors text-sm"
+                  data-distribution="exponential"
+                >
+                  指数分布
+                </button>
+              </div>
+            </div>
+
+            <!-- 分布参数控制区域 -->
+            <div id="distribution-params" class="mb-6">
+              <!-- 正态分布参数 -->
+              <div id="normal-params" class="distribution-params">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-gray-300 mb-2 text-sm"
+                      >均值 (μ):</label
+                    >
+                    <div class="flex items-center">
+                      <input
+                        type="range"
+                        id="normal-mean"
+                        min="-3"
+                        max="3"
+                        step="0.1"
+                        value="0"
+                        class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                      />
+                      <span
+                        id="normal-mean-value"
+                        class="ml-4 text-neon-green font-bold"
+                        >0</span
+                      >
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2 text-sm"
+                      >标准差 (σ):</label
+                    >
+                    <div class="flex items-center">
+                      <input
+                        type="range"
+                        id="normal-std"
+                        min="0.1"
+                        max="2"
+                        step="0.1"
+                        value="1"
+                        class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                      />
+                      <span
+                        id="normal-std-value"
+                        class="ml-4 text-neon-green font-bold"
+                        >1</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 泊松分布参数 -->
+              <div id="poisson-params" class="distribution-params hidden">
+                <div>
+                  <label class="block text-gray-300 mb-2 text-sm"
+                    >λ 参数:</label
+                  >
+                  <div class="flex items-center">
+                    <input
+                      type="range"
+                      id="poisson-lambda"
+                      min="1"
+                      max="10"
+                      step="0.5"
+                      value="3"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                    />
+                    <span
+                      id="poisson-lambda-value"
+                      class="ml-4 text-neon-blue font-bold"
+                      >3</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- 二项分布参数 -->
+              <div id="binomial-params" class="distribution-params hidden">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-gray-300 mb-2 text-sm"
+                      >试验次数 (n):</label
+                    >
+                    <div class="flex items-center">
+                      <input
+                        type="range"
+                        id="binomial-n"
+                        min="5"
+                        max="30"
+                        step="1"
+                        value="10"
+                        class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                      />
+                      <span
+                        id="binomial-n-value"
+                        class="ml-4 text-neon-purple font-bold"
+                        >10</span
+                      >
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2 text-sm"
+                      >成功概率 (p):</label
+                    >
+                    <div class="flex items-center">
+                      <input
+                        type="range"
+                        id="binomial-p"
+                        min="0.1"
+                        max="0.9"
+                        step="0.05"
+                        value="0.5"
+                        class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                      />
+                      <span
+                        id="binomial-p-value"
+                        class="ml-4 text-neon-purple font-bold"
+                        >0.5</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 指数分布参数 -->
+              <div id="exponential-params" class="distribution-params hidden">
+                <div>
+                  <label class="block text-gray-300 mb-2 text-sm"
+                    >λ 参数:</label
+                  >
+                  <div class="flex items-center">
+                    <input
+                      type="range"
+                      id="exponential-lambda"
+                      min="0.5"
+                      max="3"
+                      step="0.1"
+                      value="1"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-orange-500"
+                    />
+                    <span
+                      id="exponential-lambda-value"
+                      class="ml-4 text-orange-500 font-bold"
+                      >1</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-72">
+              <canvas id="distributions-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- 相关性分析 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-link text-neon-blue mr-3"></i> 变量相关性分析
+            </h3>
+
+            <div class="mb-6">
+              <label class="block text-gray-300 mb-2">相关系数:</label>
+              <div class="flex items-center">
+                <input
+                  type="range"
+                  id="correlation-coeff"
+                  min="-1"
+                  max="1"
+                  step="0.1"
+                  value="0.8"
+                  class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                />
+                <span
+                  id="correlation-coeff-value"
+                  class="ml-4 text-neon-blue font-bold"
+                  >0.8</span
+                >
+              </div>
+            </div>
+
+            <div class="h-72">
+              <canvas id="correlation-chart"></canvas>
+            </div>
+
+            <div class="mt-4 text-sm text-gray-400">
+              <p>
+                相关系数r衡量两个变量线性相关的强度和方向，取值范围为[-1,
+                1]。r越接近1表示强正相关，越接近-1表示强负相关，接近0表示几乎无相关。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 应用场景部分 -->
+    <section
+      id="applications"
+      class="py-20 relative bg-gradient-to-b from-dark-card/50 to-dark-bg"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            概率统计的<span class="text-neon-blue">应用</span>场景
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            探索概率与统计在现实世界和科幻场景中的广泛应用
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- 应用卡片1 -->
+          <div class="group relative overflow-hidden rounded-xl">
+            <img
+              src="https://picsum.photos/seed/prob1/600/400"
+              alt="天气预报中的概率模型"
+              class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"
+            ></div>
+            <div class="absolute bottom-0 left-0 p-6">
+              <div
+                class="w-12 h-12 rounded-full bg-neon-blue/20 flex items-center justify-center mb-4"
+              >
+                <i class="fa fa-cloud text-neon-blue text-xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-2 text-white">
+                天气预报
+              </h3>
+              <p class="text-gray-300 text-sm">
+                使用概率模型预测降水概率、温度范围等气象要素，为决策提供科学依据。
+              </p>
+            </div>
+          </div>
+
+          <!-- 应用卡片2 -->
+          <div class="group relative overflow-hidden rounded-xl">
+            <img
+              src="https://picsum.photos/seed/prob2/600/400"
+              alt="机器学习中的统计方法"
+              class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"
+            ></div>
+            <div class="absolute bottom-0 left-0 p-6">
+              <div
+                class="w-12 h-12 rounded-full bg-neon-purple/20 flex items-center justify-center mb-4"
+              >
+                <i class="fa fa-brain text-neon-purple text-xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-2 text-white">
+                机器学习
+              </h3>
+              <p class="text-gray-300 text-sm">
+                统计学习理论是机器学习的基础，贝叶斯方法、最大似然估计等广泛应用于模型训练。
+              </p>
+            </div>
+          </div>
+
+          <!-- 应用卡片3 -->
+          <div class="group relative overflow-hidden rounded-xl">
+            <img
+              src="https://picsum.photos/seed/prob3/600/400"
+              alt="量子力学中的概率解释"
+              class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"
+            ></div>
+            <div class="absolute bottom-0 left-0 p-6">
+              <div
+                class="w-12 h-12 rounded-full bg-neon-green/20 flex items-center justify-center mb-4"
+              >
+                <i class="fa fa-atom text-neon-green text-xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-2 text-white">
+                量子力学
+              </h3>
+              <p class="text-gray-300 text-sm">
+                量子世界的行为本质上是概率性的，波函数描述了粒子状态的概率分布。
+              </p>
+            </div>
+          </div>
+
+          <!-- 应用卡片4 -->
+          <div class="group relative overflow-hidden rounded-xl">
+            <img
+              src="https://picsum.photos/seed/prob4/600/400"
+              alt="金融风险评估中的概率模型"
+              class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"
+            ></div>
+            <div class="absolute bottom-0 left-0 p-6">
+              <div
+                class="w-12 h-12 rounded-full bg-neon-blue/20 flex items-center justify-center mb-4"
+              >
+                <i class="fa fa-chart-line text-neon-blue text-xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-2 text-white">
+                风险评估
+              </h3>
+              <p class="text-gray-300 text-sm">
+                金融领域使用VaR（风险价值）等概率模型评估投资组合的潜在损失风险。
+              </p>
+            </div>
+          </div>
+
+          <!-- 应用卡片5 -->
+          <div class="group relative overflow-hidden rounded-xl">
+            <img
+              src="https://picsum.photos/seed/prob5/600/400"
+              alt="宇宙学中的概率分布"
+              class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"
+            ></div>
+            <div class="absolute bottom-0 left-0 p-6">
+              <div
+                class="w-12 h-12 rounded-full bg-neon-purple/20 flex items-center justify-center mb-4"
+              >
+                <i class="fa fa-galaxy text-neon-purple text-xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-2 text-white">
+                宇宙学
+              </h3>
+              <p class="text-gray-300 text-sm">
+                概率模型用于描述宇宙结构形成、暗物质分布等宇宙学现象。
+              </p>
+            </div>
+          </div>
+
+          <!-- 应用卡片6 -->
+          <div class="group relative overflow-hidden rounded-xl">
+            <img
+              src="https://picsum.photos/seed/prob6/600/400"
+              alt="医疗诊断中的统计方法"
+              class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"
+            ></div>
+            <div class="absolute bottom-0 left-0 p-6">
+              <div
+                class="w-12 h-12 rounded-full bg-neon-green/20 flex items-center justify-center mb-4"
+              >
+                <i class="fa fa-heartbeat text-neon-green text-xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-2 text-white">
+                医疗诊断
+              </h3>
+              <p class="text-gray-300 text-sm">
+                统计方法用于疾病风险预测、诊断准确性评估和临床试验设计。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 订阅区域 -->
+    <section class="py-16 relative">
+      <div class="absolute inset-0 bg-grid opacity-20"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div
+          class="max-w-4xl mx-auto bg-gradient-to-r from-dark-card to-dark-bg p-8 md:p-12 rounded-2xl border border-gray-800 border-glow"
+        >
+          <div class="text-center mb-8">
+            <h2
+              class="text-[clamp(1.5rem,4vw,2.5rem)] font-future font-bold mb-4 text-white"
+            >
+              探索更多概率<span class="text-neon-blue">维度</span>
+            </h2>
+            <p class="text-gray-400">
+              订阅我们的通讯，获取最新的概率统计知识和工具更新
+            </p>
+          </div>
+
+          <form class="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
+            <input
+              type="email"
+              placeholder="输入您的邮箱地址"
+              class="flex-1 px-4 py-3 bg-dark-bg border border-gray-700 rounded-md focus:outline-none focus:border-neon-blue text-white"
+            />
+            <button
+              type="submit"
+              class="px-6 py-3 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-white transition-all duration-300 whitespace-nowrap"
+            >
+              立即订阅 <i class="fa fa-paper-plane ml-2"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark-card py-12 border-t border-gray-800">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <div class="flex items-center space-x-2 mb-6">
+              <div
+                class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center"
+              >
+                <i class="fa fa-calculator text-white text-xl"></i>
+              </div>
+              <h2 class="text-xl font-future font-bold text-white">
+                <span class="text-neon-blue">概率</span
+                ><span class="text-white">维度</span>
+              </h2>
+            </div>
+            <p class="text-gray-400 mb-6">
+              探索概率与数理统计的奇妙世界，揭示数据背后的规律。
+            </p>
+            <div class="flex space-x-4">
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-neon-blue hover:text-dark-bg transition-colors"
+              >
+                <i class="fa fa-twitter"></i>
+              </a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-neon-blue hover:text-dark-bg transition-colors"
+              >
+                <i class="fa fa-facebook"></i>
+              </a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-neon-blue hover:text-dark-bg transition-colors"
+              >
+                <i class="fa fa-instagram"></i>
+              </a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-neon-blue hover:text-dark-bg transition-colors"
+              >
+                <i class="fa fa-github"></i>
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">快速链接</h3>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="#concepts"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >核心概念</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#simulations"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >概率模拟</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#visualizations"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >数据可视化</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#applications"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >应用场景</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">学习资源</h3>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >教程与指南</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >在线课程</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >书籍推荐</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >研究论文</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">联系我们</h3>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <i class="fa fa-envelope text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400"
+                  >contact@probabilitydimensions.com</span
+                >
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-map-marker text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400">北京市海淀区科学园路100号</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-phone text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400">+86 10 8888 7777</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div
+          class="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"
+        >
+          <p class="text-gray-500 text-sm mb-4 md:mb-0">
+            © 2023 概率维度. 保留所有权利.
+          </p>
+          <div class="flex space-x-6">
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >隐私政策</a
+            >
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >服务条款</a
+            >
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >Cookie政策</a
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+      // 导航栏滚动效果
+      const nav = document.getElementById("main-nav");
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 50) {
+          nav.classList.add("py-2", "shadow-lg", "shadow-neon-blue/10");
+          nav.classList.remove("py-3");
+        } else {
+          nav.classList.add("py-3");
+          nav.classList.remove("py-2", "shadow-lg", "shadow-neon-blue/10");
+        }
+      });
+
+      // 移动端菜单切换
+      const menuToggle = document.getElementById("menu-toggle");
+      const mobileMenu = document.getElementById("mobile-menu");
+
+      menuToggle.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+        const icon = menuToggle.querySelector("i");
+        if (icon.classList.contains("fa-bars")) {
+          icon.classList.replace("fa-bars", "fa-times");
+        } else {
+          icon.classList.replace("fa-times", "fa-bars");
+        }
+      });
+
+      // 平滑滚动
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          // 关闭移动菜单（如果打开）
+          if (!mobileMenu.classList.contains("hidden")) {
+            mobileMenu.classList.add("hidden");
+            const icon = menuToggle.querySelector("i");
+            icon.classList.replace("fa-times", "fa-bars");
+          }
+
+          document.querySelector(this.getAttribute("href")).scrollIntoView({
+            behavior: "smooth",
+          });
+        });
+      });
+
+      // 创建粒子背景
+      function createParticles() {
+        const container = document.getElementById("particles-container");
+        const particleCount = 50;
+
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement("div");
+
+          // 随机大小和位置
+          const size = Math.random() * 3 + 1;
+          const posX = Math.random() * 100;
+          const posY = Math.random() * 100;
+          const delay = Math.random() * 5;
+          const duration = Math.random() * 20 + 10;
+
+          // 随机颜色
+          const colors = ["bg-neon-blue", "bg-neon-purple", "bg-neon-green"];
+          const color = colors[Math.floor(Math.random() * colors.length)];
+
+          // 设置样式
+          particle.classList.add(
+            "absolute",
+            "rounded-full",
+            color,
+            "opacity-50"
+          );
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          particle.style.left = `${posX}%`;
+          particle.style.top = `${posY}%`;
+          particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+
+          container.appendChild(particle);
+        }
+      }
+
+      // 添加浮动动画
+      const style = document.createElement("style");
+      style.textContent = `
+            @keyframes float {
+                0% { transform: translateY(0) translateX(0); }
+                50% { transform: translateY(-20px) translateX(10px); }
+                100% { transform: translateY(0) translateX(0); }
+            }
+        `;
+      document.head.appendChild(style);
+
+      // 掷骰子模拟
+      let diceChart;
+      function initDiceChart() {
+        const ctx = document.getElementById("dice-chart").getContext("2d");
+        diceChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["1", "2", "3", "4", "5", "6"],
+            datasets: [
+              {
+                label: "出现次数",
+                data: [0, 0, 0, 0, 0, 0],
+                backgroundColor: "rgba(191, 0, 255, 0.7)",
+                borderColor: "rgba(191, 0, 255, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+              x: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      function rollDice(trials) {
+        const results = [0, 0, 0, 0, 0, 0];
+
+        for (let i = 0; i < trials; i++) {
+          const roll = Math.floor(Math.random() * 6);
+          results[roll]++;
+        }
+
+        diceChart.data.datasets[0].data = results;
+        diceChart.update();
+      }
+
+      // 正态分布模拟
+      let normalChart;
+      function initNormalChart(mean = 0, std = 1) {
+        const ctx = document.getElementById("normal-chart").getContext("2d");
+
+        // 生成正态分布数据
+        const generateNormalData = (mean, std, count = 10000) => {
+          const data = [];
+          for (let i = 0; i < count; i++) {
+            // 使用Box-Muller变换生成正态分布随机数
+            let u1 = 1 - Math.random();
+            let u2 = Math.random();
+            let z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+            data.push(z0 * std + mean);
+          }
+          return data;
+        };
+
+        const data = generateNormalData(mean, std);
+        const bins = 50;
+        const min = Math.min(...data);
+        const max = Math.max(...data);
+        const binWidth = (max - min) / bins;
+        const frequencies = new Array(bins).fill(0);
+
+        data.forEach((value) => {
+          const binIndex = Math.min(
+            Math.floor((value - min) / binWidth),
+            bins - 1
+          );
+          frequencies[binIndex]++;
+        });
+
+        const labels = Array.from({ length: bins }, (_, i) =>
+          (min + i * binWidth).toFixed(1)
+        );
+
+        if (normalChart) {
+          normalChart.destroy();
+        }
+
+        normalChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "正态分布",
+                data: frequencies,
+                backgroundColor: "rgba(0, 243, 255, 0.2)",
+                borderColor: "rgba(0, 243, 255, 1)",
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+              x: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                  maxTicksLimit: 10,
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // 蒙特卡洛模拟计算π
+      let monteCarloChart;
+      function initMonteCarloChart() {
+        const ctx = document
+          .getElementById("monte-carlo-chart")
+          .getContext("2d");
+
+        if (monteCarloChart) {
+          monteCarloChart.destroy();
+        }
+
+        monteCarloChart = new Chart(ctx, {
+          type: "scatter",
+          data: {
+            datasets: [
+              {
+                label: "圆内点",
+                data: [],
+                backgroundColor: "rgba(0, 255, 102, 0.6)",
+                pointRadius: 3,
+              },
+              {
+                label: "圆外点",
+                data: [],
+                backgroundColor: "rgba(255, 255, 255, 0.3)",
+                pointRadius: 3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                min: 0,
+                max: 1,
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+              x: {
+                min: 0,
+                max: 1,
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+              annotation: {
+                annotations: {
+                  circle: {
+                    type: "circle",
+                    xMin: 0,
+                    xMax: 1,
+                    yMin: 0,
+                    yMax: 1,
+                    backgroundColor: "rgba(0, 255, 102, 0.1)",
+                    borderColor: "rgba(0, 255, 102, 0.5)",
+                    borderWidth: 2,
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      function calculatePi(samples) {
+        const insidePoints = [];
+        const outsidePoints = [];
+        let insideCount = 0;
+
+        for (let i = 0; i < samples; i++) {
+          const x = Math.random();
+          const y = Math.random();
+          const distance = x * x + y * y;
+
+          if (distance <= 1) {
+            insidePoints.push({ x, y });
+            insideCount++;
+          } else {
+            outsidePoints.push({ x, y });
+          }
+        }
+
+        // 计算π的估计值
+        const piEstimate = (insideCount / samples) * 4;
+        const piExact = Math.PI;
+        const error = Math.abs((piEstimate - piExact) / piExact) * 100;
+
+        // 更新图表
+        monteCarloChart.data.datasets[0].data = insidePoints;
+        monteCarloChart.data.datasets[1].data = outsidePoints;
+        monteCarloChart.update();
+
+        // 更新显示
+        document.getElementById("pi-estimate").textContent =
+          piEstimate.toFixed(6);
+        document.getElementById("pi-error").textContent =
+          error.toFixed(4) + "%";
+      }
+
+      // 分布比较图表
+      let distributionsChart;
+      let currentDistribution = "normal";
+
+      function initDistributionsChart() {
+        const ctx = document
+          .getElementById("distributions-chart")
+          .getContext("2d");
+
+        const normalData = generateDistributionData("normal");
+
+        distributionsChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: normalData.labels,
+            datasets: [
+              {
+                label: "概率密度",
+                data: normalData.data,
+                backgroundColor: "rgba(0, 255, 102, 0.2)",
+                borderColor: "rgba(0, 255, 102, 1)",
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+              x: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+          },
+        });
+
+        // 初始化参数滑块事件监听
+        initDistributionParamEvents();
+      }
+
+      function updateDistributionChart(type) {
+        currentDistribution = type;
+
+        // 隐藏所有参数控制区域
+        document.querySelectorAll(".distribution-params").forEach((el) => {
+          el.classList.add("hidden");
+        });
+
+        // 显示当前分布的参数控制区域
+        const paramsEl = document.getElementById(`${type}-params`);
+        if (paramsEl) {
+          paramsEl.classList.remove("hidden");
+        }
+
+        const data = generateDistributionData(type);
+        distributionsChart.data.labels = data.labels;
+        distributionsChart.data.datasets[0].data = data.data;
+
+        // 更新标题和颜色
+        switch (type) {
+          case "normal":
+            distributionsChart.data.datasets[0].borderColor =
+              "rgba(0, 255, 102, 1)";
+            distributionsChart.data.datasets[0].backgroundColor =
+              "rgba(0, 255, 102, 0.2)";
+            break;
+          case "poisson":
+            distributionsChart.data.datasets[0].borderColor =
+              "rgba(0, 243, 255, 1)";
+            distributionsChart.data.datasets[0].backgroundColor =
+              "rgba(0, 243, 255, 0.2)";
+            break;
+          case "binomial":
+            distributionsChart.data.datasets[0].borderColor =
+              "rgba(191, 0, 255, 1)";
+            distributionsChart.data.datasets[0].backgroundColor =
+              "rgba(191, 0, 255, 0.2)";
+            break;
+          case "exponential":
+            distributionsChart.data.datasets[0].borderColor =
+              "rgba(255, 102, 0, 1)";
+            distributionsChart.data.datasets[0].backgroundColor =
+              "rgba(255, 102, 0, 0.2)";
+            break;
+        }
+
+        distributionsChart.update();
+      }
+
+      // 初始化分布参数滑块事件
+      function initDistributionParamEvents() {
+        // 正态分布参数
+        const normalMean = document.getElementById("normal-mean");
+        const normalStd = document.getElementById("normal-std");
+        const normalMeanValue = document.getElementById("normal-mean-value");
+        const normalStdValue = document.getElementById("normal-std-value");
+
+        if (normalMean && normalStd) {
+          normalMean.addEventListener("input", function () {
+            normalMeanValue.textContent = this.value;
+            if (currentDistribution === "normal") {
+              updateChart();
+            }
+          });
+
+          normalStd.addEventListener("input", function () {
+            normalStdValue.textContent = this.value;
+            if (currentDistribution === "normal") {
+              updateChart();
+            }
+          });
+        }
+
+        // 泊松分布参数
+        const poissonLambda = document.getElementById("poisson-lambda");
+        const poissonLambdaValue = document.getElementById(
+          "poisson-lambda-value"
+        );
+
+        if (poissonLambda) {
+          poissonLambda.addEventListener("input", function () {
+            poissonLambdaValue.textContent = this.value;
+            if (currentDistribution === "poisson") {
+              updateChart();
+            }
+          });
+        }
+
+        // 二项分布参数
+        const binomialN = document.getElementById("binomial-n");
+        const binomialP = document.getElementById("binomial-p");
+        const binomialNValue = document.getElementById("binomial-n-value");
+        const binomialPValue = document.getElementById("binomial-p-value");
+
+        if (binomialN && binomialP) {
+          binomialN.addEventListener("input", function () {
+            binomialNValue.textContent = this.value;
+            if (currentDistribution === "binomial") {
+              updateChart();
+            }
+          });
+
+          binomialP.addEventListener("input", function () {
+            binomialPValue.textContent = this.value;
+            if (currentDistribution === "binomial") {
+              updateChart();
+            }
+          });
+        }
+
+        // 指数分布参数
+        const exponentialLambda = document.getElementById("exponential-lambda");
+        const exponentialLambdaValue = document.getElementById(
+          "exponential-lambda-value"
+        );
+
+        if (exponentialLambda) {
+          exponentialLambda.addEventListener("input", function () {
+            exponentialLambdaValue.textContent = this.value;
+            if (currentDistribution === "exponential") {
+              updateChart();
+            }
+          });
+        }
+      }
+
+      // 更新图表
+      function updateChart() {
+        const data = generateDistributionData(currentDistribution);
+        distributionsChart.data.datasets[0].data = data.data;
+        distributionsChart.update();
+      }
+
+      // 辅助函数，在全局作用域中定义以便updateDistributionChart使用
+      function generateDistributionData(type) {
+        const labels = Array.from({ length: 100 }, (_, i) => i / 10 - 5); // 从-5到5
+
+        let data;
+        switch (type) {
+          case "normal":
+            // 正态分布 - 使用用户设置的参数
+            var mean;
+            mean = parseFloat(
+              document.getElementById("normal-mean")?.value || 0
+            );
+            var std;
+            std = parseFloat(document.getElementById("normal-std")?.value || 1);
+
+            data = labels.map((x) => {
+              const z = (x - mean) / std;
+              return Math.exp(-0.5 * z * z) / (std * Math.sqrt(2 * Math.PI));
+            });
+            break;
+
+          case "poisson":
+            // 泊松分布 - 使用用户设置的λ
+            var lambda;
+            lambda = parseFloat(
+              document.getElementById("poisson-lambda")?.value || 3
+            );
+            data = labels.map((x) => {
+              if (x < 0 || x !== Math.floor(x)) return 0;
+              let factorial = 1;
+              for (let i = 1; i <= x; i++) factorial *= i;
+              return (Math.exp(-lambda) * Math.pow(lambda, x)) / factorial;
+            });
+            break;
+
+          case "binomial":
+            // 二项分布 - 使用用户设置的n和p
+            var n;
+            n = parseInt(document.getElementById("binomial-n")?.value || 10);
+            var p;
+            p = parseFloat(document.getElementById("binomial-p")?.value || 0.5);
+
+            data = labels.map((k) => {
+              if (k < 0 || k > n || k !== Math.floor(k)) return 0;
+              // 计算组合数 C(n,k)
+              let comb = 1;
+              for (let i = 1; i <= k; i++) {
+                comb = (comb * (n - k + i)) / i;
+              }
+              return comb * Math.pow(p, k) * Math.pow(1 - p, n - k);
+            });
+            break;
+
+          case "exponential":
+            // 指数分布 - 使用用户设置的λ
+            var lambdaExp;
+            lambdaExp = parseFloat(
+              document.getElementById("exponential-lambda")?.value || 1
+            );
+            data = labels.map((x) =>
+              x >= 0 ? lambdaExp * Math.exp(-lambdaExp * x) : 0
+            );
+            break;
+        }
+
+        return { labels, data };
+      }
+
+      // 相关性分析图表
+      let correlationChart;
+      function initCorrelationChart(r = 0.8) {
+        const ctx = document
+          .getElementById("correlation-chart")
+          .getContext("2d");
+
+        // 生成具有指定相关系数的随机数据
+        const generateCorrelatedData = (r, n = 200) => {
+          var x = Array.from({ length: n }, () => Math.random() * 100);
+          var y = [];
+
+          // 使用相关系数生成y值
+          for (let i = 0; i < n; i++) {
+            const z = Math.random() * 100;
+            // 根据相关系数调整y值
+            y.push(r * x[i] + Math.sqrt(1 - r * r) * z);
+          }
+
+          // 标准化数据
+          const xMean = x.reduce((a, b) => a + b, 0) / n;
+          const yMean = y.reduce((a, b) => a + b, 0) / n;
+          const xStd = Math.sqrt(
+            x.reduce((a, b) => a + Math.pow(b - xMean, 2), 0) / n
+          );
+          const yStd = Math.sqrt(
+            y.reduce((a, b) => a + Math.pow(b - yMean, 2), 0) / n
+          );
+
+          const normalizedData = x.map((xi, i) => ({
+            x: ((xi - xMean) / xStd) * 10 + 50, // 标准化到均值50，标准差10
+            y: ((y[i] - yMean) / yStd) * 10 + 50,
+          }));
+
+          return normalizedData;
+        };
+
+        const data = generateCorrelatedData(r);
+
+        if (correlationChart) {
+          correlationChart.destroy();
+        }
+
+        correlationChart = new Chart(ctx, {
+          type: "scatter",
+          data: {
+            datasets: [
+              {
+                label: "数据点",
+                data: data,
+                backgroundColor: "rgba(0, 243, 255, 0.6)",
+                pointRadius: 4,
+                pointHoverRadius: 6,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                min: 20,
+                max: 80,
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+              x: {
+                min: 20,
+                max: 80,
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // 初始化所有图表和事件监听
+      // 随机变量相关函数
+      // 随机变量相关变量已移至 random_variables.html
+
+      // initDiscreteRvChart函数已移至 random_variables.html
+
+      // initContinuousRvChart函数已移至 random_variables.html
+
+      // initRvFeaturesChart函数已移至 random_variables.html
+
+      // rollTwoDice函数已移至 random_variables.html
+
+      // generateContinuousSamples函数已移至 random_variables.html
+
+      // updateRvFeatures函数已移至 random_variables.html
+
+      // initRvParamEvents函数已移至 random_variables.html
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // 创建粒子背景
+        createParticles();
+
+        // 随机变量相关功能已移至 random_variables.html
+
+        // 初始化图表
+        initDiceChart();
+        initNormalChart();
+        initMonteCarloChart();
+        initDistributionsChart();
+        initCorrelationChart();
+        
+        // 初始化分布参数事件监听器
+        initDistributionParamEvents();
+
+        // 掷骰子模拟器事件
+        const diceTrialsSlider = document.getElementById("dice-trials");
+        const diceTrialsValue = document.getElementById("dice-trials-value");
+        const rollDiceBtn = document.getElementById("roll-dice");
+
+        diceTrialsSlider.addEventListener("input", () => {
+          diceTrialsValue.textContent = diceTrialsSlider.value;
+        });
+
+        rollDiceBtn.addEventListener("click", () => {
+          const trials = parseInt(diceTrialsSlider.value);
+          rollDice(trials);
+        });
+
+        // 正态分布模拟器事件
+        const normalMeanSlider = document.getElementById("normal-sim-mean");
+        const normalMeanValue = document.getElementById("normal-sim-mean-value");
+        const normalStdSlider = document.getElementById("normal-sim-std");
+        const normalStdValue = document.getElementById("normal-sim-std-value");
+        const generateNormalBtn = document.getElementById("generate-normal");
+
+        normalMeanSlider.addEventListener("input", () => {
+          normalMeanValue.textContent = normalMeanSlider.value;
+        });
+
+        normalStdSlider.addEventListener("input", () => {
+          normalStdValue.textContent = normalStdSlider.value;
+        });
+
+        generateNormalBtn.addEventListener("click", () => {
+          const mean = parseFloat(normalMeanSlider.value);
+          const std = parseFloat(normalStdSlider.value);
+          initNormalChart(mean, std);
+        });
+
+        // 蒙特卡洛模拟事件
+        const monteCarloSamplesSlider = document.getElementById(
+          "monte-carlo-samples"
+        );
+        const monteCarloSamplesValue = document.getElementById(
+          "monte-carlo-samples-value"
+        );
+        const calculatePiBtn = document.getElementById("calculate-pi");
+
+        monteCarloSamplesSlider.addEventListener("input", () => {
+          monteCarloSamplesValue.textContent = monteCarloSamplesSlider.value;
+        });
+
+        calculatePiBtn.addEventListener("click", () => {
+          const samples = parseInt(monteCarloSamplesSlider.value);
+          calculatePi(samples);
+        });
+
+        // 分布比较事件
+        const distributionBtns = document.querySelectorAll(".distribution-btn");
+        distributionBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            // 更新按钮样式
+            distributionBtns.forEach((b) => {
+              b.classList.remove("active");
+              b.classList.remove("bg-neon-green/20", "text-neon-green");
+              b.classList.remove("bg-neon-blue/20", "text-neon-blue");
+              b.classList.remove("bg-neon-purple/20", "text-neon-purple");
+              b.classList.remove("bg-orange-500/20", "text-orange-500");
+              b.classList.add("bg-gray-800", "text-gray-300");
+            });
+
+            // 获取分布类型
+            const distribution = btn.getAttribute("data-distribution");
+            btn.classList.add("active");
+            btn.classList.remove("bg-gray-800", "text-gray-300");
+
+            // 根据分布类型设置按钮颜色
+            switch (distribution) {
+              case "normal":
+                btn.classList.add("bg-neon-green/20", "text-neon-green");
+                break;
+              case "poisson":
+                btn.classList.add("bg-neon-blue/20", "text-neon-blue");
+                break;
+              case "binomial":
+                btn.classList.add("bg-neon-purple/20", "text-neon-purple");
+                break;
+              case "exponential":
+                btn.classList.add("bg-orange-500/20", "text-orange-500");
+                break;
+            }
+
+            // 更新图表
+            updateDistributionChart(distribution);
+          });
+        });
+
+        // 相关性分析事件
+        const correlationCoeffSlider =
+          document.getElementById("correlation-coeff");
+        const correlationCoeffValue = document.getElementById(
+          "correlation-coeff-value"
+        );
+
+        correlationCoeffSlider.addEventListener("input", () => {
+          const r = parseFloat(correlationCoeffSlider.value);
+          correlationCoeffValue.textContent = r.toFixed(1);
+          initCorrelationChart(r);
+        });
+
+        // 初始模拟
+        rollDice(1000);
+        calculatePi(1000);
+      });
+    </script>
+  </body>
+</html>

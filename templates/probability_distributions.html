@@ -1,0 +1,3336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>概率分布探索 - 概率统计可视化</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.4.0/chartjs-plugin-annotation.min.js"></script>
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre"],
+        },
+      };
+    </script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+      :root {
+        --dark-bg: #0f172a;
+        --dark-card: #1e293b;
+        --neon-blue: #00f3ff;
+        --neon-purple: #bf00ff;
+        --neon-green: #00ff66;
+        --neon-orange: #ff6600;
+        --neon-pink: #ff0080;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: var(--dark-bg);
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      .font-future {
+        font-family: "Roboto", sans-serif;
+        letter-spacing: 0.05em;
+      }
+
+      .text-neon-blue {
+        color: var(--neon-blue);
+      }
+
+      .text-neon-purple {
+        color: var(--neon-purple);
+      }
+
+      .text-neon-green {
+        color: var(--neon-green);
+      }
+
+      .text-neon-orange {
+        color: var(--neon-orange);
+      }
+
+      .text-neon-pink {
+        color: var(--neon-pink);
+      }
+
+      .bg-neon-blue {
+        background-color: var(--neon-blue);
+      }
+
+      .bg-neon-purple {
+        background-color: var(--neon-purple);
+      }
+
+      .bg-neon-green {
+        background-color: var(--neon-green);
+      }
+
+      .bg-neon-orange {
+        background-color: var(--neon-orange);
+      }
+
+      .bg-neon-pink {
+        background-color: var(--neon-pink);
+      }
+
+      .bg-dark-bg {
+        background-color: var(--dark-bg);
+      }
+
+      .bg-dark-card {
+        background-color: var(--dark-card);
+      }
+
+      .accent-neon-blue {
+        accent-color: var(--neon-blue);
+      }
+
+      .accent-neon-purple {
+        accent-color: var(--neon-purple);
+      }
+
+      .accent-neon-green {
+        accent-color: var(--neon-green);
+      }
+
+      .accent-neon-orange {
+        accent-color: var(--neon-orange);
+      }
+
+      .accent-neon-pink {
+        accent-color: var(--neon-pink);
+      }
+
+      .clip-path-slant {
+        clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+      }
+
+      .bg-grid {
+        background-image: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          );
+        background-size: 20px 20px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      /* 粒子动画 */
+      #particles-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.5;
+        animation: float 15s infinite ease-in-out;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) translateX(0);
+        }
+        25% {
+          transform: translateY(-30px) translateX(15px);
+        }
+        50% {
+          transform: translateY(-15px) translateX(-15px);
+        }
+        75% {
+          transform: translateY(30px) translateX(15px);
+        }
+      }
+
+      /* 分布卡片样式 */
+      .distribution-card {
+        transition: all 0.3s ease;
+      }
+
+      .distribution-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 243, 255, 0.1);
+      }
+
+      /* 参数控制面板样式 */
+      .param-control {
+        background: linear-gradient(
+          135deg,
+          rgba(30, 41, 59, 0.8),
+          rgba(15, 23, 42, 0.9)
+        );
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* 数学公式样式 */
+      .math-formula {
+        background: rgba(0, 243, 255, 0.1);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        text-align: center;
+      }
+
+      .math-formula .MathJax {
+        font-size: 1.2em !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 粒子背景 -->
+    <div id="particles-container"></div>
+
+    <!-- 导航栏 -->
+    <nav
+      class="bg-dark-bg/80 backdrop-blur-md py-4 sticky top-0 z-50 border-b border-gray-800"
+    >
+      <div class="container mx-auto px-4 flex justify-between items-center">
+        <a
+          href="index.html"
+          class="text-2xl font-future font-bold flex items-center"
+        >
+          <span class="text-neon-blue">概率统计</span
+          ><span class="ml-2">可视化</span>
+        </a>
+        <div class="flex space-x-6">
+          <a
+            href="index.html"
+            class="text-gray-300 hover:text-neon-blue transition-colors duration-300"
+            >首页</a
+          >
+          <a
+            href="random_variables.html"
+            class="text-gray-300 hover:text-neon-blue transition-colors duration-300"
+            >随机变量</a
+          >
+          <a
+            href="probability_distributions.html"
+            class="text-neon-blue border-b-2 border-neon-blue pb-1"
+            >概率分布</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <section
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50 clip-path-slant"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h1 class="text-[clamp(2rem,6vw,4rem)] font-future font-bold mb-4">
+            <span class="text-neon-purple">概率分布</span>探索
+          </h1>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            深入理解各种概率分布的特性、参数和应用场景
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 概率分布概览 -->
+    <section
+      id="distributions-overview"
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-future font-bold mb-4 text-white">
+            常见概率分布
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            概率分布描述了随机变量取值的概率规律，是概率论和统计学的核心概念
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- 正态分布卡片 -->
+          <div
+            class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6"
+            >
+              <i class="fa fa-bell text-neon-blue text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              正态分布
+            </h3>
+            <p class="text-gray-400 mb-4">
+              最重要的连续概率分布，呈钟形曲线，广泛应用于自然现象和社会现象的建模。
+            </p>
+            <div class="math-formula">
+              $$f(x) = \frac{1}{\sigma\sqrt{2\pi}}
+              e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
+            </div>
+            <button
+              onclick="showDistribution('normal')"
+              class="w-full mt-4 px-4 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300"
+            >
+              探索正态分布 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+
+          <!-- 泊松分布卡片 -->
+          <div
+            class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6"
+            >
+              <i class="fa fa-chart-bar text-neon-purple text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              泊松分布
+            </h3>
+            <p class="text-gray-400 mb-4">
+              描述单位时间内随机事件发生次数的离散概率分布，常用于排队论和可靠性分析。
+            </p>
+            <div class="math-formula">
+              $$P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}$$
+            </div>
+            <button
+              onclick="showDistribution('poisson')"
+              class="w-full mt-4 px-4 py-2 bg-neon-purple text-dark-bg font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300"
+            >
+              探索泊松分布 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+
+          <!-- 指数分布卡片 -->
+          <div
+            class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6"
+            >
+              <i class="fa fa-line-chart text-neon-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              指数分布
+            </h3>
+            <p class="text-gray-400 mb-4">
+              描述事件间隔时间的连续概率分布，具有无记忆性，常用于生存分析和可靠性工程。
+            </p>
+            <div class="math-formula">
+              $$f(x) = \lambda e^{-\lambda x}, \quad x \geq 0$$
+            </div>
+            <button
+              onclick="showDistribution('exponential')"
+              class="w-full mt-4 px-4 py-2 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-neon-green/80 transition-all duration-300"
+            >
+              探索指数分布 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+
+          <!-- 二项分布卡片 -->
+          <div
+            class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-orange/10 flex items-center justify-center mb-6"
+            >
+              <i class="fa fa-coins text-neon-orange text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              二项分布
+            </h3>
+            <p class="text-gray-400 mb-4">
+              描述n次独立伯努利试验中成功次数的离散概率分布，是最基本的离散分布之一。
+            </p>
+            <div class="math-formula">
+              $$P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}$$
+            </div>
+            <button
+              onclick="showDistribution('binomial')"
+              class="w-full mt-4 px-4 py-2 bg-neon-orange text-dark-bg font-bold rounded-md hover:bg-neon-orange/80 transition-all duration-300"
+            >
+              探索二项分布 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+
+          <!-- 均匀分布卡片 -->
+          <div
+            class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-pink"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-pink/10 flex items-center justify-center mb-6"
+            >
+              <i class="fa fa-square text-neon-pink text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              均匀分布
+            </h3>
+            <p class="text-gray-400 mb-4">
+              在指定区间内所有值等概率出现的连续概率分布，是概率论中最简单的分布。
+            </p>
+            <div class="math-formula">
+              $$f(x) = \frac{1}{b-a}, \quad a \leq x \leq b$$
+            </div>
+            <button
+              onclick="showDistribution('uniform')"
+              class="w-full mt-4 px-4 py-2 bg-neon-pink text-dark-bg font-bold rounded-md hover:bg-neon-pink/80 transition-all duration-300"
+            >
+              探索均匀分布 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+
+          <!-- 卡方分布卡片 -->
+          <div
+            class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6"
+            >
+              <i class="fa fa-chart-area text-neon-blue text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              卡方分布
+            </h3>
+            <p class="text-gray-400 mb-4">
+              由k个独立标准正态随机变量的平方和构成，广泛用于假设检验和置信区间估计。
+            </p>
+            <div class="math-formula">
+              $$f(x) = \frac{1}{2^{k/2}\Gamma(k/2)} x^{k/2-1} e^{-x/2}$$
+            </div>
+            <button
+              onclick="showDistribution('chisquare')"
+              class="w-full mt-4 px-4 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300"
+            >
+              探索卡方分布 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 交互式分布探索 -->
+    <section
+      id="interactive-exploration"
+      class="py-20 relative bg-gradient-to-b from-dark-card/50 to-dark-bg"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-future font-bold mb-4 text-white">
+            交互式分布探索
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            通过调整参数，实时观察不同概率分布的形状变化和统计特性
+          </p>
+        </div>
+
+        <div class="bg-dark-card rounded-xl p-8 border border-gray-800">
+          <!-- 分布选择器 -->
+          <div class="mb-8">
+            <label class="block text-gray-300 mb-4 text-lg font-semibold"
+              >选择概率分布:</label
+            >
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <button
+                onclick="selectDistribution('normal')"
+                id="btn-normal"
+                class="distribution-btn px-4 py-3 bg-neon-blue text-dark-bg font-bold rounded-lg hover:bg-neon-blue/80 transition-all duration-300"
+              >
+                正态分布
+              </button>
+              <button
+                onclick="selectDistribution('poisson')"
+                id="btn-poisson"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-purple transition-all duration-300"
+              >
+                泊松分布
+              </button>
+              <button
+                onclick="selectDistribution('exponential')"
+                id="btn-exponential"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-green transition-all duration-300"
+              >
+                指数分布
+              </button>
+              <button
+                onclick="selectDistribution('binomial')"
+                id="btn-binomial"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-orange transition-all duration-300"
+              >
+                二项分布
+              </button>
+              <button
+                onclick="selectDistribution('uniform')"
+                id="btn-uniform"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-pink transition-all duration-300"
+              >
+                均匀分布
+              </button>
+              <button
+                onclick="selectDistribution('chisquare')"
+                id="btn-chisquare"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-blue transition-all duration-300"
+              >
+                卡方分布
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 参数控制面板 -->
+            <div class="param-control rounded-xl p-6">
+              <h3
+                class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+              >
+                <i class="fa fa-sliders-h text-neon-blue mr-3"></i> 参数控制
+              </h3>
+
+              <!-- 正态分布参数 -->
+              <div id="normal-params" class="distribution-params">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >均值 (μ):
+                    <span
+                      id="normal-mean-value"
+                      class="text-neon-blue font-bold"
+                      >0</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="normal-mean"
+                    min="-5"
+                    max="5"
+                    step="0.1"
+                    value="0"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >标准差 (σ):
+                    <span id="normal-std-value" class="text-neon-blue font-bold"
+                      >1</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="normal-std"
+                    min="0.1"
+                    max="3"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                </div>
+              </div>
+
+              <!-- 泊松分布参数 -->
+              <div id="poisson-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >λ参数:
+                    <span
+                      id="poisson-lambda-value"
+                      class="text-neon-purple font-bold"
+                      >3</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="poisson-lambda"
+                    min="0.5"
+                    max="10"
+                    step="0.1"
+                    value="3"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                  />
+                </div>
+              </div>
+
+              <!-- 指数分布参数 -->
+              <div id="exponential-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >λ参数:
+                    <span
+                      id="exponential-lambda-value"
+                      class="text-neon-green font-bold"
+                      >1</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="exponential-lambda"
+                    min="0.1"
+                    max="3"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                </div>
+              </div>
+
+              <!-- 二项分布参数 -->
+              <div id="binomial-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >试验次数 (n):
+                    <span
+                      id="binomial-n-value"
+                      class="text-neon-orange font-bold"
+                      >10</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="binomial-n"
+                    min="1"
+                    max="50"
+                    step="1"
+                    value="10"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-orange"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >成功概率 (p):
+                    <span
+                      id="binomial-p-value"
+                      class="text-neon-orange font-bold"
+                      >0.5</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="binomial-p"
+                    min="0.01"
+                    max="0.99"
+                    step="0.01"
+                    value="0.5"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-orange"
+                  />
+                </div>
+              </div>
+
+              <!-- 均匀分布参数 -->
+              <div id="uniform-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >最小值 (a):
+                    <span id="uniform-a-value" class="text-neon-pink font-bold"
+                      >0</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="uniform-a"
+                    min="-5"
+                    max="0"
+                    step="0.1"
+                    value="0"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-pink"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >最大值 (b):
+                    <span id="uniform-b-value" class="text-neon-pink font-bold"
+                      >1</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="uniform-b"
+                    min="1"
+                    max="5"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-pink"
+                  />
+                </div>
+              </div>
+
+              <!-- 卡方分布参数 -->
+              <div id="chisquare-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >自由度 (k):
+                    <span
+                      id="chisquare-k-value"
+                      class="text-neon-blue font-bold"
+                      >2</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="chisquare-k"
+                    min="1"
+                    max="10"
+                    step="1"
+                    value="2"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                </div>
+              </div>
+
+              <!-- 统计信息 -->
+              <div class="mt-8 pt-6 border-t border-gray-700">
+                <h4 class="text-lg font-semibold mb-4 text-white">统计特性</h4>
+                <div class="grid grid-cols-1 gap-4">
+                  <div class="bg-gray-800 p-3 rounded-lg">
+                    <div class="text-sm text-gray-400">期望值 E[X]</div>
+                    <div
+                      id="expectation"
+                      class="text-lg font-semibold text-neon-blue"
+                    >
+                      0.00
+                    </div>
+                  </div>
+                  <div class="bg-gray-800 p-3 rounded-lg">
+                    <div class="text-sm text-gray-400">方差 Var[X]</div>
+                    <div
+                      id="variance"
+                      class="text-lg font-semibold text-neon-blue"
+                    >
+                      1.00
+                    </div>
+                  </div>
+                  <div class="bg-gray-800 p-3 rounded-lg">
+                    <div class="text-sm text-gray-400">标准差 σ</div>
+                    <div
+                      id="std-dev"
+                      class="text-lg font-semibold text-neon-blue"
+                    >
+                      1.00
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 图表显示区域 -->
+            <div class="lg:col-span-2">
+              <div class="bg-dark-bg rounded-xl p-6 border border-gray-800">
+                <div class="flex justify-between items-center mb-6">
+                  <h3
+                    class="text-xl font-future font-semibold text-white flex items-center"
+                  >
+                    <i class="fa fa-chart-line text-neon-blue mr-3"></i>
+                    <span id="chart-title">正态分布</span>
+                  </h3>
+                  <div class="flex space-x-2">
+                    <button
+                      onclick="togglePDF()"
+                      id="pdf-btn"
+                      class="px-4 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300"
+                    >
+                      PDF
+                    </button>
+                    <button
+                      onclick="toggleCDF()"
+                      id="cdf-btn"
+                      class="px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-neon-blue transition-all duration-300"
+                    >
+                      CDF
+                    </button>
+                  </div>
+                </div>
+                <div class="h-96">
+                  <canvas id="distribution-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- 分布信息 -->
+              <div
+                class="mt-6 bg-dark-bg rounded-xl p-6 border border-gray-800"
+              >
+                <h4
+                  class="text-lg font-semibold mb-4 text-white flex items-center"
+                >
+                  <i class="fa fa-info-circle text-neon-blue mr-3"></i> 分布信息
+                </h4>
+                <div id="distribution-info" class="text-gray-300">
+                  <p>
+                    <strong>正态分布</strong
+                    >是最重要的连续概率分布，具有钟形曲线的特征。它在自然界和社会现象中广泛存在，是中心极限定理的基础。
+                  </p>
+                  <p class="mt-2">
+                    <strong>应用场景：</strong
+                    >身高、体重、测量误差、考试成绩等。
+                  </p>
+                  <p class="mt-2">
+                    <strong>特性：</strong>对称性、68-95-99.7规则、可加性等。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 理论知识深入探索 -->
+    <section
+      id="theory-exploration"
+      class="py-20 relative bg-gradient-to-b from-dark-card/30 to-dark-bg"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-future font-bold mb-4 text-white">
+            理论知识<span class="text-neon-blue">深入探索</span>
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            深入理解各种概率分布的数学定义、重要性质和实际应用场景
+          </p>
+        </div>
+
+        <!-- 理论知识卡片网格 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+          <!-- 正态分布理论 -->
+          <div
+            class="bg-dark-card rounded-xl p-8 border border-gray-800 hover:border-neon-blue transition-all duration-300"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 rounded-lg bg-neon-blue/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-bell text-neon-blue text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-future font-bold text-white">
+                正态分布理论
+              </h3>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-3">
+                  数学定义
+                </h4>
+                <p class="text-gray-300 mb-4">
+                  正态分布（Normal
+                  Distribution），又称高斯分布，是最重要的连续概率分布。
+                </p>
+                <div class="math-formula">
+                  $$f(x) = \frac{1}{\sqrt{2\pi\sigma^2}}
+                  e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
+                </div>
+                <p class="text-sm text-gray-400">其中 μ 是均值，σ² 是方差</p>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-3">
+                  重要性质
+                </h4>
+                <ul class="text-gray-300 space-y-2">
+                  <li>
+                    • <strong>对称性：</strong>关于均值 μ
+                    对称，均值、中位数、众数相等
+                  </li>
+                  <li>
+                    •
+                    <strong>68-95-99.7规则：</strong
+                    >约68%数据在1σ内，95%在2σ内，99.7%在3σ内
+                  </li>
+                  <li>
+                    •
+                    <strong>无限可分性：</strong
+                    >独立正态变量的线性组合仍服从正态分布
+                  </li>
+                  <li>
+                    •
+                    <strong>最大熵性质：</strong
+                    >在给定均值和方差下，正态分布具有最大熵
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-3">
+                  应用场景
+                </h4>
+                <p class="text-gray-300">
+                  身高体重分布、测量误差、金融收益率、自然现象建模、中心极限定理的基础
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 泊松分布理论 -->
+          <div
+            class="bg-dark-card rounded-xl p-8 border border-gray-800 hover:border-neon-green transition-all duration-300"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 rounded-lg bg-neon-green/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-clock-o text-neon-green text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-future font-bold text-white">
+                泊松分布理论
+              </h3>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-green mb-3">
+                  数学定义
+                </h4>
+                <p class="text-gray-300 mb-4">
+                  泊松分布描述单位时间或空间内随机事件发生次数的概率分布。
+                </p>
+                <div class="math-formula">
+                  $$P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad k =
+                  0,1,2,\ldots$$
+                </div>
+                <p class="text-sm text-gray-400">
+                  其中 λ > 0 是平均发生率，既是期望也是方差
+                </p>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-green mb-3">
+                  重要性质
+                </h4>
+                <ul class="text-gray-300 space-y-2">
+                  <li>
+                    •
+                    <strong>二项分布极限：</strong
+                    >当n→∞，p→0，np=λ时，B(n,p)→Poisson(λ)
+                  </li>
+                  <li>
+                    • <strong>可加性：</strong>独立泊松变量之和仍服从泊松分布
+                  </li>
+                  <li>• <strong>正态近似：</strong>当λ≥20时可用正态分布近似</li>
+                  <li>• <strong>稀有事件：</strong>适用于描述稀有事件的发生</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-green mb-3">
+                  应用场景
+                </h4>
+                <p class="text-gray-300">
+                  电话呼叫次数、网站访问量、放射性衰变、交通事故、机器故障、DNA变异
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 指数分布理论 -->
+          <div
+            class="bg-dark-card rounded-xl p-8 border border-gray-800 hover:border-neon-orange transition-all duration-300"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 rounded-lg bg-neon-orange/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-hourglass text-neon-orange text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-future font-bold text-white">
+                指数分布理论
+              </h3>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-orange mb-3">
+                  数学定义
+                </h4>
+                <p class="text-gray-300 mb-4">
+                  指数分布描述独立随机事件发生的时间间隔。
+                </p>
+                <div class="math-formula">
+                  $$f(x) = \lambda e^{-\lambda x}, \quad x \geq 0$$
+                </div>
+                <p class="text-sm text-gray-400">
+                  其中 λ > 0 是率参数，期望为1/λ，方差为1/λ²
+                </p>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-orange mb-3">
+                  重要性质
+                </h4>
+                <ul class="text-gray-300 space-y-2">
+                  <li>
+                    • <strong>无记忆性：</strong>P(X>s+t|X>s) =
+                    P(X>t)，过去不影响未来
+                  </li>
+                  <li>
+                    •
+                    <strong>泊松过程联系：</strong
+                    >泊松过程中事件间隔时间服从指数分布
+                  </li>
+                  <li>
+                    •
+                    <strong>最小值性质：</strong
+                    >独立指数变量的最小值仍服从指数分布
+                  </li>
+                  <li>
+                    • <strong>伽马分布特例：</strong>形状参数为1的伽马分布
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-orange mb-3">
+                  应用场景
+                </h4>
+                <p class="text-gray-300">
+                  设备寿命、服务时间、排队等待、放射性衰变间隔、电子元件失效时间
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 二项分布理论 -->
+          <div
+            class="bg-dark-card rounded-xl p-8 border border-gray-800 hover:border-neon-purple transition-all duration-300"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 rounded-lg bg-neon-purple/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-coins text-neon-purple text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-future font-bold text-white">
+                二项分布理论
+              </h3>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-purple mb-3">
+                  数学定义
+                </h4>
+                <p class="text-gray-300 mb-4">
+                  二项分布描述n次独立伯努利试验中成功次数的分布。
+                </p>
+                <div class="math-formula">
+                  $$P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}$$
+                </div>
+                <p class="text-sm text-gray-400">
+                  其中n是试验次数，p是成功概率，期望为np，方差为np(1-p)
+                </p>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-purple mb-3">
+                  重要性质
+                </h4>
+                <ul class="text-gray-300 space-y-2">
+                  <li>• <strong>伯努利推广：</strong>伯努利分布是n=1的特例</li>
+                  <li>
+                    • <strong>正态近似：</strong>当n较大时可用正态分布近似
+                  </li>
+                  <li>
+                    • <strong>泊松极限：</strong>n→∞，p→0，np=λ时趋向泊松分布
+                  </li>
+                  <li>
+                    • <strong>可加性：</strong>独立二项变量之和仍服从二项分布
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-purple mb-3">
+                  应用场景
+                </h4>
+                <p class="text-gray-300">
+                  质量控制、医学试验、市场调研、投票预测、A/B测试、成功率分析
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 均匀分布理论 -->
+          <div
+            class="bg-dark-card rounded-xl p-8 border border-gray-800 hover:border-neon-pink transition-all duration-300"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 rounded-lg bg-neon-pink/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-minus text-neon-pink text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-future font-bold text-white">
+                均匀分布理论
+              </h3>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-pink mb-3">
+                  数学定义
+                </h4>
+                <p class="text-gray-300 mb-4">
+                  均匀分布在区间[a,b]内每个值出现的概率相等。
+                </p>
+                <div class="math-formula">
+                  $$f(x) = \begin{cases} \frac{1}{b-a} & \text{if } a \leq x
+                  \leq b \\ 0 & \text{otherwise} \end{cases}$$
+                </div>
+                <p class="text-sm text-gray-400">
+                  期望为(a+b)/2，方差为(b-a)²/12
+                </p>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-pink mb-3">
+                  重要性质
+                </h4>
+                <ul class="text-gray-300 space-y-2">
+                  <li>
+                    • <strong>等概率性：</strong>区间内任意等长子区间概率相等
+                  </li>
+                  <li>• <strong>最大熵：</strong>在有界支撑上具有最大熵</li>
+                  <li>
+                    • <strong>变换性质：</strong>线性变换后仍可能是均匀分布
+                  </li>
+                  <li>
+                    • <strong>随机数生成：</strong>其他分布随机数生成的基础
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-pink mb-3">
+                  应用场景
+                </h4>
+                <p class="text-gray-300">
+                  随机数生成、蒙特卡洛模拟、几何概率、信号处理、计算机图形学
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 卡方分布理论 -->
+          <div
+            class="bg-dark-card rounded-xl p-8 border border-gray-800 hover:border-neon-blue transition-all duration-300"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 rounded-lg bg-neon-blue/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-square text-neon-blue text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-future font-bold text-white">
+                卡方分布理论
+              </h3>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-3">
+                  数学定义
+                </h4>
+                <p class="text-gray-300 mb-4">
+                  k个独立标准正态变量平方和的分布。
+                </p>
+                <div class="math-formula">
+                  $$f(x) = \frac{1}{2^{k/2}\Gamma(k/2)} x^{k/2-1} e^{-x/2},
+                  \quad x > 0$$
+                </div>
+                <p class="text-sm text-gray-400">
+                  其中k是自由度，期望为k，方差为2k
+                </p>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-3">
+                  重要性质
+                </h4>
+                <ul class="text-gray-300 space-y-2">
+                  <li>• <strong>正偏态：</strong>分布在第一象限，呈右偏态</li>
+                  <li>
+                    • <strong>可加性：</strong>独立卡方变量之和仍服从卡方分布
+                  </li>
+                  <li>• <strong>正态近似：</strong>自由度较大时趋向正态分布</li>
+                  <li>
+                    •
+                    <strong>伽马分布特例：</strong
+                    >形状参数k/2，尺度参数2的伽马分布
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-3">
+                  应用场景
+                </h4>
+                <p class="text-gray-300">
+                  假设检验、方差估计、拟合优度检验、独立性检验、置信区间构造
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 分布关系图 -->
+        <div class="bg-dark-card rounded-xl p-8 border border-gray-800 mb-16">
+          <h3
+            class="text-2xl font-future font-bold text-center mb-8 text-white"
+          >
+            概率分布<span class="text-neon-blue">关系图谱</span>
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 极限关系 -->
+            <div
+              class="bg-gradient-to-br from-neon-blue/10 to-neon-purple/10 rounded-lg p-6 border border-neon-blue/30"
+            >
+              <h4 class="text-lg font-semibold text-neon-blue mb-4">
+                极限关系
+              </h4>
+              <div class="space-y-3 text-sm text-gray-300">
+                <div class="flex items-center">
+                  <span class="text-neon-purple">二项分布</span>
+                  <i class="fa fa-arrow-right mx-2 text-neon-blue"></i>
+                  <span class="text-neon-green">泊松分布</span>
+                </div>
+                <p class="text-xs text-gray-400">n→∞, p→0, np=λ</p>
+
+                <div class="flex items-center">
+                  <span class="text-neon-green">泊松分布</span>
+                  <i class="fa fa-arrow-right mx-2 text-neon-blue"></i>
+                  <span class="text-neon-blue">正态分布</span>
+                </div>
+                <p class="text-xs text-gray-400">λ→∞</p>
+
+                <div class="flex items-center">
+                  <span class="text-neon-purple">二项分布</span>
+                  <i class="fa fa-arrow-right mx-2 text-neon-blue"></i>
+                  <span class="text-neon-blue">正态分布</span>
+                </div>
+                <p class="text-xs text-gray-400">n→∞ (德莫弗-拉普拉斯定理)</p>
+              </div>
+            </div>
+
+            <!-- 构造关系 -->
+            <div
+              class="bg-gradient-to-br from-neon-green/10 to-neon-orange/10 rounded-lg p-6 border border-neon-green/30"
+            >
+              <h4 class="text-lg font-semibold text-neon-green mb-4">
+                构造关系
+              </h4>
+              <div class="space-y-3 text-sm text-gray-300">
+                <div>
+                  <span class="text-neon-blue">标准正态²</span>
+                  <i class="fa fa-arrow-right mx-2 text-neon-green"></i>
+                  <span class="text-neon-blue">卡方(1)</span>
+                </div>
+
+                <div>
+                  <span class="text-neon-blue">k个标准正态²</span>
+                  <i class="fa fa-arrow-right mx-2 text-neon-green"></i>
+                  <span class="text-neon-blue">卡方(k)</span>
+                </div>
+
+                <div>
+                  <span class="text-neon-green">泊松过程</span>
+                  <i class="fa fa-arrow-right mx-2 text-neon-green"></i>
+                  <span class="text-neon-orange">指数分布</span>
+                </div>
+                <p class="text-xs text-gray-400">事件间隔时间</p>
+              </div>
+            </div>
+
+            <!-- 特殊关系 -->
+            <div
+              class="bg-gradient-to-br from-neon-purple/10 to-neon-pink/10 rounded-lg p-6 border border-neon-purple/30"
+            >
+              <h4 class="text-lg font-semibold text-neon-purple mb-4">
+                特殊关系
+              </h4>
+              <div class="space-y-3 text-sm text-gray-300">
+                <div>
+                  <span class="text-neon-purple">伯努利(p)</span>
+                  <i class="fa fa-arrow-right mx-2 text-neon-purple"></i>
+                  <span class="text-neon-purple">二项(1,p)</span>
+                </div>
+
+                <div>
+                  <span class="text-neon-orange">指数(λ)</span>
+                  <i class="fa fa-arrow-right mx-2 text-neon-purple"></i>
+                  <span class="text-gray-300">伽马(1,λ)</span>
+                </div>
+
+                <div>
+                  <span class="text-neon-blue">卡方(k)</span>
+                  <i class="fa fa-arrow-right mx-2 text-neon-purple"></i>
+                  <span class="text-gray-300">伽马(k/2,2)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 高级数学工具 -->
+    <section
+      id="advanced-tools"
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/30"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-future font-bold mb-4 text-white">
+            高级数学<span class="text-neon-purple">工具箱</span>
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            专业的概率分布分析工具，包含分布比较、参数估计、假设检验等高级功能
+          </p>
+        </div>
+
+        <!-- 工具选择器 -->
+        <div class="flex flex-wrap justify-center gap-4 mb-12">
+          <button
+            onclick="showAdvancedTool('comparator')"
+            class="advanced-tool-btn px-6 py-3 bg-neon-blue/20 text-neon-blue border border-neon-blue/50 rounded-lg hover:bg-neon-blue/30 transition-all duration-300 font-semibold"
+          >
+            <i class="fa fa-balance-scale mr-2"></i>分布比较器
+          </button>
+          <button
+            onclick="showAdvancedTool('estimator')"
+            class="advanced-tool-btn px-6 py-3 bg-neon-green/20 text-neon-green border border-neon-green/50 rounded-lg hover:bg-neon-green/30 transition-all duration-300 font-semibold"
+          >
+            <i class="fa fa-calculator mr-2"></i>参数估计器
+          </button>
+          <button
+            onclick="showAdvancedTool('hypothesis')"
+            class="advanced-tool-btn px-6 py-3 bg-neon-orange/20 text-neon-orange border border-neon-orange/50 rounded-lg hover:bg-neon-orange/30 transition-all duration-300 font-semibold"
+          >
+            <i class="fa fa-flask mr-2"></i>假设检验
+          </button>
+          <button
+            onclick="showAdvancedTool('monte-carlo')"
+            class="advanced-tool-btn px-6 py-3 bg-neon-purple/20 text-neon-purple border border-neon-purple/50 rounded-lg hover:bg-neon-purple/30 transition-all duration-300 font-semibold"
+          >
+            <i class="fa fa-random mr-2"></i>蒙特卡洛模拟
+          </button>
+        </div>
+
+        <!-- 分布比较器 -->
+        <div
+          id="comparator-tool"
+          class="advanced-tool bg-dark-card rounded-xl p-8 border border-gray-800 mb-8"
+          style="display: none"
+        >
+          <h3 class="text-2xl font-future font-bold text-white mb-6">
+            <i class="fa fa-balance-scale text-neon-blue mr-3"></i>分布比较器
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 左侧分布选择 -->
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-semibold text-neon-blue mb-2"
+                  >分布A</label
+                >
+                <select
+                  id="dist-a-select"
+                  class="w-full px-4 py-2 bg-dark-bg border border-gray-700 rounded-lg text-white focus:border-neon-blue"
+                >
+                  <option value="normal">正态分布</option>
+                  <option value="poisson">泊松分布</option>
+                  <option value="exponential">指数分布</option>
+                  <option value="binomial">二项分布</option>
+                  <option value="uniform">均匀分布</option>
+                  <option value="chisquare">卡方分布</option>
+                </select>
+              </div>
+
+              <div id="dist-a-params" class="space-y-4">
+                <!-- 动态参数控制 -->
+              </div>
+            </div>
+
+            <!-- 右侧分布选择 -->
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-semibold text-neon-green mb-2"
+                  >分布B</label
+                >
+                <select
+                  id="dist-b-select"
+                  class="w-full px-4 py-2 bg-dark-bg border border-gray-700 rounded-lg text-white focus:border-neon-green"
+                >
+                  <option value="normal">正态分布</option>
+                  <option value="poisson" selected>泊松分布</option>
+                  <option value="exponential">指数分布</option>
+                  <option value="binomial">二项分布</option>
+                  <option value="uniform">均匀分布</option>
+                  <option value="chisquare">卡方分布</option>
+                </select>
+              </div>
+
+              <div id="dist-b-params" class="space-y-4">
+                <!-- 动态参数控制 -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 比较图表 -->
+          <div class="mt-8">
+            <canvas
+              id="comparison-chart"
+              class="w-full h-96 bg-dark-bg rounded-lg"
+            ></canvas>
+          </div>
+
+          <!-- 比较统计 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            <div
+              class="bg-gradient-to-br from-neon-blue/10 to-neon-blue/5 rounded-lg p-6 border border-neon-blue/30"
+            >
+              <h4 class="text-lg font-semibold text-neon-blue mb-3">KL散度</h4>
+              <div id="kl-divergence" class="text-2xl font-bold text-white">
+                --
+              </div>
+              <p class="text-sm text-gray-400 mt-2">衡量两分布差异</p>
+            </div>
+
+            <div
+              class="bg-gradient-to-br from-neon-green/10 to-neon-green/5 rounded-lg p-6 border border-neon-green/30"
+            >
+              <h4 class="text-lg font-semibold text-neon-green mb-3">
+                重叠系数
+              </h4>
+              <div
+                id="overlap-coefficient"
+                class="text-2xl font-bold text-white"
+              >
+                --
+              </div>
+              <p class="text-sm text-gray-400 mt-2">分布重叠程度</p>
+            </div>
+
+            <div
+              class="bg-gradient-to-br from-neon-purple/10 to-neon-purple/5 rounded-lg p-6 border border-neon-purple/30"
+            >
+              <h4 class="text-lg font-semibold text-neon-purple mb-3">
+                相似度评分
+              </h4>
+              <div id="similarity-score" class="text-2xl font-bold text-white">
+                --
+              </div>
+              <p class="text-sm text-gray-400 mt-2">综合相似度</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 参数估计器 -->
+        <div
+          id="estimator-tool"
+          class="advanced-tool bg-dark-card rounded-xl p-8 border border-gray-800 mb-8"
+          style="display: none"
+        >
+          <h3 class="text-2xl font-future font-bold text-white mb-6">
+            <i class="fa fa-calculator text-neon-green mr-3"></i>参数估计器
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 数据输入 -->
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-semibold text-neon-green mb-2"
+                  >数据输入方式</label
+                >
+                <div class="flex gap-4 mb-4">
+                  <button
+                    onclick="setDataInputMode('manual')"
+                    class="data-input-btn px-4 py-2 bg-neon-green/20 text-neon-green border border-neon-green/50 rounded-lg hover:bg-neon-green/30 transition-all duration-300"
+                  >
+                    手动输入
+                  </button>
+                  <button
+                    onclick="setDataInputMode('generate')"
+                    class="data-input-btn px-4 py-2 bg-gray-700 text-gray-300 border border-gray-600 rounded-lg hover:bg-gray-600 transition-all duration-300"
+                  >
+                    生成样本
+                  </button>
+                </div>
+              </div>
+
+              <div id="manual-input" class="space-y-4">
+                <textarea
+                  id="data-input"
+                  class="w-full h-32 px-4 py-2 bg-dark-bg border border-gray-700 rounded-lg text-white resize-none"
+                  placeholder="请输入数据，用逗号或空格分隔\n例如: 1.2, 2.3, 1.8, 2.1, 1.9"
+                ></textarea>
+              </div>
+
+              <div id="generate-input" class="space-y-4" style="display: none">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm text-gray-400 mb-1"
+                      >分布类型</label
+                    >
+                    <select
+                      id="generate-dist"
+                      class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white"
+                    >
+                      <option value="normal">正态分布</option>
+                      <option value="exponential">指数分布</option>
+                      <option value="uniform">均匀分布</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-sm text-gray-400 mb-1"
+                      >样本数量</label
+                    >
+                    <input
+                      type="number"
+                      id="sample-size"
+                      value="100"
+                      min="10"
+                      max="1000"
+                      class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white"
+                    />
+                  </div>
+                </div>
+                <button
+                  onclick="generateSampleData()"
+                  class="w-full px-4 py-2 bg-neon-green text-dark-bg font-bold rounded-lg hover:bg-neon-green/80 transition-all duration-300"
+                >
+                  生成样本数据
+                </button>
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-neon-green mb-2"
+                  >估计分布类型</label
+                >
+                <select
+                  id="estimate-dist"
+                  class="w-full px-4 py-2 bg-dark-bg border border-gray-700 rounded-lg text-white focus:border-neon-green"
+                >
+                  <option value="normal">正态分布</option>
+                  <option value="exponential">指数分布</option>
+                  <option value="uniform">均匀分布</option>
+                  <option value="poisson">泊松分布</option>
+                </select>
+              </div>
+
+              <button
+                onclick="estimateParameters()"
+                class="w-full px-6 py-3 bg-neon-green text-dark-bg font-bold rounded-lg hover:bg-neon-green/80 transition-all duration-300"
+              >
+                <i class="fa fa-play mr-2"></i>开始估计
+              </button>
+            </div>
+
+            <!-- 结果显示 -->
+            <div class="space-y-6">
+              <div
+                class="bg-gradient-to-br from-neon-green/10 to-neon-green/5 rounded-lg p-6 border border-neon-green/30"
+              >
+                <h4 class="text-lg font-semibold text-neon-green mb-4">
+                  估计结果
+                </h4>
+                <div id="estimation-results" class="space-y-3 text-gray-300">
+                  <p>请输入数据并选择分布类型进行参数估计</p>
+                </div>
+              </div>
+
+              <div
+                class="bg-gradient-to-br from-neon-blue/10 to-neon-blue/5 rounded-lg p-6 border border-neon-blue/30"
+              >
+                <h4 class="text-lg font-semibold text-neon-blue mb-4">
+                  拟合优度
+                </h4>
+                <div id="goodness-of-fit" class="space-y-3 text-gray-300">
+                  <div class="flex justify-between">
+                    <span>R²:</span>
+                    <span id="r-squared">--</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>AIC:</span>
+                    <span id="aic-value">--</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>BIC:</span>
+                    <span id="bic-value">--</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 拟合图表 -->
+              <div>
+                <canvas
+                  id="fitting-chart"
+                  class="w-full h-64 bg-dark-bg rounded-lg"
+                ></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 蒙特卡洛模拟 -->
+        <div
+          id="monte-carlo-tool"
+          class="advanced-tool bg-dark-card rounded-xl p-8 border border-gray-800 mb-8"
+          style="display: none"
+        >
+          <h3 class="text-2xl font-future font-bold text-white mb-6">
+            <i class="fa fa-random text-neon-purple mr-3"></i>蒙特卡洛模拟
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 模拟设置 -->
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-semibold text-neon-purple mb-2"
+                  >模拟场景</label
+                >
+                <select
+                  id="mc-scenario"
+                  class="w-full px-4 py-2 bg-dark-bg border border-gray-700 rounded-lg text-white focus:border-neon-purple"
+                >
+                  <option value="pi-estimation">π值估计</option>
+                  <option value="portfolio-risk">投资组合风险</option>
+                  <option value="option-pricing">期权定价</option>
+                  <option value="reliability">可靠性分析</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm text-gray-400 mb-1">模拟次数</label>
+                <input
+                  type="number"
+                  id="mc-iterations"
+                  value="10000"
+                  min="1000"
+                  max="100000"
+                  step="1000"
+                  class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white"
+                />
+              </div>
+
+              <div id="mc-parameters" class="space-y-4">
+                <!-- 动态参数控制 -->
+              </div>
+
+              <button
+                onclick="runMonteCarloSimulation()"
+                class="w-full px-6 py-3 bg-neon-purple text-dark-bg font-bold rounded-lg hover:bg-neon-purple/80 transition-all duration-300"
+              >
+                <i class="fa fa-play mr-2"></i>开始模拟
+              </button>
+
+              <div
+                class="bg-gradient-to-br from-neon-purple/10 to-neon-purple/5 rounded-lg p-4 border border-neon-purple/30"
+              >
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-sm text-gray-400">进度</span>
+                  <span id="mc-progress-text" class="text-sm text-neon-purple"
+                    >0%</span
+                  >
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-2">
+                  <div
+                    id="mc-progress-bar"
+                    class="bg-neon-purple h-2 rounded-full transition-all duration-300"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 结果可视化 -->
+            <div class="lg:col-span-2 space-y-6">
+              <div>
+                <canvas
+                  id="mc-chart"
+                  class="w-full h-80 bg-dark-bg rounded-lg"
+                ></canvas>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div
+                  class="bg-gradient-to-br from-neon-purple/10 to-neon-purple/5 rounded-lg p-4 border border-neon-purple/30"
+                >
+                  <h4 class="text-sm font-semibold text-neon-purple mb-2">
+                    估计值
+                  </h4>
+                  <div id="mc-estimate" class="text-xl font-bold text-white">
+                    --
+                  </div>
+                </div>
+
+                <div
+                  class="bg-gradient-to-br from-neon-blue/10 to-neon-blue/5 rounded-lg p-4 border border-neon-blue/30"
+                >
+                  <h4 class="text-sm font-semibold text-neon-blue mb-2">
+                    标准误差
+                  </h4>
+                  <div id="mc-error" class="text-xl font-bold text-white">
+                    --
+                  </div>
+                </div>
+
+                <div
+                  class="bg-gradient-to-br from-neon-green/10 to-neon-green/5 rounded-lg p-4 border border-neon-green/30"
+                >
+                  <h4 class="text-sm font-semibold text-neon-green mb-2">
+                    置信区间
+                  </h4>
+                  <div id="mc-confidence" class="text-xl font-bold text-white">
+                    --
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark-card py-12 border-t border-gray-800">
+      <div class="container mx-auto px-4">
+        <div class="text-center">
+          <div class="text-2xl font-future font-bold mb-4">
+            <span class="text-neon-blue">概率统计</span
+            ><span class="ml-2">可视化</span>
+          </div>
+          <p class="text-gray-400 mb-6">
+            通过交互式可视化，让概率统计变得生动有趣
+          </p>
+          <div class="flex justify-center space-x-6">
+            <a
+              href="#"
+              class="text-gray-400 hover:text-neon-blue transition-colors"
+            >
+              <i class="fab fa-github text-xl"></i>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-neon-blue transition-colors"
+            >
+              <i class="fab fa-twitter text-xl"></i>
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-neon-blue transition-colors"
+            >
+              <i class="fab fa-linkedin text-xl"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // 全局变量
+      let currentDistribution = "normal";
+      let currentChart = null;
+      let showPDF = true;
+
+      // 初始化
+      document.addEventListener("DOMContentLoaded", function () {
+        createParticles();
+        initializeChart();
+        setupEventListeners();
+        updateChart();
+      });
+
+      // 创建粒子背景
+      function createParticles() {
+        const container = document.getElementById("particles-container");
+        const colors = ["#00f3ff", "#bf00ff", "#00ff66", "#ff6600", "#ff0080"];
+
+        for (let i = 0; i < 50; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+          particle.style.left = Math.random() * 100 + "%";
+          particle.style.top = Math.random() * 100 + "%";
+          particle.style.width = Math.random() * 4 + 2 + "px";
+          particle.style.height = particle.style.width;
+          particle.style.backgroundColor =
+            colors[Math.floor(Math.random() * colors.length)];
+          particle.style.animationDelay = Math.random() * 15 + "s";
+          container.appendChild(particle);
+        }
+      }
+
+      // 初始化图表
+      function initializeChart() {
+        const ctx = document
+          .getElementById("distribution-chart")
+          .getContext("2d");
+
+        // 如果图表已存在，先销毁
+        if (currentChart) {
+          currentChart.destroy();
+        }
+
+        currentChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "PDF",
+                data: [],
+                borderColor: "#00f3ff",
+                backgroundColor: "rgba(0, 243, 255, 0.1)",
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false,
+              },
+            },
+            scales: {
+              x: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "#9ca3af",
+                },
+              },
+              y: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "#9ca3af",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // 设置事件监听器
+      function setupEventListeners() {
+        // 正态分布参数
+        document
+          .getElementById("normal-mean")
+          .addEventListener("input", updateChart);
+        document
+          .getElementById("normal-std")
+          .addEventListener("input", updateChart);
+
+        // 泊松分布参数
+        document
+          .getElementById("poisson-lambda")
+          .addEventListener("input", updateChart);
+
+        // 指数分布参数
+        document
+          .getElementById("exponential-lambda")
+          .addEventListener("input", updateChart);
+
+        // 二项分布参数
+        document
+          .getElementById("binomial-n")
+          .addEventListener("input", updateChart);
+        document
+          .getElementById("binomial-p")
+          .addEventListener("input", updateChart);
+
+        // 均匀分布参数
+        document
+          .getElementById("uniform-a")
+          .addEventListener("input", updateChart);
+        document
+          .getElementById("uniform-b")
+          .addEventListener("input", updateChart);
+
+        // 卡方分布参数
+        document
+          .getElementById("chisquare-k")
+          .addEventListener("input", updateChart);
+      }
+
+      // 选择分布
+      function selectDistribution(distribution) {
+        currentDistribution = distribution;
+
+        // 更新按钮样式
+        document.querySelectorAll(".distribution-btn").forEach((btn) => {
+          btn.className =
+            "distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-blue transition-all duration-300";
+        });
+
+        const colors = {
+          normal: "bg-neon-blue",
+          poisson: "bg-neon-purple",
+          exponential: "bg-neon-green",
+          binomial: "bg-neon-orange",
+          uniform: "bg-neon-pink",
+          chisquare: "bg-neon-blue",
+        };
+
+        document.getElementById(
+          `btn-${distribution}`
+        ).className = `distribution-btn px-4 py-3 ${colors[distribution]} text-dark-bg font-bold rounded-lg hover:${colors[distribution]}/80 transition-all duration-300`;
+
+        // 隐藏所有参数面板
+        document.querySelectorAll(".distribution-params").forEach((panel) => {
+          panel.classList.add("hidden");
+        });
+
+        // 显示当前分布的参数面板
+        document
+          .getElementById(`${distribution}-params`)
+          .classList.remove("hidden");
+
+        // 更新图表标题
+        const titles = {
+          normal: "正态分布",
+          poisson: "泊松分布",
+          exponential: "指数分布",
+          binomial: "二项分布",
+          uniform: "均匀分布",
+          chisquare: "卡方分布",
+        };
+        document.getElementById("chart-title").textContent =
+          titles[distribution];
+
+        // 更新分布信息
+        updateDistributionInfo(distribution);
+
+        // 更新图表
+        updateChart();
+      }
+
+      // 更新分布信息
+      function updateDistributionInfo(distribution) {
+        const info = {
+          normal: {
+            description:
+              "正态分布是最重要的连续概率分布，具有钟形曲线的特征。它在自然界和社会现象中广泛存在，是中心极限定理的基础。",
+            applications: "身高、体重、测量误差、考试成绩等。",
+            properties: "对称性、68-95-99.7规则、可加性等。",
+          },
+          poisson: {
+            description:
+              "泊松分布描述单位时间内随机事件发生次数的概率分布。当二项分布的n很大、p很小时，可用泊松分布近似。",
+            applications: "电话呼叫次数、交通事故、放射性衰变等。",
+            properties: "离散性、期望等于方差、可加性等。",
+          },
+          exponential: {
+            description:
+              "指数分布描述事件间隔时间的概率分布，具有无记忆性。它是泊松过程中事件间隔时间的分布。",
+            applications: "设备寿命、服务时间、等待时间等。",
+            properties: "无记忆性、单调递减、与泊松分布的关系等。",
+          },
+          binomial: {
+            description:
+              "二项分布描述n次独立伯努利试验中成功次数的概率分布。它是最基本的离散概率分布之一。",
+            applications: "质量检验、市场调研、医学试验等。",
+            properties: "离散性、对称性（p=0.5时）、正态近似等。",
+          },
+          uniform: {
+            description:
+              "均匀分布是最简单的连续概率分布，在指定区间内所有值等概率出现。它常用作随机数生成的基础。",
+            applications: "随机数生成、蒙特卡罗模拟、概率建模等。",
+            properties: "等概率性、有界性、线性变换不变性等。",
+          },
+          chisquare: {
+            description:
+              "卡方分布由k个独立标准正态随机变量的平方和构成。它在假设检验和置信区间估计中有重要应用。",
+            applications: "拟合优度检验、独立性检验、方差估计等。",
+            properties: "非负性、右偏性、可加性等。",
+          },
+        };
+
+        const currentInfo = info[distribution];
+        const infoElement = document.getElementById("distribution-info");
+        infoElement.innerHTML = `
+                <p><strong>${
+                  document.getElementById("chart-title").textContent
+                }</strong>${currentInfo.description}</p>
+                <p class="mt-2"><strong>应用场景：</strong>${
+                  currentInfo.applications
+                }</p>
+                <p class="mt-2"><strong>特性：</strong>${
+                  currentInfo.properties
+                }</p>
+            `;
+      }
+
+      // 更新图表
+      function updateChart() {
+        const data = generateDistributionData();
+
+        currentChart.data.labels = data.x;
+        currentChart.data.datasets[0].data = data.y;
+        currentChart.data.datasets[0].label = showPDF ? "PDF" : "CDF";
+
+        // 更新颜色
+        const colors = {
+          normal: "#00f3ff",
+          poisson: "#bf00ff",
+          exponential: "#00ff66",
+          binomial: "#ff6600",
+          uniform: "#ff0080",
+          chisquare: "#00f3ff",
+        };
+
+        currentChart.data.datasets[0].borderColor = colors[currentDistribution];
+        currentChart.data.datasets[0].backgroundColor =
+          colors[currentDistribution] + "20";
+
+        currentChart.update();
+
+        // 更新参数显示
+        updateParameterDisplays();
+
+        // 更新统计信息
+        updateStatistics();
+      }
+
+      // 生成分布数据
+      function generateDistributionData() {
+        switch (currentDistribution) {
+          case "normal":
+            return generateNormalData();
+          case "poisson":
+            return generatePoissonData();
+          case "exponential":
+            return generateExponentialData();
+          case "binomial":
+            return generateBinomialData();
+          case "uniform":
+            return generateUniformData();
+          case "chisquare":
+            return generateChiSquareData();
+          default:
+            return { x: [], y: [] };
+        }
+      }
+
+      // 生成正态分布数据
+      function generateNormalData() {
+        const mean = parseFloat(document.getElementById("normal-mean").value);
+        const std = parseFloat(document.getElementById("normal-std").value);
+
+        const x = [];
+        const y = [];
+
+        for (let i = -6; i <= 6; i += 0.1) {
+          const xVal = mean + i * std;
+          x.push(xVal.toFixed(2));
+
+          if (showPDF) {
+            const yVal =
+              (1 / (std * Math.sqrt(2 * Math.PI))) *
+              Math.exp(-0.5 * Math.pow((xVal - mean) / std, 2));
+            y.push(yVal);
+          } else {
+            // CDF approximation using error function
+            const z = (xVal - mean) / std;
+            const yVal = 0.5 * (1 + erf(z / Math.sqrt(2)));
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成泊松分布数据
+      function generatePoissonData() {
+        const lambda = parseFloat(
+          document.getElementById("poisson-lambda").value
+        );
+
+        const x = [];
+        const y = [];
+
+        const maxK = Math.min(30, lambda + 4 * Math.sqrt(lambda));
+
+        if (showPDF) {
+          for (let k = 0; k <= maxK; k++) {
+            x.push(k.toString());
+            const yVal =
+              (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+            y.push(yVal);
+          }
+        } else {
+          let cumulativeProb = 0;
+          for (let k = 0; k <= maxK; k++) {
+            x.push(k.toString());
+            const prob =
+              (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+            cumulativeProb += prob;
+            y.push(cumulativeProb);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成指数分布数据
+      function generateExponentialData() {
+        const lambda = parseFloat(
+          document.getElementById("exponential-lambda").value
+        );
+
+        const x = [];
+        const y = [];
+
+        for (let i = 0; i <= 5; i += 0.1) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = lambda * Math.exp(-lambda * i);
+            y.push(yVal);
+          } else {
+            const yVal = 1 - Math.exp(-lambda * i);
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成二项分布数据
+      function generateBinomialData() {
+        const n = parseInt(document.getElementById("binomial-n").value);
+        const p = parseFloat(document.getElementById("binomial-p").value);
+
+        const x = [];
+        const y = [];
+
+        if (showPDF) {
+          for (let k = 0; k <= n; k++) {
+            x.push(k.toString());
+            const yVal =
+              binomialCoeff(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+            y.push(yVal);
+          }
+        } else {
+          let cumulativeProb = 0;
+          for (let k = 0; k <= n; k++) {
+            x.push(k.toString());
+            const prob =
+              binomialCoeff(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+            cumulativeProb += prob;
+            y.push(cumulativeProb);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成均匀分布数据
+      function generateUniformData() {
+        const a = parseFloat(document.getElementById("uniform-a").value);
+        const b = parseFloat(document.getElementById("uniform-b").value);
+
+        const x = [];
+        const y = [];
+
+        const range = b - a;
+        const step = range / 100;
+
+        for (let i = a - range * 0.2; i <= b + range * 0.2; i += step) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = i >= a && i <= b ? 1 / range : 0;
+            y.push(yVal);
+          } else {
+            let yVal;
+            if (i < a) yVal = 0;
+            else if (i > b) yVal = 1;
+            else yVal = (i - a) / range;
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成卡方分布数据
+      function generateChiSquareData() {
+        const k = parseInt(document.getElementById("chisquare-k").value);
+
+        const x = [];
+        const y = [];
+
+        for (let i = 0.1; i <= 20; i += 0.2) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = chiSquarePDF(i, k);
+            y.push(yVal);
+          } else {
+            // CDF approximation (simplified)
+            const yVal = incompleteGamma(k / 2, i / 2) / gamma(k / 2);
+            y.push(Math.min(1, Math.max(0, yVal)));
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 更新参数显示
+      function updateParameterDisplays() {
+        // 正态分布
+        document.getElementById("normal-mean-value").textContent =
+          document.getElementById("normal-mean").value;
+        document.getElementById("normal-std-value").textContent =
+          document.getElementById("normal-std").value;
+
+        // 泊松分布
+        document.getElementById("poisson-lambda-value").textContent =
+          document.getElementById("poisson-lambda").value;
+
+        // 指数分布
+        document.getElementById("exponential-lambda-value").textContent =
+          document.getElementById("exponential-lambda").value;
+
+        // 二项分布
+        document.getElementById("binomial-n-value").textContent =
+          document.getElementById("binomial-n").value;
+        document.getElementById("binomial-p-value").textContent =
+          document.getElementById("binomial-p").value;
+
+        // 均匀分布
+        document.getElementById("uniform-a-value").textContent =
+          document.getElementById("uniform-a").value;
+        document.getElementById("uniform-b-value").textContent =
+          document.getElementById("uniform-b").value;
+
+        // 卡方分布
+        document.getElementById("chisquare-k-value").textContent =
+          document.getElementById("chisquare-k").value;
+      }
+
+      // 更新统计信息
+      function updateStatistics() {
+        let expectation, variance, stdDev;
+
+        switch (currentDistribution) {
+          case "normal":
+            const mean = parseFloat(
+              document.getElementById("normal-mean").value
+            );
+            const std = parseFloat(document.getElementById("normal-std").value);
+            expectation = mean;
+            variance = std * std;
+            stdDev = std;
+            break;
+
+          case "poisson":
+            const lambda = parseFloat(
+              document.getElementById("poisson-lambda").value
+            );
+            expectation = lambda;
+            variance = lambda;
+            stdDev = Math.sqrt(lambda);
+            break;
+
+          case "exponential":
+            const expLambda = parseFloat(
+              document.getElementById("exponential-lambda").value
+            );
+            expectation = 1 / expLambda;
+            variance = 1 / (expLambda * expLambda);
+            stdDev = 1 / expLambda;
+            break;
+
+          case "binomial":
+            const n = parseInt(document.getElementById("binomial-n").value);
+            const p = parseFloat(document.getElementById("binomial-p").value);
+            expectation = n * p;
+            variance = n * p * (1 - p);
+            stdDev = Math.sqrt(variance);
+            break;
+
+          case "uniform":
+            const a = parseFloat(document.getElementById("uniform-a").value);
+            const b = parseFloat(document.getElementById("uniform-b").value);
+            expectation = (a + b) / 2;
+            variance = ((b - a) * (b - a)) / 12;
+            stdDev = Math.sqrt(variance);
+            break;
+
+          case "chisquare":
+            const k = parseInt(document.getElementById("chisquare-k").value);
+            expectation = k;
+            variance = 2 * k;
+            stdDev = Math.sqrt(2 * k);
+            break;
+        }
+
+        document.getElementById("expectation").textContent =
+          expectation.toFixed(2);
+        document.getElementById("variance").textContent = variance.toFixed(2);
+        document.getElementById("std-dev").textContent = stdDev.toFixed(2);
+      }
+
+      // 切换PDF/CDF
+      function togglePDF() {
+        showPDF = true;
+        document.getElementById("pdf-btn").className =
+          "px-4 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300";
+        document.getElementById("cdf-btn").className =
+          "px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-neon-blue transition-all duration-300";
+        updateChart();
+      }
+
+      function toggleCDF() {
+        showPDF = false;
+        document.getElementById("cdf-btn").className =
+          "px-4 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300";
+        document.getElementById("pdf-btn").className =
+          "px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-neon-blue transition-all duration-300";
+        updateChart();
+      }
+
+      // 显示特定分布（从概览卡片调用）
+      function showDistribution(distribution) {
+        // 滚动到交互区域
+        document
+          .getElementById("interactive-exploration")
+          .scrollIntoView({ behavior: "smooth" });
+
+        // 延迟选择分布，确保滚动完成
+        setTimeout(() => {
+          selectDistribution(distribution);
+        }, 500);
+      }
+
+      // 数学函数
+      function factorial(n) {
+        if (n <= 1) return 1;
+        let result = 1;
+        for (let i = 2; i <= n; i++) {
+          result *= i;
+        }
+        return result;
+      }
+
+      function binomialCoeff(n, k) {
+        if (k > n) return 0;
+        if (k === 0 || k === n) return 1;
+
+        let result = 1;
+        for (let i = 0; i < k; i++) {
+          result *= (n - i) / (i + 1);
+        }
+        return result;
+      }
+
+      function erf(x) {
+        // Approximation of error function
+        const a1 = 0.254829592;
+        const a2 = -0.284496736;
+        const a3 = 1.421413741;
+        const a4 = -1.453152027;
+        const a5 = 1.061405429;
+        const p = 0.3275911;
+
+        const sign = x >= 0 ? 1 : -1;
+        x = Math.abs(x);
+
+        const t = 1.0 / (1.0 + p * x);
+        const y =
+          1.0 -
+          ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+
+        return sign * y;
+      }
+
+      function gamma(z) {
+        // Stirling's approximation for gamma function
+        if (z < 0.5) {
+          return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
+        }
+
+        z -= 1;
+        let x = 0.99999999999980993;
+        const coefficients = [
+          676.5203681218851, -1259.1392167224028, 771.32342877765313,
+          -176.61502916214059, 12.507343278686905, -0.13857109526572012,
+          9.9843695780195716e-6, 1.5056327351493116e-7,
+        ];
+
+        for (let i = 0; i < coefficients.length; i++) {
+          x += coefficients[i] / (z + i + 1);
+        }
+
+        const t = z + coefficients.length - 0.5;
+        const sqrt2pi = Math.sqrt(2 * Math.PI);
+
+        return sqrt2pi * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
+      }
+
+      function incompleteGamma(s, x) {
+        // Simplified incomplete gamma function approximation
+        if (x === 0) return 0;
+        if (s === 0) return 1;
+
+        let sum = 1;
+        let term = 1;
+
+        for (let n = 1; n < 100; n++) {
+          term *= x / (s + n - 1);
+          sum += term;
+          if (Math.abs(term) < 1e-10) break;
+        }
+
+        return Math.pow(x, s) * Math.exp(-x) * sum;
+      }
+
+      function chiSquarePDF(x, k) {
+        if (x <= 0) return 0;
+
+        const numerator = Math.pow(x, k / 2 - 1) * Math.exp(-x / 2);
+        const denominator = Math.pow(2, k / 2) * gamma(k / 2);
+
+        return numerator / denominator;
+      }
+
+      // ===== 高级数学工具功能 =====
+
+      // 显示高级工具
+      function showAdvancedTool(toolName) {
+        // 隐藏所有工具
+        document.querySelectorAll(".advanced-tool").forEach((tool) => {
+          tool.style.display = "none";
+        });
+
+        // 重置所有按钮样式
+        document.querySelectorAll(".advanced-tool-btn").forEach((btn) => {
+          btn.className = btn.className
+            .replace(/bg-neon-\w+\/30/, "bg-gray-700")
+            .replace(/text-neon-\w+/, "text-gray-300")
+            .replace(/border-neon-\w+\/50/, "border-gray-600");
+        });
+
+        // 显示选中的工具
+        const toolElement = document.getElementById(toolName + "-tool");
+        if (toolElement) {
+          toolElement.style.display = "block";
+
+          // 高亮选中的按钮
+          const btnElement = event.target;
+          const colorClass =
+            toolName === "comparator"
+              ? "neon-blue"
+              : toolName === "estimator"
+              ? "neon-green"
+              : toolName === "hypothesis"
+              ? "neon-orange"
+              : "neon-purple";
+
+          btnElement.className = btnElement.className
+            .replace(/bg-gray-700/, `bg-${colorClass}/30`)
+            .replace(/text-gray-300/, `text-${colorClass}`)
+            .replace(/border-gray-600/, `border-${colorClass}/50`);
+
+          // 初始化工具
+          if (toolName === "comparator") {
+            initializeComparator();
+          } else if (toolName === "estimator") {
+            initializeEstimator();
+          } else if (toolName === "monte-carlo") {
+            initializeMonteCarlo();
+          }
+        }
+      }
+
+      // ===== 分布比较器 =====
+      let comparisonChart = null;
+
+      function initializeComparator() {
+        // 初始化比较图表
+        const ctx = document
+          .getElementById("comparison-chart")
+          .getContext("2d");
+
+        if (comparisonChart) {
+          comparisonChart.destroy();
+        }
+
+        comparisonChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "分布A",
+                data: [],
+                borderColor: "#00d4ff",
+                backgroundColor: "rgba(0, 212, 255, 0.1)",
+                borderWidth: 3,
+                fill: false,
+              },
+              {
+                label: "分布B",
+                data: [],
+                borderColor: "#00ff88",
+                backgroundColor: "rgba(0, 255, 136, 0.1)",
+                borderWidth: 3,
+                fill: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: "#ffffff",
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#888888" },
+                grid: { color: "#333333" },
+              },
+              y: {
+                ticks: { color: "#888888" },
+                grid: { color: "#333333" },
+              },
+            },
+          },
+        });
+
+        // 设置事件监听器
+        document
+          .getElementById("dist-a-select")
+          .addEventListener("change", updateComparison);
+        document
+          .getElementById("dist-b-select")
+          .addEventListener("change", updateComparison);
+
+        // 初始化参数控制
+        updateDistributionParams("a", "normal");
+        updateDistributionParams("b", "poisson");
+        updateComparison();
+      }
+
+      function updateDistributionParams(side, distType) {
+        const container = document.getElementById(`dist-${side}-params`);
+        const color = side === "a" ? "neon-blue" : "neon-green";
+
+        let paramsHTML = "";
+
+        switch (distType) {
+          case "normal":
+            paramsHTML = `
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">均值 (μ)</label>
+                            <input type="number" id="${side}-mu" value="0" step="0.1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white" onchange="updateComparison()">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">标准差 (σ)</label>
+                            <input type="number" id="${side}-sigma" value="1" min="0.1" step="0.1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white" onchange="updateComparison()">
+                        </div>
+                    `;
+            break;
+          case "poisson":
+            paramsHTML = `
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">强度 (λ)</label>
+                            <input type="number" id="${side}-lambda" value="3" min="0.1" step="0.1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white" onchange="updateComparison()">
+                        </div>
+                    `;
+            break;
+          case "exponential":
+            paramsHTML = `
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">速率 (λ)</label>
+                            <input type="number" id="${side}-rate" value="1" min="0.1" step="0.1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white" onchange="updateComparison()">
+                        </div>
+                    `;
+            break;
+          case "uniform":
+            paramsHTML = `
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">下界 (a)</label>
+                            <input type="number" id="${side}-a" value="0" step="0.1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white" onchange="updateComparison()">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">上界 (b)</label>
+                            <input type="number" id="${side}-b" value="1" step="0.1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white" onchange="updateComparison()">
+                        </div>
+                    `;
+            break;
+        }
+
+        container.innerHTML = paramsHTML;
+      }
+
+      function updateComparison() {
+        const distA = document.getElementById("dist-a-select").value;
+        const distB = document.getElementById("dist-b-select").value;
+
+        updateDistributionParams("a", distA);
+        updateDistributionParams("b", distB);
+
+        // 生成数据点
+        const xValues = [];
+        const yValuesA = [];
+        const yValuesB = [];
+
+        for (let i = -5; i <= 10; i += 0.1) {
+          xValues.push(i.toFixed(1));
+          yValuesA.push(getDistributionValue(distA, i, "a"));
+          yValuesB.push(getDistributionValue(distB, i, "b"));
+        }
+
+        // 更新图表
+        comparisonChart.data.labels = xValues;
+        comparisonChart.data.datasets[0].data = yValuesA;
+        comparisonChart.data.datasets[1].data = yValuesB;
+        comparisonChart.update();
+
+        // 计算比较统计
+        calculateComparisonStats(yValuesA, yValuesB);
+      }
+
+      function getDistributionValue(distType, x, side) {
+        switch (distType) {
+          case "normal":
+            var mu;
+            mu = parseFloat(document.getElementById(`${side}-mu`)?.value || 0);
+            var sigma;
+            sigma = parseFloat(
+              document.getElementById(`${side}-sigma`)?.value || 1
+            );
+            return normalPDF(x, mu, sigma);
+          case "poisson":
+            const lambda = parseFloat(
+              document.getElementById(`${side}-lambda`)?.value || 3
+            );
+            return x >= 0 && x === Math.floor(x) ? poissonPDF(x, lambda) : 0;
+          case "exponential":
+            const rate = parseFloat(
+              document.getElementById(`${side}-rate`)?.value || 1
+            );
+            return exponentialPDF(x, rate);
+          case "uniform":
+            const a = parseFloat(
+              document.getElementById(`${side}-a`)?.value || 0
+            );
+            const b = parseFloat(
+              document.getElementById(`${side}-b`)?.value || 1
+            );
+            return uniformPDF(x, a, b);
+          default:
+            return 0;
+        }
+      }
+
+      function calculateComparisonStats(dataA, dataB) {
+        // KL散度近似计算
+        let klDiv = 0;
+        let overlap = 0;
+        let totalA = 0,
+          totalB = 0;
+
+        for (let i = 0; i < dataA.length; i++) {
+          const pA = Math.max(dataA[i], 1e-10);
+          const pB = Math.max(dataB[i], 1e-10);
+
+          klDiv += pA * Math.log(pA / pB) * 0.1; // 步长0.1
+          overlap += Math.min(pA, pB) * 0.1;
+          totalA += pA * 0.1;
+          totalB += pB * 0.1;
+        }
+
+        // 归一化重叠系数
+        const overlapCoeff = overlap / Math.max(totalA, totalB);
+
+        // 相似度评分 (0-100)
+        const similarity = Math.max(0, 100 * (1 - klDiv / 10));
+
+        document.getElementById("kl-divergence").textContent = klDiv.toFixed(4);
+        document.getElementById("overlap-coefficient").textContent =
+          (overlapCoeff * 100).toFixed(1) + "%";
+        document.getElementById("similarity-score").textContent =
+          similarity.toFixed(1);
+      }
+
+      // ===== 参数估计器 =====
+      let fittingChart = null;
+
+      function initializeEstimator() {
+        // 初始化拟合图表
+        const ctx = document.getElementById("fitting-chart").getContext("2d");
+
+        if (fittingChart) {
+          fittingChart.destroy();
+        }
+
+        fittingChart = new Chart(ctx, {
+          type: "scatter",
+          data: {
+            datasets: [
+              {
+                label: "观测数据",
+                data: [],
+                backgroundColor: "#00d4ff",
+                borderColor: "#00d4ff",
+                pointRadius: 4,
+              },
+              {
+                label: "拟合分布",
+                data: [],
+                borderColor: "#00ff88",
+                backgroundColor: "rgba(0, 255, 136, 0.1)",
+                type: "line",
+                borderWidth: 3,
+                fill: false,
+                pointRadius: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: "#ffffff",
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#888888" },
+                grid: { color: "#333333" },
+              },
+              y: {
+                ticks: { color: "#888888" },
+                grid: { color: "#333333" },
+              },
+            },
+          },
+        });
+      }
+
+      function setDataInputMode(mode) {
+        const manualInput = document.getElementById("manual-input");
+        const generateInput = document.getElementById("generate-input");
+        const buttons = document.querySelectorAll(".data-input-btn");
+
+        buttons.forEach((btn) => {
+          btn.className = btn.className.replace(
+            /bg-neon-green\/20 text-neon-green border-neon-green\/50/,
+            "bg-gray-700 text-gray-300 border-gray-600"
+          );
+        });
+
+        if (mode === "manual") {
+          manualInput.style.display = "block";
+          generateInput.style.display = "none";
+          buttons[0].className = buttons[0].className.replace(
+            /bg-gray-700 text-gray-300 border-gray-600/,
+            "bg-neon-green/20 text-neon-green border-neon-green/50"
+          );
+        } else {
+          manualInput.style.display = "none";
+          generateInput.style.display = "block";
+          buttons[1].className = buttons[1].className.replace(
+            /bg-gray-700 text-gray-300 border-gray-600/,
+            "bg-neon-green/20 text-neon-green border-neon-green/50"
+          );
+        }
+      }
+
+      function generateSampleData() {
+        const distType = document.getElementById("generate-dist").value;
+        const sampleSize = parseInt(
+          document.getElementById("sample-size").value
+        );
+        const data = [];
+
+        for (let i = 0; i < sampleSize; i++) {
+          let value;
+          switch (distType) {
+            case "normal":
+              value = normalRandom(2, 1);
+              break;
+            case "exponential":
+              value = exponentialRandom(1);
+              break;
+            case "uniform":
+              value = Math.random() * 10;
+              break;
+          }
+          data.push(value.toFixed(3));
+        }
+
+        document.getElementById("data-input").value = data.join(", ");
+      }
+
+      function normalRandom(mu, sigma) {
+        let u = 0,
+          v = 0;
+        while (u === 0) u = Math.random();
+        while (v === 0) v = Math.random();
+        return (
+          mu + sigma * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v)
+        );
+      }
+
+      function exponentialRandom(lambda) {
+        return -Math.log(1 - Math.random()) / lambda;
+      }
+
+      function estimateParameters() {
+        const dataText = document.getElementById("data-input").value;
+        const distType = document.getElementById("estimate-dist").value;
+
+        if (!dataText.trim()) {
+          alert("请输入数据");
+          return;
+        }
+
+        // 解析数据
+        const data = dataText
+          .split(/[,\s]+/)
+          .map((x) => parseFloat(x))
+          .filter((x) => !isNaN(x));
+
+        if (data.length < 2) {
+          alert("数据点数量不足");
+          return;
+        }
+
+        // 参数估计
+        const results = performParameterEstimation(data, distType);
+        displayEstimationResults(results, data, distType);
+      }
+
+      function performParameterEstimation(data, distType) {
+        const n = data.length;
+        const mean = data.reduce((a, b) => a + b, 0) / n;
+        const variance =
+          data.reduce((a, b) => a + (b - mean) ** 2, 0) / (n - 1);
+        const std = Math.sqrt(variance);
+
+        let params = {};
+
+        switch (distType) {
+          case "normal":
+            params = { mu: mean, sigma: std };
+            break;
+          case "exponential":
+            params = { lambda: 1 / mean };
+            break;
+          case "uniform":
+            params = { a: Math.min(...data), b: Math.max(...data) };
+            break;
+          case "poisson":
+            params = { lambda: mean };
+            break;
+        }
+
+        return { params, mean, std, variance };
+      }
+
+      function displayEstimationResults(results, data, distType) {
+        const resultsDiv = document.getElementById("estimation-results");
+        let html = "";
+
+        switch (distType) {
+          case "normal":
+            html = `
+                        <div class="flex justify-between"><span>均值 (μ):</span><span>${results.params.mu.toFixed(
+                          4
+                        )}</span></div>
+                        <div class="flex justify-between"><span>标准差 (σ):</span><span>${results.params.sigma.toFixed(
+                          4
+                        )}</span></div>
+                    `;
+            break;
+          case "exponential":
+            html = `
+                        <div class="flex justify-between"><span>速率 (λ):</span><span>${results.params.lambda.toFixed(
+                          4
+                        )}</span></div>
+                    `;
+            break;
+          case "uniform":
+            html = `
+                        <div class="flex justify-between"><span>下界 (a):</span><span>${results.params.a.toFixed(
+                          4
+                        )}</span></div>
+                        <div class="flex justify-between"><span>上界 (b):</span><span>${results.params.b.toFixed(
+                          4
+                        )}</span></div>
+                    `;
+            break;
+          case "poisson":
+            html = `
+                        <div class="flex justify-between"><span>强度 (λ):</span><span>${results.params.lambda.toFixed(
+                          4
+                        )}</span></div>
+                    `;
+            break;
+        }
+
+        resultsDiv.innerHTML = html;
+
+        // 计算拟合优度
+        const goodnessOfFit = calculateGoodnessOfFit(
+          data,
+          results.params,
+          distType
+        );
+        document.getElementById("r-squared").textContent =
+          goodnessOfFit.rSquared.toFixed(4);
+        document.getElementById("aic-value").textContent =
+          goodnessOfFit.aic.toFixed(2);
+        document.getElementById("bic-value").textContent =
+          goodnessOfFit.bic.toFixed(2);
+
+        // 更新拟合图表
+        updateFittingChart(data, results.params, distType);
+      }
+
+      function calculateGoodnessOfFit(data, params, distType) {
+        // 简化的拟合优度计算
+        const n = data.length;
+        let logLikelihood = 0;
+
+        data.forEach((x) => {
+          let pdf;
+          switch (distType) {
+            case "normal":
+              pdf = normalPDF(x, params.mu, params.sigma);
+              break;
+            case "exponential":
+              pdf = exponentialPDF(x, params.lambda);
+              break;
+            case "uniform":
+              pdf = uniformPDF(x, params.a, params.b);
+              break;
+            case "poisson":
+              pdf = poissonPDF(Math.round(x), params.lambda);
+              break;
+          }
+          logLikelihood += Math.log(Math.max(pdf, 1e-10));
+        });
+
+        const k = Object.keys(params).length; // 参数个数
+        const aic = 2 * k - 2 * logLikelihood;
+        const bic = k * Math.log(n) - 2 * logLikelihood;
+
+        // 简化的R²计算
+        const rSquared = Math.max(0, 1 - Math.abs(logLikelihood) / (n * 10));
+
+        return { rSquared, aic, bic };
+      }
+
+      function updateFittingChart(data, params, distType) {
+        // 创建直方图数据
+        const bins = 20;
+        const min = Math.min(...data);
+        const max = Math.max(...data);
+        const binWidth = (max - min) / bins;
+        const histogram = new Array(bins).fill(0);
+
+        data.forEach((x) => {
+          const binIndex = Math.min(Math.floor((x - min) / binWidth), bins - 1);
+          histogram[binIndex]++;
+        });
+
+        // 归一化直方图
+        const histogramData = histogram.map((count, i) => ({
+          x: min + (i + 0.5) * binWidth,
+          y: count / (data.length * binWidth),
+        }));
+
+        // 生成拟合曲线
+        const fittingData = [];
+        for (let x = min; x <= max; x += (max - min) / 100) {
+          let pdf;
+          switch (distType) {
+            case "normal":
+              pdf = normalPDF(x, params.mu, params.sigma);
+              break;
+            case "exponential":
+              pdf = exponentialPDF(x, params.lambda);
+              break;
+            case "uniform":
+              pdf = uniformPDF(x, params.a, params.b);
+              break;
+          }
+          fittingData.push({ x, y: pdf });
+        }
+
+        fittingChart.data.datasets[0].data = histogramData;
+        fittingChart.data.datasets[1].data = fittingData;
+        fittingChart.update();
+      }
+
+      // ===== 蒙特卡洛模拟 =====
+      let mcChart = null;
+      let mcSimulationRunning = false;
+
+      function initializeMonteCarlo() {
+        const ctx = document.getElementById("mc-chart").getContext("2d");
+
+        if (mcChart) {
+          mcChart.destroy();
+        }
+
+        mcChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "收敛过程",
+                data: [],
+                borderColor: "#ff6b9d",
+                backgroundColor: "rgba(255, 107, 157, 0.1)",
+                borderWidth: 2,
+                fill: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: "#ffffff",
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#888888" },
+                grid: { color: "#333333" },
+              },
+              y: {
+                ticks: { color: "#888888" },
+                grid: { color: "#333333" },
+              },
+            },
+          },
+        });
+
+        // 初始化场景参数
+        updateMonteCarloParameters("pi-estimation");
+        document
+          .getElementById("mc-scenario")
+          .addEventListener("change", (e) => {
+            updateMonteCarloParameters(e.target.value);
+          });
+      }
+
+      function updateMonteCarloParameters(scenario) {
+        const container = document.getElementById("mc-parameters");
+        let html = "";
+
+        switch (scenario) {
+          case "pi-estimation":
+            html =
+              '<p class="text-sm text-gray-400">使用随机点估计π值，无需额外参数</p>';
+            break;
+          case "portfolio-risk":
+            html = `
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">预期收益率 (%)</label>
+                            <input type="number" id="expected-return" value="8" step="0.1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">波动率 (%)</label>
+                            <input type="number" id="volatility" value="15" step="0.1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">投资期限 (年)</label>
+                            <input type="number" id="time-horizon" value="1" step="0.1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white">
+                        </div>
+                    `;
+            break;
+          case "option-pricing":
+            html = `
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">标的价格</label>
+                            <input type="number" id="spot-price" value="100" step="1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">执行价格</label>
+                            <input type="number" id="strike-price" value="105" step="1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">无风险利率 (%)</label>
+                            <input type="number" id="risk-free-rate" value="5" step="0.1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">到期时间 (年)</label>
+                            <input type="number" id="time-to-expiry" value="0.25" step="0.01" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">波动率 (%)</label>
+                            <input type="number" id="option-volatility" value="20" step="0.1" class="w-full px-3 py-2 bg-dark-bg border border-gray-700 rounded text-white">
+                        </div>
+                    `;
+            break;
+        }
+
+        container.innerHTML = html;
+      }
+
+      async function runMonteCarloSimulation() {
+        if (mcSimulationRunning) return;
+
+        mcSimulationRunning = true;
+        const scenario = document.getElementById("mc-scenario").value;
+        const iterations = parseInt(
+          document.getElementById("mc-iterations").value
+        );
+
+        // 重置进度条和结果
+        document.getElementById("mc-progress-bar").style.width = "0%";
+        document.getElementById("mc-progress-text").textContent = "0%";
+        document.getElementById("mc-estimate").textContent = "--";
+        document.getElementById("mc-error").textContent = "--";
+        document.getElementById("mc-confidence").textContent = "--";
+
+        const results = [];
+        const batchSize = Math.max(1, Math.floor(iterations / 100));
+
+        for (let i = 0; i < iterations; i += batchSize) {
+          const batchResults = [];
+
+          for (let j = 0; j < batchSize && i + j < iterations; j++) {
+            let result;
+            switch (scenario) {
+              case "pi-estimation":
+                result = estimatePi();
+                break;
+              case "portfolio-risk":
+                result = simulatePortfolioReturn();
+                break;
+              case "option-pricing":
+                result = simulateOptionPrice();
+                break;
+              default:
+                result = Math.random();
+            }
+            batchResults.push(result);
+          }
+
+          results.push(...batchResults);
+
+          // 更新进度
+          const progress = Math.min(100, (results.length / iterations) * 100);
+          document.getElementById("mc-progress-bar").style.width =
+            progress + "%";
+          document.getElementById("mc-progress-text").textContent =
+            Math.round(progress) + "%";
+
+          // 更新图表（每10%更新一次）
+          if (
+            results.length % Math.floor(iterations / 10) === 0 ||
+            results.length === iterations
+          ) {
+            updateMonteCarloChart(results, scenario);
+          }
+
+          // 让出控制权，避免阻塞UI
+          await new Promise((resolve) => setTimeout(resolve, 1));
+        }
+
+        // 计算最终统计
+        const finalStats = calculateMonteCarloStats(results, scenario);
+        displayMonteCarloResults(finalStats);
+
+        mcSimulationRunning = false;
+      }
+
+      function estimatePi() {
+        const x = Math.random() * 2 - 1;
+        const y = Math.random() * 2 - 1;
+        return x * x + y * y <= 1 ? 4 : 0;
+      }
+
+      function simulatePortfolioReturn() {
+        const expectedReturn =
+          parseFloat(document.getElementById("expected-return")?.value || 8) /
+          100;
+        const volatility =
+          parseFloat(document.getElementById("volatility")?.value || 15) / 100;
+        const timeHorizon = parseFloat(
+          document.getElementById("time-horizon")?.value || 1
+        );
+
+        const randomShock = normalRandom(0, 1);
+        return (
+          expectedReturn * timeHorizon +
+          volatility * Math.sqrt(timeHorizon) * randomShock
+        );
+      }
+
+      function simulateOptionPrice() {
+        const S0 = parseFloat(
+          document.getElementById("spot-price")?.value || 100
+        );
+        const K = parseFloat(
+          document.getElementById("strike-price")?.value || 105
+        );
+        const r =
+          parseFloat(document.getElementById("risk-free-rate")?.value || 5) /
+          100;
+        const T = parseFloat(
+          document.getElementById("time-to-expiry")?.value || 0.25
+        );
+        const sigma =
+          parseFloat(
+            document.getElementById("option-volatility")?.value || 20
+          ) / 100;
+
+        const Z = normalRandom(0, 1);
+        const ST =
+          S0 *
+          Math.exp((r - 0.5 * sigma * sigma) * T + sigma * Math.sqrt(T) * Z);
+
+        return Math.max(ST - K, 0) * Math.exp(-r * T);
+      }
+
+      function updateMonteCarloChart(results, scenario) {
+        const convergenceData = [];
+        let runningSum = 0;
+
+        for (
+          let i = 0;
+          i < results.length;
+          i += Math.max(1, Math.floor(results.length / 100))
+        ) {
+          runningSum += results[i];
+          convergenceData.push({
+            x: i + 1,
+            y: runningSum / (i + 1),
+          });
+        }
+
+        mcChart.data.labels = convergenceData.map((d) => d.x);
+        mcChart.data.datasets[0].data = convergenceData;
+        mcChart.update("none");
+      }
+
+      function calculateMonteCarloStats(results, scenario) {
+        const n = results.length;
+        const mean = results.reduce((a, b) => a + b, 0) / n;
+        const variance =
+          results.reduce((a, b) => a + (b - mean) ** 2, 0) / (n - 1);
+        const standardError = Math.sqrt(variance / n);
+
+        // 95%置信区间
+        const marginOfError = 1.96 * standardError;
+        const confidenceInterval = [mean - marginOfError, mean + marginOfError];
+
+        return {
+          estimate: mean,
+          standardError,
+          confidenceInterval,
+          scenario,
+        };
+      }
+
+      function displayMonteCarloResults(stats) {
+        let estimateText, errorText, confidenceText;
+
+        switch (stats.scenario) {
+          case "pi-estimation":
+            estimateText = stats.estimate.toFixed(6);
+            errorText = stats.standardError.toFixed(6);
+            confidenceText = `[${stats.confidenceInterval[0].toFixed(
+              4
+            )}, ${stats.confidenceInterval[1].toFixed(4)}]`;
+            break;
+          case "portfolio-risk":
+            estimateText = (stats.estimate * 100).toFixed(2) + "%";
+            // 计算标准误差百分比
+            var errorValue = stats.standardError * 100;
+            errorText = errorValue.toFixed(2) + "%";
+            confidenceText = `[${(stats.confidenceInterval[0] * 100).toFixed(
+              1
+            )}%, ${(stats.confidenceInterval[1] * 100).toFixed(1)}%]`;
+            break;
+          case "option-pricing":
+            estimateText = "$" + stats.estimate.toFixed(2);
+            errorText = "$" + stats.standardError.toFixed(2);
+            confidenceText = `[$${stats.confidenceInterval[0].toFixed(
+              2
+            )}, $${stats.confidenceInterval[1].toFixed(2)}]`;
+            break;
+        }
+
+        document.getElementById("mc-estimate").textContent = estimateText;
+        document.getElementById("mc-error").textContent = errorText;
+        document.getElementById("mc-confidence").textContent = confidenceText;
+      }
+
+      // 初始化页面
+      document.addEventListener("DOMContentLoaded", function () {
+        createParticles();
+        initializeChart();
+        selectDistribution("normal");
+        setupEventListeners();
+      });
+    </script>
+  </body>
+</html>
