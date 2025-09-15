@@ -394,6 +394,58 @@ class ProbabilityToolbox {
                                  </div>
                              </div>
                          </div>
+
+                        <!-- 测试工具 -->
+                        <div class="tool-accordion">
+                            <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-green transition-all duration-300 cursor-pointer" data-tool="test-tools">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center">
+                                            <i class="fa fa-vial text-neon-green text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-white">测试工具</h3>
+                                            <p class="text-sm text-gray-400">系统功能测试与验证</p>
+                                        </div>
+                                    </div>
+                                    <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300" id="test-tools-chevron"></i>
+                                </div>
+                            </div>
+                            <div class="tool-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700" id="test-tools-content">
+                                <h3 class="text-lg font-semibold text-neon-green mb-4">测试工具</h3>
+                                <div class="space-y-4">
+                                    <!-- LaTeX渲染测试 -->
+                                    <div class="bg-gray-800 rounded-lg p-4">
+                                        <h4 class="text-sm font-semibold text-gray-300 mb-2">LaTeX渲染测试</h4>
+                                        <p class="text-xs text-gray-400 mb-3">测试全局LaTeX渲染函数是否正常工作</p>
+                                        <button id="test-latex-render" class="w-full bg-neon-green hover:bg-neon-green/80 text-dark-bg p-2 rounded text-sm font-medium transition-colors">
+                                            <i class="fa fa-play mr-2"></i>运行LaTeX渲染测试
+                                        </button>
+                                        <div id="latex-test-result" class="mt-2 text-xs text-gray-400"></div>
+                                    </div>
+                                    
+                                    <!-- 聊天记录测试 -->
+                                    <div class="bg-gray-800 rounded-lg p-4">
+                                        <h4 class="text-sm font-semibold text-gray-300 mb-2">聊天记录测试</h4>
+                                        <p class="text-xs text-gray-400 mb-3">测试页面切换时聊天记录是否重复</p>
+                                        <button id="test-chat-history" class="w-full bg-neon-green hover:bg-neon-green/80 text-dark-bg p-2 rounded text-sm font-medium transition-colors">
+                                            <i class="fa fa-play mr-2"></i>运行聊天记录测试
+                                        </button>
+                                        <div id="chat-test-result" class="mt-2 text-xs text-gray-400"></div>
+                                    </div>
+                                    
+                                    <!-- 系统状态检查 -->
+                                    <div class="bg-gray-800 rounded-lg p-4">
+                                        <h4 class="text-sm font-semibold text-gray-300 mb-2">系统状态检查</h4>
+                                        <p class="text-xs text-gray-400 mb-3">检查各项功能模块的运行状态</p>
+                                        <button id="test-system-status" class="w-full bg-neon-green hover:bg-neon-green/80 text-dark-bg p-2 rounded text-sm font-medium transition-colors">
+                                            <i class="fa fa-play mr-2"></i>检查系统状态
+                                        </button>
+                                        <div id="system-test-result" class="mt-2 text-xs text-gray-400"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -444,6 +496,19 @@ class ProbabilityToolbox {
     // 假设检验相关事件
     document.getElementById("run-test").addEventListener("click", () => {
       this.runHypothesisTest();
+    });
+
+    // 测试工具相关事件
+    document.getElementById("test-latex-render").addEventListener("click", () => {
+      this.testLatexRender();
+    });
+
+    document.getElementById("test-chat-history").addEventListener("click", () => {
+      this.testChatHistory();
+    });
+
+    document.getElementById("test-system-status").addEventListener("click", () => {
+      this.testSystemStatus();
     });
     
     // 检验方法分类变化事件
@@ -539,9 +604,13 @@ class ProbabilityToolbox {
         content.classList.remove("hidden");
         chevron.style.transform = "rotate(180deg)";
 
-        // 如果是AI助手，加载聊天历史
+        // 如果是AI助手，检查是否需要加载聊天历史
         if (toolName === "ai-assistant") {
-          this.displayChatHistory();
+          const chatMessages = document.getElementById("chat-messages");
+          // 只有当聊天容器为空时才加载历史记录，避免重复显示
+          if (chatMessages && chatMessages.children.length === 0) {
+            this.displayChatHistory();
+          }
         }
       } else {
         // 收起
@@ -868,8 +937,10 @@ class ProbabilityToolbox {
       this.removeLoadingMessage();
       // 添加AI回复
       this.addMessageToChat("assistant", response);
-      // 强制重新渲染LaTeX和Markdown
-      this.forceRerenderMath();
+      // 延迟渲染确保DOM完全更新
+      setTimeout(() => {
+        this.forceRerenderMath();
+      }, 200);
     } catch (error) {
       this.removeLoadingMessage();
       this.addMessageToChat("assistant", "抱歉，发生了错误，请稍后再试。");
@@ -920,7 +991,7 @@ class ProbabilityToolbox {
     }
   }
 
-  addMessageToChat(role, content, isLoading = false) {
+  addMessageToChat(role, content, isLoading = false, skipSave = false) {
     const chatMessages = document.getElementById("chat-messages");
     const messageDiv = document.createElement("div");
     messageDiv.className = `message ${role} ${isLoading ? "loading" : ""}`;
@@ -947,15 +1018,21 @@ class ProbabilityToolbox {
     } else if (role !== "user") {
       // 如果是AI助手的回复，渲染Markdown和LaTeX
       try {
-        if (window.marked) {
-          // marked 4.3.0版本使用marked()函数
+        if (window.marked && window.marked.parse) {
+          // marked 4.3.0版本使用marked.parse()函数
+          const htmlContent = marked.parse(content);
+          contentContainer.innerHTML = htmlContent;
+        } else if (window.marked) {
+          // 兼容旧版本marked
           const htmlContent = marked(content);
           contentContainer.innerHTML = htmlContent;
         } else {
+          console.warn('marked库未加载，使用简单换行处理');
           contentContainer.innerHTML = content.replace(/\n/g, '<br>');
         }
       } catch (error) {
         console.error('Markdown渲染错误:', error);
+        console.log('marked对象:', window.marked);
         contentContainer.innerHTML = content.replace(/\n/g, '<br>');
       }
     } else {
@@ -985,15 +1062,10 @@ class ProbabilityToolbox {
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    // 如果是AI助手的回复且不是加载状态，立即渲染LaTeX
-    if (role !== "user" && !isLoading) {
-      setTimeout(() => {
-        this.renderMathInContainer(contentContainer);
-      }, 100);
-    }
+    // LaTeX渲染将由forceRerenderMath统一处理
 
-    // 如果不是加载消息，保存到历史记录
-    if (!isLoading) {
+    // 如果不是加载消息且不跳过保存，保存到历史记录
+    if (!isLoading && !skipSave) {
       this.chatHistory.push({ role, content });
       this.saveChatHistory();
     }
@@ -1008,11 +1080,25 @@ class ProbabilityToolbox {
 
   // 渲染单个容器中的LaTeX公式
   renderMathInContainer(container) {
-    if (!container) return;
+    if (!container) {
+      console.warn('renderMathInContainer: 容器为空');
+      return;
+    }
+    
+    // 检查容器中是否包含LaTeX内容
+    const content = container.textContent || container.innerText || '';
+    const hasLatex = /\$.*?\$|\\\[.*?\\\]|\\\(.*?\\\)/.test(content);
+    console.log(`容器内容检查 - 包含LaTeX: ${hasLatex}, 内容长度: ${content.length}`);
+    
+    if (!hasLatex) {
+      console.log('容器中未发现LaTeX内容，跳过渲染');
+      return;
+    }
     
     // 渲染LaTeX公式 - 支持KaTeX和MathJax
     if (window.renderMathInElement) {
       // 使用KaTeX渲染
+      console.log('使用KaTeX渲染LaTeX');
       try {
         renderMathInElement(container, {
           delimiters: [
@@ -1022,32 +1108,44 @@ class ProbabilityToolbox {
             {left: '\\(', right: '\\)', display: false}
           ],
           throwOnError: false,
-          strict: false
+          strict: false,
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
         });
+        console.log('KaTeX渲染成功');
       } catch (error) {
-        console.warn('KaTeX单容器渲染错误:', error);
+        console.error('KaTeX单容器渲染错误:', error);
       }
     } else if (window.MathJax && window.MathJax.typesetPromise) {
       // 使用MathJax渲染
-      window.MathJax.typesetPromise([container]).catch((err) => {
-        console.warn('MathJax单容器渲染错误:', err);
+      console.log('使用MathJax (新版) 渲染LaTeX');
+      window.MathJax.typesetPromise([container]).then(() => {
+        console.log('MathJax渲染成功');
+      }).catch((err) => {
+        console.error('MathJax单容器渲染错误:', err);
       });
     } else if (window.MathJax && window.MathJax.Hub) {
       // 兼容旧版MathJax
+      console.log('使用MathJax (旧版Hub) 渲染LaTeX');
       try {
         window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, container]);
+        console.log('MathJax Hub渲染已排队');
       } catch (error) {
-        console.warn('MathJax Hub单容器渲染错误:', error);
+        console.error('MathJax Hub单容器渲染错误:', error);
       }
+    } else {
+      console.warn('未找到可用的LaTeX渲染库 (KaTeX或MathJax)');
     }
   }
 
   // 强制重新渲染所有LaTeX和Markdown内容
   forceRerenderMath() {
+    console.log('开始强制重新渲染LaTeX和Markdown');
+    
     // 使用多次尝试确保渲染成功
     const attemptRender = (attempt = 0) => {
       const chatMessages = document.getElementById("chat-messages");
       if (!chatMessages) {
+        console.warn(`尝试 ${attempt + 1}: 未找到chat-messages容器`);
         if (attempt < 5) {
           setTimeout(() => attemptRender(attempt + 1), 100);
         }
@@ -1056,19 +1154,34 @@ class ProbabilityToolbox {
       
       // 获取所有消息内容容器
       const messageContents = chatMessages.querySelectorAll('.message-content');
+      console.log(`找到 ${messageContents.length} 个消息容器`);
       
-      messageContents.forEach(container => {
+      if (messageContents.length === 0) {
+        console.warn('没有找到消息内容容器');
+        return;
+      }
+      
+      messageContents.forEach((container, index) => {
+        console.log(`渲染第 ${index + 1} 个容器`);
         this.renderMathInContainer(container);
       });
       
+      // 检查渲染库状态
+      const hasKaTeX = !!window.renderMathInElement;
+      const hasMathJax = !!(window.MathJax && (window.MathJax.typesetPromise || window.MathJax.Hub));
+      console.log(`渲染库状态 - KaTeX: ${hasKaTeX}, MathJax: ${hasMathJax}`);
+      
       // 如果渲染库还未加载完成，进行重试
-      if (!window.renderMathInElement && !window.MathJax && attempt < 10) {
+      if (!hasKaTeX && !hasMathJax && attempt < 10) {
+        console.log(`渲染库未就绪，${300}ms后重试 (尝试 ${attempt + 1}/10)`);
         setTimeout(() => attemptRender(attempt + 1), 300);
+      } else {
+        console.log('LaTeX渲染完成');
       }
     };
     
     // 延迟执行确保DOM完全更新
-    setTimeout(() => attemptRender(), 300);
+    setTimeout(() => attemptRender(), 100);
   }
 
   displayChatHistory() {
@@ -1076,7 +1189,7 @@ class ProbabilityToolbox {
     chatMessages.innerHTML = "";
 
     this.chatHistory.forEach((message) => {
-      this.addMessageToChat(message.role, message.content);
+      this.addMessageToChat(message.role, message.content, false, true); // 添加skipSave参数
     });
     
     // 使用统一的重新渲染函数
@@ -2190,9 +2303,220 @@ class ProbabilityToolbox {
     const correction = 1 + (t * t) / (4 * df);
     return Math.min(1, normalP * correction);
   }
+
+  // 测试工具方法
+  testLatexRender() {
+    const resultDiv = document.getElementById('latex-test-result');
+    resultDiv.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i>正在测试LaTeX渲染...';
+    
+    try {
+      // 创建测试元素
+      const testElement = document.createElement('div');
+      testElement.innerHTML = '测试公式: $E = mc^2$ 和 $$\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}$$';
+      document.body.appendChild(testElement);
+      
+      // 测试全局渲染函数
+      if (typeof window.renderLatexInElement === 'function') {
+        window.renderLatexInElement(testElement);
+        
+        setTimeout(() => {
+          const hasRendered = testElement.querySelector('.katex') !== null;
+          document.body.removeChild(testElement);
+          
+          if (hasRendered) {
+            resultDiv.innerHTML = '<i class="fa fa-check text-green-400 mr-1"></i>LaTeX渲染测试通过';
+          } else {
+            resultDiv.innerHTML = '<i class="fa fa-times text-red-400 mr-1"></i>LaTeX渲染失败';
+          }
+        }, 200);
+      } else {
+        document.body.removeChild(testElement);
+        resultDiv.innerHTML = '<i class="fa fa-times text-red-400 mr-1"></i>全局渲染函数不存在';
+      }
+    } catch (error) {
+      resultDiv.innerHTML = `<i class="fa fa-times text-red-400 mr-1"></i>测试出错: ${error.message}`;
+    }
+  }
+
+  testChatHistory() {
+    const resultDiv = document.getElementById('chat-test-result');
+    resultDiv.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i>正在测试聊天记录...';
+    
+    try {
+      // 清空聊天记录
+      this.clearChat();
+      
+      // 添加测试消息
+      this.addMessageToChat('user', '测试消息1', false, false);
+      this.addMessageToChat('assistant', '测试回复1', false, false);
+      
+      const initialCount = document.querySelectorAll('#chat-messages .message').length;
+      
+      // 模拟切换工具（这会触发displayChatHistory）
+      this.toggleTool('calculator');
+      this.toggleTool('ai-assistant');
+      
+      setTimeout(() => {
+        const finalCount = document.querySelectorAll('#chat-messages .message').length;
+        
+        if (finalCount === initialCount) {
+          resultDiv.innerHTML = '<i class="fa fa-check text-green-400 mr-1"></i>聊天记录测试通过，无重复';
+        } else {
+          resultDiv.innerHTML = `<i class="fa fa-times text-red-400 mr-1"></i>检测到重复，消息数量从${initialCount}变为${finalCount}`;
+        }
+      }, 100);
+    } catch (error) {
+      resultDiv.innerHTML = `<i class="fa fa-times text-red-400 mr-1"></i>测试出错: ${error.message}`;
+    }
+  }
+
+  testSystemStatus() {
+    const resultDiv = document.getElementById('system-test-result');
+    resultDiv.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i>正在检查系统状态...';
+    
+    const checks = [];
+    
+    // 检查KaTeX
+    checks.push({
+      name: 'KaTeX',
+      status: typeof katex !== 'undefined',
+      message: typeof katex !== 'undefined' ? '已加载' : '未加载'
+    });
+    
+    // 检查全局渲染函数
+    checks.push({
+      name: '全局LaTeX渲染',
+      status: typeof window.renderLatexInElement === 'function',
+      message: typeof window.renderLatexInElement === 'function' ? '可用' : '不可用'
+    });
+    
+    // 检查聊天历史
+    checks.push({
+      name: '聊天历史',
+      status: Array.isArray(this.chatHistory),
+      message: Array.isArray(this.chatHistory) ? `${this.chatHistory.length}条记录` : '异常'
+    });
+    
+    // 检查工具箱元素
+    checks.push({
+      name: '工具箱界面',
+      status: document.getElementById('toolbox-sidebar') !== null,
+      message: document.getElementById('toolbox-sidebar') !== null ? '正常' : '缺失'
+    });
+    
+    setTimeout(() => {
+      const passedChecks = checks.filter(check => check.status).length;
+      const totalChecks = checks.length;
+      
+      let statusHtml = `<div class="text-xs">`;
+      checks.forEach(check => {
+        const icon = check.status ? 'fa-check text-green-400' : 'fa-times text-red-400';
+        statusHtml += `<div><i class="fa ${icon} mr-1"></i>${check.name}: ${check.message}</div>`;
+      });
+      statusHtml += `<div class="mt-1 font-medium">总体状态: ${passedChecks}/${totalChecks} 项正常</div></div>`;
+      
+      resultDiv.innerHTML = statusHtml;
+    }, 500);
+  }
 }
 
-// 初始化工具箱
+// 全局LaTeX渲染函数，可在其他页面中调用
+window.renderLatexInElement = function(element, options = {}) {
+  if (!element) {
+    console.warn('renderLatexInElement: 元素为空');
+    return;
+  }
+  
+  const defaultOptions = {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$', right: '$', display: false},
+      {left: '\\[', right: '\\]', display: true},
+      {left: '\\(', right: '\\)', display: false}
+    ],
+    throwOnError: false,
+    strict: false,
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  };
+  
+  const finalOptions = Object.assign(defaultOptions, options);
+  
+  // 检查是否包含LaTeX内容
+  const content = element.textContent || element.innerText || '';
+  const hasLatex = /\$.*?\$|\\\[.*?\\\]|\\\(.*?\\\)/.test(content);
+  
+  if (!hasLatex) {
+    console.log('元素中未发现LaTeX内容，跳过渲染');
+    return false;
+  }
+  
+  console.log('开始渲染LaTeX内容');
+  
+  // 尝试使用KaTeX渲染
+  if (window.renderMathInElement) {
+    try {
+      renderMathInElement(element, finalOptions);
+      console.log('KaTeX渲染成功');
+      return true;
+    } catch (error) {
+      console.error('KaTeX渲染失败:', error);
+    }
+  }
+  
+  // 尝试使用MathJax渲染
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise([element]).then(() => {
+      console.log('MathJax渲染成功');
+    }).catch((err) => {
+      console.error('MathJax渲染失败:', err);
+    });
+    return true;
+  }
+  
+  // 尝试使用旧版MathJax
+  if (window.MathJax && window.MathJax.Hub) {
+    try {
+      window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, element]);
+      console.log('MathJax Hub渲染已排队');
+      return true;
+    } catch (error) {
+      console.error('MathJax Hub渲染失败:', error);
+    }
+  }
+  
+  console.warn('未找到可用的LaTeX渲染库');
+  return false;
+};
+
+// 全局Markdown渲染函数
+window.renderMarkdownInElement = function(element, content) {
+  if (!element) {
+    console.warn('renderMarkdownInElement: 元素为空');
+    return false;
+  }
+  
+  try {
+    if (window.marked && window.marked.parse) {
+      element.innerHTML = marked.parse(content);
+      console.log('Markdown渲染成功 (marked.parse)');
+      return true;
+    } else if (window.marked) {
+      element.innerHTML = marked(content);
+      console.log('Markdown渲染成功 (marked)');
+      return true;
+    } else {
+      console.warn('marked库未加载，使用简单换行处理');
+      element.innerHTML = content.replace(/\n/g, '<br>');
+      return false;
+    }
+  } catch (error) {
+    console.error('Markdown渲染错误:', error);
+    element.innerHTML = content.replace(/\n/g, '<br>');
+    return false;
+  }
+};
+
+// 页面加载完成后初始化工具箱
 document.addEventListener("DOMContentLoaded", () => {
-  new ProbabilityToolbox();
+  window.probabilityToolbox = new ProbabilityToolbox();
 });
