@@ -11,29 +11,24 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.4.0/chartjs-plugin-annotation.min.js"></script>
-    <!-- MathJax for LaTeX rendering -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script
-      id="MathJax-script"
-      async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    ></script>
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    
+    <!-- KaTeX for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
     <script>
-      window.MathJax = {
-        tex: {
-          inlineMath: [
-            ["$", "$"],
-            ["\\(", "\\)"],
-          ],
-          displayMath: [
-            ["$$", "$$"],
-            ["\\[", "\\]"],
-          ],
-        },
-        options: {
-          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre"],
-        },
-      };
+      document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false},
+            {left: "\\[", right: "\\]", display: true},
+            {left: "\\(", right: "\\)", display: false}
+          ]
+        });
+      });
     </script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
@@ -84,6 +79,135 @@
 
       .bg-dark-bg {
         background-color: var(--dark-bg);
+      }
+
+      /* 思考动画样式 */
+      .thinking-animation {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .thinking-animation .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #00f3ff;
+        animation: thinking-pulse 1.4s ease-in-out infinite both;
+      }
+
+      .thinking-animation .dot:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+
+      .thinking-animation .dot:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+
+      .thinking-animation .dot:nth-child(3) {
+        animation-delay: 0s;
+      }
+
+      @keyframes thinking-pulse {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.5;
+        }
+        40% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+      }
+
+      /* Markdown内容样式 */
+      .message-content {
+        line-height: 1.6;
+      }
+
+      .message-content h1,
+      .message-content h2,
+      .message-content h3,
+      .message-content h4,
+      .message-content h5,
+      .message-content h6 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      .message-content p {
+        margin-bottom: 1rem;
+      }
+
+      .message-content ul,
+      .message-content ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+      }
+
+      .message-content li {
+        margin-bottom: 0.25rem;
+      }
+
+      .message-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        background-color: rgba(30, 41, 59, 0.5);
+        border-radius: 0.5rem;
+        overflow: hidden;
+      }
+
+      .message-content th,
+      .message-content td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .message-content th {
+        background-color: rgba(0, 243, 255, 0.1);
+        font-weight: 600;
+        color: #00f3ff;
+      }
+
+      .message-content code {
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-family: 'Courier New', monospace;
+        color: #00ff66;
+      }
+
+      .message-content pre {
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1rem 0;
+      }
+
+      .message-content pre code {
+        background: none;
+        padding: 0;
+      }
+
+      .message-content blockquote {
+        border-left: 4px solid #00f3ff;
+        padding-left: 1rem;
+        margin: 1rem 0;
+        font-style: italic;
+        color: #cbd5e1;
+      }
+
+      .message-content .katex {
+        color: #e5e7eb !important;
+      }
+
+      .message-content .katex-display {
+        margin: 1rem 0;
       }
 
       .bg-dark-card {
@@ -1434,7 +1558,8 @@
                 </div>
                 <div class="mb-4">
                   <label class="block text-gray-300 mb-1"
-                    >动画速度: <span id="integral-speed-value">50ms</span></label
+                    >动画速度:
+                    <span id="integral-speed-value">50ms</span></label
                   >
                   <input
                     type="range"
@@ -1462,7 +1587,7 @@
                   <button
                     id="integral-pause-btn"
                     class="px-6 py-2 bg-yellow-500 text-dark-bg font-bold rounded-md hover:bg-yellow-400 transition-all duration-300"
-                    style="display: none;"
+                    style="display: none"
                   >
                     暂停 <i class="fa fa-pause ml-2"></i>
                   </button>
@@ -1476,10 +1601,18 @@
                 <div class="bg-gray-800 p-3 rounded-lg mb-4">
                   <div class="flex justify-between items-center mb-2">
                     <span class="text-sm text-gray-400">进度</span>
-                    <span id="integral-progress-text" class="text-sm text-neon-purple">0%</span>
+                    <span
+                      id="integral-progress-text"
+                      class="text-sm text-neon-purple"
+                      >0%</span
+                    >
                   </div>
                   <div class="w-full bg-gray-700 rounded-full h-2">
-                    <div id="integral-progress-bar" class="bg-neon-purple h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    <div
+                      id="integral-progress-bar"
+                      class="bg-neon-purple h-2 rounded-full transition-all duration-300"
+                      style="width: 0%"
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -1522,7 +1655,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="grid grid-cols-1 gap-4 mt-4">
                 <div class="bg-gray-800 p-3 rounded-lg text-center">
                   <div class="text-sm text-gray-400">计算时间</div>
@@ -1670,8 +1803,18 @@
                   </select>
                 </div>
                 <div class="mb-4">
-                  <label class="block text-gray-300 mb-1">动画速度: <span id="option-speed-value">100ms</span></label>
-                  <input type="range" id="option-speed" min="50" max="500" step="50" value="100" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green">
+                  <label class="block text-gray-300 mb-1"
+                    >动画速度: <span id="option-speed-value">100ms</span></label
+                  >
+                  <input
+                    type="range"
+                    id="option-speed"
+                    min="50"
+                    max="500"
+                    step="50"
+                    value="100"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
                 </div>
                 <div class="flex space-x-4 mb-4">
                   <button
@@ -1689,7 +1832,7 @@
                   <button
                     id="option-pause-btn"
                     class="px-6 py-2 bg-yellow-500 text-dark-bg font-bold rounded-md hover:bg-yellow-400 transition-all duration-300"
-                    style="display: none;"
+                    style="display: none"
                   >
                     继续 <i class="fa fa-play ml-2"></i>
                   </button>
@@ -1703,10 +1846,18 @@
                 <div class="bg-gray-800 p-3 rounded-lg mb-4">
                   <div class="flex justify-between items-center mb-2">
                     <span class="text-sm text-gray-400">进度</span>
-                    <span id="option-progress-text" class="text-sm text-neon-green">0%</span>
+                    <span
+                      id="option-progress-text"
+                      class="text-sm text-neon-green"
+                      >0%</span
+                    >
                   </div>
                   <div class="w-full bg-gray-700 rounded-full h-2">
-                    <div id="option-progress-bar" class="bg-neon-green h-2 rounded-full transition-all duration-300" style="width: 0%;"></div>
+                    <div
+                      id="option-progress-bar"
+                      class="bg-neon-green h-2 rounded-full transition-all duration-300"
+                      style="width: 0%"
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -1749,11 +1900,16 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="grid grid-cols-1 gap-4 mt-4">
                 <div class="bg-gray-800 p-3 rounded-lg text-center">
                   <div class="text-sm text-gray-400">计算时间</div>
-                  <div id="option-time" class="text-xl font-semibold text-white">0ms</div>
+                  <div
+                    id="option-time"
+                    class="text-xl font-semibold text-white"
+                  >
+                    0ms
+                  </div>
                 </div>
               </div>
             </div>
@@ -1793,7 +1949,8 @@
                 <div class="mb-3">
                   <label class="block text-gray-300 mb-1"
                     >到达率 λ:
-                    <span id="queue-arrival-rate-value">2</span> 客户/分钟</label
+                    <span id="queue-arrival-rate-value">2</span>
+                    客户/分钟</label
                   >
                   <input
                     type="range"
@@ -1808,7 +1965,8 @@
                 <div class="mb-3">
                   <label class="block text-gray-300 mb-1"
                     >服务率 μ:
-                    <span id="queue-service-rate-value">3</span> 客户/分钟</label
+                    <span id="queue-service-rate-value">3</span>
+                    客户/分钟</label
                   >
                   <input
                     type="range"
@@ -1822,7 +1980,8 @@
                 </div>
                 <div class="mb-3">
                   <label class="block text-gray-300 mb-1"
-                    >模拟时间: <span id="queue-max-time-value">60</span> 分钟</label
+                    >模拟时间:
+                    <span id="queue-max-time-value">60</span> 分钟</label
                   >
                   <input
                     type="range"
@@ -2956,7 +3115,7 @@
         queueLengthData: [],
         serverStatusData: [],
         avgWaitData: [],
-        utilizationData: []
+        utilizationData: [],
       };
 
       // π值估算模拟
@@ -3268,31 +3427,36 @@
       }
 
       function animateIntegral() {
-        if (integralSimulation.isAnimating && !integralSimulation.isPaused) return;
+        if (integralSimulation.isAnimating && !integralSimulation.isPaused)
+          return;
 
         const functionType = document.getElementById("integral-function").value;
         const a = parseFloat(document.getElementById("integral-a").value);
         const b = parseFloat(document.getElementById("integral-b").value);
         const speed = parseInt(document.getElementById("integral-speed").value);
-        
+
         if (!integralSimulation.isAnimating) {
           // 开始新的动画
-          integralSimulation.totalSamples = parseInt(document.getElementById("integral-samples").value);
+          integralSimulation.totalSamples = parseInt(
+            document.getElementById("integral-samples").value
+          );
           integralSimulation.isAnimating = true;
           integralSimulation.isPaused = false;
           integralSimulation.currentSample = 0;
           integralSimulation.sum = 0;
           integralSimulation.samplePoints = [];
           integralSimulation.convergenceData = [];
-          
+
           // 更新按钮状态
-          document.getElementById("integral-animate-btn").style.display = "none";
-          document.getElementById("integral-pause-btn").style.display = "inline-block";
-          
+          document.getElementById("integral-animate-btn").style.display =
+            "none";
+          document.getElementById("integral-pause-btn").style.display =
+            "inline-block";
+
           // 清空图表
           integralSimulation.chart.data.datasets[1].data = [];
           integralSimulation.chart.update();
-          
+
           // 重置显示
           document.getElementById("integral-current-samples").textContent = "0";
           document.getElementById("integral-progress-text").textContent = "0%";
@@ -3300,15 +3464,26 @@
         } else {
           // 继续暂停的动画
           integralSimulation.isPaused = false;
-          document.getElementById("integral-pause-btn").innerHTML = '暂停 <i class="fa fa-pause ml-2"></i>';
+          document.getElementById("integral-pause-btn").innerHTML =
+            '暂停 <i class="fa fa-pause ml-2"></i>';
         }
 
         const addSample = () => {
-          if (integralSimulation.currentSample >= integralSimulation.totalSamples || !integralSimulation.isAnimating || integralSimulation.isPaused) {
-            if (integralSimulation.currentSample >= integralSimulation.totalSamples) {
+          if (
+            integralSimulation.currentSample >=
+              integralSimulation.totalSamples ||
+            !integralSimulation.isAnimating ||
+            integralSimulation.isPaused
+          ) {
+            if (
+              integralSimulation.currentSample >=
+              integralSimulation.totalSamples
+            ) {
               integralSimulation.isAnimating = false;
-              document.getElementById("integral-animate-btn").style.display = "inline-block";
-              document.getElementById("integral-pause-btn").style.display = "none";
+              document.getElementById("integral-animate-btn").style.display =
+                "inline-block";
+              document.getElementById("integral-pause-btn").style.display =
+                "none";
             }
             return;
           }
@@ -3322,32 +3497,59 @@
           integralSimulation.samplePoints.push({ x: x, y: y });
 
           // 更新图表中的采样点（每10个点更新一次以提高性能）
-          if (integralSimulation.currentSample % 10 === 0 || integralSimulation.currentSample <= 100) {
-            integralSimulation.chart.data.datasets[1].data = integralSimulation.samplePoints.slice(-500); // 只显示最近500个点
+          if (
+            integralSimulation.currentSample % 10 === 0 ||
+            integralSimulation.currentSample <= 100
+          ) {
+            integralSimulation.chart.data.datasets[1].data =
+              integralSimulation.samplePoints.slice(-500); // 只显示最近500个点
             integralSimulation.chart.update("none");
           }
 
           // 计算当前估算值
-          const estimate = (integralSimulation.sum / integralSimulation.currentSample) * (b - a);
+          const estimate =
+            (integralSimulation.sum / integralSimulation.currentSample) *
+            (b - a);
           const exactValue = getExactIntegral(functionType, a, b);
-          const error = exactValue !== 0 ? Math.abs((estimate - exactValue) / exactValue * 100) : 0;
-          
+          const error =
+            exactValue !== 0
+              ? Math.abs(((estimate - exactValue) / exactValue) * 100)
+              : 0;
+
           // 更新显示
-          document.getElementById("integral-mc-result").textContent = estimate.toFixed(4);
-          document.getElementById("integral-exact-result").textContent = exactValue.toFixed(4);
-          document.getElementById("integral-error").textContent = error.toFixed(2) + "%";
-          document.getElementById("integral-current-samples").textContent = integralSimulation.currentSample;
-          
+          document.getElementById("integral-mc-result").textContent =
+            estimate.toFixed(4);
+          document.getElementById("integral-exact-result").textContent =
+            exactValue.toFixed(4);
+          document.getElementById("integral-error").textContent =
+            error.toFixed(2) + "%";
+          document.getElementById("integral-current-samples").textContent =
+            integralSimulation.currentSample;
+
           // 更新进度
-          const progress = (integralSimulation.currentSample / integralSimulation.totalSamples * 100);
-          document.getElementById("integral-progress-text").textContent = progress.toFixed(1) + "%";
-          document.getElementById("integral-progress-bar").style.width = progress + "%";
-          
+          const progress =
+            (integralSimulation.currentSample /
+              integralSimulation.totalSamples) *
+            100;
+          document.getElementById("integral-progress-text").textContent =
+            progress.toFixed(1) + "%";
+          document.getElementById("integral-progress-bar").style.width =
+            progress + "%";
+
           // 更新收敛图表
-          if (integralSimulation.currentSample % 100 === 0 || integralSimulation.currentSample <= 100) {
-            integralSimulation.convergenceChart.data.labels.push(integralSimulation.currentSample);
-            integralSimulation.convergenceChart.data.datasets[0].data.push(estimate);
-            integralSimulation.convergenceChart.data.datasets[1].data.push(exactValue);
+          if (
+            integralSimulation.currentSample % 100 === 0 ||
+            integralSimulation.currentSample <= 100
+          ) {
+            integralSimulation.convergenceChart.data.labels.push(
+              integralSimulation.currentSample
+            );
+            integralSimulation.convergenceChart.data.datasets[0].data.push(
+              estimate
+            );
+            integralSimulation.convergenceChart.data.datasets[1].data.push(
+              exactValue
+            );
             integralSimulation.convergenceChart.update("none");
           }
 
@@ -3356,38 +3558,41 @@
 
         addSample();
       }
-      
+
       function pauseIntegralAnimation() {
         if (!integralSimulation.isAnimating) return;
-        
+
         integralSimulation.isPaused = !integralSimulation.isPaused;
-        
+
         if (integralSimulation.isPaused) {
-          document.getElementById("integral-pause-btn").innerHTML = '继续 <i class="fa fa-play ml-2"></i>';
+          document.getElementById("integral-pause-btn").innerHTML =
+            '继续 <i class="fa fa-play ml-2"></i>';
           if (integralSimulation.animationId) {
             clearTimeout(integralSimulation.animationId);
           }
         } else {
-          document.getElementById("integral-pause-btn").innerHTML = '暂停 <i class="fa fa-pause ml-2"></i>';
+          document.getElementById("integral-pause-btn").innerHTML =
+            '暂停 <i class="fa fa-pause ml-2"></i>';
           animateIntegral(); // 继续动画
         }
       }
-      
+
       function resetIntegralAnimation() {
         integralSimulation.isAnimating = false;
         integralSimulation.isPaused = false;
         integralSimulation.currentSample = 0;
         integralSimulation.sum = 0;
         integralSimulation.samplePoints = [];
-        
+
         if (integralSimulation.animationId) {
           clearTimeout(integralSimulation.animationId);
         }
-        
+
         // 重置按钮状态
-        document.getElementById("integral-animate-btn").style.display = "inline-block";
+        document.getElementById("integral-animate-btn").style.display =
+          "inline-block";
         document.getElementById("integral-pause-btn").style.display = "none";
-        
+
         // 重置显示
         document.getElementById("integral-mc-result").textContent = "0.0000";
         document.getElementById("integral-exact-result").textContent = "0.0000";
@@ -3395,13 +3600,13 @@
         document.getElementById("integral-current-samples").textContent = "0";
         document.getElementById("integral-progress-text").textContent = "0%";
         document.getElementById("integral-progress-bar").style.width = "0%";
-        
+
         // 清空图表
         if (integralSimulation.chart) {
           integralSimulation.chart.data.datasets[1].data = [];
           integralSimulation.chart.update();
         }
-        
+
         if (integralSimulation.convergenceChart) {
           integralSimulation.convergenceChart.data.labels = [];
           integralSimulation.convergenceChart.data.datasets[0].data = [];
@@ -3681,20 +3886,23 @@
           pauseOptionAnimation();
           return;
         }
-        
+
         if (optionSimulation.isPaused) {
           // 如果已暂停，则继续
           optionSimulation.isPaused = false;
           document.getElementById("option-animate-btn").textContent = "暂停";
-          document.getElementById("option-animate-btn").innerHTML = '暂停 <i class="fa fa-pause ml-2"></i>';
+          document.getElementById("option-animate-btn").innerHTML =
+            '暂停 <i class="fa fa-pause ml-2"></i>';
           document.getElementById("option-pause-btn").style.display = "none";
           continueOptionAnimation();
           return;
         }
 
         // 开始新的动画
-        const totalPaths = parseInt(document.getElementById("option-paths").value);
-        
+        const totalPaths = parseInt(
+          document.getElementById("option-paths").value
+        );
+
         optionSimulation.isSimulating = true;
         optionSimulation.isPaused = false;
         optionSimulation.currentPath = 0;
@@ -3703,119 +3911,147 @@
         optionSimulation.payoffs = [];
         optionSimulation.convergenceData = [];
         optionSimulation.totalPayoff = 0;
-        
+
         // 更新按钮状态
         document.getElementById("option-animate-btn").textContent = "暂停";
-        document.getElementById("option-animate-btn").innerHTML = '暂停 <i class="fa fa-pause ml-2"></i>';
+        document.getElementById("option-animate-btn").innerHTML =
+          '暂停 <i class="fa fa-pause ml-2"></i>';
         document.getElementById("option-pause-btn").style.display = "none";
-        
+
         // 重置显示
         document.getElementById("option-mc-price").textContent = "0.00";
         document.getElementById("option-current-paths").textContent = "0";
         document.getElementById("option-progress-text").textContent = "0%";
         document.getElementById("option-progress-bar").style.width = "0%";
-        
+
         // 清空图表
         if (optionSimulation.pathChart) {
           optionSimulation.pathChart.data.datasets = [];
           optionSimulation.pathChart.update();
         }
-        
+
         if (optionSimulation.convergenceChart) {
           optionSimulation.convergenceChart.data.labels = [];
           optionSimulation.convergenceChart.data.datasets[0].data = [];
           optionSimulation.convergenceChart.data.datasets[1].data = [];
           optionSimulation.convergenceChart.update();
         }
-        
+
         continueOptionAnimation();
       }
-      
+
       function continueOptionAnimation() {
         if (!optionSimulation.isSimulating || optionSimulation.isPaused) return;
-        
+
         const S0 = parseFloat(document.getElementById("option-s0").value);
         const K = parseFloat(document.getElementById("option-k").value);
         const T = parseFloat(document.getElementById("option-t").value);
         const r = parseFloat(document.getElementById("option-r").value) / 100;
-        const sigma = parseFloat(document.getElementById("option-sigma").value) / 100;
+        const sigma =
+          parseFloat(document.getElementById("option-sigma").value) / 100;
         const optionType = document.getElementById("option-type").value;
         const speed = parseInt(document.getElementById("option-speed").value);
         const steps = 100;
-        
+
         if (optionSimulation.currentPath >= optionSimulation.totalPaths) {
           // 动画完成
           optionSimulation.isSimulating = false;
-          document.getElementById("option-animate-btn").textContent = "开始动画";
-          document.getElementById("option-animate-btn").innerHTML = '开始动画 <i class="fa fa-play ml-2"></i>';
+          document.getElementById("option-animate-btn").textContent =
+            "开始动画";
+          document.getElementById("option-animate-btn").innerHTML =
+            '开始动画 <i class="fa fa-play ml-2"></i>';
           return;
         }
-        
+
         // 生成新的股价路径
         const path = generateStockPath(S0, r, sigma, T, steps);
         const finalPrice = path[path.length - 1];
-        
+
         let payoff;
         if (optionType === "call") {
           payoff = Math.max(finalPrice - K, 0);
         } else {
           payoff = Math.max(K - finalPrice, 0);
         }
-        
+
         optionSimulation.totalPayoff += payoff;
         optionSimulation.payoffs.push(payoff);
         optionSimulation.paths.push(path);
         optionSimulation.currentPath++;
-        
+
         // 计算当前蒙特卡洛价格
-        const mcPrice = Math.exp(-r * T) * (optionSimulation.totalPayoff / optionSimulation.currentPath);
-        const bsPrice = optionType === "call" ? 
-          blackScholesCall(S0, K, T, r, sigma) : 
-          blackScholesPut(S0, K, T, r, sigma);
-        
+        const mcPrice =
+          Math.exp(-r * T) *
+          (optionSimulation.totalPayoff / optionSimulation.currentPath);
+        const bsPrice =
+          optionType === "call"
+            ? blackScholesCall(S0, K, T, r, sigma)
+            : blackScholesPut(S0, K, T, r, sigma);
+
         // 更新显示
-        document.getElementById("option-mc-price").textContent = mcPrice.toFixed(4);
-        document.getElementById("option-bs-price").textContent = bsPrice.toFixed(4);
-        document.getElementById("option-current-paths").textContent = optionSimulation.currentPath;
-        
-        const progress = (optionSimulation.currentPath / optionSimulation.totalPaths) * 100;
-        document.getElementById("option-progress-text").textContent = progress.toFixed(1) + "%";
-        document.getElementById("option-progress-bar").style.width = progress + "%";
-        
+        document.getElementById("option-mc-price").textContent =
+          mcPrice.toFixed(4);
+        document.getElementById("option-bs-price").textContent =
+          bsPrice.toFixed(4);
+        document.getElementById("option-current-paths").textContent =
+          optionSimulation.currentPath;
+
+        const progress =
+          (optionSimulation.currentPath / optionSimulation.totalPaths) * 100;
+        document.getElementById("option-progress-text").textContent =
+          progress.toFixed(1) + "%";
+        document.getElementById("option-progress-bar").style.width =
+          progress + "%";
+
         const error = Math.abs((mcPrice - bsPrice) / bsPrice) * 100;
-        document.getElementById("option-price-diff").textContent = error.toFixed(2) + "%";
-        
+        document.getElementById("option-price-diff").textContent =
+          error.toFixed(2) + "%";
+
         // 记录收敛数据
-        optionSimulation.convergenceData.push({ x: optionSimulation.currentPath, y: mcPrice });
-        
+        optionSimulation.convergenceData.push({
+          x: optionSimulation.currentPath,
+          y: mcPrice,
+        });
+
         // 更新路径图表（只显示最近的几条路径）
         updatePathChart();
-        
+
         // 更新收敛图表
-        if (optionSimulation.convergenceChart && optionSimulation.currentPath % 10 === 0) {
-          optionSimulation.convergenceChart.data.labels = optionSimulation.convergenceData.map(d => d.x);
-          optionSimulation.convergenceChart.data.datasets[0].data = optionSimulation.convergenceData.map(d => d.y);
-          optionSimulation.convergenceChart.data.datasets[1].data = optionSimulation.convergenceData.map(d => bsPrice);
-          optionSimulation.convergenceChart.update('none');
+        if (
+          optionSimulation.convergenceChart &&
+          optionSimulation.currentPath % 10 === 0
+        ) {
+          optionSimulation.convergenceChart.data.labels =
+            optionSimulation.convergenceData.map((d) => d.x);
+          optionSimulation.convergenceChart.data.datasets[0].data =
+            optionSimulation.convergenceData.map((d) => d.y);
+          optionSimulation.convergenceChart.data.datasets[1].data =
+            optionSimulation.convergenceData.map((d) => bsPrice);
+          optionSimulation.convergenceChart.update("none");
         }
-        
+
         // 继续下一次迭代
-        optionSimulation.animationId = setTimeout(continueOptionAnimation, speed);
+        optionSimulation.animationId = setTimeout(
+          continueOptionAnimation,
+          speed
+        );
       }
-      
+
       function pauseOptionAnimation() {
         if (!optionSimulation.isSimulating) return;
-        
+
         optionSimulation.isPaused = true;
         if (optionSimulation.animationId) {
           clearTimeout(optionSimulation.animationId);
         }
-        
+
         document.getElementById("option-animate-btn").textContent = "继续";
-        document.getElementById("option-animate-btn").innerHTML = '继续 <i class="fa fa-play ml-2"></i>';
-        document.getElementById("option-pause-btn").style.display = "inline-block";
+        document.getElementById("option-animate-btn").innerHTML =
+          '继续 <i class="fa fa-play ml-2"></i>';
+        document.getElementById("option-pause-btn").style.display =
+          "inline-block";
       }
-      
+
       function resetOptionAnimation() {
         optionSimulation.isSimulating = false;
         optionSimulation.isPaused = false;
@@ -3825,16 +4061,17 @@
         optionSimulation.payoffs = [];
         optionSimulation.convergenceData = [];
         optionSimulation.totalPayoff = 0;
-        
+
         if (optionSimulation.animationId) {
           clearTimeout(optionSimulation.animationId);
         }
-        
+
         // 重置按钮状态
         document.getElementById("option-animate-btn").textContent = "开始动画";
-        document.getElementById("option-animate-btn").innerHTML = '开始动画 <i class="fa fa-play ml-2"></i>';
+        document.getElementById("option-animate-btn").innerHTML =
+          '开始动画 <i class="fa fa-play ml-2"></i>';
         document.getElementById("option-pause-btn").style.display = "none";
-        
+
         // 重置显示
         document.getElementById("option-mc-price").textContent = "0.00";
         document.getElementById("option-bs-price").textContent = "0.00";
@@ -3842,13 +4079,13 @@
         document.getElementById("option-current-paths").textContent = "0";
         document.getElementById("option-progress-text").textContent = "0%";
         document.getElementById("option-progress-bar").style.width = "0%";
-        
+
         // 清空图表
         if (optionSimulation.pathChart) {
           optionSimulation.pathChart.data.datasets = [];
           optionSimulation.pathChart.update();
         }
-        
+
         if (optionSimulation.convergenceChart) {
           optionSimulation.convergenceChart.data.labels = [];
           optionSimulation.convergenceChart.data.datasets[0].data = [];
@@ -4211,29 +4448,36 @@
           queueSimulation.serverStatusData = [];
           queueSimulation.avgWaitData = [];
           queueSimulation.utilizationData = [];
-          
+
           // 初始化第一个到达事件
           queueSimulation.nextArrival = exponentialRandom(arrivalRate);
-          
+
           // 更新按钮状态
           document.getElementById("queue-start-btn").style.display = "none";
-          document.getElementById("queue-pause-btn").style.display = "inline-block";
+          document.getElementById("queue-pause-btn").style.display =
+            "inline-block";
           document.getElementById("queue-pause-btn").disabled = false;
-          document.getElementById("queue-pause-btn").innerHTML = '暂停 <i class="fa fa-pause ml-2"></i>';
+          document.getElementById("queue-pause-btn").innerHTML =
+            '暂停 <i class="fa fa-pause ml-2"></i>';
         } else if (queueSimulation.isPaused) {
           // 继续动画
           queueSimulation.isPaused = false;
-          document.getElementById("queue-pause-btn").innerHTML = '暂停 <i class="fa fa-pause ml-2"></i>';
+          document.getElementById("queue-pause-btn").innerHTML =
+            '暂停 <i class="fa fa-pause ml-2"></i>';
         }
 
         const simulateStep = () => {
           if (!queueSimulation.isAnimating || queueSimulation.isPaused) {
             return;
           }
-          
-          if (queueSimulation.stepCount >= queueSimulation.maxSteps || queueSimulation.currentTime >= queueSimulation.maxTime) {
+
+          if (
+            queueSimulation.stepCount >= queueSimulation.maxSteps ||
+            queueSimulation.currentTime >= queueSimulation.maxTime
+          ) {
             queueSimulation.isAnimating = false;
-            document.getElementById("queue-start-btn").style.display = "inline-block";
+            document.getElementById("queue-start-btn").style.display =
+              "inline-block";
             document.getElementById("queue-pause-btn").style.display = "none";
             return;
           }
@@ -4287,8 +4531,12 @@
 
           // 更新数据
           queueSimulation.timeData.push(queueSimulation.currentTime.toFixed(2));
-          queueSimulation.queueLengthData.push(queueSimulation.customers.length);
-          queueSimulation.serverStatusData.push(queueSimulation.serverBusy ? 1 : 0);
+          queueSimulation.queueLengthData.push(
+            queueSimulation.customers.length
+          );
+          queueSimulation.serverStatusData.push(
+            queueSimulation.serverBusy ? 1 : 0
+          );
 
           // 计算实时指标
           const avgWait =
@@ -4301,19 +4549,23 @@
                   queueSimulation.currentTime) *
                 100
               : 0;
-          
+
           queueSimulation.avgWaitData.push(avgWait);
           queueSimulation.utilizationData.push(utilization);
 
           // 更新图表
           queueSimulation.chart.data.labels = queueSimulation.timeData;
-          queueSimulation.chart.data.datasets[0].data = queueSimulation.queueLengthData;
-          queueSimulation.chart.data.datasets[1].data = queueSimulation.serverStatusData;
+          queueSimulation.chart.data.datasets[0].data =
+            queueSimulation.queueLengthData;
+          queueSimulation.chart.data.datasets[1].data =
+            queueSimulation.serverStatusData;
           queueSimulation.chart.update("none");
-          
+
           queueSimulation.metricsChart.data.labels = queueSimulation.timeData;
-          queueSimulation.metricsChart.data.datasets[0].data = queueSimulation.avgWaitData;
-          queueSimulation.metricsChart.data.datasets[1].data = queueSimulation.utilizationData;
+          queueSimulation.metricsChart.data.datasets[0].data =
+            queueSimulation.avgWaitData;
+          queueSimulation.metricsChart.data.datasets[1].data =
+            queueSimulation.utilizationData;
           queueSimulation.metricsChart.update("none");
 
           // 更新显示
@@ -4333,19 +4585,20 @@
 
         simulateStep();
       }
-      
+
       function pauseQueueAnimation() {
         if (queueSimulation.isAnimating && !queueSimulation.isPaused) {
           queueSimulation.isPaused = true;
           if (queueSimulation.animationId) {
             clearTimeout(queueSimulation.animationId);
           }
-          document.getElementById("queue-pause-btn").innerHTML = '继续 <i class="fa fa-play ml-2"></i>';
+          document.getElementById("queue-pause-btn").innerHTML =
+            '继续 <i class="fa fa-play ml-2"></i>';
         } else if (queueSimulation.isAnimating && queueSimulation.isPaused) {
           animateQueueSimulation();
         }
       }
-      
+
       function resetQueueAnimation() {
         queueSimulation.isAnimating = false;
         queueSimulation.isPaused = false;
@@ -4353,11 +4606,13 @@
           clearTimeout(queueSimulation.animationId);
         }
         resetQueueSystem();
-        
+
         // 重置按钮状态
-        document.getElementById("queue-start-btn").style.display = "inline-block";
+        document.getElementById("queue-start-btn").style.display =
+          "inline-block";
         document.getElementById("queue-pause-btn").style.display = "none";
-        document.getElementById("queue-pause-btn").innerHTML = '暂停 <i class="fa fa-pause ml-2"></i>';
+        document.getElementById("queue-pause-btn").innerHTML =
+          '暂停 <i class="fa fa-pause ml-2"></i>';
       }
 
       function drawPiCanvas() {
@@ -4642,5 +4897,8 @@
           });
       });
     </script>
+
+    <!-- 工具箱组件 -->
+    <script src="/static/js/toolbox.js"></script>
   </body>
 </html>

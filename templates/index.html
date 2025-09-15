@@ -13,6 +13,15 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
 
+    <!-- Markdown和LaTeX渲染库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
     <!-- 配置Tailwind自定义颜色和字体 -->
     <script>
       tailwind.config = {
@@ -78,6 +87,152 @@
         .glass-effect {
           backdrop-filter: blur(10px);
           background-color: rgba(15, 23, 48, 0.6);
+        }
+
+        /* Markdown内容样式 */
+        .message-content h1,
+        .message-content h2,
+        .message-content h3,
+        .message-content h4,
+        .message-content h5,
+        .message-content h6 {
+          color: #00f3ff;
+          font-weight: 600;
+          margin: 0.5rem 0;
+        }
+
+        .message-content h1 {
+          font-size: 1.25rem;
+        }
+        .message-content h2 {
+          font-size: 1.125rem;
+        }
+        .message-content h3 {
+          font-size: 1rem;
+        }
+
+        .message-content p {
+          margin: 0.5rem 0;
+          line-height: 1.6;
+        }
+
+        .message-content ul,
+        .message-content ol {
+          margin: 0.5rem 0;
+          padding-left: 1.5rem;
+        }
+
+        .message-content li {
+          margin: 0.25rem 0;
+        }
+
+        .message-content code {
+          background-color: rgba(55, 65, 81, 0.8);
+          color: #fbbf24;
+          padding: 0.125rem 0.25rem;
+          border-radius: 0.25rem;
+          font-family: "Courier New", monospace;
+          font-size: 0.875rem;
+        }
+
+        .message-content pre {
+          background-color: rgba(31, 41, 55, 0.9);
+          border: 1px solid rgba(75, 85, 99, 0.5);
+          border-radius: 0.5rem;
+          padding: 1rem;
+          margin: 0.5rem 0;
+          overflow-x: auto;
+        }
+
+        .message-content pre code {
+          background: none;
+          padding: 0;
+          color: #e5e7eb;
+        }
+
+        .message-content blockquote {
+          border-left: 4px solid #00f3ff;
+          padding-left: 1rem;
+          margin: 0.5rem 0;
+          color: #d1d5db;
+          font-style: italic;
+        }
+
+        .message-content table {
+          border-collapse: collapse;
+          width: 100%;
+          margin: 0.5rem 0;
+        }
+
+        .message-content th,
+        .message-content td {
+          border: 1px solid rgba(75, 85, 99, 0.5);
+          padding: 0.5rem;
+          text-align: left;
+        }
+
+        .message-content th {
+          background-color: rgba(55, 65, 81, 0.8);
+          color: #00f3ff;
+          font-weight: 600;
+        }
+
+        .message-content a {
+          color: #00f3ff;
+          text-decoration: underline;
+        }
+
+        .message-content a:hover {
+          color: #bf00ff;
+        }
+
+        /* KaTeX公式样式调整 */
+        .message-content .katex {
+          color: #e5e7eb !important;
+        }
+
+        .message-content .katex-display {
+          margin: 1rem 0;
+        }
+
+        /* 思考动画样式 */
+        .thinking-animation {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .thinking-animation .dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background-color: #00f3ff;
+          animation: thinking-pulse 1.4s ease-in-out infinite both;
+        }
+
+        .thinking-animation .dot:nth-child(1) {
+          animation-delay: -0.32s;
+        }
+
+        .thinking-animation .dot:nth-child(2) {
+          animation-delay: -0.16s;
+        }
+
+        .thinking-animation .dot:nth-child(3) {
+          animation-delay: 0s;
+        }
+
+        @keyframes thinking-pulse {
+          0%,
+          80%,
+          100% {
+            transform: scale(0.8);
+            opacity: 0.5;
+          }
+          40% {
+            transform: scale(1.2);
+            opacity: 1;
+          }
         }
       }
     </style>
@@ -1971,7 +2126,7 @@
         initMonteCarloChart();
         initDistributionsChart();
         initCorrelationChart();
-        
+
         // 初始化分布参数事件监听器
         initDistributionParamEvents();
 
@@ -1991,7 +2146,9 @@
 
         // 正态分布模拟器事件
         const normalMeanSlider = document.getElementById("normal-sim-mean");
-        const normalMeanValue = document.getElementById("normal-sim-mean-value");
+        const normalMeanValue = document.getElementById(
+          "normal-sim-mean-value"
+        );
         const normalStdSlider = document.getElementById("normal-sim-std");
         const normalStdValue = document.getElementById("normal-sim-std-value");
         const generateNormalBtn = document.getElementById("generate-normal");
@@ -2086,5 +2243,8 @@
         calculatePi(1000);
       });
     </script>
+
+    <!-- 工具箱组件 -->
+    <script src="/static/js/toolbox.js"></script>
   </body>
 </html>
