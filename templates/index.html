@@ -13,6 +13,15 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
 
+    <!-- Markdown和LaTeX渲染库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
     <!-- 配置Tailwind自定义颜色和字体 -->
     <script>
       tailwind.config = {
@@ -22,6 +31,7 @@
               "neon-blue": "#00f3ff",
               "neon-purple": "#bf00ff",
               "neon-green": "#00ff66",
+              "neon-orange": "#ff8c00",
               "dark-bg": "#050a1a",
               "dark-card": "#0f1730",
             },
@@ -78,6 +88,152 @@
         .glass-effect {
           backdrop-filter: blur(10px);
           background-color: rgba(15, 23, 48, 0.6);
+        }
+
+        /* Markdown内容样式 */
+        .message-content h1,
+        .message-content h2,
+        .message-content h3,
+        .message-content h4,
+        .message-content h5,
+        .message-content h6 {
+          color: #00f3ff;
+          font-weight: 600;
+          margin: 0.5rem 0;
+        }
+
+        .message-content h1 {
+          font-size: 1.25rem;
+        }
+        .message-content h2 {
+          font-size: 1.125rem;
+        }
+        .message-content h3 {
+          font-size: 1rem;
+        }
+
+        .message-content p {
+          margin: 0.5rem 0;
+          line-height: 1.6;
+        }
+
+        .message-content ul,
+        .message-content ol {
+          margin: 0.5rem 0;
+          padding-left: 1.5rem;
+        }
+
+        .message-content li {
+          margin: 0.25rem 0;
+        }
+
+        .message-content code {
+          background-color: rgba(55, 65, 81, 0.8);
+          color: #fbbf24;
+          padding: 0.125rem 0.25rem;
+          border-radius: 0.25rem;
+          font-family: "Courier New", monospace;
+          font-size: 0.875rem;
+        }
+
+        .message-content pre {
+          background-color: rgba(31, 41, 55, 0.9);
+          border: 1px solid rgba(75, 85, 99, 0.5);
+          border-radius: 0.5rem;
+          padding: 1rem;
+          margin: 0.5rem 0;
+          overflow-x: auto;
+        }
+
+        .message-content pre code {
+          background: none;
+          padding: 0;
+          color: #e5e7eb;
+        }
+
+        .message-content blockquote {
+          border-left: 4px solid #00f3ff;
+          padding-left: 1rem;
+          margin: 0.5rem 0;
+          color: #d1d5db;
+          font-style: italic;
+        }
+
+        .message-content table {
+          border-collapse: collapse;
+          width: 100%;
+          margin: 0.5rem 0;
+        }
+
+        .message-content th,
+        .message-content td {
+          border: 1px solid rgba(75, 85, 99, 0.5);
+          padding: 0.5rem;
+          text-align: left;
+        }
+
+        .message-content th {
+          background-color: rgba(55, 65, 81, 0.8);
+          color: #00f3ff;
+          font-weight: 600;
+        }
+
+        .message-content a {
+          color: #00f3ff;
+          text-decoration: underline;
+        }
+
+        .message-content a:hover {
+          color: #bf00ff;
+        }
+
+        /* KaTeX公式样式调整 */
+        .message-content .katex {
+          color: #e5e7eb !important;
+        }
+
+        .message-content .katex-display {
+          margin: 1rem 0;
+        }
+
+        /* 思考动画样式 */
+        .thinking-animation {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .thinking-animation .dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background-color: #00f3ff;
+          animation: thinking-pulse 1.4s ease-in-out infinite both;
+        }
+
+        .thinking-animation .dot:nth-child(1) {
+          animation-delay: -0.32s;
+        }
+
+        .thinking-animation .dot:nth-child(2) {
+          animation-delay: -0.16s;
+        }
+
+        .thinking-animation .dot:nth-child(3) {
+          animation-delay: 0s;
+        }
+
+        @keyframes thinking-pulse {
+          0%,
+          80%,
+          100% {
+            transform: scale(0.8);
+            opacity: 0.5;
+          }
+          40% {
+            transform: scale(1.2);
+            opacity: 1;
+          }
         }
       }
     </style>
@@ -140,7 +296,12 @@
         </div>
 
         <!-- 移动端菜单按钮 -->
-        <button class="md:hidden text-white text-2xl" id="menu-toggle">
+        <button
+          class="md:hidden text-white text-2xl"
+          id="menu-toggle"
+          aria-label="打开导航菜单"
+          title="打开导航菜单"
+        >
           <i class="fa fa-bars"></i>
         </button>
       </div>
@@ -317,7 +478,32 @@
             </div>
           </div>
 
-          <!-- 概念卡片4 -->
+          <!-- 概念卡片4 - 区间估计 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-orange-500/10 flex items-center justify-center mb-6 group-hover:bg-orange-500/20 transition-colors"
+            >
+              <i class="fa fa-chart-bar text-orange-500 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              区间估计
+            </h3>
+            <p class="text-gray-400">
+              用样本统计量构造包含未知参数的区间，给出参数估计的精度和可信度，是统计推断的核心方法。
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a
+                href="#"
+                class="text-orange-500 hover:text-white transition-colors flex items-center"
+              >
+                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 概念卡片5 - 假设检验 -->
           <div
             class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
           >
@@ -342,7 +528,7 @@
             </div>
           </div>
 
-          <!-- 概念卡片5 -->
+          <!-- 概念卡片6 -->
           <div
             class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group"
           >
@@ -367,7 +553,7 @@
             </div>
           </div>
 
-          <!-- 概念卡片6 -->
+          <!-- 概念卡片7 -->
           <div
             class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
           >
@@ -421,7 +607,9 @@
             </h3>
 
             <div class="mb-6">
-              <label class="block text-gray-300 mb-2">试验次数:</label>
+              <label for="dice-trials" class="block text-gray-300 mb-2"
+                >试验次数:</label
+              >
               <div class="flex items-center">
                 <input
                   type="range"
@@ -472,7 +660,9 @@
 
             <div class="grid grid-cols-2 gap-4 mb-6">
               <div>
-                <label class="block text-gray-300 mb-2">均值 (μ):</label>
+                <label for="normal-sim-mean" class="block text-gray-300 mb-2"
+                  >均值 (μ):</label
+                >
                 <div class="flex items-center">
                   <input
                     type="range"
@@ -491,7 +681,9 @@
                 </div>
               </div>
               <div>
-                <label class="block text-gray-300 mb-2">标准差 (σ):</label>
+                <label for="normal-sim-std" class="block text-gray-300 mb-2"
+                  >标准差 (σ):</label
+                >
                 <div class="flex items-center">
                   <input
                     type="range"
@@ -547,7 +739,11 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div class="md:col-span-1">
                 <div class="mb-6">
-                  <label class="block text-gray-300 mb-2">样本数量:</label>
+                  <label
+                    for="monte-carlo-samples"
+                    class="block text-gray-300 mb-2"
+                    >样本数量:</label
+                  >
                   <div class="flex items-center">
                     <input
                       type="range"
@@ -636,7 +832,9 @@
             </h3>
 
             <div class="mb-6">
-              <label class="block text-gray-300 mb-3">选择分布:</label>
+              <label for="distribution-select" class="block text-gray-300 mb-3"
+                >选择分布:</label
+              >
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <button
                   class="distribution-btn active px-3 py-2 bg-neon-green/20 text-neon-green rounded-md hover:bg-neon-green/30 transition-colors text-sm"
@@ -671,7 +869,9 @@
               <div id="normal-params" class="distribution-params">
                 <div class="grid grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-gray-300 mb-2 text-sm"
+                    <label
+                      for="normal-mean"
+                      class="block text-gray-300 mb-2 text-sm"
                       >均值 (μ):</label
                     >
                     <div class="flex items-center">
@@ -692,7 +892,9 @@
                     </div>
                   </div>
                   <div>
-                    <label class="block text-gray-300 mb-2 text-sm"
+                    <label
+                      for="normal-std"
+                      class="block text-gray-300 mb-2 text-sm"
                       >标准差 (σ):</label
                     >
                     <div class="flex items-center">
@@ -718,7 +920,9 @@
               <!-- 泊松分布参数 -->
               <div id="poisson-params" class="distribution-params hidden">
                 <div>
-                  <label class="block text-gray-300 mb-2 text-sm"
+                  <label
+                    for="poisson-lambda"
+                    class="block text-gray-300 mb-2 text-sm"
                     >λ 参数:</label
                   >
                   <div class="flex items-center">
@@ -744,7 +948,9 @@
               <div id="binomial-params" class="distribution-params hidden">
                 <div class="grid grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-gray-300 mb-2 text-sm"
+                    <label
+                      for="binomial-n"
+                      class="block text-gray-300 mb-2 text-sm"
                       >试验次数 (n):</label
                     >
                     <div class="flex items-center">
@@ -765,7 +971,9 @@
                     </div>
                   </div>
                   <div>
-                    <label class="block text-gray-300 mb-2 text-sm"
+                    <label
+                      for="binomial-p"
+                      class="block text-gray-300 mb-2 text-sm"
                       >成功概率 (p):</label
                     >
                     <div class="flex items-center">
@@ -791,7 +999,9 @@
               <!-- 指数分布参数 -->
               <div id="exponential-params" class="distribution-params hidden">
                 <div>
-                  <label class="block text-gray-300 mb-2 text-sm"
+                  <label
+                    for="exponential-lambda"
+                    class="block text-gray-300 mb-2 text-sm"
                     >λ 参数:</label
                   >
                   <div class="flex items-center">
@@ -828,7 +1038,9 @@
             </h3>
 
             <div class="mb-6">
-              <label class="block text-gray-300 mb-2">相关系数:</label>
+              <label for="correlation-coeff" class="block text-gray-300 mb-2"
+                >相关系数:</label
+              >
               <div class="flex items-center">
                 <input
                   type="range"
@@ -1965,13 +2177,17 @@
 
         // 随机变量相关功能已移至 random_variables.html
 
-        // 初始化图表
-        initDiceChart();
-        initNormalChart();
-        initMonteCarloChart();
-        initDistributionsChart();
-        initCorrelationChart();
-        
+        // 初始化图表 - 确保Chart.js已加载
+        if (typeof Chart !== "undefined") {
+          initDiceChart();
+          initNormalChart();
+          initMonteCarloChart();
+          initDistributionsChart();
+          initCorrelationChart();
+        } else {
+          console.error("Chart.js未加载，请检查网络连接");
+        }
+
         // 初始化分布参数事件监听器
         initDistributionParamEvents();
 
@@ -1991,7 +2207,9 @@
 
         // 正态分布模拟器事件
         const normalMeanSlider = document.getElementById("normal-sim-mean");
-        const normalMeanValue = document.getElementById("normal-sim-mean-value");
+        const normalMeanValue = document.getElementById(
+          "normal-sim-mean-value"
+        );
         const normalStdSlider = document.getElementById("normal-sim-std");
         const normalStdValue = document.getElementById("normal-sim-std-value");
         const generateNormalBtn = document.getElementById("generate-normal");
@@ -2085,6 +2303,144 @@
         rollDice(1000);
         calculatePi(1000);
       });
+    </script>
+
+    <!-- 工具箱组件 -->
+    <script src="/static/js/toolbox.js"></script>
+
+    <!-- LaTeX和Markdown渲染测试 -->
+    <script>
+      // 测试LaTeX和Markdown渲染功能
+      function testLatexRendering() {
+        console.log("开始测试LaTeX渲染功能");
+
+        // 创建测试容器
+        const testContainer = document.createElement("div");
+        testContainer.id = "latex-test-container";
+        testContainer.style.cssText =
+          "position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 20px; border-radius: 8px; z-index: 9999; max-width: 400px;";
+
+        // 测试内容
+        const testContent = `
+          <h3>LaTeX渲染测试</h3>
+          <p>行内公式: $E = mc^2$</p>
+          <p>块级公式:</p>
+          $$\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}$$
+          <p>概率密度函数:</p>
+          $$f(x) = \\frac{1}{\\sqrt{2\\pi\\sigma^2}} e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}$$
+          
+          <h4>Markdown表格测试</h4>
+          | 分布 | 均值 | 方差 |
+          |------|------|------|
+          | 正态分布 | μ | σ² |
+          | 泊松分布 | λ | λ |
+          
+          <button onclick="closeTest()" style="margin-top: 10px; padding: 5px 10px; background: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer;">关闭测试</button>
+        `;
+
+        testContainer.innerHTML = testContent;
+        document.body.appendChild(testContainer);
+
+        // 使用全局渲染函数
+        setTimeout(() => {
+          if (window.renderLatexInElement) {
+            console.log("使用全局LaTeX渲染函数");
+            const success = window.renderLatexInElement(testContainer);
+            if (success) {
+              console.log("LaTeX渲染完成");
+            } else {
+              console.warn("LaTeX渲染失败或无内容");
+            }
+          } else {
+            console.warn("全局LaTeX渲染函数未找到");
+          }
+        }, 100);
+      }
+
+      function closeTest() {
+        const testContainer = document.getElementById("latex-test-container");
+        if (testContainer) {
+          testContainer.remove();
+        }
+      }
+
+      // 聊天记录测试函数
+      function testChatHistory() {
+        console.log("开始测试聊天记录重复问题");
+
+        if (window.probabilityToolbox) {
+          // 模拟添加一些测试消息
+          const testMessages = [
+            { role: "user", content: "测试消息1：什么是正态分布？" },
+            {
+              role: "assistant",
+              content: "正态分布是一种连续概率分布，具有钟形曲线特征。",
+            },
+            { role: "user", content: "测试消息2：如何计算标准差？" },
+            {
+              role: "assistant",
+              content:
+                "标准差 $\\sigma = \\sqrt{\\frac{\\sum(x_i - \\mu)^2}{n}}$",
+            },
+          ];
+
+          // 清空现有聊天记录
+          window.probabilityToolbox.clearChat();
+
+          // 添加测试消息
+          testMessages.forEach((msg) => {
+            window.probabilityToolbox.addMessageToChat(msg.role, msg.content);
+          });
+
+          console.log(
+            "当前聊天历史长度:",
+            window.probabilityToolbox.chatHistory.length
+          );
+
+          // 模拟多次切换工具（这应该不会导致消息重复）
+          setTimeout(() => {
+            console.log(
+              "第一次切换后聊天历史长度:",
+              window.probabilityToolbox.chatHistory.length
+            );
+            window.probabilityToolbox.displayChatHistory();
+
+            setTimeout(() => {
+              console.log(
+                "第二次切换后聊天历史长度:",
+                window.probabilityToolbox.chatHistory.length
+              );
+              window.probabilityToolbox.displayChatHistory();
+
+              setTimeout(() => {
+                console.log(
+                  "第三次切换后聊天历史长度:",
+                  window.probabilityToolbox.chatHistory.length
+                );
+
+                // 检查DOM中的消息数量
+                const chatMessages = document.getElementById("chat-messages");
+                if (chatMessages) {
+                  const messageCount =
+                    chatMessages.querySelectorAll(".message").length;
+                  console.log("DOM中的消息数量:", messageCount);
+                  console.log("预期消息数量:", testMessages.length);
+
+                  if (messageCount === testMessages.length) {
+                    console.log("✅ 测试通过：聊天记录没有重复");
+                    alert("✅ 测试通过：聊天记录没有重复");
+                  } else {
+                    console.log("❌ 测试失败：聊天记录出现重复");
+                    alert("❌ 测试失败：聊天记录出现重复");
+                  }
+                }
+              }, 500);
+            }, 500);
+          }, 500);
+        } else {
+          console.error("工具箱未初始化");
+        }
+      }
     </script>
   </body>
 </html>

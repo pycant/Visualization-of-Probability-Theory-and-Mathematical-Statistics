@@ -11,29 +11,39 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.4.0/chartjs-plugin-annotation.min.js"></script>
-    <!-- MathJax for LaTeX rendering -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+
+    <!-- KaTeX for LaTeX rendering -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+      integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
+      crossorigin="anonymous"
+    />
     <script
-      id="MathJax-script"
-      async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"
+      integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+      integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"
+      crossorigin="anonymous"
     ></script>
     <script>
-      window.MathJax = {
-        tex: {
-          inlineMath: [
-            ["$", "$"],
-            ["\\(", "\\)"],
+      document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\[", right: "\\]", display: true },
+            { left: "\\(", right: "\\)", display: false },
           ],
-          displayMath: [
-            ["$$", "$$"],
-            ["\\[", "\\]"],
-          ],
-        },
-        options: {
-          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre"],
-        },
-      };
+        });
+      });
     </script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
@@ -46,6 +56,12 @@
         --neon-green: #00ff66;
         --neon-orange: #ff6600;
         --neon-pink: #ff0080;
+        --neon-cyan: #00f3ff;
+        --neon-yellow: #ffff00;
+        --neon-red: #ff0040;
+        --neon-indigo: #6366f1;
+        --neon-teal: #14b8a6;
+        --neon-lime: #84cc16;
       }
 
       body {
@@ -80,6 +96,30 @@
         color: var(--neon-pink);
       }
 
+      .text-neon-cyan {
+        color: var(--neon-cyan);
+      }
+
+      .text-neon-yellow {
+        color: var(--neon-yellow);
+      }
+
+      .text-neon-red {
+        color: var(--neon-red);
+      }
+
+      .text-neon-indigo {
+        color: var(--neon-indigo);
+      }
+
+      .text-neon-teal {
+        color: var(--neon-teal);
+      }
+
+      .text-neon-lime {
+        color: var(--neon-lime);
+      }
+
       .bg-neon-blue {
         background-color: var(--neon-blue);
       }
@@ -100,8 +140,185 @@
         background-color: var(--neon-pink);
       }
 
+      .bg-neon-cyan {
+        background-color: var(--neon-cyan);
+      }
+
+      .bg-neon-yellow {
+        background-color: var(--neon-yellow);
+      }
+
+      .bg-neon-red {
+        background-color: var(--neon-red);
+      }
+
+      .bg-neon-indigo {
+        background-color: var(--neon-indigo);
+      }
+
+      .bg-neon-teal {
+        background-color: var(--neon-teal);
+      }
+
+      .bg-neon-lime {
+        background-color: var(--neon-lime);
+      }
+
       .bg-dark-bg {
         background-color: var(--dark-bg);
+      }
+
+      .accent-neon-cyan {
+        accent-color: var(--neon-cyan);
+      }
+
+      .accent-neon-yellow {
+        accent-color: var(--neon-yellow);
+      }
+
+      .accent-neon-red {
+        accent-color: var(--neon-red);
+      }
+
+      .accent-neon-indigo {
+        accent-color: var(--neon-indigo);
+      }
+
+      .accent-neon-teal {
+        accent-color: var(--neon-teal);
+      }
+
+      .accent-neon-lime {
+        accent-color: var(--neon-lime);
+      }
+
+      /* 思考动画样式 */
+      .thinking-animation {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .thinking-animation .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #00f3ff;
+        animation: thinking-pulse 1.4s ease-in-out infinite both;
+      }
+
+      .thinking-animation .dot:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+
+      .thinking-animation .dot:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+
+      .thinking-animation .dot:nth-child(3) {
+        animation-delay: 0s;
+      }
+
+      @keyframes thinking-pulse {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.5;
+        }
+        40% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+      }
+
+      /* Markdown内容样式 */
+      .message-content {
+        line-height: 1.6;
+      }
+
+      .message-content h1,
+      .message-content h2,
+      .message-content h3,
+      .message-content h4,
+      .message-content h5,
+      .message-content h6 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      .message-content p {
+        margin-bottom: 1rem;
+      }
+
+      .message-content ul,
+      .message-content ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+      }
+
+      .message-content li {
+        margin-bottom: 0.25rem;
+      }
+
+      .message-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        background-color: rgba(30, 41, 59, 0.5);
+        border-radius: 0.5rem;
+        overflow: hidden;
+      }
+
+      .message-content th,
+      .message-content td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .message-content th {
+        background-color: rgba(0, 243, 255, 0.1);
+        font-weight: 600;
+        color: #00f3ff;
+      }
+
+      .message-content code {
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-family: "Courier New", monospace;
+        color: #00ff66;
+      }
+
+      .message-content pre {
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1rem 0;
+      }
+
+      .message-content pre code {
+        background: none;
+        padding: 0;
+      }
+
+      .message-content blockquote {
+        border-left: 4px solid #00f3ff;
+        padding-left: 1rem;
+        margin: 1rem 0;
+        font-style: italic;
+        color: #cbd5e1;
+      }
+
+      .message-content .katex {
+        color: #e5e7eb !important;
+      }
+
+      .message-content .katex-display {
+        margin: 1rem 0;
       }
 
       .bg-dark-card {
@@ -446,6 +663,284 @@
               探索卡方分布 <i class="fa fa-arrow-right ml-2"></i>
             </button>
           </div>
+
+          <!-- 贝塔分布卡片 -->
+          <div
+            class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6"
+            >
+              <i class="fa fa-wave-square text-neon-purple text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              贝塔分布
+            </h3>
+            <p class="text-gray-400 mb-4">
+              定义在[0,1]区间上的连续概率分布，常用于建模概率、比例和百分比等有界变量。
+            </p>
+            <div class="math-formula">
+              $$f(x) = \frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)}$$
+            </div>
+            <button
+              onclick="showDistribution('beta')"
+              class="w-full mt-4 px-4 py-2 bg-neon-purple text-dark-bg font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300"
+            >
+              探索贝塔分布 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+
+          <!-- t分布卡片 -->
+          <div
+            class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6"
+            >
+              <i class="fa fa-chart-line text-neon-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              t分布
+            </h3>
+            <p class="text-gray-400 mb-4">
+              学生t分布，用于小样本统计推断，当样本量增大时趋近于标准正态分布。
+            </p>
+            <div class="math-formula">
+              $$f(x) =
+              \frac{\Gamma(\frac{\nu+1}{2})}{\sqrt{\nu\pi}\Gamma(\frac{\nu}{2})}\left(1+\frac{x^2}{\nu}\right)^{-\frac{\nu+1}{2}}$$
+            </div>
+            <button
+              onclick="showDistribution('t')"
+              class="w-full mt-4 px-4 py-2 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-neon-green/80 transition-all duration-300"
+            >
+              探索t分布 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+
+          <!-- 伽马分布卡片 -->
+          <div
+            class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-orange/10 flex items-center justify-center mb-6"
+            >
+              <i class="fa fa-chart-area text-neon-orange text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              伽马分布
+            </h3>
+            <p class="text-gray-400 mb-4">
+              连续概率分布，指数分布和卡方分布的推广，常用于建模等待时间和生存分析。
+            </p>
+            <div class="math-formula">
+              $$f(x) = \frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1}
+              e^{-\beta x}$$
+            </div>
+            <button
+              onclick="showDistribution('gamma')"
+              class="w-full mt-4 px-4 py-2 bg-neon-orange text-dark-bg font-bold rounded-md hover:bg-neon-orange/80 transition-all duration-300"
+            >
+              探索伽马分布 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+
+          <!-- F分布卡片 -->
+          <div
+            class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-pink"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-pink/10 flex items-center justify-center mb-6"
+            >
+              <i class="fa fa-signal text-neon-pink text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              F分布
+            </h3>
+            <p class="text-gray-400 mb-4">
+              两个卡方分布的比值分布，广泛用于方差分析和回归分析中的假设检验。
+            </p>
+            <div class="math-formula">
+              $$f(x) =
+              \frac{\Gamma(\frac{d_1+d_2}{2})}{\Gamma(\frac{d_1}{2})\Gamma(\frac{d_2}{2})}
+              \left(\frac{d_1}{d_2}\right)^{\frac{d_1}{2}}
+              \frac{x^{\frac{d_1}{2}-1}}{\left(1+\frac{d_1}{d_2}x\right)^{\frac{d_1+d_2}{2}}}$$
+            </div>
+            <button
+              onclick="showDistribution('f')"
+              class="w-full mt-4 px-4 py-2 bg-neon-pink text-dark-bg font-bold rounded-md hover:bg-neon-pink/80 transition-all duration-300"
+            >
+              探索F分布 <i class="fa fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 拓展分布标题 -->
+        <div class="text-center mt-16 mb-12">
+          <h3 class="text-2xl font-future font-bold mb-4 text-white">
+            拓展概率分布
+          </h3>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            更多高级和专业领域中使用的概率分布
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- 狄利克雷分布卡片 -->
+            <div
+              class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-cyan"
+            >
+              <div
+                class="w-14 h-14 rounded-lg bg-neon-cyan/10 flex items-center justify-center mb-6"
+              >
+                <i class="fa fa-cube text-neon-cyan text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                狄利克雷分布
+              </h3>
+              <p class="text-gray-400 mb-4">
+                多元连续概率分布，贝塔分布的多维推广，常用于贝叶斯统计和主题建模。
+              </p>
+              <div class="math-formula">
+                $$f(x_1,...,x_k) = \frac{1}{B(\alpha)} \prod_{i=1}^{k} x_i^{\alpha_i-1}$$
+              </div>
+              <button
+                onclick="showDistribution('dirichlet')"
+                class="w-full mt-4 px-4 py-2 bg-neon-cyan text-dark-bg font-bold rounded-md hover:bg-neon-cyan/80 transition-all duration-300"
+              >
+                探索狄利克雷分布 <i class="fa fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+
+            <!-- 威布尔分布卡片 -->
+            <div
+              class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-yellow"
+            >
+              <div
+                class="w-14 h-14 rounded-lg bg-neon-yellow/10 flex items-center justify-center mb-6"
+              >
+                <i class="fa fa-cog text-neon-yellow text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                威布尔分布
+              </h3>
+              <p class="text-gray-400 mb-4">
+                连续概率分布，广泛用于可靠性分析、生存分析和风险评估中的失效时间建模。
+              </p>
+              <div class="math-formula">
+                $$f(x) = \frac{k}{\lambda}\left(\frac{x}{\lambda}\right)^{k-1} e^{-(x/\lambda)^k}$$
+              </div>
+              <button
+                onclick="showDistribution('weibull')"
+                class="w-full mt-4 px-4 py-2 bg-neon-yellow text-dark-bg font-bold rounded-md hover:bg-neon-yellow/80 transition-all duration-300"
+              >
+                探索威布尔分布 <i class="fa fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+
+            <!-- 对数正态分布卡片 -->
+            <div
+              class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-red"
+            >
+              <div
+                class="w-14 h-14 rounded-lg bg-neon-red/10 flex items-center justify-center mb-6"
+              >
+                <i class="fa fa-chart-area text-neon-red text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                对数正态分布
+              </h3>
+              <p class="text-gray-400 mb-4">
+                连续概率分布，其对数服从正态分布，常用于金融建模和生物统计中的正偏数据。
+              </p>
+              <div class="math-formula">
+                $$f(x) = \frac{1}{x\sigma\sqrt{2\pi}} e^{-\frac{(\ln x - \mu)^2}{2\sigma^2}}$$
+              </div>
+              <button
+                onclick="showDistribution('lognormal')"
+                class="w-full mt-4 px-4 py-2 bg-neon-red text-dark-bg font-bold rounded-md hover:bg-neon-red/80 transition-all duration-300"
+              >
+                探索对数正态分布 <i class="fa fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+
+            <!-- 帕累托分布卡片 -->
+            <div
+              class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-indigo"
+            >
+              <div
+                class="w-14 h-14 rounded-lg bg-neon-indigo/10 flex items-center justify-center mb-6"
+              >
+                <i class="fa fa-balance-scale text-neon-indigo text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                帕累托分布
+              </h3>
+              <p class="text-gray-400 mb-4">
+                幂律分布，体现"80-20法则"，常用于经济学、社会学中的财富和收入分布建模。
+              </p>
+              <div class="math-formula">
+                $$f(x) = \frac{\alpha x_m^\alpha}{x^{\alpha+1}}$$
+              </div>
+              <button
+                onclick="showDistribution('pareto')"
+                class="w-full mt-4 px-4 py-2 bg-neon-indigo text-dark-bg font-bold rounded-md hover:bg-neon-indigo/80 transition-all duration-300"
+              >
+                探索帕累托分布 <i class="fa fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+
+            <!-- 拉普拉斯分布卡片 -->
+            <div
+              class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-teal"
+            >
+              <div
+                class="w-14 h-14 rounded-lg bg-neon-teal/10 flex items-center justify-center mb-6"
+              >
+                <i class="fa fa-mountain text-neon-teal text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                拉普拉斯分布
+              </h3>
+              <p class="text-gray-400 mb-4">
+                双指数分布，具有尖峰和厚尾特性，常用于信号处理和机器学习中的稀疏建模。
+              </p>
+              <div class="math-formula">
+                $$f(x) = \frac{1}{2b} e^{-\frac{|x-\mu|}{b}}$$
+              </div>
+              <button
+                onclick="showDistribution('laplace')"
+                class="w-full mt-4 px-4 py-2 bg-neon-teal text-dark-bg font-bold rounded-md hover:bg-neon-teal/80 transition-all duration-300"
+              >
+                探索拉普拉斯分布 <i class="fa fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+
+            <!-- 逆伽马分布卡片 -->
+            <div
+              class="distribution-card bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-lime"
+            >
+              <div
+                class="w-14 h-14 rounded-lg bg-neon-lime/10 flex items-center justify-center mb-6"
+              >
+                <i class="fa fa-flip-horizontal text-neon-lime text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                逆伽马分布
+              </h3>
+              <p class="text-gray-400 mb-4">
+                连续概率分布，伽马分布的倒数，常用作贝叶斯统计中方差参数的先验分布。
+              </p>
+              <div class="math-formula">
+                $$f(x) = \frac{\beta^\alpha}{\Gamma(\alpha)} x^{-\alpha-1} e^{-\beta/x}$$
+              </div>
+              <button
+                onclick="showDistribution('invgamma')"
+                class="w-full mt-4 px-4 py-2 bg-neon-lime text-dark-bg font-bold rounded-md hover:bg-neon-lime/80 transition-all duration-300"
+              >
+                探索逆伽马分布 <i class="fa fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -472,7 +967,7 @@
             <label class="block text-gray-300 mb-4 text-lg font-semibold"
               >选择概率分布:</label
             >
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               <button
                 onclick="selectDistribution('normal')"
                 id="btn-normal"
@@ -514,6 +1009,76 @@
                 class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-blue transition-all duration-300"
               >
                 卡方分布
+              </button>
+              <button
+                onclick="selectDistribution('beta')"
+                id="btn-beta"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-purple transition-all duration-300"
+              >
+                贝塔分布
+              </button>
+              <button
+                onclick="selectDistribution('t')"
+                id="btn-t"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-green transition-all duration-300"
+              >
+                t分布
+              </button>
+              <button
+                onclick="selectDistribution('gamma')"
+                id="btn-gamma"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-orange transition-all duration-300"
+              >
+                伽马分布
+              </button>
+              <button
+                onclick="selectDistribution('f')"
+                id="btn-f"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-pink transition-all duration-300"
+              >
+                F分布
+              </button>
+              <button
+                onclick="selectDistribution('dirichlet')"
+                id="btn-dirichlet"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-cyan transition-all duration-300"
+              >
+                狄利克雷分布
+              </button>
+              <button
+                onclick="selectDistribution('weibull')"
+                id="btn-weibull"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-yellow transition-all duration-300"
+              >
+                威布尔分布
+              </button>
+              <button
+                onclick="selectDistribution('lognormal')"
+                id="btn-lognormal"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-red transition-all duration-300"
+              >
+                对数正态分布
+              </button>
+              <button
+                onclick="selectDistribution('pareto')"
+                id="btn-pareto"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-indigo transition-all duration-300"
+              >
+                帕累托分布
+              </button>
+              <button
+                onclick="selectDistribution('laplace')"
+                id="btn-laplace"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-teal transition-all duration-300"
+              >
+                拉普拉斯分布
+              </button>
+              <button
+                onclick="selectDistribution('invgamma')"
+                id="btn-invgamma"
+                class="distribution-btn px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-neon-lime transition-all duration-300"
+              >
+                逆伽马分布
               </button>
             </div>
           </div>
@@ -712,6 +1277,394 @@
                     step="1"
                     value="2"
                     class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                </div>
+              </div>
+
+              <!-- 贝塔分布参数 -->
+              <div id="beta-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >α参数:
+                    <span
+                      id="beta-alpha-value"
+                      class="text-neon-purple font-bold"
+                      >2</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="beta-alpha"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value="2"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >β参数:
+                    <span
+                      id="beta-beta-value"
+                      class="text-neon-purple font-bold"
+                      >2</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="beta-beta"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value="2"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                  />
+                </div>
+              </div>
+
+              <!-- t分布参数 -->
+              <div id="t-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >自由度 (ν):
+                    <span id="t-df-value" class="text-neon-green font-bold"
+                      >3</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="t-df"
+                    min="1"
+                    max="30"
+                    step="1"
+                    value="3"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                </div>
+              </div>
+
+              <!-- 伽马分布参数 -->
+              <div id="gamma-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >形状参数 (α):
+                    <span
+                      id="gamma-alpha-value"
+                      class="text-neon-orange font-bold"
+                      >2</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="gamma-alpha"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value="2"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-orange"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >速率参数 (β):
+                    <span
+                      id="gamma-beta-value"
+                      class="text-neon-orange font-bold"
+                      >1</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="gamma-beta"
+                    min="0.1"
+                    max="3"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-orange"
+                  />
+                </div>
+              </div>
+
+              <!-- F分布参数 -->
+              <div id="f-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >分子自由度 (d₁):
+                    <span id="f-df1-value" class="text-neon-pink font-bold"
+                      >5</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="f-df1"
+                    min="1"
+                    max="20"
+                    step="1"
+                    value="5"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-pink"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >分母自由度 (d₂):
+                    <span id="f-df2-value" class="text-neon-pink font-bold"
+                      >10</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="f-df2"
+                    min="1"
+                    max="30"
+                    step="1"
+                    value="10"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-pink"
+                  />
+                </div>
+              </div>
+
+              <!-- 狄利克雷分布参数 -->
+              <div id="dirichlet-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >α₁ 参数:
+                    <span id="dirichlet-alpha1-value" class="text-neon-cyan font-bold"
+                      >2</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="dirichlet-alpha1"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value="2"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-cyan"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >α₂ 参数:
+                    <span id="dirichlet-alpha2-value" class="text-neon-cyan font-bold"
+                      >3</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="dirichlet-alpha2"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value="3"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-cyan"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >α₃ 参数:
+                    <span id="dirichlet-alpha3-value" class="text-neon-cyan font-bold"
+                      >1</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="dirichlet-alpha3"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-cyan"
+                  />
+                </div>
+              </div>
+
+              <!-- 威布尔分布参数 -->
+              <div id="weibull-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >形状参数 (k):
+                    <span id="weibull-k-value" class="text-neon-yellow font-bold"
+                      >2</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="weibull-k"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value="2"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-yellow"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >尺度参数 (λ):
+                    <span id="weibull-lambda-value" class="text-neon-yellow font-bold"
+                      >1</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="weibull-lambda"
+                    min="0.5"
+                    max="3"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-yellow"
+                  />
+                </div>
+              </div>
+
+              <!-- 对数正态分布参数 -->
+              <div id="lognormal-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >μ 参数:
+                    <span id="lognormal-mu-value" class="text-neon-red font-bold"
+                      >0</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="lognormal-mu"
+                    min="-2"
+                    max="2"
+                    step="0.1"
+                    value="0"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-red"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >σ 参数:
+                    <span id="lognormal-sigma-value" class="text-neon-red font-bold"
+                      >1</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="lognormal-sigma"
+                    min="0.1"
+                    max="2"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-red"
+                  />
+                </div>
+              </div>
+
+              <!-- 帕累托分布参数 -->
+              <div id="pareto-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >形状参数 (α):
+                    <span id="pareto-alpha-value" class="text-neon-indigo font-bold"
+                      >1</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="pareto-alpha"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-indigo"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >最小值 (xₘ):
+                    <span id="pareto-xm-value" class="text-neon-indigo font-bold"
+                      >1</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="pareto-xm"
+                    min="0.5"
+                    max="3"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-indigo"
+                  />
+                </div>
+              </div>
+
+              <!-- 拉普拉斯分布参数 -->
+              <div id="laplace-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >位置参数 (μ):
+                    <span id="laplace-mu-value" class="text-neon-teal font-bold"
+                      >0</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="laplace-mu"
+                    min="-3"
+                    max="3"
+                    step="0.1"
+                    value="0"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-teal"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >尺度参数 (b):
+                    <span id="laplace-b-value" class="text-neon-teal font-bold"
+                      >1</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="laplace-b"
+                    min="0.1"
+                    max="3"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-teal"
+                  />
+                </div>
+              </div>
+
+              <!-- 逆伽马分布参数 -->
+              <div id="invgamma-params" class="distribution-params hidden">
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >形状参数 (α):
+                    <span id="invgamma-alpha-value" class="text-neon-lime font-bold"
+                      >2</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="invgamma-alpha"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value="2"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-lime"
+                  />
+                </div>
+                <div class="mb-6">
+                  <label class="block text-gray-300 mb-2"
+                    >尺度参数 (β):
+                    <span id="invgamma-beta-value" class="text-neon-lime font-bold"
+                      >1</span
+                    ></label
+                  >
+                  <input
+                    type="range"
+                    id="invgamma-beta"
+                    min="0.1"
+                    max="3"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-lime"
                   />
                 </div>
               </div>
@@ -1896,6 +2849,54 @@
         document
           .getElementById("chisquare-k")
           .addEventListener("input", updateChart);
+
+        // 贝塔分布参数
+        document
+          .getElementById("beta-alpha")
+          .addEventListener("input", updateChart);
+        document
+          .getElementById("beta-beta")
+          .addEventListener("input", updateChart);
+
+        // t分布参数
+        document.getElementById("t-df").addEventListener("input", updateChart);
+
+        // 伽马分布参数
+        document
+          .getElementById("gamma-alpha")
+          .addEventListener("input", updateChart);
+        document
+          .getElementById("gamma-beta")
+          .addEventListener("input", updateChart);
+
+        // F分布参数
+        document.getElementById("f-df1").addEventListener("input", updateChart);
+        document.getElementById("f-df2").addEventListener("input", updateChart);
+
+        // 狄利克雷分布参数
+        document.getElementById("dirichlet-alpha1").addEventListener("input", updateChart);
+        document.getElementById("dirichlet-alpha2").addEventListener("input", updateChart);
+        document.getElementById("dirichlet-alpha3").addEventListener("input", updateChart);
+
+        // 威布尔分布参数
+        document.getElementById("weibull-k").addEventListener("input", updateChart);
+        document.getElementById("weibull-lambda").addEventListener("input", updateChart);
+
+        // 对数正态分布参数
+        document.getElementById("lognormal-mu").addEventListener("input", updateChart);
+        document.getElementById("lognormal-sigma").addEventListener("input", updateChart);
+
+        // 帕累托分布参数
+        document.getElementById("pareto-alpha").addEventListener("input", updateChart);
+        document.getElementById("pareto-xm").addEventListener("input", updateChart);
+
+        // 拉普拉斯分布参数
+        document.getElementById("laplace-mu").addEventListener("input", updateChart);
+        document.getElementById("laplace-b").addEventListener("input", updateChart);
+
+        // 逆伽马分布参数
+        document.getElementById("invgamma-alpha").addEventListener("input", updateChart);
+        document.getElementById("invgamma-beta").addEventListener("input", updateChart);
       }
 
       // 选择分布
@@ -1915,6 +2916,16 @@
           binomial: "bg-neon-orange",
           uniform: "bg-neon-pink",
           chisquare: "bg-neon-blue",
+          beta: "bg-neon-purple",
+          t: "bg-neon-green",
+          gamma: "bg-neon-orange",
+          f: "bg-neon-pink",
+          dirichlet: "bg-neon-cyan",
+          weibull: "bg-neon-yellow",
+          lognormal: "bg-neon-red",
+          pareto: "bg-neon-indigo",
+          laplace: "bg-neon-teal",
+          invgamma: "bg-neon-lime",
         };
 
         document.getElementById(
@@ -1939,6 +2950,16 @@
           binomial: "二项分布",
           uniform: "均匀分布",
           chisquare: "卡方分布",
+          beta: "贝塔分布",
+          t: "t分布",
+          gamma: "伽马分布",
+          f: "F分布",
+          dirichlet: "狄利克雷分布",
+          weibull: "威布尔分布",
+          lognormal: "对数正态分布",
+          pareto: "帕累托分布",
+          laplace: "拉普拉斯分布",
+          invgamma: "逆伽马分布",
         };
         document.getElementById("chart-title").textContent =
           titles[distribution];
@@ -1989,6 +3010,66 @@
             applications: "拟合优度检验、独立性检验、方差估计等。",
             properties: "非负性、右偏性、可加性等。",
           },
+          beta: {
+            description:
+              "贝塔分布是定义在[0,1]区间上的连续概率分布，由两个形状参数α和β控制。它常用于建模比例和概率。",
+            applications: "贝叶斯统计、项目管理、质量控制等。",
+            properties: "有界性、形状多样性、共轭先验等。",
+          },
+          t: {
+            description:
+              "学生t分布用于小样本统计推断，当样本量增大时趋近于标准正态分布。它在假设检验中应用广泛。",
+            applications: "小样本均值检验、置信区间估计、回归分析等。",
+            properties: "对称性、厚尾性、渐近正态性等。",
+          },
+          gamma: {
+            description:
+              "伽马分布是指数分布和卡方分布的推广，常用于建模等待时间和生存分析。它具有丰富的形状变化。",
+            applications: "可靠性分析、排队论、生存分析等。",
+            properties: "非负性、形状参数控制、可加性等。",
+          },
+          f: {
+            description:
+              "F分布是两个卡方分布的比值分布，广泛用于方差分析和回归分析中的假设检验。",
+            applications: "方差分析、回归显著性检验、模型比较等。",
+            properties: "非负性、右偏性、与卡方分布的关系等。",
+          },
+          dirichlet: {
+            description:
+              "狄利克雷分布是多元贝塔分布的推广，定义在单纯形上。它是多项分布的共轭先验分布，在贝叶斯统计中应用广泛。",
+            applications: "主题建模、文本分析、贝叶斯推断等。",
+            properties: "多元性、共轭先验、单纯形约束等。",
+          },
+          weibull: {
+            description:
+              "威布尔分布广泛用于可靠性分析和生存分析，能够建模各种失效模式。它包含指数分布作为特例。",
+            applications: "可靠性工程、生存分析、风速建模等。",
+            properties: "形状参数控制、包含指数分布、危险率函数等。",
+          },
+          lognormal: {
+            description:
+              "对数正态分布描述其对数服从正态分布的随机变量。它常用于建模正值且右偏的数据。",
+            applications: "收入分布、股价建模、粒径分析等。",
+            properties: "正值性、右偏性、几何平均等。",
+          },
+          pareto: {
+            description:
+              "帕累托分布也称为幂律分布，常用于描述财富分布、城市规模等现象。它体现了80-20法则。",
+            applications: "财富分布、网络分析、风险管理等。",
+            properties: "重尾性、幂律特征、80-20法则等。",
+          },
+          laplace: {
+            description:
+              "拉普拉斯分布也称为双指数分布，具有对称的指数衰减特征。它在信号处理和机器学习中有重要应用。",
+            applications: "信号处理、图像去噪、稀疏建模等。",
+            properties: "对称性、双指数衰减、L1正则化等。",
+          },
+          invgamma: {
+            description:
+              "逆伽马分布是伽马分布的倒数分布，常用作方差参数的先验分布。它在贝叶斯统计中应用广泛。",
+            applications: "贝叶斯推断、方差建模、层次模型等。",
+            properties: "正值性、重尾性、共轭先验等。",
+          },
         };
 
         const currentInfo = info[distribution];
@@ -2022,6 +3103,16 @@
           binomial: "#ff6600",
           uniform: "#ff0080",
           chisquare: "#00f3ff",
+          beta: "#bf00ff",
+          t: "#00ff66",
+          gamma: "#ff6600",
+          f: "#ff0080",
+          dirichlet: "#00f3ff",
+          weibull: "#ffff00",
+          lognormal: "#ff0040",
+          pareto: "#6366f1",
+          laplace: "#14b8a6",
+          invgamma: "#84cc16",
         };
 
         currentChart.data.datasets[0].borderColor = colors[currentDistribution];
@@ -2052,6 +3143,26 @@
             return generateUniformData();
           case "chisquare":
             return generateChiSquareData();
+          case "beta":
+            return generateBetaData();
+          case "t":
+            return generateTData();
+          case "gamma":
+            return generateGammaData();
+          case "f":
+            return generateFData();
+          case "dirichlet":
+            return generateDirichletData();
+          case "weibull":
+            return generateWeibullData();
+          case "lognormal":
+            return generateLogNormalData();
+          case "pareto":
+            return generateParetoData();
+          case "laplace":
+            return generateLaplaceData();
+          case "invgamma":
+            return generateInvGammaData();
           default:
             return { x: [], y: [] };
         }
@@ -2222,6 +3333,237 @@
         return { x, y };
       }
 
+      // 生成贝塔分布数据
+      function generateBetaData() {
+        const alpha = parseFloat(document.getElementById("beta-alpha").value);
+        const beta = parseFloat(document.getElementById("beta-beta").value);
+
+        const x = [];
+        const y = [];
+
+        for (let i = 0.01; i <= 0.99; i += 0.01) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = betaPDF(i, alpha, beta);
+            y.push(yVal);
+          } else {
+            const yVal = betaCDF(i, alpha, beta);
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成t分布数据
+      function generateTData() {
+        const df = parseInt(document.getElementById("t-df").value);
+
+        const x = [];
+        const y = [];
+
+        for (let i = -5; i <= 5; i += 0.1) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = tPDF(i, df);
+            y.push(yVal);
+          } else {
+            const yVal = tCDF(i, df);
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成伽马分布数据
+      function generateGammaData() {
+        const alpha = parseFloat(document.getElementById("gamma-alpha").value);
+        const beta = parseFloat(document.getElementById("gamma-beta").value);
+
+        const x = [];
+        const y = [];
+
+        for (let i = 0.1; i <= 20; i += 0.2) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = gammaPDF(i, alpha, beta);
+            y.push(yVal);
+          } else {
+            const yVal = gammaCDF(i, alpha, beta);
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成F分布数据
+      function generateFData() {
+        const df1 = parseInt(document.getElementById("f-df1").value);
+        const df2 = parseInt(document.getElementById("f-df2").value);
+
+        const x = [];
+        const y = [];
+
+        for (let i = 0.1; i <= 10; i += 0.1) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = fPDF(i, df1, df2);
+            y.push(yVal);
+          } else {
+            const yVal = fCDF(i, df1, df2);
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成狄利克雷分布数据（显示边际分布）
+      function generateDirichletData() {
+        const alpha1 = parseFloat(document.getElementById("dirichlet-alpha1").value);
+        const alpha2 = parseFloat(document.getElementById("dirichlet-alpha2").value);
+        const alpha3 = parseFloat(document.getElementById("dirichlet-alpha3").value);
+
+        const x = [];
+        const y = [];
+
+        // 显示第一个分量的边际分布（Beta分布）
+        for (let i = 0.01; i <= 0.99; i += 0.01) {
+          x.push(i.toFixed(3));
+
+          if (showPDF) {
+            const yVal = dirichletMarginalPDF(i, alpha1, alpha2, alpha3);
+            y.push(yVal);
+          } else {
+            const yVal = dirichletMarginalCDF(i, alpha1, alpha2, alpha3);
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成威布尔分布数据
+      function generateWeibullData() {
+        const k = parseFloat(document.getElementById("weibull-k").value);
+        const lambda = parseFloat(document.getElementById("weibull-lambda").value);
+
+        const x = [];
+        const y = [];
+
+        for (let i = 0.1; i <= 10; i += 0.1) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = weibullPDF(i, k, lambda);
+            y.push(yVal);
+          } else {
+            const yVal = weibullCDF(i, k, lambda);
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成对数正态分布数据
+      function generateLogNormalData() {
+        const mu = parseFloat(document.getElementById("lognormal-mu").value);
+        const sigma = parseFloat(document.getElementById("lognormal-sigma").value);
+
+        const x = [];
+        const y = [];
+
+        for (let i = 0.1; i <= 20; i += 0.2) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = logNormalPDF(i, mu, sigma);
+            y.push(yVal);
+          } else {
+            const yVal = logNormalCDF(i, mu, sigma);
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成帕累托分布数据
+      function generateParetoData() {
+        const alpha = parseFloat(document.getElementById("pareto-alpha").value);
+        const xm = parseFloat(document.getElementById("pareto-xm").value);
+
+        const x = [];
+        const y = [];
+
+        for (let i = xm; i <= xm + 20; i += 0.2) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = paretoPDF(i, alpha, xm);
+            y.push(yVal);
+          } else {
+            const yVal = paretoCDF(i, alpha, xm);
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成拉普拉斯分布数据
+      function generateLaplaceData() {
+        const mu = parseFloat(document.getElementById("laplace-mu").value);
+        const b = parseFloat(document.getElementById("laplace-b").value);
+
+        const x = [];
+        const y = [];
+
+        for (let i = mu - 10; i <= mu + 10; i += 0.2) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = laplacePDF(i, mu, b);
+            y.push(yVal);
+          } else {
+            const yVal = laplaceCDF(i, mu, b);
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
+      // 生成逆伽马分布数据
+      function generateInvGammaData() {
+        const alpha = parseFloat(document.getElementById("invgamma-alpha").value);
+        const beta = parseFloat(document.getElementById("invgamma-beta").value);
+
+        const x = [];
+        const y = [];
+
+        for (let i = 0.1; i <= 10; i += 0.1) {
+          x.push(i.toFixed(2));
+
+          if (showPDF) {
+            const yVal = invGammaPDF(i, alpha, beta);
+            y.push(yVal);
+          } else {
+            const yVal = invGammaCDF(i, alpha, beta);
+            y.push(yVal);
+          }
+        }
+
+        return { x, y };
+      }
+
       // 更新参数显示
       function updateParameterDisplays() {
         // 正态分布
@@ -2253,6 +3595,66 @@
         // 卡方分布
         document.getElementById("chisquare-k-value").textContent =
           document.getElementById("chisquare-k").value;
+
+        // 贝塔分布
+        document.getElementById("beta-alpha-value").textContent =
+          document.getElementById("beta-alpha").value;
+        document.getElementById("beta-beta-value").textContent =
+          document.getElementById("beta-beta").value;
+
+        // t分布
+        document.getElementById("t-df-value").textContent =
+          document.getElementById("t-df").value;
+
+        // 伽马分布
+        document.getElementById("gamma-alpha-value").textContent =
+          document.getElementById("gamma-alpha").value;
+        document.getElementById("gamma-beta-value").textContent =
+          document.getElementById("gamma-beta").value;
+
+        // F分布
+        document.getElementById("f-df1-value").textContent =
+          document.getElementById("f-df1").value;
+        document.getElementById("f-df2-value").textContent =
+          document.getElementById("f-df2").value;
+
+        // 狄利克雷分布
+        document.getElementById("dirichlet-alpha1-value").textContent =
+          document.getElementById("dirichlet-alpha1").value;
+        document.getElementById("dirichlet-alpha2-value").textContent =
+          document.getElementById("dirichlet-alpha2").value;
+        document.getElementById("dirichlet-alpha3-value").textContent =
+          document.getElementById("dirichlet-alpha3").value;
+
+        // 威布尔分布
+        document.getElementById("weibull-k-value").textContent =
+          document.getElementById("weibull-k").value;
+        document.getElementById("weibull-lambda-value").textContent =
+          document.getElementById("weibull-lambda").value;
+
+        // 对数正态分布
+        document.getElementById("lognormal-mu-value").textContent =
+          document.getElementById("lognormal-mu").value;
+        document.getElementById("lognormal-sigma-value").textContent =
+          document.getElementById("lognormal-sigma").value;
+
+        // 帕累托分布
+        document.getElementById("pareto-alpha-value").textContent =
+          document.getElementById("pareto-alpha").value;
+        document.getElementById("pareto-xm-value").textContent =
+          document.getElementById("pareto-xm").value;
+
+        // 拉普拉斯分布
+        document.getElementById("laplace-mu-value").textContent =
+          document.getElementById("laplace-mu").value;
+        document.getElementById("laplace-b-value").textContent =
+          document.getElementById("laplace-b").value;
+
+        // 逆伽马分布
+        document.getElementById("invgamma-alpha-value").textContent =
+          document.getElementById("invgamma-alpha").value;
+        document.getElementById("invgamma-beta-value").textContent =
+          document.getElementById("invgamma-beta").value;
       }
 
       // 更新统计信息
@@ -2310,12 +3712,115 @@
             variance = 2 * k;
             stdDev = Math.sqrt(2 * k);
             break;
+
+          case "beta":
+            const betaAlpha = parseFloat(
+              document.getElementById("beta-alpha").value
+            );
+            const betaBeta = parseFloat(
+              document.getElementById("beta-beta").value
+            );
+            expectation = betaAlpha / (betaAlpha + betaBeta);
+            variance =
+              (betaAlpha * betaBeta) /
+              ((betaAlpha + betaBeta) *
+                (betaAlpha + betaBeta) *
+                (betaAlpha + betaBeta + 1));
+            stdDev = Math.sqrt(variance);
+            break;
+
+          case "t":
+            const tDf = parseInt(document.getElementById("t-df").value);
+            expectation = tDf > 1 ? 0 : "未定义";
+            variance = tDf > 2 ? tDf / (tDf - 2) : "未定义";
+            stdDev =
+              typeof variance === "number" ? Math.sqrt(variance) : "未定义";
+            break;
+
+          case "gamma":
+            const gammaAlpha = parseFloat(
+              document.getElementById("gamma-alpha").value
+            );
+            const gammaBeta = parseFloat(
+              document.getElementById("gamma-beta").value
+            );
+            expectation = gammaAlpha / gammaBeta;
+            variance = gammaAlpha / (gammaBeta * gammaBeta);
+            stdDev = Math.sqrt(variance);
+            break;
+
+          case "f":
+            const fDf1 = parseInt(document.getElementById("f-df1").value);
+            const fDf2 = parseInt(document.getElementById("f-df2").value);
+            expectation = fDf2 > 2 ? fDf2 / (fDf2 - 2) : "未定义";
+            variance =
+              fDf2 > 4
+                ? (2 * fDf2 * fDf2 * (fDf1 + fDf2 - 2)) /
+                  (fDf1 * (fDf2 - 2) * (fDf2 - 2) * (fDf2 - 4))
+                : "未定义";
+            stdDev =
+              typeof variance === "number" ? Math.sqrt(variance) : "未定义";
+            break;
+
+          case "dirichlet":
+            const dirAlpha1 = parseFloat(document.getElementById("dirichlet-alpha1").value);
+            const dirAlpha2 = parseFloat(document.getElementById("dirichlet-alpha2").value);
+            const dirAlpha3 = parseFloat(document.getElementById("dirichlet-alpha3").value);
+            const alphaSum = dirAlpha1 + dirAlpha2 + dirAlpha3;
+            expectation = dirAlpha1 / alphaSum; // 第一个分量的期望
+            variance = (dirAlpha1 * (alphaSum - dirAlpha1)) / (alphaSum * alphaSum * (alphaSum + 1));
+            stdDev = Math.sqrt(variance);
+            break;
+
+          case "weibull":
+            const weibullK = parseFloat(document.getElementById("weibull-k").value);
+            const weibullLambda = parseFloat(document.getElementById("weibull-lambda").value);
+            expectation = weibullLambda * gamma(1 + 1/weibullK);
+            variance = weibullLambda * weibullLambda * (gamma(1 + 2/weibullK) - Math.pow(gamma(1 + 1/weibullK), 2));
+            stdDev = Math.sqrt(variance);
+            break;
+
+          case "lognormal":
+            const lnMu = parseFloat(document.getElementById("lognormal-mu").value);
+            const lnSigma = parseFloat(document.getElementById("lognormal-sigma").value);
+            expectation = Math.exp(lnMu + lnSigma * lnSigma / 2);
+            variance = (Math.exp(lnSigma * lnSigma) - 1) * Math.exp(2 * lnMu + lnSigma * lnSigma);
+            stdDev = Math.sqrt(variance);
+            break;
+
+          case "pareto":
+            const paretoAlpha = parseFloat(document.getElementById("pareto-alpha").value);
+            const paretoXm = parseFloat(document.getElementById("pareto-xm").value);
+            expectation = paretoAlpha > 1 ? (paretoAlpha * paretoXm) / (paretoAlpha - 1) : "未定义";
+            variance = paretoAlpha > 2 ? (paretoXm * paretoXm * paretoAlpha) / ((paretoAlpha - 1) * (paretoAlpha - 1) * (paretoAlpha - 2)) : "未定义";
+            stdDev = typeof variance === "number" ? Math.sqrt(variance) : "未定义";
+            break;
+
+          case "laplace":
+            const laplaceMu = parseFloat(document.getElementById("laplace-mu").value);
+            const laplaceB = parseFloat(document.getElementById("laplace-b").value);
+            expectation = laplaceMu;
+            variance = 2 * laplaceB * laplaceB;
+            stdDev = Math.sqrt(variance);
+            break;
+
+          case "invgamma":
+            const invGammaAlpha = parseFloat(document.getElementById("invgamma-alpha").value);
+            const invGammaBeta = parseFloat(document.getElementById("invgamma-beta").value);
+            expectation = invGammaAlpha > 1 ? invGammaBeta / (invGammaAlpha - 1) : "未定义";
+            variance = invGammaAlpha > 2 ? (invGammaBeta * invGammaBeta) / ((invGammaAlpha - 1) * (invGammaAlpha - 1) * (invGammaAlpha - 2)) : "未定义";
+            stdDev = typeof variance === "number" ? Math.sqrt(variance) : "未定义";
+            break;
         }
 
         document.getElementById("expectation").textContent =
-          expectation.toFixed(2);
-        document.getElementById("variance").textContent = variance.toFixed(2);
-        document.getElementById("std-dev").textContent = stdDev.toFixed(2);
+          typeof expectation === "number"
+            ? expectation.toFixed(2)
+            : expectation;
+        document.getElementById("variance").textContent =
+          typeof variance === "number" ? variance.toFixed(2) : variance;
+        document.getElementById("std-dev").textContent =
+          typeof stdDev === "number" ? stdDev.toFixed(2) : stdDev;
       }
 
       // 切换PDF/CDF
@@ -2416,20 +3921,23 @@
       }
 
       function incompleteGamma(s, x) {
-        // Simplified incomplete gamma function approximation
+        // 改进的不完全伽马函数近似
         if (x === 0) return 0;
         if (s === 0) return 1;
+        if (x < 0) return 0;
 
+        // 使用级数展开
         let sum = 1;
         let term = 1;
 
-        for (let n = 1; n < 100; n++) {
+        for (let n = 1; n < 200; n++) {
           term *= x / (s + n - 1);
           sum += term;
-          if (Math.abs(term) < 1e-10) break;
+          if (Math.abs(term) < 1e-12) break;
         }
 
-        return Math.pow(x, s) * Math.exp(-x) * sum;
+        const result = Math.pow(x, s) * Math.exp(-x) * sum;
+        return Math.max(0, Math.min(result, gamma(s))); // 确保结果在合理范围内
       }
 
       function chiSquarePDF(x, k) {
@@ -2439,6 +3947,237 @@
         const denominator = Math.pow(2, k / 2) * gamma(k / 2);
 
         return numerator / denominator;
+      }
+
+      // 贝塔分布PDF
+      function betaPDF(x, alpha, beta) {
+        if (x <= 0 || x >= 1) return 0;
+
+        const numerator = Math.pow(x, alpha - 1) * Math.pow(1 - x, beta - 1);
+        const denominator = (gamma(alpha) * gamma(beta)) / gamma(alpha + beta);
+
+        return numerator / denominator;
+      }
+
+      // 贝塔分布CDF (简化近似)
+      function betaCDF(x, alpha, beta) {
+        if (x <= 0) return 0;
+        if (x >= 1) return 1;
+
+        // 使用不完全贝塔函数的简化近似
+        return incompleteBeta(x, alpha, beta);
+      }
+
+      // t分布PDF
+      function tPDF(x, df) {
+        const numerator = gamma((df + 1) / 2);
+        const denominator =
+          Math.sqrt(df * Math.PI) *
+          gamma(df / 2) *
+          Math.pow(1 + (x * x) / df, (df + 1) / 2);
+
+        return numerator / denominator;
+      }
+
+      // t分布CDF (简化近似)
+      function tCDF(x, df) {
+        if (df === 1) {
+          return 0.5 + Math.atan(x) / Math.PI;
+        }
+
+        // 使用正态分布近似 (当df较大时)
+        if (df > 30) {
+          return 0.5 * (1 + erf(x / Math.sqrt(2)));
+        }
+
+        // 简化的t分布CDF近似
+        const t = x / Math.sqrt(df);
+        return 0.5 + 0.5 * erf(t / Math.sqrt(2));
+      }
+
+      // 伽马分布PDF
+      function gammaPDF(x, alpha, beta) {
+        if (x <= 0) return 0;
+
+        const numerator =
+          Math.pow(beta, alpha) * Math.pow(x, alpha - 1) * Math.exp(-beta * x);
+        const denominator = gamma(alpha);
+
+        return numerator / denominator;
+      }
+
+      // 伽马分布CDF
+      function gammaCDF(x, alpha, beta) {
+        if (x <= 0) return 0;
+
+        return incompleteGamma(alpha, beta * x) / gamma(alpha);
+      }
+
+      // F分布PDF
+      function fPDF(x, df1, df2) {
+        if (x <= 0) return 0;
+
+        const numerator =
+          gamma((df1 + df2) / 2) *
+          Math.pow(df1 / df2, df1 / 2) *
+          Math.pow(x, df1 / 2 - 1);
+        const denominator =
+          gamma(df1 / 2) *
+          gamma(df2 / 2) *
+          Math.pow(1 + (df1 / df2) * x, (df1 + df2) / 2);
+
+        return numerator / denominator;
+      }
+
+      // F分布CDF (简化近似)
+      function fCDF(x, df1, df2) {
+        if (x <= 0) return 0;
+
+        // 使用不完全贝塔函数的关系
+        const y = (df1 * x) / (df1 * x + df2);
+        return incompleteBeta(y, df1 / 2, df2 / 2);
+      }
+
+      // 不完全贝塔函数 (改进近似)
+      function incompleteBeta(x, a, b) {
+        if (x <= 0) return 0;
+        if (x >= 1) return 1;
+
+        // 使用贝塔函数的积分近似
+        const betaAB = (gamma(a) * gamma(b)) / gamma(a + b);
+        
+        // 使用辛普森积分法近似
+        const n = 100;
+        const h = x / n;
+        let sum = Math.pow(0, a - 1) * Math.pow(1 - 0, b - 1) + 
+                  Math.pow(x, a - 1) * Math.pow(1 - x, b - 1);
+        
+        for (let i = 1; i < n; i++) {
+          const t = i * h;
+          const weight = (i % 2 === 0) ? 2 : 4;
+          sum += weight * Math.pow(t, a - 1) * Math.pow(1 - t, b - 1);
+        }
+        
+        const result = (h / 3) * sum / betaAB;
+        return Math.min(1, Math.max(0, result));
+      }
+
+      // 威布尔分布PDF
+      function weibullPDF(x, k, lambda) {
+        if (x <= 0) return 0;
+
+        return (k / lambda) * Math.pow(x / lambda, k - 1) * Math.exp(-Math.pow(x / lambda, k));
+      }
+
+      // 威布尔分布CDF
+      function weibullCDF(x, k, lambda) {
+        if (x <= 0) return 0;
+
+        return 1 - Math.exp(-Math.pow(x / lambda, k));
+      }
+
+      // 对数正态分布PDF
+      function logNormalPDF(x, mu, sigma) {
+        if (x <= 0) return 0;
+
+        const numerator = Math.exp(-Math.pow(Math.log(x) - mu, 2) / (2 * sigma * sigma));
+        const denominator = x * sigma * Math.sqrt(2 * Math.PI);
+
+        return numerator / denominator;
+      }
+
+      // 对数正态分布CDF
+      function logNormalCDF(x, mu, sigma) {
+        if (x <= 0) return 0;
+
+        return 0.5 * (1 + erf((Math.log(x) - mu) / (sigma * Math.sqrt(2))));
+      }
+
+      // 帕累托分布PDF
+      function paretoPDF(x, alpha, xm) {
+        if (x < xm) return 0;
+
+        return (alpha * Math.pow(xm, alpha)) / Math.pow(x, alpha + 1);
+      }
+
+      // 帕累托分布CDF
+      function paretoCDF(x, alpha, xm) {
+        if (x < xm) return 0;
+
+        return 1 - Math.pow(xm / x, alpha);
+      }
+
+      // 拉普拉斯分布PDF
+      function laplacePDF(x, mu, b) {
+        return (1 / (2 * b)) * Math.exp(-Math.abs(x - mu) / b);
+      }
+
+      // 拉普拉斯分布CDF
+      function laplaceCDF(x, mu, b) {
+        if (x < mu) {
+          return 0.5 * Math.exp((x - mu) / b);
+        } else {
+          return 1 - 0.5 * Math.exp(-(x - mu) / b);
+        }
+      }
+
+      // 逆伽马分布PDF
+      function invGammaPDF(x, alpha, beta) {
+        if (x <= 0) return 0;
+
+        const numerator = Math.pow(beta, alpha) * Math.pow(x, -alpha - 1) * Math.exp(-beta / x);
+        const denominator = gamma(alpha);
+
+        return numerator / denominator;
+      }
+
+      // 逆伽马分布CDF (修正实现)
+      function invGammaCDF(x, alpha, beta) {
+        if (x <= 0) return 0;
+
+        // 逆伽马分布的CDF：P(X ≤ x) = Γ(α, β/x) / Γ(α)
+        // 其中Γ(α, β/x)是上不完全伽马函数
+        const upperIncompleteGamma = gamma(alpha) - incompleteGamma(alpha, beta / x);
+        return upperIncompleteGamma / gamma(alpha);
+      }
+
+      // 狄利克雷分布PDF (简化为二元情况)
+      function dirichletPDF(x1, x2, alpha1, alpha2, alpha3) {
+        // 对于三元狄利克雷分布，x3 = 1 - x1 - x2
+        const x3 = 1 - x1 - x2;
+        if (x1 <= 0 || x2 <= 0 || x3 <= 0) return 0;
+        if (x1 + x2 >= 1) return 0;
+
+        const numerator = gamma(alpha1 + alpha2 + alpha3) * 
+                         Math.pow(x1, alpha1 - 1) * 
+                         Math.pow(x2, alpha2 - 1) * 
+                         Math.pow(x3, alpha3 - 1);
+        const denominator = gamma(alpha1) * gamma(alpha2) * gamma(alpha3);
+
+        return numerator / denominator;
+      }
+
+      // 狄利克雷分布边际PDF (单变量)
+      function dirichletMarginalPDF(x, alpha1, alpha2, alpha3) {
+        if (x <= 0 || x >= 1) return 0;
+
+        // 第一个分量的边际分布是Beta(alpha1, alpha2 + alpha3)
+        const a = alpha1;
+        const b = alpha2 + alpha3;
+        
+        return betaPDF(x, a, b);
+      }
+
+      // 狄利克雷分布边际CDF (单变量)
+      function dirichletMarginalCDF(x, alpha1, alpha2, alpha3) {
+        if (x <= 0) return 0;
+        if (x >= 1) return 1;
+
+        // 第一个分量的边际分布是Beta(alpha1, alpha2 + alpha3)
+        const a = alpha1;
+        const b = alpha2 + alpha3;
+        
+        return betaCDF(x, a, b);
       }
 
       // ===== 高级数学工具功能 =====
@@ -3332,5 +5071,8 @@
         setupEventListeners();
       });
     </script>
+
+    <!-- 工具箱组件 -->
+    <script src="/static/js/toolbox.js"></script>
   </body>
 </html>
