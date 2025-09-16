@@ -34,7 +34,7 @@ class ProbabilityToolbox {
     triggerButton.id = "toolbox-trigger";
     triggerButton.innerHTML = `
             <div class="fixed right-6 top-1/2 transform -translate-y-1/2 z-50">
-                <button class="bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow">
+                <button class="bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" aria-label="打开工具箱" title="打开工具箱">
                     <i class="fa fa-toolbox text-xl"></i>
                 </button>
             </div>
@@ -50,7 +50,7 @@ class ProbabilityToolbox {
                 <div class="p-6 border-b border-gray-800">
                     <div class="flex justify-between items-center">
                         <h2 class="text-xl font-future font-bold text-neon-blue">工具箱</h2>
-                        <button id="close-toolbox" class="text-gray-400 hover:text-white transition-colors">
+                        <button id="close-toolbox" class="text-gray-400 hover:text-white transition-colors" aria-label="关闭工具箱" title="关闭工具箱">
                             <i class="fa fa-times text-xl"></i>
                         </button>
                     </div>
@@ -88,7 +88,7 @@ class ProbabilityToolbox {
                                     </div>
                                     <div class="flex space-x-2">
                                         <input type="text" id="chat-input" placeholder="请输入您的问题..." class="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none">
-                                        <button id="send-message" class="bg-neon-blue text-dark-bg px-4 py-2 rounded-lg hover:bg-neon-blue/80 transition-colors">
+                                        <button id="send-message" class="bg-neon-blue text-dark-bg px-4 py-2 rounded-lg hover:bg-neon-blue/80 transition-colors" aria-label="发送消息" title="发送消息">
                                             <i class="fa fa-paper-plane"></i>
                                         </button>
                                     </div>
@@ -499,41 +499,51 @@ class ProbabilityToolbox {
     });
 
     // 测试工具相关事件
-    document.getElementById("test-latex-render").addEventListener("click", () => {
-      this.testLatexRender();
-    });
+    document
+      .getElementById("test-latex-render")
+      .addEventListener("click", () => {
+        this.testLatexRender();
+      });
 
-    document.getElementById("test-chat-history").addEventListener("click", () => {
-      this.testChatHistory();
-    });
+    document
+      .getElementById("test-chat-history")
+      .addEventListener("click", () => {
+        this.testChatHistory();
+      });
 
-    document.getElementById("test-system-status").addEventListener("click", () => {
-      this.testSystemStatus();
-    });
-    
+    document
+      .getElementById("test-system-status")
+      .addEventListener("click", () => {
+        this.testSystemStatus();
+      });
+
     // 检验方法分类变化事件
     document.getElementById("test-category").addEventListener("change", () => {
       this.updateTestTypes();
     });
-    
+
     // 数据输入方式切换事件
     document.getElementById("raw-data-btn").addEventListener("click", () => {
-      this.switchDataInputMode('raw');
+      this.switchDataInputMode("raw");
     });
-    
-    document.getElementById("summary-data-btn").addEventListener("click", () => {
-      this.switchDataInputMode('summary');
-    });
-    
+
+    document
+      .getElementById("summary-data-btn")
+      .addEventListener("click", () => {
+        this.switchDataInputMode("summary");
+      });
+
     // 显著性水平自定义选项事件
-    document.getElementById("significance-level").addEventListener("change", (e) => {
-      const customAlpha = document.getElementById("custom-alpha");
-      if (e.target.value === "custom") {
-        customAlpha.classList.remove("hidden");
-      } else {
-        customAlpha.classList.add("hidden");
-      }
-    });
+    document
+      .getElementById("significance-level")
+      .addEventListener("change", (e) => {
+        const customAlpha = document.getElementById("custom-alpha");
+        if (e.target.value === "custom") {
+          customAlpha.classList.remove("hidden");
+        } else {
+          customAlpha.classList.add("hidden");
+        }
+      });
 
     // 分位数表相关事件
     document
@@ -589,7 +599,6 @@ class ProbabilityToolbox {
     sidebarContent.classList.add("translate-x-full");
     body.style.marginRight = "0";
     this.isOpen = false;
-    this.hideTool();
   }
 
   toggleTool(toolName) {
@@ -949,8 +958,8 @@ class ProbabilityToolbox {
   }
 
   async callDeepSeekAPI(message) {
-    console.log('发送API请求:', message);
-    
+    console.log("发送API请求:", message);
+
     const response = await fetch(
       "https://api.deepseek.com/v1/chat/completions",
       {
@@ -972,22 +981,22 @@ class ProbabilityToolbox {
       }
     );
 
-    console.log('API响应状态:', response.status);
-    
+    console.log("API响应状态:", response.status);
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('API错误详情:', errorText);
+      console.error("API错误详情:", errorText);
       throw new Error(`API请求失败: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('API响应数据:', data);
-    
+    console.log("API响应数据:", data);
+
     if (data.choices && data.choices[0] && data.choices[0].message) {
       return data.choices[0].message.content;
     } else {
-      console.error('API响应格式异常:', data);
-      throw new Error('API响应格式异常');
+      console.error("API响应格式异常:", data);
+      throw new Error("API响应格式异常");
     }
   }
 
@@ -1001,8 +1010,9 @@ class ProbabilityToolbox {
 
     // 创建消息内容容器
     const contentContainer = document.createElement("div");
-    contentContainer.className = "message-content text-gray-300 text-sm leading-relaxed max-w-none";
-    
+    contentContainer.className =
+      "message-content text-gray-300 text-sm leading-relaxed max-w-none";
+
     // 如果是加载状态，添加思考动画
     if (isLoading) {
       contentContainer.innerHTML = `
@@ -1027,13 +1037,13 @@ class ProbabilityToolbox {
           const htmlContent = marked(content);
           contentContainer.innerHTML = htmlContent;
         } else {
-          console.warn('marked库未加载，使用简单换行处理');
-          contentContainer.innerHTML = content.replace(/\n/g, '<br>');
+          console.warn("marked库未加载，使用简单换行处理");
+          contentContainer.innerHTML = content.replace(/\n/g, "<br>");
         }
       } catch (error) {
-        console.error('Markdown渲染错误:', error);
-        console.log('marked对象:', window.marked);
-        contentContainer.innerHTML = content.replace(/\n/g, '<br>');
+        console.error("Markdown渲染错误:", error);
+        console.log("marked对象:", window.marked);
+        contentContainer.innerHTML = content.replace(/\n/g, "<br>");
       }
     } else {
       contentContainer.textContent = content;
@@ -1056,7 +1066,7 @@ class ProbabilityToolbox {
         `;
 
     // 将渲染好的内容插入到消息容器中
-    const messageContentDiv = messageDiv.querySelector('.message-content');
+    const messageContentDiv = messageDiv.querySelector(".message-content");
     messageContentDiv.appendChild(contentContainer);
 
     chatMessages.appendChild(messageDiv);
@@ -1081,66 +1091,77 @@ class ProbabilityToolbox {
   // 渲染单个容器中的LaTeX公式
   renderMathInContainer(container) {
     if (!container) {
-      console.warn('renderMathInContainer: 容器为空');
+      console.warn("renderMathInContainer: 容器为空");
       return;
     }
-    
+
     // 检查容器中是否包含LaTeX内容
-    const content = container.textContent || container.innerText || '';
+    const content = container.textContent || container.innerText || "";
     const hasLatex = /\$.*?\$|\\\[.*?\\\]|\\\(.*?\\\)/.test(content);
-    console.log(`容器内容检查 - 包含LaTeX: ${hasLatex}, 内容长度: ${content.length}`);
-    
+    console.log(
+      `容器内容检查 - 包含LaTeX: ${hasLatex}, 内容长度: ${content.length}`
+    );
+
     if (!hasLatex) {
-      console.log('容器中未发现LaTeX内容，跳过渲染');
+      console.log("容器中未发现LaTeX内容，跳过渲染");
       return;
     }
-    
+
     // 渲染LaTeX公式 - 支持KaTeX和MathJax
     if (window.renderMathInElement) {
       // 使用KaTeX渲染
-      console.log('使用KaTeX渲染LaTeX');
+      console.log("使用KaTeX渲染LaTeX");
       try {
         renderMathInElement(container, {
           delimiters: [
-            {left: '$$', right: '$$', display: true},
-            {left: '$', right: '$', display: false},
-            {left: '\\[', right: '\\]', display: true},
-            {left: '\\(', right: '\\)', display: false}
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\[", right: "\\]", display: true },
+            { left: "\\(", right: "\\)", display: false },
           ],
           throwOnError: false,
           strict: false,
-          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+          ignoredTags: [
+            "script",
+            "noscript",
+            "style",
+            "textarea",
+            "pre",
+            "code",
+          ],
         });
-        console.log('KaTeX渲染成功');
+        console.log("KaTeX渲染成功");
       } catch (error) {
-        console.error('KaTeX单容器渲染错误:', error);
+        console.error("KaTeX单容器渲染错误:", error);
       }
     } else if (window.MathJax && window.MathJax.typesetPromise) {
       // 使用MathJax渲染
-      console.log('使用MathJax (新版) 渲染LaTeX');
-      window.MathJax.typesetPromise([container]).then(() => {
-        console.log('MathJax渲染成功');
-      }).catch((err) => {
-        console.error('MathJax单容器渲染错误:', err);
-      });
+      console.log("使用MathJax (新版) 渲染LaTeX");
+      window.MathJax.typesetPromise([container])
+        .then(() => {
+          console.log("MathJax渲染成功");
+        })
+        .catch((err) => {
+          console.error("MathJax单容器渲染错误:", err);
+        });
     } else if (window.MathJax && window.MathJax.Hub) {
       // 兼容旧版MathJax
-      console.log('使用MathJax (旧版Hub) 渲染LaTeX');
+      console.log("使用MathJax (旧版Hub) 渲染LaTeX");
       try {
         window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, container]);
-        console.log('MathJax Hub渲染已排队');
+        console.log("MathJax Hub渲染已排队");
       } catch (error) {
-        console.error('MathJax Hub单容器渲染错误:', error);
+        console.error("MathJax Hub单容器渲染错误:", error);
       }
     } else {
-      console.warn('未找到可用的LaTeX渲染库 (KaTeX或MathJax)');
+      console.warn("未找到可用的LaTeX渲染库 (KaTeX或MathJax)");
     }
   }
 
   // 强制重新渲染所有LaTeX和Markdown内容
   forceRerenderMath() {
-    console.log('开始强制重新渲染LaTeX和Markdown');
-    
+    console.log("开始强制重新渲染LaTeX和Markdown");
+
     // 使用多次尝试确保渲染成功
     const attemptRender = (attempt = 0) => {
       const chatMessages = document.getElementById("chat-messages");
@@ -1151,35 +1172,38 @@ class ProbabilityToolbox {
         }
         return;
       }
-      
+
       // 获取所有消息内容容器
-      const messageContents = chatMessages.querySelectorAll('.message-content');
+      const messageContents = chatMessages.querySelectorAll(".message-content");
       console.log(`找到 ${messageContents.length} 个消息容器`);
-      
+
       if (messageContents.length === 0) {
-        console.warn('没有找到消息内容容器');
+        console.warn("没有找到消息内容容器");
         return;
       }
-      
+
       messageContents.forEach((container, index) => {
         console.log(`渲染第 ${index + 1} 个容器`);
         this.renderMathInContainer(container);
       });
-      
+
       // 检查渲染库状态
       const hasKaTeX = !!window.renderMathInElement;
-      const hasMathJax = !!(window.MathJax && (window.MathJax.typesetPromise || window.MathJax.Hub));
+      const hasMathJax = !!(
+        window.MathJax &&
+        (window.MathJax.typesetPromise || window.MathJax.Hub)
+      );
       console.log(`渲染库状态 - KaTeX: ${hasKaTeX}, MathJax: ${hasMathJax}`);
-      
+
       // 如果渲染库还未加载完成，进行重试
       if (!hasKaTeX && !hasMathJax && attempt < 10) {
         console.log(`渲染库未就绪，${300}ms后重试 (尝试 ${attempt + 1}/10)`);
         setTimeout(() => attemptRender(attempt + 1), 300);
       } else {
-        console.log('LaTeX渲染完成');
+        console.log("LaTeX渲染完成");
       }
     };
-    
+
     // 延迟执行确保DOM完全更新
     setTimeout(() => attemptRender(), 100);
   }
@@ -1191,7 +1215,7 @@ class ProbabilityToolbox {
     this.chatHistory.forEach((message) => {
       this.addMessageToChat(message.role, message.content, false, true); // 添加skipSave参数
     });
-    
+
     // 使用统一的重新渲染函数
     this.forceRerenderMath();
   }
@@ -1219,7 +1243,7 @@ class ProbabilityToolbox {
   updateTestTypes() {
     const category = document.getElementById("test-category").value;
     const testTypeSelect = document.getElementById("test-type");
-    
+
     let options = "";
     switch (category) {
       case "single-sample":
@@ -1251,19 +1275,21 @@ class ProbabilityToolbox {
         this.updateDataInputInterface("multiple");
         break;
     }
-    
+
     testTypeSelect.innerHTML = options;
   }
 
   // 更新数据输入界面
   updateDataInputInterface(sampleType) {
-    const singleSampleSummary = document.getElementById("single-sample-summary");
+    const singleSampleSummary = document.getElementById(
+      "single-sample-summary"
+    );
     const twoSampleSummary = document.getElementById("two-sample-summary");
-    
+
     // 隐藏所有汇总数据界面
     if (singleSampleSummary) singleSampleSummary.classList.add("hidden");
     if (twoSampleSummary) twoSampleSummary.classList.add("hidden");
-    
+
     // 根据样本类型显示对应界面
     switch (sampleType) {
       case "single":
@@ -1275,20 +1301,20 @@ class ProbabilityToolbox {
         break;
     }
   }
-  
+
   // 切换数据输入模式
   switchDataInputMode(mode) {
     const rawDataBtn = document.getElementById("raw-data-btn");
     const summaryDataBtn = document.getElementById("summary-data-btn");
     const rawDataSection = document.getElementById("raw-data-section");
     const summaryDataSection = document.getElementById("summary-data-section");
-    
-    if (mode === 'raw') {
+
+    if (mode === "raw") {
       rawDataBtn.classList.remove("bg-gray-600");
       rawDataBtn.classList.add("bg-neon-purple");
       summaryDataBtn.classList.remove("bg-neon-purple");
       summaryDataBtn.classList.add("bg-gray-600");
-      
+
       rawDataSection.classList.remove("hidden");
       summaryDataSection.classList.add("hidden");
     } else {
@@ -1296,7 +1322,7 @@ class ProbabilityToolbox {
       summaryDataBtn.classList.add("bg-neon-purple");
       rawDataBtn.classList.remove("bg-neon-purple");
       rawDataBtn.classList.add("bg-gray-600");
-      
+
       summaryDataSection.classList.remove("hidden");
       rawDataSection.classList.add("hidden");
     }
@@ -1305,10 +1331,11 @@ class ProbabilityToolbox {
   runHypothesisTest() {
     const testType = document.getElementById("test-type").value;
     const testDirection = document.getElementById("test-direction").value;
-    
+
     // 获取显著性水平
     let alpha;
-    const significanceLevel = document.getElementById("significance-level").value;
+    const significanceLevel =
+      document.getElementById("significance-level").value;
     if (significanceLevel === "custom") {
       alpha = parseFloat(document.getElementById("custom-alpha").value);
       if (isNaN(alpha) || alpha <= 0 || alpha >= 1) {
@@ -1318,15 +1345,16 @@ class ProbabilityToolbox {
     } else {
       alpha = parseFloat(significanceLevel);
     }
-    
+
     // 检查数据输入模式
     const rawDataSection = document.getElementById("raw-data-section");
     const isRawData = !rawDataSection.classList.contains("hidden");
-    
+
     // 检查是否为两样本检验
     const category = document.getElementById("test-category").value;
-    const isTwoSample = category === "two-sample" || category === "variance-test";
-    
+    const isTwoSample =
+      category === "two-sample" || category === "variance-test";
+
     let testData;
     if (isRawData) {
       // 原始数据模式
@@ -1335,7 +1363,7 @@ class ProbabilityToolbox {
         this.showTestResult("请输入样本数据", "error");
         return;
       }
-      
+
       const data = dataText
         .split(",")
         .map((x) => parseFloat(x.trim()))
@@ -1344,13 +1372,21 @@ class ProbabilityToolbox {
         this.showTestResult("请输入有效的数值数据", "error");
         return;
       }
-      
+
       testData = {
-        type: 'raw',
+        type: "raw",
         data: data,
         n: data.length,
         mean: data.reduce((a, b) => a + b, 0) / data.length,
-        std: Math.sqrt(data.reduce((a, b) => a + Math.pow(b - (data.reduce((x, y) => x + y, 0) / data.length), 2), 0) / (data.length - 1))
+        std: Math.sqrt(
+          data.reduce(
+            (a, b) =>
+              a +
+              Math.pow(b - data.reduce((x, y) => x + y, 0) / data.length, 2),
+            0
+          ) /
+            (data.length - 1)
+        ),
       };
     } else {
       // 汇总数据模式
@@ -1362,63 +1398,109 @@ class ProbabilityToolbox {
         const mean2 = parseFloat(document.getElementById("sample2-mean").value);
         const std2 = parseFloat(document.getElementById("sample2-std").value);
         const n2 = parseInt(document.getElementById("sample2-size").value);
-        
-        if (isNaN(mean1) || isNaN(std1) || isNaN(n1) || n1 <= 0 ||
-            isNaN(mean2) || isNaN(std2) || isNaN(n2) || n2 <= 0) {
+
+        if (
+          isNaN(mean1) ||
+          isNaN(std1) ||
+          isNaN(n1) ||
+          n1 <= 0 ||
+          isNaN(mean2) ||
+          isNaN(std2) ||
+          isNaN(n2) ||
+          n2 <= 0
+        ) {
           this.showTestResult("请输入有效的两组样本统计量", "error");
           return;
         }
-        
+
         testData = {
-          type: 'summary',
+          type: "summary",
           sample1: { mean: mean1, std: std1, n: n1 },
-          sample2: { mean: mean2, std: std2, n: n2 }
+          sample2: { mean: mean2, std: std2, n: n2 },
         };
       } else {
         // 单样本数据
-        const sampleMean = parseFloat(document.getElementById("sample-mean").value);
-        const sampleStd = parseFloat(document.getElementById("sample-std").value);
-        const sampleSize = parseInt(document.getElementById("sample-size").value);
-        
-        if (isNaN(sampleMean) || isNaN(sampleStd) || isNaN(sampleSize) || sampleSize <= 0) {
+        const sampleMean = parseFloat(
+          document.getElementById("sample-mean").value
+        );
+        const sampleStd = parseFloat(
+          document.getElementById("sample-std").value
+        );
+        const sampleSize = parseInt(
+          document.getElementById("sample-size").value
+        );
+
+        if (
+          isNaN(sampleMean) ||
+          isNaN(sampleStd) ||
+          isNaN(sampleSize) ||
+          sampleSize <= 0
+        ) {
           this.showTestResult("请输入有效的汇总统计量", "error");
           return;
         }
-        
+
         testData = {
-          type: 'summary',
+          type: "summary",
           n: sampleSize,
           mean: sampleMean,
-          std: sampleStd
+          std: sampleStd,
         };
       }
     }
-    
+
     // 获取假设参数
     let hypothesisValue = 0;
     if (isTwoSample) {
-      hypothesisValue = parseFloat(document.getElementById("hypothesis-diff").value) || 0;
+      hypothesisValue =
+        parseFloat(document.getElementById("hypothesis-diff").value) || 0;
     } else {
-      hypothesisValue = parseFloat(document.getElementById("hypothesis-mean").value) || 0;
+      hypothesisValue =
+        parseFloat(document.getElementById("hypothesis-mean").value) || 0;
     }
-    
+
     try {
       let result;
       switch (testType) {
         case "one-sample-z":
-          result = this.performOneSampleZTest(testData, hypothesisValue, alpha, testDirection);
+          result = this.performOneSampleZTest(
+            testData,
+            hypothesisValue,
+            alpha,
+            testDirection
+          );
           break;
         case "one-sample-t":
-          result = this.performOneSampleTTest(testData, hypothesisValue, alpha, testDirection);
+          result = this.performOneSampleTTest(
+            testData,
+            hypothesisValue,
+            alpha,
+            testDirection
+          );
           break;
         case "independent-t-equal":
-          result = this.performIndependentTTestEqual(testData, hypothesisValue, alpha, testDirection);
+          result = this.performIndependentTTestEqual(
+            testData,
+            hypothesisValue,
+            alpha,
+            testDirection
+          );
           break;
         case "independent-t-unequal":
-          result = this.performIndependentTTestUnequal(testData, hypothesisValue, alpha, testDirection);
+          result = this.performIndependentTTestUnequal(
+            testData,
+            hypothesisValue,
+            alpha,
+            testDirection
+          );
           break;
         case "paired-t":
-          result = this.performPairedTTest(testData, hypothesisValue, alpha, testDirection);
+          result = this.performPairedTTest(
+            testData,
+            hypothesisValue,
+            alpha,
+            testDirection
+          );
           break;
         case "f-test":
           result = this.performFTest(testData, alpha);
@@ -1442,31 +1524,31 @@ class ProbabilityToolbox {
 
   performOneSampleZTest(testData, hypothesisMean, alpha, testDirection) {
     const { n, mean, std } = testData;
-    
+
     // 需要总体标准差，这里假设样本标准差就是总体标准差
     const se = std / Math.sqrt(n);
     const z = (mean - hypothesisMean) / se;
-    
+
     let critical, pValue, significant;
-    
+
     switch (testDirection) {
-      case 'two-tailed':
+      case "two-tailed":
         critical = this.getZCriticalValue(alpha / 2);
         pValue = 2 * (1 - this.normalCDF(Math.abs(z)));
         significant = Math.abs(z) > critical;
         break;
-      case 'left-tailed':
+      case "left-tailed":
         critical = -this.getZCriticalValue(alpha);
         pValue = this.normalCDF(z);
         significant = z < critical;
         break;
-      case 'right-tailed':
+      case "right-tailed":
         critical = this.getZCriticalValue(alpha);
         pValue = 1 - this.normalCDF(z);
         significant = z > critical;
         break;
     }
-    
+
     return {
       testType: "单样本Z检验",
       statistic: z.toFixed(4),
@@ -1490,27 +1572,27 @@ class ProbabilityToolbox {
     const se = std / Math.sqrt(n);
     const t = (mean - hypothesisMean) / se;
     const df = n - 1;
-    
+
     let critical, pValue, significant;
-    
+
     switch (testDirection) {
-      case 'two-tailed':
+      case "two-tailed":
         critical = this.getTCriticalValue(df, alpha / 2);
         pValue = 2 * this.getTTestPValue(Math.abs(t), df);
         significant = Math.abs(t) > critical;
         break;
-      case 'left-tailed':
+      case "left-tailed":
         critical = -this.getTCriticalValue(df, alpha);
         pValue = this.getTTestPValue(-t, df);
         significant = t < critical;
         break;
-      case 'right-tailed':
+      case "right-tailed":
         critical = this.getTCriticalValue(df, alpha);
         pValue = this.getTTestPValue(-t, df);
         significant = t > critical;
         break;
     }
-    
+
     return {
       testType: "单样本t检验",
       statistic: t.toFixed(4),
@@ -1607,60 +1689,66 @@ class ProbabilityToolbox {
 
   performIndependentTTestEqual(testData, hypothesisDiff, alpha, testDirection) {
     let sample1, sample2;
-    
-    if (testData.type === 'summary') {
+
+    if (testData.type === "summary") {
       sample1 = testData.sample1;
       sample2 = testData.sample2;
     } else {
       // 原始数据模式暂不支持两样本
       return {
         testType: "独立样本t检验（等方差）",
-        error: "原始数据模式暂不支持两样本检验，请使用汇总数据模式"
+        error: "原始数据模式暂不支持两样本检验，请使用汇总数据模式",
       };
     }
-    
+
     const n1 = sample1.n;
     const n2 = sample2.n;
     const mean1 = sample1.mean;
     const mean2 = sample2.mean;
     const std1 = sample1.std;
     const std2 = sample2.std;
-    
+
     // 计算合并标准差
-    const pooledVariance = ((n1 - 1) * std1 * std1 + (n2 - 1) * std2 * std2) / (n1 + n2 - 2);
+    const pooledVariance =
+      ((n1 - 1) * std1 * std1 + (n2 - 1) * std2 * std2) / (n1 + n2 - 2);
     const pooledStd = Math.sqrt(pooledVariance);
-    const standardError = pooledStd * Math.sqrt(1/n1 + 1/n2);
-    
+    const standardError = pooledStd * Math.sqrt(1 / n1 + 1 / n2);
+
     // 计算t统计量
     const tStatistic = (mean1 - mean2 - hypothesisDiff) / standardError;
     const df = n1 + n2 - 2;
-    
+
     // 获取临界值和p值
     let criticalValue, pValue;
-    if (testDirection === 'two-tailed') {
+    if (testDirection === "two-tailed") {
       criticalValue = this.getTCriticalValue(df, alpha / 2);
       pValue = 2 * (1 - this.getTCDF(Math.abs(tStatistic), df));
-    } else if (testDirection === 'left-tailed') {
+    } else if (testDirection === "left-tailed") {
       criticalValue = -this.getTCriticalValue(df, alpha);
       pValue = this.getTCDF(tStatistic, df);
-    } else { // right-tailed
+    } else {
+      // right-tailed
       criticalValue = this.getTCriticalValue(df, alpha);
       pValue = 1 - this.getTCDF(tStatistic, df);
     }
-    
+
     const reject = pValue < alpha;
-    
+
     // 生成结论
     let conclusion;
-    const directionText = testDirection === 'two-tailed' ? '不等于' : 
-                         testDirection === 'left-tailed' ? '小于' : '大于';
-    
+    const directionText =
+      testDirection === "two-tailed"
+        ? "不等于"
+        : testDirection === "left-tailed"
+        ? "小于"
+        : "大于";
+
     if (reject) {
       conclusion = `在显著性水平${alpha}下，拒绝原假设，认为两组均值差${directionText}${hypothesisDiff}`;
     } else {
       conclusion = `在显著性水平${alpha}下，不能拒绝原假设，没有足够证据表明两组均值差${directionText}${hypothesisDiff}`;
     }
-    
+
     return {
       testType: "独立样本t检验（等方差）",
       statistic: tStatistic.toFixed(4),
@@ -1675,68 +1763,80 @@ class ProbabilityToolbox {
       sample1Stats: { mean: mean1, std: std1, n: n1 },
       sample2Stats: { mean: mean2, std: std2, n: n2 },
       pooledStd: pooledStd.toFixed(4),
-      standardError: standardError.toFixed(4)
+      standardError: standardError.toFixed(4),
     };
   }
 
-  performIndependentTTestUnequal(testData, hypothesisDiff, alpha, testDirection) {
+  performIndependentTTestUnequal(
+    testData,
+    hypothesisDiff,
+    alpha,
+    testDirection
+  ) {
     let sample1, sample2;
-    
-    if (testData.type === 'summary') {
+
+    if (testData.type === "summary") {
       sample1 = testData.sample1;
       sample2 = testData.sample2;
     } else {
       // 原始数据模式暂不支持两样本
       return {
         testType: "独立样本t检验（不等方差）",
-        error: "原始数据模式暂不支持两样本检验，请使用汇总数据模式"
+        error: "原始数据模式暂不支持两样本检验，请使用汇总数据模式",
       };
     }
-    
+
     const n1 = sample1.n;
     const n2 = sample2.n;
     const mean1 = sample1.mean;
     const mean2 = sample2.mean;
     const std1 = sample1.std;
     const std2 = sample2.std;
-    
+
     // 计算标准误差（Welch's t-test）
-    const se1 = std1 * std1 / n1;
-    const se2 = std2 * std2 / n2;
+    const se1 = (std1 * std1) / n1;
+    const se2 = (std2 * std2) / n2;
     const standardError = Math.sqrt(se1 + se2);
-    
+
     // 计算t统计量
     const tStatistic = (mean1 - mean2 - hypothesisDiff) / standardError;
-    
+
     // 计算Welch-Satterthwaite自由度
-    const df = Math.pow(se1 + se2, 2) / (Math.pow(se1, 2) / (n1 - 1) + Math.pow(se2, 2) / (n2 - 1));
-    
+    const df =
+      Math.pow(se1 + se2, 2) /
+      (Math.pow(se1, 2) / (n1 - 1) + Math.pow(se2, 2) / (n2 - 1));
+
     // 获取临界值和p值
     let criticalValue, pValue;
-    if (testDirection === 'two-tailed') {
+    if (testDirection === "two-tailed") {
       criticalValue = this.getTCriticalValue(df, alpha / 2);
       pValue = 2 * (1 - this.getTCDF(Math.abs(tStatistic), df));
-    } else if (testDirection === 'left-tailed') {
+    } else if (testDirection === "left-tailed") {
       criticalValue = -this.getTCriticalValue(df, alpha);
       pValue = this.getTCDF(tStatistic, df);
-    } else { // right-tailed
+    } else {
+      // right-tailed
       criticalValue = this.getTCriticalValue(df, alpha);
       pValue = 1 - this.getTCDF(tStatistic, df);
     }
-    
+
     const reject = pValue < alpha;
-    
+
     // 生成结论
     let conclusion;
-    const directionText = testDirection === 'two-tailed' ? '不等于' : 
-                         testDirection === 'left-tailed' ? '小于' : '大于';
-    
+    const directionText =
+      testDirection === "two-tailed"
+        ? "不等于"
+        : testDirection === "left-tailed"
+        ? "小于"
+        : "大于";
+
     if (reject) {
       conclusion = `在显著性水平${alpha}下，拒绝原假设，认为两组均值差${directionText}${hypothesisDiff}`;
     } else {
       conclusion = `在显著性水平${alpha}下，不能拒绝原假设，没有足够证据表明两组均值差${directionText}${hypothesisDiff}`;
     }
-    
+
     return {
       testType: "独立样本t检验（不等方差）",
       statistic: tStatistic.toFixed(4),
@@ -1750,74 +1850,79 @@ class ProbabilityToolbox {
       hypothesisValue: hypothesisDiff,
       sample1Stats: { mean: mean1, std: std1, n: n1 },
       sample2Stats: { mean: mean2, std: std2, n: n2 },
-      standardError: standardError.toFixed(4)
+      standardError: standardError.toFixed(4),
     };
   }
 
   performPairedTTest(testData, hypothesisDiff, alpha, testDirection) {
     let sample1, sample2;
-    
-    if (testData.type === 'summary') {
+
+    if (testData.type === "summary") {
       sample1 = testData.sample1;
       sample2 = testData.sample2;
     } else {
       // 原始数据模式暂不支持两样本
       return {
         testType: "配对样本t检验",
-        error: "原始数据模式暂不支持两样本检验，请使用汇总数据模式"
+        error: "原始数据模式暂不支持两样本检验，请使用汇总数据模式",
       };
     }
-    
+
     // 配对t检验要求样本量相等
     if (sample1.n !== sample2.n) {
       return {
         testType: "配对样本t检验",
-        error: "配对样本t检验要求两组样本量相等"
+        error: "配对样本t检验要求两组样本量相等",
       };
     }
-    
+
     const n = sample1.n;
     const mean1 = sample1.mean;
     const mean2 = sample2.mean;
     const std1 = sample1.std;
     const std2 = sample2.std;
-    
+
     // 计算差值的均值和标准差
     // 注意：这里假设两组数据不相关（相关系数为0），实际应用中需要相关系数
     const meanDiff = mean1 - mean2;
     const stdDiff = Math.sqrt(std1 * std1 + std2 * std2); // 假设独立
     const standardError = stdDiff / Math.sqrt(n);
-    
+
     // 计算t统计量
     const tStatistic = (meanDiff - hypothesisDiff) / standardError;
     const df = n - 1;
-    
+
     // 获取临界值和p值
     let criticalValue, pValue;
-    if (testDirection === 'two-tailed') {
+    if (testDirection === "two-tailed") {
       criticalValue = this.getTCriticalValue(df, alpha / 2);
       pValue = 2 * (1 - this.getTCDF(Math.abs(tStatistic), df));
-    } else if (testDirection === 'left-tailed') {
+    } else if (testDirection === "left-tailed") {
       criticalValue = -this.getTCriticalValue(df, alpha);
       pValue = this.getTCDF(tStatistic, df);
-    } else { // right-tailed
+    } else {
+      // right-tailed
       criticalValue = this.getTCriticalValue(df, alpha);
       pValue = 1 - this.getTCDF(tStatistic, df);
     }
-    
+
     const reject = pValue < alpha;
-    
+
     // 生成结论
     let conclusion;
-    const directionText = testDirection === 'two-tailed' ? '不等于' : 
-                         testDirection === 'left-tailed' ? '小于' : '大于';
-    
+    const directionText =
+      testDirection === "two-tailed"
+        ? "不等于"
+        : testDirection === "left-tailed"
+        ? "小于"
+        : "大于";
+
     if (reject) {
       conclusion = `在显著性水平${alpha}下，拒绝原假设，认为配对差值${directionText}${hypothesisDiff}`;
     } else {
       conclusion = `在显著性水平${alpha}下，不能拒绝原假设，没有足够证据表明配对差值${directionText}${hypothesisDiff}`;
     }
-    
+
     return {
       testType: "配对样本t检验",
       statistic: tStatistic.toFixed(4),
@@ -1833,7 +1938,7 @@ class ProbabilityToolbox {
       sample2Stats: { mean: mean2, std: std2, n: n },
       meanDiff: meanDiff.toFixed(4),
       stdDiff: stdDiff.toFixed(4),
-      standardError: standardError.toFixed(4)
+      standardError: standardError.toFixed(4),
     };
   }
 
@@ -1846,7 +1951,7 @@ class ProbabilityToolbox {
       pValue: "0.0000",
       alpha: alpha,
       reject: false,
-      conclusion: "功能开发中..."
+      conclusion: "功能开发中...",
     };
   }
 
@@ -1859,13 +1964,13 @@ class ProbabilityToolbox {
       pValue: "0.0000",
       alpha: alpha,
       reject: false,
-      conclusion: "功能开发中..."
+      conclusion: "功能开发中...",
     };
   }
 
   performFTest(testData, alpha) {
     // 更新F检验以支持新的数据格式
-    if (testData && testData.type === 'raw') {
+    if (testData && testData.type === "raw") {
       const data = testData.data;
       const n = data.length;
       const variance =
@@ -1896,7 +2001,7 @@ class ProbabilityToolbox {
         pValue: "N/A",
         alpha: alpha,
         reject: false,
-        conclusion: "功能开发中..."
+        conclusion: "功能开发中...",
       };
     }
   }
@@ -1916,9 +2021,9 @@ class ProbabilityToolbox {
 
     // 检验方向的中文显示
     const directionText = {
-      'two-tailed': '双侧检验',
-      'left-tailed': '左侧检验', 
-      'right-tailed': '右侧检验'
+      "two-tailed": "双侧检验",
+      "left-tailed": "左侧检验",
+      "right-tailed": "右侧检验",
     };
 
     resultDiv.innerHTML = `
@@ -1926,7 +2031,10 @@ class ProbabilityToolbox {
                 <div><strong>检验类型:</strong> ${result.testType}</div>
                 ${
                   result.testDirection
-                    ? `<div><strong>检验方向:</strong> ${directionText[result.testDirection] || result.testDirection}</div>`
+                    ? `<div><strong>检验方向:</strong> ${
+                        directionText[result.testDirection] ||
+                        result.testDirection
+                      }</div>`
                     : ""
                 }
                 ${
@@ -1935,7 +2043,8 @@ class ProbabilityToolbox {
                     : ""
                 }
                 ${
-                  result.hypothesisValue !== undefined && result.hypothesisMean === undefined
+                  result.hypothesisValue !== undefined &&
+                  result.hypothesisMean === undefined
                     ? `<div><strong>假设差值:</strong> ${result.hypothesisValue}</div>`
                     : ""
                 }
@@ -1966,8 +2075,16 @@ class ProbabilityToolbox {
                     ${
                       result.sample1Stats && result.sample2Stats
                         ? `<div><strong>样本信息:</strong></div>
-                           <div>• 第一组: 均值=${result.sample1Stats.mean}, 标准差=${result.sample1Stats.std}, 样本量=${result.sample1Stats.n}</div>
-                           <div>• 第二组: 均值=${result.sample2Stats.mean}, 标准差=${result.sample2Stats.std}, 样本量=${result.sample2Stats.n}</div>
+                           <div>• 第一组: 均值=${
+                             result.sample1Stats.mean
+                           }, 标准差=${result.sample1Stats.std}, 样本量=${
+                            result.sample1Stats.n
+                          }</div>
+                           <div>• 第二组: 均值=${
+                             result.sample2Stats.mean
+                           }, 标准差=${result.sample2Stats.std}, 样本量=${
+                            result.sample2Stats.n
+                          }</div>
                            ${
                              result.pooledStd
                                ? `<div>• 合并标准差: ${result.pooledStd}</div>`
@@ -2306,32 +2423,37 @@ class ProbabilityToolbox {
 
   // 测试工具方法
   testLatexRender() {
-    const resultDiv = document.getElementById('latex-test-result');
-    resultDiv.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i>正在测试LaTeX渲染...';
-    
+    const resultDiv = document.getElementById("latex-test-result");
+    resultDiv.innerHTML =
+      '<i class="fa fa-spinner fa-spin mr-1"></i>正在测试LaTeX渲染...';
+
     try {
       // 创建测试元素
-      const testElement = document.createElement('div');
-      testElement.innerHTML = '测试公式: $E = mc^2$ 和 $$\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}$$';
+      const testElement = document.createElement("div");
+      testElement.innerHTML =
+        "测试公式: $E = mc^2$ 和 $$\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}$$";
       document.body.appendChild(testElement);
-      
+
       // 测试全局渲染函数
-      if (typeof window.renderLatexInElement === 'function') {
+      if (typeof window.renderLatexInElement === "function") {
         window.renderLatexInElement(testElement);
-        
+
         setTimeout(() => {
-          const hasRendered = testElement.querySelector('.katex') !== null;
+          const hasRendered = testElement.querySelector(".katex") !== null;
           document.body.removeChild(testElement);
-          
+
           if (hasRendered) {
-            resultDiv.innerHTML = '<i class="fa fa-check text-green-400 mr-1"></i>LaTeX渲染测试通过';
+            resultDiv.innerHTML =
+              '<i class="fa fa-check text-green-400 mr-1"></i>LaTeX渲染测试通过';
           } else {
-            resultDiv.innerHTML = '<i class="fa fa-times text-red-400 mr-1"></i>LaTeX渲染失败';
+            resultDiv.innerHTML =
+              '<i class="fa fa-times text-red-400 mr-1"></i>LaTeX渲染失败';
           }
         }, 200);
       } else {
         document.body.removeChild(testElement);
-        resultDiv.innerHTML = '<i class="fa fa-times text-red-400 mr-1"></i>全局渲染函数不存在';
+        resultDiv.innerHTML =
+          '<i class="fa fa-times text-red-400 mr-1"></i>全局渲染函数不存在';
       }
     } catch (error) {
       resultDiv.innerHTML = `<i class="fa fa-times text-red-400 mr-1"></i>测试出错: ${error.message}`;
@@ -2339,28 +2461,34 @@ class ProbabilityToolbox {
   }
 
   testChatHistory() {
-    const resultDiv = document.getElementById('chat-test-result');
-    resultDiv.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i>正在测试聊天记录...';
-    
+    const resultDiv = document.getElementById("chat-test-result");
+    resultDiv.innerHTML =
+      '<i class="fa fa-spinner fa-spin mr-1"></i>正在测试聊天记录...';
+
     try {
       // 清空聊天记录
       this.clearChat();
-      
+
       // 添加测试消息
-      this.addMessageToChat('user', '测试消息1', false, false);
-      this.addMessageToChat('assistant', '测试回复1', false, false);
-      
-      const initialCount = document.querySelectorAll('#chat-messages .message').length;
-      
+      this.addMessageToChat("user", "测试消息1", false, false);
+      this.addMessageToChat("assistant", "测试回复1", false, false);
+
+      const initialCount = document.querySelectorAll(
+        "#chat-messages .message"
+      ).length;
+
       // 模拟切换工具（这会触发displayChatHistory）
-      this.toggleTool('calculator');
-      this.toggleTool('ai-assistant');
-      
+      this.toggleTool("calculator");
+      this.toggleTool("ai-assistant");
+
       setTimeout(() => {
-        const finalCount = document.querySelectorAll('#chat-messages .message').length;
-        
+        const finalCount = document.querySelectorAll(
+          "#chat-messages .message"
+        ).length;
+
         if (finalCount === initialCount) {
-          resultDiv.innerHTML = '<i class="fa fa-check text-green-400 mr-1"></i>聊天记录测试通过，无重复';
+          resultDiv.innerHTML =
+            '<i class="fa fa-check text-green-400 mr-1"></i>聊天记录测试通过，无重复';
         } else {
           resultDiv.innerHTML = `<i class="fa fa-times text-red-400 mr-1"></i>检测到重复，消息数量从${initialCount}变为${finalCount}`;
         }
@@ -2371,147 +2499,156 @@ class ProbabilityToolbox {
   }
 
   testSystemStatus() {
-    const resultDiv = document.getElementById('system-test-result');
-    resultDiv.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i>正在检查系统状态...';
-    
+    const resultDiv = document.getElementById("system-test-result");
+    resultDiv.innerHTML =
+      '<i class="fa fa-spinner fa-spin mr-1"></i>正在检查系统状态...';
+
     const checks = [];
-    
+
     // 检查KaTeX
     checks.push({
-      name: 'KaTeX',
-      status: typeof katex !== 'undefined',
-      message: typeof katex !== 'undefined' ? '已加载' : '未加载'
+      name: "KaTeX",
+      status: typeof katex !== "undefined",
+      message: typeof katex !== "undefined" ? "已加载" : "未加载",
     });
-    
+
     // 检查全局渲染函数
     checks.push({
-      name: '全局LaTeX渲染',
-      status: typeof window.renderLatexInElement === 'function',
-      message: typeof window.renderLatexInElement === 'function' ? '可用' : '不可用'
+      name: "全局LaTeX渲染",
+      status: typeof window.renderLatexInElement === "function",
+      message:
+        typeof window.renderLatexInElement === "function" ? "可用" : "不可用",
     });
-    
+
     // 检查聊天历史
     checks.push({
-      name: '聊天历史',
+      name: "聊天历史",
       status: Array.isArray(this.chatHistory),
-      message: Array.isArray(this.chatHistory) ? `${this.chatHistory.length}条记录` : '异常'
+      message: Array.isArray(this.chatHistory)
+        ? `${this.chatHistory.length}条记录`
+        : "异常",
     });
-    
+
     // 检查工具箱元素
     checks.push({
-      name: '工具箱界面',
-      status: document.getElementById('toolbox-sidebar') !== null,
-      message: document.getElementById('toolbox-sidebar') !== null ? '正常' : '缺失'
+      name: "工具箱界面",
+      status: document.getElementById("toolbox-sidebar") !== null,
+      message:
+        document.getElementById("toolbox-sidebar") !== null ? "正常" : "缺失",
     });
-    
+
     setTimeout(() => {
-      const passedChecks = checks.filter(check => check.status).length;
+      const passedChecks = checks.filter((check) => check.status).length;
       const totalChecks = checks.length;
-      
+
       let statusHtml = `<div class="text-xs">`;
-      checks.forEach(check => {
-        const icon = check.status ? 'fa-check text-green-400' : 'fa-times text-red-400';
+      checks.forEach((check) => {
+        const icon = check.status
+          ? "fa-check text-green-400"
+          : "fa-times text-red-400";
         statusHtml += `<div><i class="fa ${icon} mr-1"></i>${check.name}: ${check.message}</div>`;
       });
       statusHtml += `<div class="mt-1 font-medium">总体状态: ${passedChecks}/${totalChecks} 项正常</div></div>`;
-      
+
       resultDiv.innerHTML = statusHtml;
     }, 500);
   }
 }
 
 // 全局LaTeX渲染函数，可在其他页面中调用
-window.renderLatexInElement = function(element, options = {}) {
+window.renderLatexInElement = function (element, options = {}) {
   if (!element) {
-    console.warn('renderLatexInElement: 元素为空');
+    console.warn("renderLatexInElement: 元素为空");
     return;
   }
-  
+
   const defaultOptions = {
     delimiters: [
-      {left: '$$', right: '$$', display: true},
-      {left: '$', right: '$', display: false},
-      {left: '\\[', right: '\\]', display: true},
-      {left: '\\(', right: '\\)', display: false}
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false },
+      { left: "\\[", right: "\\]", display: true },
+      { left: "\\(", right: "\\)", display: false },
     ],
     throwOnError: false,
     strict: false,
-    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"],
   };
-  
+
   const finalOptions = Object.assign(defaultOptions, options);
-  
+
   // 检查是否包含LaTeX内容
-  const content = element.textContent || element.innerText || '';
+  const content = element.textContent || element.innerText || "";
   const hasLatex = /\$.*?\$|\\\[.*?\\\]|\\\(.*?\\\)/.test(content);
-  
+
   if (!hasLatex) {
-    console.log('元素中未发现LaTeX内容，跳过渲染');
+    console.log("元素中未发现LaTeX内容，跳过渲染");
     return false;
   }
-  
-  console.log('开始渲染LaTeX内容');
-  
+
+  console.log("开始渲染LaTeX内容");
+
   // 尝试使用KaTeX渲染
   if (window.renderMathInElement) {
     try {
       renderMathInElement(element, finalOptions);
-      console.log('KaTeX渲染成功');
+      console.log("KaTeX渲染成功");
       return true;
     } catch (error) {
-      console.error('KaTeX渲染失败:', error);
+      console.error("KaTeX渲染失败:", error);
     }
   }
-  
+
   // 尝试使用MathJax渲染
   if (window.MathJax && window.MathJax.typesetPromise) {
-    window.MathJax.typesetPromise([element]).then(() => {
-      console.log('MathJax渲染成功');
-    }).catch((err) => {
-      console.error('MathJax渲染失败:', err);
-    });
+    window.MathJax.typesetPromise([element])
+      .then(() => {
+        console.log("MathJax渲染成功");
+      })
+      .catch((err) => {
+        console.error("MathJax渲染失败:", err);
+      });
     return true;
   }
-  
+
   // 尝试使用旧版MathJax
   if (window.MathJax && window.MathJax.Hub) {
     try {
       window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, element]);
-      console.log('MathJax Hub渲染已排队');
+      console.log("MathJax Hub渲染已排队");
       return true;
     } catch (error) {
-      console.error('MathJax Hub渲染失败:', error);
+      console.error("MathJax Hub渲染失败:", error);
     }
   }
-  
-  console.warn('未找到可用的LaTeX渲染库');
+
+  console.warn("未找到可用的LaTeX渲染库");
   return false;
 };
 
 // 全局Markdown渲染函数
-window.renderMarkdownInElement = function(element, content) {
+window.renderMarkdownInElement = function (element, content) {
   if (!element) {
-    console.warn('renderMarkdownInElement: 元素为空');
+    console.warn("renderMarkdownInElement: 元素为空");
     return false;
   }
-  
+
   try {
     if (window.marked && window.marked.parse) {
       element.innerHTML = marked.parse(content);
-      console.log('Markdown渲染成功 (marked.parse)');
+      console.log("Markdown渲染成功 (marked.parse)");
       return true;
     } else if (window.marked) {
       element.innerHTML = marked(content);
-      console.log('Markdown渲染成功 (marked)');
+      console.log("Markdown渲染成功 (marked)");
       return true;
     } else {
-      console.warn('marked库未加载，使用简单换行处理');
-      element.innerHTML = content.replace(/\n/g, '<br>');
+      console.warn("marked库未加载，使用简单换行处理");
+      element.innerHTML = content.replace(/\n/g, "<br>");
       return false;
     }
   } catch (error) {
-    console.error('Markdown渲染错误:', error);
-    element.innerHTML = content.replace(/\n/g, '<br>');
+    console.error("Markdown渲染错误:", error);
+    element.innerHTML = content.replace(/\n/g, "<br>");
     return false;
   }
 };

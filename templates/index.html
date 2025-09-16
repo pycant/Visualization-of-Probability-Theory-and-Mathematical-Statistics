@@ -31,6 +31,7 @@
               "neon-blue": "#00f3ff",
               "neon-purple": "#bf00ff",
               "neon-green": "#00ff66",
+              "neon-orange": "#ff8c00",
               "dark-bg": "#050a1a",
               "dark-card": "#0f1730",
             },
@@ -295,7 +296,12 @@
         </div>
 
         <!-- 移动端菜单按钮 -->
-        <button class="md:hidden text-white text-2xl" id="menu-toggle">
+        <button
+          class="md:hidden text-white text-2xl"
+          id="menu-toggle"
+          aria-label="打开导航菜单"
+          title="打开导航菜单"
+        >
           <i class="fa fa-bars"></i>
         </button>
       </div>
@@ -472,7 +478,32 @@
             </div>
           </div>
 
-          <!-- 概念卡片4 -->
+          <!-- 概念卡片4 - 区间估计 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-orange-500/10 flex items-center justify-center mb-6 group-hover:bg-orange-500/20 transition-colors"
+            >
+              <i class="fa fa-chart-bar text-orange-500 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              区间估计
+            </h3>
+            <p class="text-gray-400">
+              用样本统计量构造包含未知参数的区间，给出参数估计的精度和可信度，是统计推断的核心方法。
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a
+                href="#"
+                class="text-orange-500 hover:text-white transition-colors flex items-center"
+              >
+                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 概念卡片5 - 假设检验 -->
           <div
             class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
           >
@@ -497,7 +528,7 @@
             </div>
           </div>
 
-          <!-- 概念卡片5 -->
+          <!-- 概念卡片6 -->
           <div
             class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group"
           >
@@ -522,7 +553,7 @@
             </div>
           </div>
 
-          <!-- 概念卡片6 -->
+          <!-- 概念卡片7 -->
           <div
             class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
           >
@@ -576,7 +607,9 @@
             </h3>
 
             <div class="mb-6">
-              <label class="block text-gray-300 mb-2">试验次数:</label>
+              <label for="dice-trials" class="block text-gray-300 mb-2"
+                >试验次数:</label
+              >
               <div class="flex items-center">
                 <input
                   type="range"
@@ -627,7 +660,9 @@
 
             <div class="grid grid-cols-2 gap-4 mb-6">
               <div>
-                <label class="block text-gray-300 mb-2">均值 (μ):</label>
+                <label for="normal-sim-mean" class="block text-gray-300 mb-2"
+                  >均值 (μ):</label
+                >
                 <div class="flex items-center">
                   <input
                     type="range"
@@ -646,7 +681,9 @@
                 </div>
               </div>
               <div>
-                <label class="block text-gray-300 mb-2">标准差 (σ):</label>
+                <label for="normal-sim-std" class="block text-gray-300 mb-2"
+                  >标准差 (σ):</label
+                >
                 <div class="flex items-center">
                   <input
                     type="range"
@@ -702,7 +739,11 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div class="md:col-span-1">
                 <div class="mb-6">
-                  <label class="block text-gray-300 mb-2">样本数量:</label>
+                  <label
+                    for="monte-carlo-samples"
+                    class="block text-gray-300 mb-2"
+                    >样本数量:</label
+                  >
                   <div class="flex items-center">
                     <input
                       type="range"
@@ -791,7 +832,9 @@
             </h3>
 
             <div class="mb-6">
-              <label class="block text-gray-300 mb-3">选择分布:</label>
+              <label for="distribution-select" class="block text-gray-300 mb-3"
+                >选择分布:</label
+              >
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <button
                   class="distribution-btn active px-3 py-2 bg-neon-green/20 text-neon-green rounded-md hover:bg-neon-green/30 transition-colors text-sm"
@@ -826,7 +869,9 @@
               <div id="normal-params" class="distribution-params">
                 <div class="grid grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-gray-300 mb-2 text-sm"
+                    <label
+                      for="normal-mean"
+                      class="block text-gray-300 mb-2 text-sm"
                       >均值 (μ):</label
                     >
                     <div class="flex items-center">
@@ -847,7 +892,9 @@
                     </div>
                   </div>
                   <div>
-                    <label class="block text-gray-300 mb-2 text-sm"
+                    <label
+                      for="normal-std"
+                      class="block text-gray-300 mb-2 text-sm"
                       >标准差 (σ):</label
                     >
                     <div class="flex items-center">
@@ -873,7 +920,9 @@
               <!-- 泊松分布参数 -->
               <div id="poisson-params" class="distribution-params hidden">
                 <div>
-                  <label class="block text-gray-300 mb-2 text-sm"
+                  <label
+                    for="poisson-lambda"
+                    class="block text-gray-300 mb-2 text-sm"
                     >λ 参数:</label
                   >
                   <div class="flex items-center">
@@ -899,7 +948,9 @@
               <div id="binomial-params" class="distribution-params hidden">
                 <div class="grid grid-cols-2 gap-4">
                   <div>
-                    <label class="block text-gray-300 mb-2 text-sm"
+                    <label
+                      for="binomial-n"
+                      class="block text-gray-300 mb-2 text-sm"
                       >试验次数 (n):</label
                     >
                     <div class="flex items-center">
@@ -920,7 +971,9 @@
                     </div>
                   </div>
                   <div>
-                    <label class="block text-gray-300 mb-2 text-sm"
+                    <label
+                      for="binomial-p"
+                      class="block text-gray-300 mb-2 text-sm"
                       >成功概率 (p):</label
                     >
                     <div class="flex items-center">
@@ -946,7 +999,9 @@
               <!-- 指数分布参数 -->
               <div id="exponential-params" class="distribution-params hidden">
                 <div>
-                  <label class="block text-gray-300 mb-2 text-sm"
+                  <label
+                    for="exponential-lambda"
+                    class="block text-gray-300 mb-2 text-sm"
                     >λ 参数:</label
                   >
                   <div class="flex items-center">
@@ -983,7 +1038,9 @@
             </h3>
 
             <div class="mb-6">
-              <label class="block text-gray-300 mb-2">相关系数:</label>
+              <label for="correlation-coeff" class="block text-gray-300 mb-2"
+                >相关系数:</label
+              >
               <div class="flex items-center">
                 <input
                   type="range"
@@ -2120,12 +2177,16 @@
 
         // 随机变量相关功能已移至 random_variables.html
 
-        // 初始化图表
-        initDiceChart();
-        initNormalChart();
-        initMonteCarloChart();
-        initDistributionsChart();
-        initCorrelationChart();
+        // 初始化图表 - 确保Chart.js已加载
+        if (typeof Chart !== "undefined") {
+          initDiceChart();
+          initNormalChart();
+          initMonteCarloChart();
+          initDistributionsChart();
+          initCorrelationChart();
+        } else {
+          console.error("Chart.js未加载，请检查网络连接");
+        }
 
         // 初始化分布参数事件监听器
         initDistributionParamEvents();
@@ -2305,80 +2366,81 @@
 
       // 聊天记录测试函数
       function testChatHistory() {
-        console.log('开始测试聊天记录重复问题');
-        
+        console.log("开始测试聊天记录重复问题");
+
         if (window.probabilityToolbox) {
           // 模拟添加一些测试消息
           const testMessages = [
-            { role: 'user', content: '测试消息1：什么是正态分布？' },
-            { role: 'assistant', content: '正态分布是一种连续概率分布，具有钟形曲线特征。' },
-            { role: 'user', content: '测试消息2：如何计算标准差？' },
-            { role: 'assistant', content: '标准差 $\\sigma = \\sqrt{\\frac{\\sum(x_i - \\mu)^2}{n}}$' }
+            { role: "user", content: "测试消息1：什么是正态分布？" },
+            {
+              role: "assistant",
+              content: "正态分布是一种连续概率分布，具有钟形曲线特征。",
+            },
+            { role: "user", content: "测试消息2：如何计算标准差？" },
+            {
+              role: "assistant",
+              content:
+                "标准差 $\\sigma = \\sqrt{\\frac{\\sum(x_i - \\mu)^2}{n}}$",
+            },
           ];
-          
+
           // 清空现有聊天记录
           window.probabilityToolbox.clearChat();
-          
+
           // 添加测试消息
-          testMessages.forEach(msg => {
+          testMessages.forEach((msg) => {
             window.probabilityToolbox.addMessageToChat(msg.role, msg.content);
           });
-          
-          console.log('当前聊天历史长度:', window.probabilityToolbox.chatHistory.length);
-          
+
+          console.log(
+            "当前聊天历史长度:",
+            window.probabilityToolbox.chatHistory.length
+          );
+
           // 模拟多次切换工具（这应该不会导致消息重复）
           setTimeout(() => {
-            console.log('第一次切换后聊天历史长度:', window.probabilityToolbox.chatHistory.length);
+            console.log(
+              "第一次切换后聊天历史长度:",
+              window.probabilityToolbox.chatHistory.length
+            );
             window.probabilityToolbox.displayChatHistory();
-            
+
             setTimeout(() => {
-              console.log('第二次切换后聊天历史长度:', window.probabilityToolbox.chatHistory.length);
+              console.log(
+                "第二次切换后聊天历史长度:",
+                window.probabilityToolbox.chatHistory.length
+              );
               window.probabilityToolbox.displayChatHistory();
-              
+
               setTimeout(() => {
-                console.log('第三次切换后聊天历史长度:', window.probabilityToolbox.chatHistory.length);
-                
+                console.log(
+                  "第三次切换后聊天历史长度:",
+                  window.probabilityToolbox.chatHistory.length
+                );
+
                 // 检查DOM中的消息数量
-                const chatMessages = document.getElementById('chat-messages');
+                const chatMessages = document.getElementById("chat-messages");
                 if (chatMessages) {
-                  const messageCount = chatMessages.querySelectorAll('.message').length;
-                  console.log('DOM中的消息数量:', messageCount);
-                  console.log('预期消息数量:', testMessages.length);
-                  
+                  const messageCount =
+                    chatMessages.querySelectorAll(".message").length;
+                  console.log("DOM中的消息数量:", messageCount);
+                  console.log("预期消息数量:", testMessages.length);
+
                   if (messageCount === testMessages.length) {
-                    console.log('✅ 测试通过：聊天记录没有重复');
-                    alert('✅ 测试通过：聊天记录没有重复');
+                    console.log("✅ 测试通过：聊天记录没有重复");
+                    alert("✅ 测试通过：聊天记录没有重复");
                   } else {
-                    console.log('❌ 测试失败：聊天记录出现重复');
-                    alert('❌ 测试失败：聊天记录出现重复');
+                    console.log("❌ 测试失败：聊天记录出现重复");
+                    alert("❌ 测试失败：聊天记录出现重复");
                   }
                 }
               }, 500);
             }, 500);
           }, 500);
         } else {
-          console.error('工具箱未初始化');
+          console.error("工具箱未初始化");
         }
       }
-
-      // 页面加载完成后添加测试按钮
-      document.addEventListener("DOMContentLoaded", function () {
-        // 添加LaTeX渲染测试按钮
-        const testButton = document.createElement("button");
-        testButton.textContent = "测试LaTeX渲染";
-        testButton.style.cssText =
-          "position: fixed; top: 10px; left: 10px; z-index: 9999; padding: 10px 15px; background: #00f3ff; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;";
-        testButton.onclick = testLatexRendering;
-        document.body.appendChild(testButton);
-        
-        // 添加聊天记录测试按钮
-        const chatTestButton = document.createElement("button");
-        chatTestButton.textContent = "测试聊天记录";
-        chatTestButton.style.cssText =
-          "position: fixed; top: 10px; left: 180px; z-index: 9999; padding: 10px 15px; background: #00ff88; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;";
-        chatTestButton.onclick = testChatHistory;
-        document.body.appendChild(chatTestButton);
-      });
     </script>
   </body>
 </html>
