@@ -1,0 +1,3356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>区间估计探索 - 概率统计可视化</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.4.0/chartjs-plugin-annotation.min.js"></script>
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+
+    <!-- KaTeX for LaTeX rendering -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+      integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
+      crossorigin="anonymous"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"
+      integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+      integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      // 等待页面和所有脚本完全加载后再渲染数学公式
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          if (typeof renderMathInElement !== 'undefined') {
+            renderMathInElement(document.body, {
+              delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\[", right: "\\]", display: true },
+                { left: "\\(", right: "\\)", display: false },
+              ],
+              throwOnError: false,
+              errorColor: '#cc0000'
+            });
+            console.log('KaTeX渲染完成');
+          } else {
+            console.error('KaTeX未加载');
+          }
+        }, 200);
+      });
+    </script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+      :root {
+        --dark-bg: #0f172a;
+        --dark-card: #1e293b;
+        --neon-blue: #00f3ff;
+        --neon-purple: #bf00ff;
+        --neon-green: #00ff66;
+        --neon-orange: #ff8c00;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: var(--dark-bg);
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      .font-future {
+        font-family: "Roboto", sans-serif;
+        letter-spacing: 0.05em;
+      }
+
+      .text-neon-blue {
+        color: var(--neon-blue);
+      }
+
+      .text-neon-purple {
+        color: var(--neon-purple);
+      }
+
+      .text-neon-green {
+        color: var(--neon-green);
+      }
+
+      .text-neon-orange {
+        color: var(--neon-orange);
+      }
+
+      .bg-neon-blue {
+        background-color: var(--neon-blue);
+      }
+
+      .bg-neon-purple {
+        background-color: var(--neon-purple);
+      }
+
+      .bg-neon-green {
+        background-color: var(--neon-green);
+      }
+
+      .bg-neon-orange {
+        background-color: var(--neon-orange);
+      }
+
+      .bg-dark-bg {
+        background-color: var(--dark-bg);
+      }
+
+      .bg-dark-card {
+        background-color: var(--dark-card);
+      }
+
+      .accent-neon-blue {
+        accent-color: var(--neon-blue);
+      }
+
+      .accent-neon-purple {
+        accent-color: var(--neon-purple);
+      }
+
+      .accent-neon-green {
+        accent-color: var(--neon-green);
+      }
+
+      .accent-neon-orange {
+        accent-color: var(--neon-orange);
+      }
+
+      .clip-path-slant {
+        clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+      }
+
+      .bg-grid {
+        background-image: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          );
+        background-size: 20px 20px;
+      }
+
+      .hidden {
+        display: none;
+      }
+      
+      /* 贝叶斯控制面板样式 */
+      #bayesian-controls {
+        display: none; /* 初始隐藏 */
+        margin-top: 10px;
+        padding: 15px;
+        background-color: rgba(0, 243, 255, 0.1);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+      }
+
+      /* 粒子动画 */
+      #particles-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.5;
+        animation: float 15s infinite ease-in-out;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) translateX(0);
+        }
+        25% {
+          transform: translateY(-30px) translateX(15px);
+        }
+        50% {
+          transform: translateY(-15px) translateX(-15px);
+        }
+        75% {
+          transform: translateY(30px) translateX(15px);
+        }
+      }
+
+      /* 思考动画样式 */
+      .thinking-animation {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .thinking-animation .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #00f3ff;
+        animation: thinking-pulse 1.4s ease-in-out infinite both;
+      }
+
+      .thinking-animation .dot:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+
+      /* 渐进式学习样式 */
+      .theory-step.locked {
+        position: relative;
+      }
+
+      .theory-step.locked .message-content {
+        pointer-events: none;
+      }
+
+      .theory-step.unlocked {
+        animation: unlock-glow 0.5s ease-in-out;
+      }
+
+      @keyframes unlock-glow {
+        0% {
+          box-shadow: 0 0 0 rgba(0, 243, 255, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(0, 243, 255, 0.8);
+        }
+        100% {
+          box-shadow: 0 0 0 rgba(0, 243, 255, 0.5);
+        }
+      }
+
+      .ai-help-btn {
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .ai-help-btn:hover {
+        background: linear-gradient(45deg, #4f46e5, #7c3aed);
+        transform: translateY(-2px);
+      }
+
+      .understanding-btn {
+        transition: all 0.3s ease;
+      }
+
+      .understanding-btn:hover {
+        transform: scale(1.1);
+      }
+
+      .progressive-hint {
+        background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(139, 92, 246, 0.1));
+        border: 1px solid rgba(0, 243, 255, 0.3);
+      }
+
+      .thinking-animation .dot:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+
+      .thinking-animation .dot:nth-child(3) {
+        animation-delay: 0s;
+      }
+
+      @keyframes thinking-pulse {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.5;
+        }
+        40% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+      }
+
+      /* Markdown内容样式 */
+      .message-content {
+        line-height: 1.6;
+      }
+
+      .message-content h1,
+      .message-content h2,
+      .message-content h3,
+      .message-content h4,
+      .message-content h5,
+      .message-content h6 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--neon-blue);
+      }
+
+      .message-content p {
+        margin-bottom: 1rem;
+      }
+
+      .message-content ul,
+      .message-content ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+      }
+
+      .message-content li {
+        margin-bottom: 0.25rem;
+      }
+
+      .message-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        background-color: rgba(30, 41, 59, 0.5);
+        border-radius: 0.5rem;
+        overflow: hidden;
+      }
+
+      .message-content th,
+      .message-content td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .message-content th {
+        background-color: rgba(0, 243, 255, 0.1);
+        font-weight: 600;
+        color: #00f3ff;
+      }
+
+      .message-content code {
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-family: "Courier New", monospace;
+        color: #00ff66;
+      }
+
+      .message-content pre {
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1rem 0;
+      }
+
+      .message-content pre code {
+        background: none;
+        padding: 0;
+      }
+
+      .message-content blockquote {
+        border-left: 4px solid #00f3ff;
+        padding-left: 1rem;
+        margin: 1rem 0;
+        font-style: italic;
+        color: #cbd5e1;
+      }
+
+      .message-content .katex {
+        color: #e5e7eb !important;
+      }
+
+      .message-content .katex-display {
+        margin: 1rem 0;
+      }
+
+      /* 糖果盒动画 */
+      .candy-box {
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        animation: candy-glow 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes candy-glow {
+        0% {
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        100% {
+          box-shadow: 0 10px 30px rgba(255, 107, 107, 0.5),
+            0 0 20px rgba(78, 205, 196, 0.3);
+        }
+      }
+
+      .candy {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin: 2px;
+        animation: candy-bounce 0.5s ease-out;
+      }
+
+      .candy.red {
+        background-color: #ff4757;
+      }
+
+      .candy.blue {
+        background-color: #3742fa;
+      }
+
+      @keyframes candy-bounce {
+        0% {
+          transform: scale(0) rotate(0deg);
+        }
+        50% {
+          transform: scale(1.2) rotate(180deg);
+        }
+        100% {
+          transform: scale(1) rotate(360deg);
+        }
+      }
+
+      /* 置信区间可视化 */
+      .confidence-interval {
+        height: 20px;
+        border-radius: 10px;
+        margin: 5px 0;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .confidence-interval.contains-true {
+        background: linear-gradient(90deg, #00ff66, #00cc52);
+        box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+      }
+
+      .confidence-interval.misses-true {
+        background: linear-gradient(90deg, #ff4757, #ff3742);
+        box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+      }
+
+      .true-value-line {
+        position: absolute;
+        width: 3px;
+        height: 100%;
+        background: #ffd700;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        z-index: 10;
+      }
+
+      /* 理论推导步骤 */
+      .theory-step {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+      }
+
+      .theory-step:hover {
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+      }
+
+      .understanding-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .understanding-btn {
+        padding: 8px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: transparent;
+        color: white;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .understanding-btn:hover {
+        background: var(--neon-blue);
+        color: var(--dark-bg);
+      }
+
+      .understanding-btn.selected {
+        background: var(--neon-blue);
+        color: var(--dark-bg);
+        border-color: var(--neon-blue);
+      }
+
+      /* 理解度图谱 */
+      .understanding-radar {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid var(--neon-green);
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+      
+      /* 数据点动画效果 */
+      .data-point-enter {
+        animation: dataPointEnter 0.6s ease-out;
+      }
+      
+      @keyframes dataPointEnter {
+        0% {
+          transform: scale(0) rotate(180deg);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.2) rotate(90deg);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 1;
+        }
+      }
+      
+      /* 置信区间动画 */
+      .confidence-interval-fade {
+        animation: confidenceIntervalFade 1s ease-in-out;
+      }
+      
+      @keyframes confidenceIntervalFade {
+        0% {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        100% {
+          opacity: 0.3;
+          transform: scale(1);
+        }
+      }
+      
+      /* 结果显示动画 */
+      .result-slide-in {
+        animation: resultSlideIn 0.8s ease-out;
+      }
+      
+      @keyframes resultSlideIn {
+        0% {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      
+      /* 按钮点击效果 */
+      .button-click-effect {
+        animation: buttonClickEffect 0.3s ease-out;
+      }
+      
+      @keyframes buttonClickEffect {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(0.95);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      
+      /* 脉冲效果 */
+      .pulse-effect {
+        animation: pulseEffect 2s ease-in-out infinite;
+      }
+      
+      @keyframes pulseEffect {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 0.8;
+        }
+      }
+      
+      /* 数据加载动画 */
+      .loading-dots {
+        display: inline-block;
+      }
+      
+      .loading-dots::after {
+        content: '';
+        animation: loadingDots 1.5s steps(4, end) infinite;
+      }
+      
+      @keyframes loadingDots {
+        0%, 20% {
+          content: '';
+        }
+        40% {
+          content: '.';
+        }
+        60% {
+          content: '..';
+        }
+        80%, 100% {
+          content: '...';
+        }
+      }
+      
+      /* 成功提示动画 */
+      .success-flash {
+        animation: successFlash 0.6s ease-out;
+      }
+      
+      @keyframes successFlash {
+        0% {
+          background-color: transparent;
+        }
+        50% {
+          background-color: rgba(0, 255, 102, 0.2);
+        }
+        100% {
+          background-color: transparent;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 粒子背景 -->
+    <div id="particles-container"></div>
+
+    <!-- 导航栏 -->
+    <nav
+      class="bg-dark-bg/80 backdrop-blur-md py-4 sticky top-0 z-50 border-b border-gray-800"
+    >
+      <div class="container mx-auto px-4 flex justify-between items-center">
+        <a
+          href="index.html"
+          class="text-2xl font-future font-bold flex items-center"
+        >
+          <span class="text-neon-blue">概率统计</span
+          ><span class="ml-2">可视化</span>
+        </a>
+        <div class="flex space-x-6">
+          <a
+            href="index.html"
+            class="text-gray-300 hover:text-neon-blue transition-colors duration-300"
+            >首页</a
+          >
+          <a
+            href="random_variables.html"
+            class="text-gray-300 hover:text-neon-blue transition-colors duration-300"
+            >随机变量</a
+          >
+          <a
+            href="interval_estimation.html"
+            class="text-neon-blue border-b-2 border-neon-blue pb-1"
+            >区间估计</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <section
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50 clip-path-slant"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h1 class="text-[clamp(2rem,6vw,4rem)] font-future font-bold mb-4">
+            <span class="text-neon-blue">区间估计</span>探索
+          </h1>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            用样本构建一个有信心的范围，探索置信区间的奥秘
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 示例展示部分 -->
+    <section id="candy-box-demo" class="py-20 relative">
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-future font-bold mb-4">
+            <span class="text-neon-orange">神秘糖果盒</span>猜想
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            通过一个直观的例子，瞬间理解什么是区间估计和置信水平
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- 糖果盒交互区 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-gift text-neon-orange mr-3"></i> 糖果盒实验
+            </h3>
+
+            <div class="candy-box mb-6 text-center">
+              <div class="text-white font-bold mb-4">神秘糖果盒</div>
+              <div
+                id="candy-display"
+                class="min-h-[100px] flex flex-wrap justify-center items-center"
+              >
+                <div class="text-gray-300">点击"抽取样本"开始实验</div>
+              </div>
+            </div>
+
+            <div class="bg-dark-bg rounded-lg p-4 mb-6">
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label class="block text-gray-300 mb-2">样本量 (n):</label>
+                  <select
+                    id="sample-size"
+                    class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                  >
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-gray-300 mb-2">置信水平:</label>
+                  <select
+                    id="confidence-level"
+                    class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                  >
+                    <option value="0.90">90%</option>
+                    <option value="0.95">95%</option>
+                    <option value="0.99">99%</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="text-center mb-4">
+                <div class="text-gray-300 mb-2">
+                  样本中红色糖果比例:
+                  <span
+                    id="sample-proportion"
+                    class="text-neon-orange font-bold"
+                    >--</span
+                  >
+                </div>
+                <div class="text-gray-300 mb-4">
+                  置信区间:
+                  <span
+                    id="confidence-interval-text"
+                    class="text-neon-blue font-bold"
+                    >--</span
+                  >
+                </div>
+              </div>
+
+              <div class="flex justify-center space-x-4">
+                <button
+                  id="sample-btn"
+                  class="px-6 py-2 bg-neon-orange text-dark-bg font-bold rounded-md hover:bg-neon-orange/80 transition-all duration-300"
+                >
+                  抽取样本 <i class="fa fa-hand-paper ml-2"></i>
+                </button>
+                <button
+                  id="reveal-truth-btn"
+                  class="px-6 py-2 bg-neon-purple text-dark-bg font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300"
+                >
+                  揭示真相 <i class="fa fa-eye ml-2"></i>
+                </button>
+                <button
+                  id="repeat-experiment-btn"
+                  class="px-6 py-2 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-neon-green/80 transition-all duration-300"
+                >
+                  重复100次 <i class="fa fa-repeat ml-2"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="text-sm text-gray-400">
+              <p class="mb-2"><strong>实验说明:</strong></p>
+              <p>• 糖果盒中有红色和蓝色糖果，真实比例未知</p>
+              <p>• 通过抽样估计红色糖果的比例</p>
+              <p>• 观察置信区间如何"捕捉"真实值</p>
+            </div>
+          </div>
+
+          <!-- 置信区间可视化 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-chart-line text-neon-blue mr-3"></i>
+              置信区间可视化
+            </h3>
+
+            <div class="mb-6">
+              <div class="text-center mb-4">
+                <div class="text-gray-300">
+                  成功捕捉真实值的区间:
+                  <span id="success-count" class="text-neon-green font-bold"
+                    >0</span
+                  >
+                  / <span id="total-intervals" class="text-gray-400">0</span>
+                </div>
+                <div class="text-gray-300">
+                  成功率:
+                  <span id="success-rate" class="text-neon-blue font-bold"
+                    >--%</span
+                  >
+                </div>
+              </div>
+
+              <div
+                id="intervals-container"
+                class="relative bg-dark-bg rounded-lg p-4 min-h-[300px] overflow-y-auto"
+              >
+                <div class="text-gray-400 text-center py-8">
+                  点击"重复100次"查看置信区间分布
+                </div>
+              </div>
+            </div>
+
+            <div class="text-sm text-gray-400">
+              <p class="mb-2"><strong>图例:</strong></p>
+              <div class="flex items-center mb-1">
+                <div class="w-4 h-4 bg-neon-green rounded mr-2"></div>
+                <span>包含真实值的区间</span>
+              </div>
+              <div class="flex items-center mb-1">
+                <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
+                <span>未包含真实值的区间</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-1 h-4 bg-yellow-400 mr-2"></div>
+                <span>真实值位置</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 理论探索部分 -->
+    <section
+      id="theory-exploration"
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-future font-bold mb-4">
+            <span class="text-neon-blue">理论</span>探索
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            揭秘置信区间：从抽样分布到最终公式的推导之旅
+          </p>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+          <!-- 渐进式学习提示 -->
+          <div class="bg-neon-blue/10 border border-neon-blue/30 rounded-lg p-4 mb-8">
+            <div class="flex items-center mb-2">
+              <i class="fa fa-lightbulb text-neon-blue mr-2"></i>
+              <h3 class="text-lg font-semibold text-neon-blue">渐进式学习模式</h3>
+            </div>
+            <p class="text-gray-300 text-sm">
+              每完成一个步骤的理解度评分（≥3分），下一步骤将自动解锁。如果遇到困难，可以点击右侧工具箱中的AI助手寻求帮助。
+            </p>
+          </div>
+
+          <!-- 步骤1 -->
+          <div class="theory-step unlocked" data-step="1">
+            <h3
+              class="text-xl font-semibold mb-4 text-neon-blue flex items-center"
+            >
+              <span
+                class="bg-neon-blue text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                >1</span
+              >
+              起点——我们最好的猜测 (点估计)
+              <span class="ml-auto text-sm">
+                <i class="fa fa-unlock text-neon-green"></i>
+              </span>
+            </h3>
+            <div class="message-content">
+              <p>
+                要估计一个未知的总体均值
+                μ，我们最直接、最好的方法就是计算样本均值 $\bar{X}$。
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-4">
+                <div class="text-center">
+                  $$\bar{X} = \frac{1}{n} \sum_{i=1}^{n} X_i$$
+                </div>
+              </div>
+              <p>
+                但是，单凭一个
+                $\bar{X}$，我们不知道这个估计的'误差'有多大。我们需要用概率的语言来量化这个不确定性。
+              </p>
+            </div>
+            <div class="understanding-section">
+              <div class="understanding-buttons">
+                <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                <button class="understanding-btn" data-level="1" title="完全不理解">1</button>
+                <button class="understanding-btn" data-level="2" title="基本不理解">2</button>
+                <button class="understanding-btn" data-level="3" title="部分理解">3</button>
+                <button class="understanding-btn" data-level="4" title="基本理解">4</button>
+                <button class="understanding-btn" data-level="5" title="完全理解">5</button>
+              </div>
+              <div class="mt-3 flex items-center gap-4">
+                <button class="ai-help-btn" data-step="1">
+                  <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                </button>
+                <div class="next-step-hint hidden text-sm text-neon-green">
+                  <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤2 -->
+          <div class="theory-step locked" data-step="2">
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+            >
+              <span
+                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                >2</span
+              >
+              钥匙——抽样分布与中心极限定理 (CLT)
+              <span class="ml-auto text-sm">
+                <i class="fa fa-lock text-gray-500"></i>
+              </span>
+            </h3>
+            <div class="message-content opacity-50">
+              <p>
+                神奇的定理来了：中心极限定理（CLT）告诉我们，无论总体是什么分布，只要样本量n足够大，样本均值
+                $\bar{X}$ 的分布就会接近一个<strong>正态分布</strong>。
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-4">
+                <div class="text-center">
+                  $$\bar{X} \sim N\left(\mu, \frac{\sigma^2}{n}\right)$$
+                </div>
+              </div>
+              <p>
+                这个分布以真正的 μ 为中心，其波动范围由
+                $\frac{\sigma^2}{n}$（方差除以样本量）决定。n越大，分布越集中，$\bar{X}$
+                作为估计就越准。
+              </p>
+            </div>
+            <div class="understanding-section">
+              <div class="locked-message text-center py-4">
+                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                <p class="text-gray-500">请先完成上一步骤的理解度评分（≥3分）以解锁此内容</p>
+              </div>
+              <div class="understanding-content hidden">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button class="understanding-btn" data-level="1" title="完全不理解">1</button>
+                  <button class="understanding-btn" data-level="2" title="基本不理解">2</button>
+                  <button class="understanding-btn" data-level="3" title="部分理解">3</button>
+                  <button class="understanding-btn" data-level="4" title="基本理解">4</button>
+                  <button class="understanding-btn" data-level="5" title="完全理解">5</button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="2">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤3 -->
+          <div class="theory-step locked" data-step="3">
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+            >
+              <span
+                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                >3</span
+              >
+              转换——构造枢轴量 (Pivotal Quantity)
+              <span class="ml-auto text-sm">
+                <i class="fa fa-lock text-gray-500"></i>
+              </span>
+            </h3>
+            <div class="message-content opacity-50">
+              <p>
+                既然知道了$\bar{X}$的分布，我们可以通过<strong>标准化</strong>，将其转化为著名的Z值。这个新的量，我们称之为'枢轴量'。
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-4">
+                <div class="text-center">
+                  $$Z = \frac{\bar{X} - \mu}{\sigma/\sqrt{n}}$$
+                </div>
+              </div>
+              <p>
+                最关键的一点来了：<strong
+                  >Z的分布是标准正态分布 N(0,
+                  1)，而且它的分布完全已知，不再依赖于任何未知参数（μ或σ）！</strong
+                >
+                这就为我们构造区间提供了可能。
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-4">
+                <div class="text-center">$$Z \sim N(0, 1)$$</div>
+              </div>
+            </div>
+            <div class="understanding-section">
+              <div class="locked-message text-center py-4">
+                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                <p class="text-gray-500">请先完成上一步骤的理解度评分（≥3分）以解锁此内容</p>
+              </div>
+              <div class="understanding-content hidden">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button class="understanding-btn" data-level="1" title="完全不理解">1</button>
+                  <button class="understanding-btn" data-level="2" title="基本不理解">2</button>
+                  <button class="understanding-btn" data-level="3" title="部分理解">3</button>
+                  <button class="understanding-btn" data-level="4" title="基本理解">4</button>
+                  <button class="understanding-btn" data-level="5" title="完全理解">5</button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="3">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤4 -->
+          <div class="theory-step locked" data-step="4">
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+            >
+              <span
+                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                >4</span
+              >
+              概率表述——找到临界值
+              <span class="ml-auto text-sm">
+                <i class="fa fa-lock text-gray-500"></i>
+              </span>
+            </h3>
+            <div class="message-content opacity-50">
+              <p>
+                因为Z服从标准正态分布，我们可以轻松求出，Z值落在$-Z_{\alpha/2}$和$Z_{\alpha/2}$之间的概率是
+                $(1-\alpha)$。
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-4">
+                <div class="text-center">
+                  $$P\left( -Z_{\alpha/2} \leq Z \leq Z_{\alpha/2} \right) = 1 -
+                  \alpha$$
+                </div>
+              </div>
+              <p>现在，我们把步骤3的Z代回去！</p>
+              <div class="bg-dark-bg rounded-lg p-4 my-4">
+                <div class="text-center">
+                  $$P\left( -Z_{\alpha/2} \leq \frac{\bar{X} -
+                  \mu}{\sigma/\sqrt{n}} \leq Z_{\alpha/2} \right) = 1 - \alpha$$
+                </div>
+              </div>
+            </div>
+            <div class="understanding-section">
+              <div class="locked-message text-center py-4">
+                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                <p class="text-gray-500">请先完成上一步骤的理解度评分（≥3分）以解锁此内容</p>
+              </div>
+              <div class="understanding-content hidden">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button class="understanding-btn" data-level="1" title="完全不理解">1</button>
+                  <button class="understanding-btn" data-level="2" title="基本不理解">2</button>
+                  <button class="understanding-btn" data-level="3" title="部分理解">3</button>
+                  <button class="understanding-btn" data-level="4" title="基本理解">4</button>
+                  <button class="understanding-btn" data-level="5" title="完全理解">5</button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="4">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤5 -->
+          <div class="theory-step locked" data-step="5">
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+            >
+              <span
+                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                >5</span
+              >
+              求解——得到置信区间
+              <span class="ml-auto text-sm">
+                <i class="fa fa-lock text-gray-500"></i>
+              </span>
+            </h3>
+            <div class="message-content opacity-50">
+              <p>
+                最后一步！我们对不等式进行代数变形，目的是解出被包围在中间的 μ。
+              </p>
+              <p>
+                <strong
+                  >1. 不等式各部分同时乘以 $\frac{\sigma}{\sqrt{n}}$：</strong
+                >
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-2">
+                <div class="text-center">
+                  $$-Z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}} \leq \bar{X} -
+                  \mu \leq Z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}$$
+                </div>
+              </div>
+              <p><strong>2. 不等式各部分同时减去 $\bar{X}$：</strong></p>
+              <div class="bg-dark-bg rounded-lg p-4 my-2">
+                <div class="text-center">
+                  $$-\bar{X} - Z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}} \leq
+                  -\mu \leq -\bar{X} + Z_{\alpha/2} \cdot
+                  \frac{\sigma}{\sqrt{n}}$$
+                </div>
+              </div>
+              <p>
+                <strong
+                  >3. 不等式各部分同时乘以 -1（注意：乘负数要变号！）：</strong
+                >
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-2">
+                <div class="text-center">
+                  $$\bar{X} + Z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}} \geq
+                  \mu \geq \bar{X} - Z_{\alpha/2} \cdot
+                  \frac{\sigma}{\sqrt{n}}$$
+                </div>
+              </div>
+              <p><strong>4. 改写为传统的区间形式：</strong></p>
+              <div
+                class="bg-dark-bg rounded-lg p-4 my-4 border border-neon-green"
+              >
+                <div class="text-center">
+                  $$P\left( \bar{X} - Z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}
+                  \leq \mu \leq \bar{X} + Z_{\alpha/2} \cdot
+                  \frac{\sigma}{\sqrt{n}} \right) = 1 - \alpha$$
+                </div>
+              </div>
+              <p class="text-neon-green font-bold">
+                大功告成！这就是置信区间的公式。区间 $\left[\bar{X} \pm
+                Z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}\right]$ 以
+                $(1-\alpha)$ 的置信水平包含了未知参数 μ。
+              </p>
+            </div>
+            <div class="understanding-section">
+              <div class="locked-message text-center py-4">
+                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                <p class="text-gray-500">请先完成上一步骤的理解度评分（≥3分）以解锁此内容</p>
+              </div>
+              <div class="understanding-content hidden">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button class="understanding-btn" data-level="1" title="完全不理解">1</button>
+                  <button class="understanding-btn" data-level="2" title="基本不理解">2</button>
+                  <button class="understanding-btn" data-level="3" title="部分理解">3</button>
+                  <button class="understanding-btn" data-level="4" title="基本理解">4</button>
+                  <button class="understanding-btn" data-level="5" title="完全理解">5</button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="5">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>恭喜！所有步骤已完成
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 理解度图谱 -->
+          <div id="understanding-radar" class="understanding-radar hidden">
+            <h3
+              class="text-xl font-semibold mb-4 text-neon-green flex items-center"
+            >
+              <i class="fa fa-chart-radar text-neon-green mr-3"></i>
+              个人理解度图谱与学习分析
+            </h3>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- 雷达图 -->
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 text-white">理解度雷达图</h4>
+                <div class="h-64">
+                  <canvas id="understanding-chart"></canvas>
+                </div>
+              </div>
+              
+              <!-- 学习数据分析 -->
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 text-white">学习数据分析</h4>
+                <div id="learning-stats" class="space-y-3">
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">平均理解度:</span>
+                    <span id="avg-understanding" class="text-neon-blue font-bold">-</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">最薄弱环节:</span>
+                    <span id="weakest-step" class="text-neon-orange font-bold">-</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">最强项:</span>
+                    <span id="strongest-step" class="text-neon-green font-bold">-</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">完成时间:</span>
+                    <span id="completion-time" class="text-neon-purple font-bold">-</span>
+                  </div>
+                </div>
+                
+                <!-- 学习建议 -->
+                <div class="mt-4 p-3 bg-gray-800 rounded-lg">
+                  <h5 class="text-sm font-semibold text-neon-green mb-2">📚 个性化学习建议</h5>
+                  <div id="learning-suggestions" class="text-sm text-gray-300">
+                    完成所有步骤后将显示个性化建议
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-sm text-gray-400 mt-4">
+              <p>
+                <i class="fa fa-info-circle mr-1"></i>
+                这个图谱记录了您的学习轨迹，帮助识别需要重点复习的内容。数据仅在本地存储，保护您的隐私。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 实践应用部分 -->
+    <section id="practical-applications" class="py-20 relative">
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-future font-bold mb-4">
+            <span class="text-neon-green">实践</span>应用
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            将区间估计理论应用到真实场景中
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- 军事分析应用 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-crosshairs text-neon-orange mr-3"></i>
+              军事分析：寻找遗失的炮弹
+            </h3>
+
+            <div class="mb-6">
+              <p class="text-gray-300 mb-4">
+                一架战机在训练海域遗失一门炮弹。使用声纳浮标进行搜索，每个浮标的探测存在随机误差。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <div class="grid grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <label class="block text-gray-300 mb-2">浮标数量:</label>
+                    <select
+                      id="sonar-count"
+                      class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                    >
+                      <option value="10">10个</option>
+                      <option value="20" selected>20个</option>
+                      <option value="50">50个</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">置信水平:</label>
+                    <select
+                      id="sonar-confidence"
+                      class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                    >
+                      <option value="0.90">90%</option>
+                      <option value="0.95" selected>95%</option>
+                      <option value="0.99">99%</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">声纳精度:</label>
+                    <select
+                      id="sonar-accuracy"
+                      class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                    >
+                      <option value="0.1">高精度 (±0.1km)</option>
+                      <option value="0.3" selected>中精度 (±0.3km)</option>
+                      <option value="0.5">低精度 (±0.5km)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="text-center mb-4">
+                  <div class="text-gray-300 mb-2">
+                    估计位置:
+                    <span
+                      id="estimated-position"
+                      class="text-neon-orange font-bold"
+                      >(0.0, 0.0)</span
+                    >
+                  </div>
+                  <div class="text-gray-300 mb-4">
+                    搜索区域:
+                    <span id="search-area" class="text-neon-blue font-bold"
+                      >-- km²</span
+                    >
+                  </div>
+                </div>
+
+                <div class="flex justify-center space-x-4">
+                  <button
+                    id="deploy-sonar-btn"
+                    class="px-6 py-2 bg-neon-orange text-dark-bg font-bold rounded-md hover:bg-neon-orange/80 transition-all duration-300"
+                  >
+                    投放浮标 <i class="fa fa-anchor ml-2"></i>
+                  </button>
+                  <button
+                    id="reveal-shell-btn"
+                    class="px-6 py-2 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-neon-green/80 transition-all duration-300"
+                  >
+                    揭示真实位置 <i class="fa fa-eye ml-2"></i>
+                  </button>
+                  <button
+                    id="reset-search-btn"
+                    class="px-6 py-2 bg-gray-600 text-white font-bold rounded-md hover:bg-gray-500 transition-all duration-300"
+                  >
+                    重置搜索 <i class="fa fa-refresh ml-2"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-96 bg-dark-bg rounded-lg p-4 relative overflow-hidden">
+              <canvas id="sonar-map" 
+                      width="800" 
+                      height="600" 
+                      style="width: 100%; height: 100%; image-rendering: auto; cursor: crosshair;"
+                      class="border border-gray-600 rounded">
+              </canvas>
+              <!-- 坐标显示 -->
+              <div id="sonar-coordinate-display" class="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-mono">
+                坐标: (0, 0) km
+              </div>
+              <!-- 缩放控制 -->
+              <div class="absolute top-2 right-2 flex flex-col gap-1">
+                <button id="sonar-zoom-in" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded flex items-center justify-center text-sm">+</button>
+                <button id="sonar-zoom-out" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded flex items-center justify-center text-sm">-</button>
+                <button id="sonar-reset-view" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded flex items-center justify-center text-xs">⌂</button>
+              </div>
+            </div>
+
+            <div class="mt-4 text-sm text-gray-400">
+              <p>
+                <strong>核心公式:</strong> $\bar{X} \pm t_{\alpha/2}(n-1) \cdot
+                \frac{S}{\sqrt{n}}$
+              </p>
+              <p>观察置信区域如何随着样本量n的增加而缩小！</p>
+            </div>
+          </div>
+
+          <!-- 游戏策略应用 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-gamepad text-neon-purple mr-3"></i>
+              游戏策略：《我的世界》末地之门定位
+            </h3>
+
+            <div class="mb-6">
+              <p class="text-gray-300 mb-4">
+                玩家投掷末影之眼寻找末地要塞。由于游戏机制，每次投掷都存在随机误差。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <div class="grid grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <label class="block text-gray-300 mb-2">投掷次数:</label>
+                    <select
+                      id="eye-count"
+                      class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                    >
+                      <option value="5">5次</option>
+                      <option value="12" selected>12次</option>
+                      <option value="20">20次</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">置信水平:</label>
+                    <select
+                      id="eye-confidence"
+                      class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                    >
+                      <option value="0.90">90%</option>
+                      <option value="0.95" selected>95%</option>
+                      <option value="0.99">99%</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">Alpha值 (α):</label>
+                    <select
+                      id="alpha-level"
+                      class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                    >
+                      <option value="0.01">0.01</option>
+                      <option value="0.05" selected>0.05</option>
+                      <option value="0.10">0.10</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">统计方法:</label>
+                    <select
+                      id="statistical-method"
+                      class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                    >
+                      <option value="classical">经典统计</option>
+                      <option value="bayesian" selected>贝叶斯方法</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div id="bayesian-controls" class="mb-4">
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-gray-300 mb-2">先验分布:</label>
+                      <select
+                        id="prior-distribution"
+                        class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                      >
+                        <option value="uniform" selected>均匀分布</option>
+                        <option value="normal">正态分布</option>
+                        <option value="informed">有信息先验</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-gray-300 mb-2">显示模式:</label>
+                      <select
+                        id="display-mode"
+                        class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                      >
+                        <option value="points">点图</option>
+                        <option value="contour" selected>等高线</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center mb-4">
+                  <div class="text-gray-300 mb-2">
+                    要塞预测位置:
+                    <span
+                      id="stronghold-position"
+                      class="text-neon-purple font-bold"
+                      >(0, 0)</span
+                    >
+                  </div>
+                  <div class="text-gray-300 mb-2">
+                    搜寻范围:
+                    <span id="search-range" class="text-neon-blue font-bold"
+                      >±-- 格</span
+                    >
+                  </div>
+                  <div class="text-gray-300 mb-4">
+                    角度置信区间:
+                    <span id="angle-confidence-interval" class="text-neon-green font-bold"
+                      >--°</span
+                    >
+                  </div>
+                </div>
+
+                <div class="flex justify-center space-x-4">
+                  <button
+                    id="throw-eye-btn"
+                    class="px-6 py-2 bg-neon-purple text-dark-bg font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300"
+                  >
+                    投掷末影之眼 <i class="fa fa-eye ml-2"></i>
+                  </button>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="h-96 bg-dark-bg rounded-lg p-4 relative overflow-hidden">
+              <canvas id="minecraft-map" 
+                      width="800" 
+                      height="600" 
+                      style="width: 100%; height: 100%; image-rendering: pixelated; cursor: crosshair;"
+                      class="border border-gray-600 rounded">
+              </canvas>
+              <!-- 坐标显示 -->
+              <div id="coordinate-display" class="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-mono">
+                坐标: (0, 0)
+              </div>
+              <!-- 缩放控制 -->
+              <div class="absolute top-2 right-2 flex flex-col gap-1">
+                <button id="zoom-in" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded flex items-center justify-center text-sm">+</button>
+                <button id="zoom-out" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded flex items-center justify-center text-sm">-</button>
+                <button id="reset-view" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded flex items-center justify-center text-xs">⌂</button>
+              </div>
+            </div>
+
+            <div class="mt-4 text-sm text-gray-400">
+              <p><strong>动态提示:</strong></p>
+              <div id="minecraft-tips" class="text-neon-green">
+                <p>开始投掷末影之眼来定位末地要塞！</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="../static/js/toolbox.js"></script>
+    <script>
+      // 全局变量
+      let candyBoxTrueRatio = 0.6; // 真实的红色糖果比例
+      let currentSample = [];
+      let allIntervals = [];
+      let understandingScores = [0, 0, 0, 0, 0];
+      let sonarData = [];
+      let eyeData = [];
+      let sonarTruePosition = { x: 2.5, y: 1.8 }; // 真实炮弹位置
+      let strongholdTruePosition = { x: 1500, z: -1200 }; // 真实要塞位置（约2000格距离）
+      let showTruePosition = false; // 控制是否显示真实位置
+      let canDeployBuoy = true; // 控制是否可以投放浮标
+      
+      // 地图缩放和滑动全局变量
+      let mapZoom = 1;
+      let mapOffsetX = 0;
+      let mapOffsetY = 0;
+      let isDragging = false;
+      let lastMouseX = 0;
+      let lastMouseY = 0;
+      let minecraftMapZoom = 1;
+      let minecraftMapOffsetX = 0;
+      let minecraftMapOffsetY = 0;
+      let minecraftIsDragging = false;
+      let minecraftLastMouseX = 0;
+      let minecraftLastMouseY = 0;
+      let eyeThrowColors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd'];
+      let eyeThrowIndex = 0;
+      let playerPosition = { x: 0, z: 0 }; // 玩家当前位置
+
+      // 初始化粒子背景
+      function initParticles() {
+        const container = document.getElementById("particles-container");
+        for (let i = 0; i < 50; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+          particle.style.left = Math.random() * 100 + "%";
+          particle.style.top = Math.random() * 100 + "%";
+          particle.style.width = Math.random() * 4 + 2 + "px";
+          particle.style.height = particle.style.width;
+          particle.style.backgroundColor = `hsl(${
+            Math.random() * 60 + 180
+          }, 70%, 60%)`;
+          particle.style.animationDelay = Math.random() * 15 + "s";
+          container.appendChild(particle);
+        }
+      }
+
+      // 糖果盒实验
+      function sampleCandies() {
+        const sampleSize = parseInt(
+          document.getElementById("sample-size").value
+        );
+        const confidenceLevel = parseFloat(
+          document.getElementById("confidence-level").value
+        );
+
+        // 生成样本
+        currentSample = [];
+        for (let i = 0; i < sampleSize; i++) {
+          currentSample.push(
+            Math.random() < candyBoxTrueRatio ? "red" : "blue"
+          );
+        }
+
+        // 显示糖果
+        const candyDisplay = document.getElementById("candy-display");
+        candyDisplay.innerHTML = "";
+        currentSample.forEach((color, index) => {
+          setTimeout(() => {
+            const candy = document.createElement("div");
+            candy.className = `candy ${color}`;
+            candyDisplay.appendChild(candy);
+          }, index * 50);
+        });
+
+        // 计算样本比例
+        const redCount = currentSample.filter((c) => c === "red").length;
+        const sampleProportion = redCount / sampleSize;
+
+        // 计算置信区间
+        const z =
+          confidenceLevel === 0.9
+            ? 1.645
+            : confidenceLevel === 0.95
+            ? 1.96
+            : 2.576;
+        const standardError = Math.sqrt(
+          (sampleProportion * (1 - sampleProportion)) / sampleSize
+        );
+        const marginError = z * standardError;
+        const lowerBound = Math.max(0, sampleProportion - marginError);
+        const upperBound = Math.min(1, sampleProportion + marginError);
+
+        // 更新显示
+        document.getElementById("sample-proportion").textContent =
+          sampleProportion.toFixed(3);
+        document.getElementById(
+          "confidence-interval-text"
+        ).textContent = `[${lowerBound.toFixed(3)}, ${upperBound.toFixed(3)}]`;
+      }
+
+      // 揭示真相
+      function revealTruth() {
+        alert(`真实的红色糖果比例是: ${candyBoxTrueRatio.toFixed(3)}`);
+      }
+
+      // 重复实验100次
+      function repeatExperiment() {
+        const sampleSize = parseInt(
+          document.getElementById("sample-size").value
+        );
+        const confidenceLevel = parseFloat(
+          document.getElementById("confidence-level").value
+        );
+        const z =
+          confidenceLevel === 0.9
+            ? 1.645
+            : confidenceLevel === 0.95
+            ? 1.96
+            : 2.576;
+
+        allIntervals = [];
+        let successCount = 0;
+
+        for (let exp = 0; exp < 100; exp++) {
+          // 生成样本
+          let redCount = 0;
+          for (let i = 0; i < sampleSize; i++) {
+            if (Math.random() < candyBoxTrueRatio) redCount++;
+          }
+
+          const sampleProportion = redCount / sampleSize;
+          const standardError = Math.sqrt(
+            (sampleProportion * (1 - sampleProportion)) / sampleSize
+          );
+          const marginError = z * standardError;
+          const lowerBound = Math.max(0, sampleProportion - marginError);
+          const upperBound = Math.min(1, sampleProportion + marginError);
+
+          const containsTrue =
+            lowerBound <= candyBoxTrueRatio && candyBoxTrueRatio <= upperBound;
+          if (containsTrue) successCount++;
+
+          allIntervals.push({
+            lower: lowerBound,
+            upper: upperBound,
+            containsTrue: containsTrue,
+          });
+        }
+
+        // 更新显示
+        document.getElementById("success-count").textContent = successCount;
+        document.getElementById("total-intervals").textContent = "100";
+        document.getElementById("success-rate").textContent =
+          successCount + "%";
+
+        // 可视化区间
+        visualizeIntervals();
+      }
+
+      // 可视化置信区间
+      function visualizeIntervals() {
+        const container = document.getElementById("intervals-container");
+        container.innerHTML = "";
+
+        // 添加真实值线
+        const trueLine = document.createElement("div");
+        trueLine.className = "true-value-line";
+        trueLine.style.left = candyBoxTrueRatio * 100 + "%";
+        container.appendChild(trueLine);
+
+        // 添加区间
+        allIntervals.forEach((interval, index) => {
+          const intervalDiv = document.createElement("div");
+          intervalDiv.className = `confidence-interval ${
+            interval.containsTrue ? "contains-true" : "misses-true"
+          }`;
+          intervalDiv.style.left = interval.lower * 100 + "%";
+          intervalDiv.style.width =
+            (interval.upper - interval.lower) * 100 + "%";
+          intervalDiv.style.top = index * 3 + "px";
+          intervalDiv.title = `区间 ${index + 1}: [${interval.lower.toFixed(
+            3
+          )}, ${interval.upper.toFixed(3)}]`;
+          container.appendChild(intervalDiv);
+        });
+
+        container.style.height = allIntervals.length * 3 + 20 + "px";
+      }
+
+      // 理解度评分
+      function setUnderstanding(step, level) {
+        understandingScores[step - 1] = level;
+
+        // 更新按钮状态
+        const buttons = document.querySelectorAll(
+          `[data-step="${step}"] .understanding-btn`
+        );
+        buttons.forEach((btn, index) => {
+          btn.classList.toggle("selected", index + 1 === level);
+        });
+
+        // 显示下一步提示
+        const currentStep = document.querySelector(`[data-step="${step}"]`);
+        const nextStepHint = currentStep.querySelector('.next-step-hint');
+        if (level >= 3 && nextStepHint) {
+          nextStepHint.classList.remove('hidden');
+        }
+
+        // 渐进式解锁下一步
+        if (level >= 3 && step < 5) {
+          unlockNextStep(step + 1);
+        }
+
+        // 检查是否所有步骤都已评分
+        if (understandingScores.every((score) => score > 0)) {
+          showUnderstandingRadar();
+        }
+      }
+
+      // 解锁下一步
+      function unlockNextStep(step) {
+        const nextStepElement = document.querySelector(`[data-step="${step}"]`);
+        if (nextStepElement && nextStepElement.classList.contains('locked')) {
+          // 移除锁定状态
+          nextStepElement.classList.remove('locked');
+          nextStepElement.classList.add('unlocked');
+          
+          // 更新标题样式
+          const title = nextStepElement.querySelector('h3');
+          const stepNumber = nextStepElement.querySelector('h3 span');
+          const lockIcon = nextStepElement.querySelector('.fa-lock');
+          
+          title.classList.remove('text-gray-500');
+          title.classList.add('text-neon-blue');
+          stepNumber.classList.remove('bg-gray-600', 'text-gray-400');
+          stepNumber.classList.add('bg-neon-blue', 'text-dark-bg');
+          
+          if (lockIcon) {
+            lockIcon.parentElement.innerHTML = '<i class="fa fa-unlock text-neon-green"></i>';
+          }
+          
+          // 恢复内容透明度
+          const content = nextStepElement.querySelector('.message-content');
+          content.classList.remove('opacity-50');
+          
+          // 显示理解度内容，隐藏锁定消息
+          const lockedMessage = nextStepElement.querySelector('.locked-message');
+          const understandingContent = nextStepElement.querySelector('.understanding-content');
+          
+          if (lockedMessage) lockedMessage.classList.add('hidden');
+          if (understandingContent) understandingContent.classList.remove('hidden');
+        }
+      }
+
+      // AI帮助功能
+      function showAIHelp(step) {
+        const helpTexts = {
+          1: "点估计是用样本统计量来估计总体参数的方法。样本均值是总体均值的无偏估计量，这意味着在多次抽样中，样本均值的期望值等于总体均值。",
+          2: "中心极限定理告诉我们，当样本量足够大时，样本均值的分布会趋向于正态分布，无论原总体是什么分布。这为我们构造置信区间提供了理论基础。",
+          3: "枢轴量是一个包含未知参数但其分布已知的统计量。通过标准化，我们得到了服从标准正态分布的Z统计量。",
+          4: "利用标准正态分布的性质，我们可以找到使得Z落在某个区间内的概率为1-α的临界值。这些临界值帮助我们构造置信区间。",
+          5: "通过代数变换，我们将包含Z的不等式转换为包含μ的不等式，从而得到置信区间的最终形式。注意乘以负数时不等号要变向！"
+        };
+        
+        alert(`AI助手提示：\n\n${helpTexts[step] || '暂无帮助信息'}`);
+      }
+
+      // 显示理解度图谱
+      function showUnderstandingRadar() {
+        const radarSection = document.getElementById("understanding-radar");
+        radarSection.classList.remove("hidden");
+
+        // 创建雷达图
+        const ctx = document
+          .getElementById("understanding-chart")
+          .getContext("2d");
+        new Chart(ctx, {
+          type: "radar",
+          data: {
+            labels: ["点估计", "CLT", "枢轴量", "概率表述", "求解"],
+            datasets: [
+              {
+                label: "理解程度",
+                data: understandingScores,
+                backgroundColor: "rgba(0, 243, 255, 0.2)",
+                borderColor: "#00f3ff",
+                pointBackgroundColor: "#00f3ff",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: "#00f3ff",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: {
+                beginAtZero: true,
+                max: 5,
+                ticks: {
+                  color: "#9ca3af",
+                },
+                grid: {
+                  color: "rgba(156, 163, 175, 0.3)",
+                },
+                angleLines: {
+                  color: "rgba(156, 163, 175, 0.3)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "#ffffff"
+                }
+              }
+            }
+          },
+        });
+
+        // 更新学习数据分析
+        updateLearningAnalysis();
+      }
+
+      // 更新学习数据分析
+      function updateLearningAnalysis() {
+        const stepNames = ["点估计", "中心极限定理", "枢轴量构造", "概率表述", "代数求解"];
+        
+        // 计算平均理解度
+        const avgScore = (understandingScores.reduce((a, b) => a + b, 0) / understandingScores.length).toFixed(1);
+        document.getElementById('avg-understanding').textContent = avgScore + '/5.0';
+        
+        // 找出最薄弱和最强的环节
+        const minScore = Math.min(...understandingScores);
+        const maxScore = Math.max(...understandingScores);
+        const weakestIndex = understandingScores.indexOf(minScore);
+        const strongestIndex = understandingScores.indexOf(maxScore);
+        
+        document.getElementById('weakest-step').textContent = stepNames[weakestIndex] + ` (${minScore}/5)`;
+        document.getElementById('strongest-step').textContent = stepNames[strongestIndex] + ` (${maxScore}/5)`;
+        
+        // 计算完成时间（模拟）
+        const completionTime = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+        document.getElementById('completion-time').textContent = completionTime;
+        
+        // 生成个性化学习建议
+        generateLearningSuggestions(avgScore, weakestIndex, minScore);
+      }
+
+      // 生成个性化学习建议
+      function generateLearningSuggestions(avgScore, weakestIndex, minScore) {
+        const stepNames = ["点估计", "中心极限定理", "枢轴量构造", "概率表述", "代数求解"];
+        const suggestions = [];
+        
+        if (avgScore >= 4.0) {
+          suggestions.push("🎉 优秀！您已经很好地掌握了区间估计的核心概念。");
+          suggestions.push("💡 建议：可以尝试更复杂的置信区间问题，如t分布、卡方分布等。");
+        } else if (avgScore >= 3.0) {
+          suggestions.push("👍 不错！您对大部分概念有了基本理解。");
+          suggestions.push(`🔍 重点关注：${stepNames[weakestIndex]}部分需要加强理解。`);
+        } else {
+          suggestions.push("📚 需要更多练习！建议重新学习基础概念。");
+          suggestions.push(`⚠️ 优先复习：${stepNames[weakestIndex]}是当前的薄弱环节。`);
+        }
+        
+        if (minScore <= 2) {
+          const helpTexts = {
+            0: "建议复习概率论基础，特别是期望值和无偏估计的概念。",
+            1: "建议复习正态分布和极限定理，这是理解CLT的关键。",
+            2: "建议复习标准化过程，理解如何构造已知分布的统计量。",
+            3: "建议复习概率计算，特别是标准正态分布的性质。",
+            4: "建议复习代数运算，特别是不等式变换的规则。"
+          };
+          suggestions.push(`📖 具体建议：${helpTexts[weakestIndex]}`);
+        }
+        
+        document.getElementById('learning-suggestions').innerHTML = suggestions.join('<br>');
+      }
+
+      // 声纳浮标实验
+      let sonarDeploymentAnimation = null;
+      
+      function deploySonar() {
+        // 检查是否可以投放浮标
+        if (!canDeployBuoy) {
+          return;
+        }
+        
+        const sonarCount = 1; // 限制每次只能投放一个浮标
+        const confidenceLevel = parseFloat(
+          document.getElementById("sonar-confidence").value
+        );
+        const sonarAccuracy = parseFloat(
+          document.getElementById("sonar-accuracy").value
+        );
+
+        // 如果是第一次投放，清空数据
+        if (sonarData.length === 0) {
+          sonarData = [];
+        }
+        
+        // 禁用投放按钮
+        canDeployBuoy = false;
+        
+        // 添加部署动画效果
+        const deployBtn = document.getElementById('deploy-sonar-btn');
+        deployBtn.classList.add('button-click-effect');
+        setTimeout(() => deployBtn.classList.remove('button-click-effect'), 300);
+        deployBtn.innerHTML = '部署中<span class="loading-dots"></span> <i class="fa fa-spinner fa-spin ml-2"></i>';
+        deployBtn.disabled = true;
+        
+        // 模拟逐个部署浮标的动画
+        let deployedCount = 0;
+        const deployInterval = setInterval(() => {
+          if (deployedCount < sonarCount) {
+            // 模拟声纳探测，基于选择的精度添加随机误差
+            // 使用正态分布生成更真实的声纳误差
+          const errorX = normalRandom(0, sonarAccuracy * 0.4);
+          const errorY = normalRandom(0, sonarAccuracy * 0.4);
+            sonarData.push({
+              x: sonarTruePosition.x + errorX,
+              y: sonarTruePosition.y + errorY,
+              deployed: true
+            });
+            deployedCount++;
+            
+            // 实时更新地图显示
+            if (deployedCount >= 3) { // 至少3个点才能计算
+              calculateAndDisplayResults(confidenceLevel);
+            }
+            
+            // 添加数据点动画效果
+            const canvas = document.getElementById('sonar-canvas');
+            if (canvas) {
+              canvas.classList.add('data-point-enter');
+              setTimeout(() => canvas.classList.remove('data-point-enter'), 600);
+            }
+          } else {
+            clearInterval(deployInterval);
+            deployBtn.innerHTML = '投放浮标 <i class="fa fa-anchor ml-2"></i>';
+            deployBtn.disabled = false;
+            deployBtn.classList.add('success-flash');
+            setTimeout(() => deployBtn.classList.remove('success-flash'), 600);
+            // 重新启用投放功能
+            canDeployBuoy = true;
+            calculateAndDisplayResults(confidenceLevel);
+          }
+        }, 200); // 每200ms部署一个浮标
+      }
+      
+      function calculateAndDisplayResults(confidenceLevel) {
+        if (sonarData.length < 2) return;
+        
+        const sonarCount = sonarData.length;
+        
+        // 计算平均位置
+        const avgX = sonarData.reduce((sum, point) => sum + point.x, 0) / sonarCount;
+        const avgY = sonarData.reduce((sum, point) => sum + point.y, 0) / sonarCount;
+
+        // 计算标准差
+        const stdX = Math.sqrt(
+          sonarData.reduce(
+            (sum, point) => sum + Math.pow(point.x - avgX, 2),
+            0
+          ) / Math.max(1, sonarCount - 1)
+        );
+        const stdY = Math.sqrt(
+          sonarData.reduce(
+            (sum, point) => sum + Math.pow(point.y - avgY, 2),
+            0
+          ) / Math.max(1, sonarCount - 1)
+        );
+
+        // t分布临界值（根据自由度调整）
+        const df = Math.max(1, sonarCount - 1);
+        let t;
+        if (confidenceLevel === 0.9) {
+          t = df <= 10 ? [0, 6.314, 2.920, 2.353, 2.132, 2.015, 1.943, 1.895, 1.860, 1.833, 1.812][df] || 1.729 : 1.645;
+        } else if (confidenceLevel === 0.95) {
+          t = df <= 10 ? [0, 12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365, 2.306, 2.262, 2.228][df] || 2.093 : 1.96;
+        } else {
+          t = df <= 10 ? [0, 63.657, 9.925, 5.841, 4.604, 4.032, 3.707, 3.499, 3.355, 3.250, 3.169][df] || 2.861 : 2.576;
+        }
+        
+        const marginX = (t * stdX) / Math.sqrt(sonarCount);
+        const marginY = (t * stdY) / Math.sqrt(sonarCount);
+
+        // 更新显示并添加动画效果
+        const positionElement = document.getElementById("estimated-position");
+        const areaElement = document.getElementById("search-area");
+        
+        // 添加结果显示动画
+        positionElement.classList.add('result-slide-in');
+        areaElement.classList.add('result-slide-in');
+        
+        positionElement.textContent = `(${avgX.toFixed(2)}, ${avgY.toFixed(2)})`;
+        const searchArea = 4 * marginX * marginY; // 矩形面积
+        areaElement.textContent = searchArea.toFixed(2) + " km²";
+        
+        // 移除动画类
+        setTimeout(() => {
+          positionElement.classList.remove('result-slide-in');
+          areaElement.classList.remove('result-slide-in');
+        }, 600);
+
+        // 绘制声纳地图
+        drawSonarMap(avgX, avgY, marginX, marginY);
+      }
+      
+      // 揭示真实炮弹位置
+      function revealShellPosition() {
+        // 显示真实位置
+        showTruePosition = true;
+        
+        // 添加按钮点击动画
+        const revealBtn = document.querySelector('button[onclick="revealShellPosition()"]');
+        if (revealBtn) {
+          revealBtn.classList.add('button-click-effect');
+          setTimeout(() => revealBtn.classList.remove('button-click-effect'), 300);
+        }
+        
+        // 重新绘制地图以显示真实位置
+        if (sonarData.length > 0) {
+          const sonarCount = sonarData.length;
+          const avgX = sonarData.reduce((sum, d) => sum + d.x, 0) / sonarCount;
+          const avgY = sonarData.reduce((sum, d) => sum + d.y, 0) / sonarCount;
+          const marginX = Math.sqrt(sonarData.reduce((sum, d) => sum + Math.pow(d.x - avgX, 2), 0) / sonarCount);
+          const marginY = Math.sqrt(sonarData.reduce((sum, d) => sum + Math.pow(d.y - avgY, 2), 0) / sonarCount);
+          drawSonarMap(avgX, avgY, marginX, marginY);
+        } else {
+          // 如果没有浮标数据，只绘制基础地图
+          drawSonarMap(0, 0, 0, 0);
+        }
+        
+        // 添加闪烁效果
+        const canvas = document.getElementById("sonar-map");
+        const ctx = canvas.getContext("2d");
+        let flashCount = 0;
+        const flashInterval = setInterval(() => {
+          if (flashCount < 6) {
+            const toCanvasX = (x) => ((x + 1) * canvas.width) / 6;
+            const toCanvasY = (y) => ((3 - y) * canvas.height) / 4;
+            
+            ctx.fillStyle = flashCount % 2 === 0 ? "#ffd700" : "#ff4444";
+            ctx.beginPath();
+            ctx.arc(
+              toCanvasX(sonarTruePosition.x),
+              toCanvasY(sonarTruePosition.y),
+              8,
+              0,
+              2 * Math.PI
+            );
+            ctx.fill();
+            flashCount++;
+          } else {
+            clearInterval(flashInterval);
+            // 显示真实位置信息
+            alert(`真实炮弹位置: (${sonarTruePosition.x.toFixed(2)}, ${sonarTruePosition.y.toFixed(2)})`);
+          }
+        }, 300);
+      }
+
+      // 绘制声纳地图
+      function drawSonarMap(avgX, avgY, marginX, marginY) {
+        const canvas = document.getElementById("sonar-map");
+        const ctx = canvas.getContext("2d");
+        
+        // 获取设备像素比以提升清晰度
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        
+        // 设置canvas实际分辨率（考虑设备像素比）
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        
+        // 设置canvas显示尺寸
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+        
+        // 缩放绘图上下文以匹配设备像素比
+        ctx.scale(dpr, dpr);
+        
+        // 启用抗锯齿
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        ctx.clearRect(0, 0, rect.width, rect.height);
+
+        // 保存上下文并应用变换
+        ctx.save();
+        ctx.translate(mapOffsetX, mapOffsetY);
+        ctx.scale(mapZoom, mapZoom);
+
+        // 坐标转换函数（考虑缩放和平移）
+        const toCanvasX = (x) => ((x + 1) * rect.width) / 6;
+        const toCanvasY = (y) => ((3 - y) * rect.height) / 4;
+
+        // 绘制网格
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 6; i++) {
+          ctx.beginPath();
+          ctx.moveTo((i * rect.width) / 6, 0);
+          ctx.lineTo((i * rect.width) / 6, rect.height);
+          ctx.stroke();
+        }
+        for (let i = 0; i <= 4; i++) {
+          ctx.beginPath();
+          ctx.moveTo(0, (i * rect.height) / 4);
+          ctx.lineTo(rect.width, (i * rect.height) / 4);
+          ctx.stroke();
+        }
+
+        // 绘制置信区域
+        ctx.fillStyle = "rgba(0, 243, 255, 0.2)";
+        ctx.strokeStyle = "#00f3ff";
+        ctx.lineWidth = 2;
+        const rectX = toCanvasX(avgX - marginX);
+        const rectY = toCanvasY(avgY + marginY);
+        const rectW = toCanvasX(avgX + marginX) - rectX;
+        const rectH = toCanvasY(avgY - marginY) - rectY;
+        ctx.fillRect(rectX, rectY, rectW, rectH);
+        ctx.strokeRect(rectX, rectY, rectW, rectH);
+
+        // 绘制声纳探测点
+        sonarData.forEach((point) => {
+          ctx.fillStyle = "#00ff66";
+          ctx.beginPath();
+          ctx.arc(toCanvasX(point.x), toCanvasY(point.y), 3, 0, 2 * Math.PI);
+          ctx.fill();
+        });
+
+        // 绘制估计位置
+        ctx.fillStyle = "#00f3ff";
+        ctx.beginPath();
+        ctx.arc(toCanvasX(avgX), toCanvasY(avgY), 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // 绘制真实位置（仅在显示状态下）
+        if (showTruePosition) {
+          ctx.fillStyle = "#ffd700";
+          ctx.beginPath();
+          ctx.arc(
+            toCanvasX(sonarTruePosition.x),
+            toCanvasY(sonarTruePosition.y),
+            6,
+            0,
+            2 * Math.PI
+          );
+          ctx.fill();
+        }
+
+        // 恢复变换
+        ctx.restore();
+
+        // 重置搜索功能
+        function resetSearch() {
+          sonarData = [];
+          const canvas = document.getElementById("sonar-map");
+          const ctx = canvas.getContext("2d");
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          // 重置显示
+          document.getElementById("estimated-position").textContent = "(0.0, 0.0)";
+          document.getElementById("search-area").textContent = "-- km²";
+          
+          // 重新绘制空白地图
+          drawSonarMap(0, 0, 0, 0);
+        }
+        
+        // 更新我的世界提示
+        function updateMinecraftTips() {
+          const tipsElement = document.getElementById("minecraft-tips");
+          const throwCount = eyeData.length;
+          
+          if (throwCount === 0) {
+            tipsElement.innerHTML = "<p>开始投掷末影之眼来定位末地要塞！</p>";
+          } else if (throwCount < 3) {
+            tipsElement.innerHTML = `<p>已投掷 ${throwCount} 次，至少需要 3 次才能进行三角定位。</p>`;
+          } else if (throwCount < 8) {
+            tipsElement.innerHTML = `<p>已投掷 ${throwCount} 次，数据越多定位越准确！建议继续投掷。</p>`;
+          } else {
+            tipsElement.innerHTML = `<p>已投掷 ${throwCount} 次，数据充足！可以开始挖掘寻找要塞。</p>`;
+          }
+        }
+        
+        // 添加图例
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "12px Arial";
+        let legendY = 20;
+        if (showTruePosition) {
+          ctx.fillText("🟡 真实位置", 10, legendY);
+          legendY += 15;
+        }
+        ctx.fillText("🔵 估计位置", 10, legendY);
+        legendY += 15;
+        ctx.fillText("🟢 声纳探测", 10, legendY);
+        legendY += 15;
+        ctx.fillText("🔷 置信区域", 10, legendY);
+      }
+
+      // 重置搜索
+      function resetSearch() {
+        sonarData = [];
+        showTruePosition = false; // 重置时隐藏真实位置
+        canDeployBuoy = true; // 重新启用浮标投放
+        document.getElementById("estimated-position").textContent =
+          "(0.0, 0.0)";
+        document.getElementById("search-area").textContent = "-- km²";
+
+        const canvas = document.getElementById("sonar-map");
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 重新绘制基础地图
+        drawSonarMap(0, 0, 0, 0);
+      }
+
+      // 末影之眼实验
+      let bayesianPosterior = null;
+      
+      function throwEye() {
+        // 添加按钮点击动画效果
+        const throwBtn = document.querySelector('button[onclick="throwEye()"]');
+        if (throwBtn) {
+          throwBtn.classList.add('button-click-effect');
+          setTimeout(() => throwBtn.classList.remove('button-click-effect'), 300);
+        }
+        
+        const eyeCount = parseInt(document.getElementById("eye-count").value);
+        const confidenceLevel = parseFloat(
+          document.getElementById("eye-confidence").value
+        );
+        const statisticalMethod = document.getElementById("statistical-method").value;
+        const priorDistribution = document.getElementById("prior-distribution").value;
+
+        // 真实的末影之眼投掷机制：16格圆圈内正态分布角度
+        const distance = Math.sqrt(
+          Math.pow(strongholdTruePosition.x - playerPosition.x, 2) + 
+          Math.pow(strongholdTruePosition.z - playerPosition.z, 2)
+        );
+        
+        // 真实角度（从玩家到要塞）
+        const trueAngle = Math.atan2(
+          strongholdTruePosition.z - playerPosition.z,
+          strongholdTruePosition.x - playerPosition.x
+        );
+        
+        // 角度误差：符合正态分布，标准差约为π/36（5度）
+        const angleError = normalRandom(0, Math.PI / 36);
+        const observedAngle = trueAngle + angleError;
+        
+        // 末影之眼落在距离玩家16格（地图坐标320）的圆圈上
+        const eyeThrowRadius = 320;
+        
+        // 计算末影之眼在16格圆圈上的落点
+        const eyeX = playerPosition.x + Math.cos(observedAngle) * eyeThrowRadius;
+        const eyeZ = playerPosition.z + Math.sin(observedAngle) * eyeThrowRadius;
+        
+        // 记录投掷数据，包含颜色信息用于可视化
+        const throwColor = eyeThrowColors[eyeThrowIndex % eyeThrowColors.length];
+        eyeData.push({
+          x: eyeX,
+          z: eyeZ,
+          angle: observedAngle,
+          trueAngle: trueAngle,
+          angleError: angleError,
+          distance: distance,
+          color: throwColor,
+          timestamp: Date.now()
+        });
+        
+        eyeThrowIndex++;
+
+        if (eyeData.length >= 3) {
+          if (statisticalMethod === 'bayesian') {
+            calculateBayesianPosition(confidenceLevel, priorDistribution);
+          } else {
+            calculateStrongholdPosition(confidenceLevel);
+          }
+          
+          // 计算并显示角度置信区间
+          const alpha = parseFloat(document.getElementById("alpha-level").value);
+          const angleCI = calculateAngleConfidenceInterval(alpha);
+          if (angleCI) {
+            document.getElementById("angle-confidence-interval").textContent = 
+              `[${angleCI.lowerBoundDegrees.toFixed(1)}°, ${angleCI.upperBoundDegrees.toFixed(1)}°] (${Math.round((1-alpha)*100)}%)`;
+          }
+        }
+
+        drawMinecraftMap();
+        updateMinecraftTips();
+        
+        // 添加地图更新动画效果
+        const canvas = document.getElementById('minecraft-canvas');
+        if (canvas) {
+          canvas.classList.add('data-point-enter');
+          setTimeout(() => canvas.classList.remove('data-point-enter'), 600);
+        }
+        
+        // 添加结果显示动画
+        const resultsContainer = document.getElementById('stronghold-position');
+        if (resultsContainer && eyeData.length >= 3) {
+          resultsContainer.parentElement.classList.add('result-slide-in');
+          setTimeout(() => resultsContainer.parentElement.classList.remove('result-slide-in'), 800);
+        }
+      }
+
+
+
+      // 计算要塞位置（经典统计方法）
+      function calculateStrongholdPosition(confidenceLevel) {
+        const n = eyeData.length;
+        const avgX = eyeData.reduce((sum, point) => sum + point.x, 0) / n;
+        const avgZ = eyeData.reduce((sum, point) => sum + point.z, 0) / n;
+
+        const stdX = Math.sqrt(
+          eyeData.reduce((sum, point) => sum + Math.pow(point.x - avgX, 2), 0) /
+            Math.max(1, n - 1)
+        );
+        const stdZ = Math.sqrt(
+          eyeData.reduce((sum, point) => sum + Math.pow(point.z - avgZ, 2), 0) /
+            Math.max(1, n - 1)
+        );
+
+        // 使用精确的t分布临界值计算
+        const df = Math.max(1, n - 1);
+        const alpha = 1 - confidenceLevel;
+        const t = tDistributionInverse(1 - alpha/2, df);
+        
+        const marginX = (t * stdX) / Math.sqrt(n);
+        const marginZ = (t * stdZ) / Math.sqrt(n);
+
+        document.getElementById(
+          "stronghold-position"
+        ).textContent = `(${Math.round(avgX)}, ${Math.round(avgZ)})`;
+        document.getElementById("search-range").textContent = `±${Math.round(
+          Math.max(marginX, marginZ)
+        )} 格`;
+      }
+      
+      // 贝叶斯统计计算
+      function calculateBayesianPosition(confidenceLevel, priorType) {
+        const n = eyeData.length;
+        
+        // 设置先验分布参数
+        let priorMeanX = 0, priorMeanZ = 0, priorVarX = 10000, priorVarZ = 10000;
+        
+        if (priorType === 'normal') {
+          // 基于游戏知识的正态先验
+          priorMeanX = 100; priorMeanZ = -100;
+          priorVarX = 5000; priorVarZ = 5000;
+        } else if (priorType === 'informed') {
+          // 有信息先验：基于已知要塞生成规律
+          priorMeanX = 150; priorMeanZ = -200;
+          priorVarX = 2500; priorVarZ = 2500;
+        }
+        
+        // 计算样本统计量
+        const sampleMeanX = eyeData.reduce((sum, point) => sum + point.x, 0) / n;
+        const sampleMeanZ = eyeData.reduce((sum, point) => sum + point.z, 0) / n;
+        
+        // 假设已知方差（简化处理）
+        const likelihoodVarX = 1000;
+        const likelihoodVarZ = 1000;
+        
+        // 贝叶斯更新（正态-正态共轭）
+        const posteriorVarX = 1 / (1/priorVarX + n/likelihoodVarX);
+        const posteriorVarZ = 1 / (1/priorVarZ + n/likelihoodVarZ);
+        
+        const posteriorMeanX = posteriorVarX * (priorMeanX/priorVarX + n*sampleMeanX/likelihoodVarX);
+        const posteriorMeanZ = posteriorVarZ * (priorMeanZ/priorVarZ + n*sampleMeanZ/likelihoodVarZ);
+        
+        // 计算可信区间
+        const z = confidenceLevel === 0.9 ? 1.645 : confidenceLevel === 0.95 ? 1.96 : 2.576;
+        const marginX = z * Math.sqrt(posteriorVarX);
+        const marginZ = z * Math.sqrt(posteriorVarZ);
+        
+        // 存储后验分布用于热力图
+        bayesianPosterior = {
+          meanX: posteriorMeanX,
+          meanZ: posteriorMeanZ,
+          varX: posteriorVarX,
+          varZ: posteriorVarZ,
+          marginX: marginX,
+          marginZ: marginZ
+        };
+        
+        document.getElementById(
+          "stronghold-position"
+        ).textContent = `(${Math.round(posteriorMeanX)}, ${Math.round(posteriorMeanZ)})`;
+        document.getElementById("search-range").textContent = `±${Math.round(
+          Math.max(marginX, marginZ)
+        )} 格 (${Math.round(confidenceLevel*100)}% 可信区间)`;
+      }
+      
+      // 计算角度的置信区间
+      function calculateAngleConfidenceInterval(alpha = 0.05) {
+        if (eyeData.length < 3) return null;
+        
+        const n = eyeData.length;
+        const angles = eyeData.map(point => point.angle);
+        
+        // 计算角度的平均值（考虑角度的周期性）
+        const sinSum = angles.reduce((sum, angle) => sum + Math.sin(angle), 0);
+        const cosSum = angles.reduce((sum, angle) => sum + Math.cos(angle), 0);
+        const meanAngle = Math.atan2(sinSum / n, cosSum / n);
+        
+        // 计算角度的标准差
+        const angleDeviations = angles.map(angle => {
+          let diff = angle - meanAngle;
+          // 处理角度差的周期性
+          while (diff > Math.PI) diff -= 2 * Math.PI;
+          while (diff < -Math.PI) diff += 2 * Math.PI;
+          return diff;
+        });
+        
+        const angleVariance = angleDeviations.reduce((sum, dev) => sum + dev * dev, 0) / (n - 1);
+        const angleStd = Math.sqrt(angleVariance);
+        
+        // 使用t分布计算置信区间
+        const df = n - 1;
+        const t = tDistributionInverse(1 - alpha/2, df);
+        const marginError = (t * angleStd) / Math.sqrt(n);
+        
+        // 计算置信区间边界
+        let lowerBound = meanAngle - marginError;
+        let upperBound = meanAngle + marginError;
+        
+        // 处理角度边界的周期性
+        while (lowerBound < -Math.PI) lowerBound += 2 * Math.PI;
+        while (upperBound > Math.PI) upperBound -= 2 * Math.PI;
+        
+        return {
+          meanAngle: meanAngle,
+          lowerBound: lowerBound,
+          upperBound: upperBound,
+          marginError: marginError,
+          confidenceLevel: 1 - alpha,
+          // 转换为度数便于显示
+          meanAngleDegrees: meanAngle * 180 / Math.PI,
+          lowerBoundDegrees: lowerBound * 180 / Math.PI,
+          upperBoundDegrees: upperBound * 180 / Math.PI,
+          marginErrorDegrees: marginError * 180 / Math.PI
+        };
+      }
+
+      // 绘制我的世界地图
+      function drawMinecraftMap() {
+        const canvas = document.getElementById("minecraft-map");
+        const ctx = canvas.getContext("2d");
+        
+        // 获取设备像素比以提升清晰度
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        
+        // 设置canvas实际分辨率（考虑设备像素比）
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        
+        // 设置canvas显示尺寸
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+        
+        // 缩放绘图上下文以匹配设备像素比
+        ctx.scale(dpr, dpr);
+        
+        // 启用抗锯齿
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        ctx.clearRect(0, 0, rect.width, rect.height);
+        
+        const displayMode = document.getElementById("display-mode").value;
+        const statisticalMethod = document.getElementById("statistical-method").value;
+
+        // 应用缩放和平移变换
+        ctx.save();
+        ctx.translate(rect.width / 2 + minecraftMapOffsetX, rect.height / 2 + minecraftMapOffsetY);
+        ctx.scale(minecraftMapZoom, minecraftMapZoom);
+        ctx.translate(-rect.width / 2, -rect.height / 2);
+
+        // 坐标转换（考虑缩放和平移）- 扩展到4000格范围
+        const toCanvasX = (x) => ((x + 2000) * rect.width) / 4000;
+        const toCanvasZ = (z) => ((2000 - z) * rect.height) / 4000;
+        
+        // 热力图功能已移除
+        
+        // 绘制等高线（仅在贝叶斯方法且选择等高线时）
+        if (statisticalMethod === 'bayesian' && displayMode === 'contour' && bayesianPosterior) {
+          drawContourLines(ctx, canvas, toCanvasX, toCanvasZ, rect);
+        }
+
+        // 绘制网格 - 扩展网格范围
+        ctx.strokeStyle = displayMode === 'heatmap' ? "rgba(255, 255, 255, 0.3)" : "rgba(255, 255, 255, 0.1)";
+        ctx.lineWidth = 1;
+        for (let i = -2000; i <= 2000; i += 500) {
+          ctx.beginPath();
+          ctx.moveTo(toCanvasX(i), 0);
+          ctx.lineTo(toCanvasX(i), rect.height);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(0, toCanvasZ(i));
+          ctx.lineTo(rect.width, toCanvasZ(i));
+          ctx.stroke();
+        }
+
+        // 绘制末影之眼投掷点和方向线
+        eyeData.forEach((point, index) => {
+          const color = point.color || eyeThrowColors[index % eyeThrowColors.length];
+          
+          // 绘制从玩家位置到末影之眼落点的方向线
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2;
+          ctx.setLineDash([5, 5]);
+          ctx.beginPath();
+          ctx.moveTo(toCanvasX(playerPosition.x), toCanvasZ(playerPosition.z));
+          ctx.lineTo(toCanvasX(point.x), toCanvasZ(point.z));
+          ctx.stroke();
+          ctx.setLineDash([]);
+          
+          // 绘制投掷范围圆圈（基于距离的不确定性）
+          const rangeRadius = Math.max(10, point.distance / 50);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1;
+          ctx.globalAlpha = 0.3;
+          ctx.beginPath();
+          ctx.arc(toCanvasX(point.x), toCanvasZ(point.z), rangeRadius, 0, 2 * Math.PI);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+          
+          // 绘制末影之眼落点
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(toCanvasX(point.x), toCanvasZ(point.z), 4, 0, 2 * Math.PI);
+          ctx.fill();
+          
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          // 显示投掷顺序
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 10px Arial";
+          ctx.strokeStyle = "#000000";
+          ctx.lineWidth = 3;
+          ctx.strokeText(
+            (index + 1).toString(),
+            toCanvasX(point.x) + 6,
+            toCanvasZ(point.z) - 6
+          );
+          ctx.fillText(
+            (index + 1).toString(),
+            toCanvasX(point.x) + 6,
+            toCanvasZ(point.z) - 6
+          );
+        });
+        
+        // 绘制玩家位置
+        ctx.fillStyle = "#00ff00";
+        ctx.beginPath();
+        ctx.arc(
+          toCanvasX(playerPosition.x),
+          toCanvasZ(playerPosition.z),
+          5,
+          0,
+          2 * Math.PI
+        );
+        ctx.fill();
+        
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // 玩家位置标签
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 12px Arial";
+        ctx.strokeStyle = "#000000";
+        ctx.lineWidth = 3;
+        ctx.strokeText(
+          "玩家",
+          toCanvasX(playerPosition.x) + 8,
+          toCanvasZ(playerPosition.z) - 8
+        );
+        ctx.fillText(
+          "玩家",
+          toCanvasX(playerPosition.x) + 8,
+          toCanvasZ(playerPosition.z) - 8
+        );
+
+        // 绘制真实要塞位置
+        ctx.fillStyle = "#ffd700";
+        ctx.beginPath();
+        ctx.arc(
+          toCanvasX(strongholdTruePosition.x),
+          toCanvasZ(strongholdTruePosition.z),
+          6,
+          0,
+          2 * Math.PI
+        );
+        ctx.fill();
+        
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 绘制玩家位置（原点）
+        ctx.fillStyle = "#00ff66";
+        ctx.beginPath();
+        ctx.arc(toCanvasX(0), toCanvasZ(0), 5, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // 绘制估计位置（如果有的话）
+        if (eyeData.length >= 3) {
+          drawEstimatedPosition(ctx, canvas, toCanvasX, toCanvasZ, displayMode);
+          
+          // 绘制角度置信区间
+          const alpha = parseFloat(document.getElementById("alpha-level").value);
+          const angleCI = calculateAngleConfidenceInterval(alpha);
+          if (angleCI) {
+            drawAngleConfidenceInterval(ctx, toCanvasX, toCanvasZ, angleCI);
+          }
+        }
+
+        // 恢复变换
+        ctx.restore();
+        
+        // 添加图例（在变换恢复后绘制，保持固定位置）
+        ctx.fillStyle = displayMode === 'heatmap' ? "#ffffff" : "#ffffff";
+        ctx.font = "12px Arial";
+        ctx.fillText("🟢 玩家位置", 10, 20);
+        ctx.fillText("🟡 真实要塞", 10, 35);
+        ctx.fillText("🟣 末影之眼", 10, 50);
+        if (eyeData.length >= 3) {
+          ctx.fillText(statisticalMethod === 'bayesian' ? "🔵 贝叶斯估计" : "🔵 经典估计", 10, 65);
+          ctx.fillText("🟢 角度置信区间", 10, 80);
+        }
+      }
+
+      // 绘制角度置信区间
+      function drawAngleConfidenceInterval(ctx, toCanvasX, toCanvasZ, angleCI) {
+        const playerX = toCanvasX(playerPosition.x);
+        const playerZ = toCanvasZ(playerPosition.z);
+        const radius = 100; // 可视化半径
+        
+        // 绘制角度置信区间扇形
+        ctx.fillStyle = "rgba(0, 255, 100, 0.2)";
+        ctx.strokeStyle = "#00ff64";
+        ctx.lineWidth = 2;
+        
+        ctx.beginPath();
+        ctx.moveTo(playerX, playerZ);
+        ctx.arc(playerX, playerZ, radius, -angleCI.upperBound, -angleCI.lowerBound, false);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
+        // 绘制平均角度线
+        ctx.strokeStyle = "#00ff00";
+        ctx.lineWidth = 3;
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(playerX, playerZ);
+        ctx.lineTo(
+          playerX + Math.cos(-angleCI.meanAngle) * radius,
+          playerZ + Math.sin(-angleCI.meanAngle) * radius
+        );
+        ctx.stroke();
+        
+        // 绘制置信区间边界线
+        ctx.strokeStyle = "#00ff64";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        
+        // 上边界
+        ctx.beginPath();
+        ctx.moveTo(playerX, playerZ);
+        ctx.lineTo(
+          playerX + Math.cos(-angleCI.upperBound) * radius,
+          playerZ + Math.sin(-angleCI.upperBound) * radius
+        );
+        ctx.stroke();
+        
+        // 下边界
+        ctx.beginPath();
+        ctx.moveTo(playerX, playerZ);
+        ctx.lineTo(
+          playerX + Math.cos(-angleCI.lowerBound) * radius,
+          playerZ + Math.sin(-angleCI.lowerBound) * radius
+        );
+        ctx.stroke();
+        
+        ctx.setLineDash([]);
+      }
+      
+      // 热力图功能已移除
+      
+      // 绘制等高线
+      function drawContourLines(ctx, canvas, toCanvasX, toCanvasZ, rect) {
+        const levels = [0.00001, 0.00005, 0.0001, 0.0005, 0.001]; // 概率密度等高线
+        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+        
+        levels.forEach((level, index) => {
+          ctx.strokeStyle = colors[index];
+          ctx.lineWidth = 2;
+          drawContour(ctx, canvas, level, toCanvasX, toCanvasZ, rect);
+        });
+      }
+      
+      // 绘制单条等高线
+      function drawContour(ctx, canvas, level, toCanvasX, toCanvasZ, rect) {
+        const step = 20;
+        ctx.beginPath();
+        
+        for (let i = 0; i < canvas.width - step; i += step) {
+          for (let j = 0; j < canvas.height - step; j += step) {
+            const x1 = ((i / rect.width) * 800) - 400;
+            const z1 = 400 - ((j / rect.height) * 800);
+            const x2 = (((i + step) / rect.width) * 800) - 400;
+            const z2 = 400 - (((j + step) / rect.height) * 800);
+            
+            const p1 = gaussianPDF(x1, z1, bayesianPosterior.meanX, bayesianPosterior.meanZ,
+                                  bayesianPosterior.varX, bayesianPosterior.varZ);
+            const p2 = gaussianPDF(x2, z2, bayesianPosterior.meanX, bayesianPosterior.meanZ,
+                                  bayesianPosterior.varX, bayesianPosterior.varZ);
+            
+            if ((p1 <= level && p2 >= level) || (p1 >= level && p2 <= level)) {
+              ctx.moveTo(i, j);
+              ctx.lineTo(i + step, j + step);
+            }
+          }
+        }
+        ctx.stroke();
+      }
+      
+      // Box-Muller变换生成正态分布随机数
+      let normalRandomSpare = null;
+      
+      function normalRandom(mean = 0, stdDev = 1) {
+        if (normalRandomSpare !== null) {
+          const spare = normalRandomSpare;
+          normalRandomSpare = null;
+          return spare * stdDev + mean;
+        }
+        
+        let u1, u2;
+        do {
+          u1 = Math.random();
+        } while (u1 === 0); // 确保u1不为0
+        
+        u2 = Math.random();
+        
+        const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+        const z1 = Math.sqrt(-2 * Math.log(u1)) * Math.sin(2 * Math.PI * u2);
+        
+        normalRandomSpare = z1;
+        return z0 * stdDev + mean;
+      }
+      
+      // 伽马函数的近似计算（Lanczos逼近）
+      function gamma(z) {
+        const g = 7;
+        const C = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+                   771.32342877765313, -176.61502916214059, 12.507343278686905,
+                   -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+        
+        if (z < 0.5) {
+          return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
+        }
+        
+        z -= 1;
+        let x = C[0];
+        for (let i = 1; i < g + 2; i++) {
+          x += C[i] / (z + i);
+        }
+        
+        const t = z + g + 0.5;
+        return Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
+      }
+      
+      // 不完全贝塔函数
+      function incompleteBeta(x, a, b) {
+        if (x === 0) return 0;
+        if (x === 1) return 1;
+        
+        // 使用连分数展开
+        const bt = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b) + 
+                           a * Math.log(x) + b * Math.log(1 - x));
+        
+        if (x < (a + 1) / (a + b + 2)) {
+          return bt * betaContinuedFraction(x, a, b) / a;
+        } else {
+          return 1 - bt * betaContinuedFraction(1 - x, b, a) / b;
+        }
+      }
+      
+      // 对数伽马函数
+      function logGamma(z) {
+        return Math.log(gamma(z));
+      }
+      
+      // 贝塔函数的连分数展开
+      function betaContinuedFraction(x, a, b) {
+        const maxIterations = 100;
+        const epsilon = 1e-15;
+        
+        const qab = a + b;
+        const qap = a + 1;
+        const qam = a - 1;
+        let c = 1;
+        let d = 1 - qab * x / qap;
+        
+        if (Math.abs(d) < 1e-30) d = 1e-30;
+        d = 1 / d;
+        let h = d;
+        
+        for (let m = 1; m <= maxIterations; m++) {
+          const m2 = 2 * m;
+          let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+          d = 1 + aa * d;
+          if (Math.abs(d) < 1e-30) d = 1e-30;
+          c = 1 + aa / c;
+          if (Math.abs(c) < 1e-30) c = 1e-30;
+          d = 1 / d;
+          h *= d * c;
+          
+          aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+          d = 1 + aa * d;
+          if (Math.abs(d) < 1e-30) d = 1e-30;
+          c = 1 + aa / c;
+          if (Math.abs(c) < 1e-30) c = 1e-30;
+          d = 1 / d;
+          const del = d * c;
+          h *= del;
+          
+          if (Math.abs(del - 1) < epsilon) break;
+        }
+        
+        return h;
+      }
+      
+      // t分布逆函数（数值逼近）
+      function tDistributionInverse(p, df) {
+        if (p <= 0 || p >= 1) {
+          throw new Error('概率必须在0和1之间');
+        }
+        
+        if (df <= 0) {
+          throw new Error('自由度必须大于0');
+        }
+        
+        // 对于大自由度，使用正态分布逼近
+        if (df > 1000) {
+          return normalInverse(p);
+        }
+        
+        // 使用牛顿-拉夫逊方法求解
+        let x = normalInverse(p); // 初始猜测
+        
+        for (let i = 0; i < 10; i++) {
+          const fx = tDistributionCDF(x, df) - p;
+          const fpx = tDistributionPDF(x, df);
+          
+          if (Math.abs(fx) < 1e-10) break;
+          
+          x = x - fx / fpx;
+        }
+        
+        return x;
+      }
+      
+      // t分布累积分布函数
+      function tDistributionCDF(t, df) {
+        const x = df / (df + t * t);
+        return 0.5 + (t > 0 ? 0.5 : -0.5) * incompleteBeta(x, df/2, 0.5);
+      }
+      
+      // t分布概率密度函数
+      function tDistributionPDF(t, df) {
+        const coeff = gamma((df + 1) / 2) / (Math.sqrt(df * Math.PI) * gamma(df / 2));
+        return coeff * Math.pow(1 + t * t / df, -(df + 1) / 2);
+      }
+      
+      // 标准正态分布逆函数（Beasley-Springer-Moro算法）
+      function normalInverse(p) {
+        const a = [0, -3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 
+                   1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+        const b = [0, -5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 
+                   6.680131188771972e+01, -1.328068155288572e+01];
+        const c = [0, -7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, 
+                   -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+        const d = [0, 7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 
+                   3.754408661907416e+00];
+        
+        const pLow = 0.02425;
+        const pHigh = 1 - pLow;
+        
+        if (p < pLow) {
+          const q = Math.sqrt(-2 * Math.log(p));
+          return (((((c[1]*q+c[2])*q+c[3])*q+c[4])*q+c[5])*q+c[6]) / 
+                 ((((d[1]*q+d[2])*q+d[3])*q+d[4])*q+1);
+        } else if (p <= pHigh) {
+          const q = p - 0.5;
+          const r = q * q;
+          return (((((a[1]*r+a[2])*r+a[3])*r+a[4])*r+a[5])*r+a[6])*q / 
+                 (((((b[1]*r+b[2])*r+b[3])*r+b[4])*r+b[5])*r+1);
+        } else {
+          const q = Math.sqrt(-2 * Math.log(1 - p));
+          return -(((((c[1]*q+c[2])*q+c[3])*q+c[4])*q+c[5])*q+c[6]) / 
+                  ((((d[1]*q+d[2])*q+d[3])*q+d[4])*q+1);
+        }
+      }
+      
+      // 高斯概率密度函数
+      function gaussianPDF(x, z, meanX, meanZ, varX, varZ) {
+        const dx = x - meanX;
+        const dz = z - meanZ;
+        const coeff = 1 / (2 * Math.PI * Math.sqrt(varX * varZ));
+        const exponent = -(dx * dx / (2 * varX) + dz * dz / (2 * varZ));
+        return coeff * Math.exp(exponent);
+      }
+      
+      // 绘制估计位置
+      function drawEstimatedPosition(ctx, canvas, toCanvasX, toCanvasZ, displayMode) {
+        let estimatedX, estimatedZ, marginX, marginZ;
+        
+        if (bayesianPosterior) {
+          estimatedX = bayesianPosterior.meanX;
+          estimatedZ = bayesianPosterior.meanZ;
+          marginX = bayesianPosterior.marginX;
+          marginZ = bayesianPosterior.marginZ;
+        } else {
+          const n = eyeData.length;
+          estimatedX = eyeData.reduce((sum, point) => sum + point.x, 0) / n;
+          estimatedZ = eyeData.reduce((sum, point) => sum + point.z, 0) / n;
+          // 简化的置信区间计算
+          marginX = marginZ = 50;
+        }
+        
+        const canvasX = toCanvasX(estimatedX);
+        const canvasZ = toCanvasZ(estimatedZ);
+        
+        // 绘制置信区间椭圆
+        ctx.strokeStyle = displayMode === 'heatmap' ? "rgba(0,191,255,0.8)" : "rgba(0,191,255,0.6)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        
+        const radiusX = (marginX / 800) * canvas.width;
+        const radiusZ = (marginZ / 800) * canvas.height;
+        
+        ctx.beginPath();
+        ctx.ellipse(canvasX, canvasZ, radiusX, radiusZ, 0, 0, 2 * Math.PI);
+        ctx.stroke();
+        
+        ctx.setLineDash([]);
+        
+        // 绘制估计位置点
+        ctx.fillStyle = displayMode === 'heatmap' ? "#00BFFF" : "#0080FF";
+        ctx.beginPath();
+        ctx.arc(canvasX, canvasZ, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      
+      // 更新我的世界提示
+      function updateMinecraftTips() {
+        const tipsDiv = document.getElementById("minecraft-tips");
+        const n = eyeData.length;
+        const statisticalMethod = document.getElementById("statistical-method").value;
+        const methodText = statisticalMethod === 'bayesian' ? '贝叶斯方法' : '经典统计方法';
+
+        if (n === 0) {
+          tipsDiv.innerHTML = "<p>开始投掷末影之眼来定位末地要塞！</p>";
+        } else if (n < 3) {
+          tipsDiv.innerHTML = `<p>已投掷 ${n} 次，至少需要 3 次才能进行统计分析。</p>`;
+        } else if (n < 12) {
+          tipsDiv.innerHTML = `<p>已投掷 ${n} 次，使用${methodText}进行分析。样本量还可以更大以提高精度。</p>`;
+        } else {
+          tipsDiv.innerHTML = `<p>已投掷 ${n} 次，使用${methodText}进行分析。样本量充足，定位精度较高！</p>`;
+        }
+        
+        if (statisticalMethod === 'bayesian' && n >= 3) {
+          const priorType = document.getElementById("prior-distribution").value;
+          const priorText = priorType === 'uniform' ? '无信息先验' : 
+                           priorType === 'normal' ? '正态先验' : '有信息先验';
+          tipsDiv.innerHTML += `<p>当前使用${priorText}分布，可尝试不同先验分布观察结果变化。</p>`;
+        }
+      }
+
+      // 事件监听器
+      document.addEventListener("DOMContentLoaded", function () {
+        initParticles();
+
+        // 糖果盒实验
+        document
+          .getElementById("sample-btn")
+          .addEventListener("click", sampleCandies);
+        document
+          .getElementById("reveal-truth-btn")
+          .addEventListener("click", revealTruth);
+        document
+          .getElementById("repeat-experiment-btn")
+          .addEventListener("click", repeatExperiment);
+
+        // 理解度评分
+        document.querySelectorAll(".understanding-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const step = parseInt(this.closest(".theory-step").dataset.step);
+            const level = parseInt(this.dataset.level);
+            setUnderstanding(step, level);
+          });
+        });
+
+        // AI帮助按钮
+        document.querySelectorAll(".ai-help-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const step = parseInt(this.dataset.step);
+            showAIHelp(step);
+          });
+        });
+
+        // 声纳实验
+        document
+          .getElementById("deploy-sonar-btn")
+          .addEventListener("click", deploySonar);
+        document
+          .getElementById("reveal-shell-btn")
+          .addEventListener("click", revealShellPosition);
+        document
+          .getElementById("reset-search-btn")
+          .addEventListener("click", resetSearch);
+
+        // 末影之眼实验
+        document
+          .getElementById("throw-eye-btn")
+          .addEventListener("click", throwEye);
+        
+        // 统计方法切换
+        document
+          .getElementById("statistical-method")
+          .addEventListener("change", function() {
+            const bayesianControls = document.getElementById("bayesian-controls");
+            if (this.value === 'bayesian') {
+              bayesianControls.style.display = 'block';
+            } else {
+              bayesianControls.style.display = 'none';
+            }
+            // 重新计算和绘制
+            if (eyeData.length >= 3) {
+              if (this.value === 'bayesian') {
+                const confidenceLevel = parseFloat(document.getElementById("eye-confidence").value);
+                const priorDistribution = document.getElementById("prior-distribution").value;
+                calculateBayesianPosition(confidenceLevel, priorDistribution);
+              } else {
+                const confidenceLevel = parseFloat(document.getElementById("eye-confidence").value);
+                calculateStrongholdPosition(confidenceLevel);
+              }
+              drawMinecraftMap();
+              updateMinecraftTips();
+            }
+          });
+        
+        // 先验分布和显示模式变化
+        document
+          .getElementById("prior-distribution")
+          .addEventListener("change", function() {
+            if (document.getElementById("statistical-method").value === 'bayesian' && eyeData.length >= 3) {
+              const confidenceLevel = parseFloat(document.getElementById("eye-confidence").value);
+              calculateBayesianPosition(confidenceLevel, this.value);
+              drawMinecraftMap();
+              updateMinecraftTips();
+            }
+          });
+          
+        // Alpha值变化监听器
+        document
+          .getElementById("alpha-level")
+          .addEventListener("change", function() {
+            if (eyeData.length >= 3) {
+              const alpha = parseFloat(this.value);
+              const angleCI = calculateAngleConfidenceInterval(alpha);
+              if (angleCI) {
+                document.getElementById("angle-confidence-interval").textContent = 
+                  `[${angleCI.lowerBoundDegrees.toFixed(1)}°, ${angleCI.upperBoundDegrees.toFixed(1)}°] (${Math.round((1-alpha)*100)}%)`;
+              }
+              drawMinecraftMap();
+            }
+          });
+          
+        // Minecraft地图缩放和拖拽事件
+        const minecraftCanvas = document.getElementById("minecraft-map");
+        
+        // 缩放按钮事件
+        document.getElementById("zoom-in").addEventListener("click", function() {
+          minecraftMapZoom = Math.min(minecraftMapZoom * 1.2, 5);
+          drawMinecraftMap();
+        });
+        
+        document.getElementById("zoom-out").addEventListener("click", function() {
+          minecraftMapZoom = Math.max(minecraftMapZoom / 1.2, 0.2);
+          drawMinecraftMap();
+        });
+        
+        document.getElementById("reset-view").addEventListener("click", function() {
+          minecraftMapZoom = 1;
+          minecraftMapOffsetX = 0;
+          minecraftMapOffsetY = 0;
+          drawMinecraftMap();
+        });
+        
+        // 鼠标拖拽事件
+        minecraftCanvas.addEventListener("mousedown", function(e) {
+          minecraftIsDragging = true;
+          minecraftLastMouseX = e.clientX;
+          minecraftLastMouseY = e.clientY;
+          minecraftCanvas.style.cursor = "grabbing";
+        });
+        
+        minecraftCanvas.addEventListener("mousemove", function(e) {
+          const rect = minecraftCanvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          // 更新坐标显示，考虑地图偏移和缩放，并转换为我的世界坐标（除以20）
+          const canvasX = (x - minecraftMapOffsetX - rect.width / 2) / minecraftMapZoom + rect.width / 2;
+          const canvasY = (y - minecraftMapOffsetY - rect.height / 2) / minecraftMapZoom + rect.height / 2;
+          const mapX = Math.round((canvasX / rect.width) * 4000 - 2000);
+          const mapZ = Math.round(2000 - (canvasY / rect.height) * 4000);
+          const worldX = Math.round(mapX / 20);
+          const worldZ = Math.round(mapZ / 20);
+          document.getElementById("coordinate-display").innerHTML = `游戏坐标: (${worldX}格, ${worldZ}格)<br>地图坐标: [${mapX}, ${mapZ}]`;
+          
+          if (minecraftIsDragging) {
+            const deltaX = e.clientX - minecraftLastMouseX;
+            const deltaY = e.clientY - minecraftLastMouseY;
+            minecraftMapOffsetX += deltaX;
+            minecraftMapOffsetY += deltaY;
+            minecraftLastMouseX = e.clientX;
+            minecraftLastMouseY = e.clientY;
+            drawMinecraftMap();
+          }
+        });
+        
+        minecraftCanvas.addEventListener("mouseup", function() {
+          minecraftIsDragging = false;
+          minecraftCanvas.style.cursor = "crosshair";
+        });
+        
+        minecraftCanvas.addEventListener("mouseleave", function() {
+          minecraftIsDragging = false;
+          minecraftCanvas.style.cursor = "crosshair";
+        });
+        
+        // 鼠标滚轮缩放
+        minecraftCanvas.addEventListener("wheel", function(e) {
+          e.preventDefault();
+          const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+          minecraftMapZoom = Math.max(0.2, Math.min(5, minecraftMapZoom * zoomFactor));
+          drawMinecraftMap();
+        });
+        
+        // 声纳地图缩放和拖拽事件
+        const sonarCanvas = document.getElementById('sonar-map');
+        
+        // 声纳地图缩放按钮事件
+        document.getElementById('sonar-zoom-in').addEventListener('click', function() {
+          mapZoom = Math.min(mapZoom * 1.2, 5);
+          if (sonarData.length > 0) {
+            const avgX = sonarData.reduce((sum, p) => sum + p.x, 0) / sonarData.length;
+            const avgY = sonarData.reduce((sum, p) => sum + p.y, 0) / sonarData.length;
+            const marginX = 1.96 * Math.sqrt(sonarData.reduce((sum, p) => sum + Math.pow(p.x - avgX, 2), 0) / sonarData.length);
+            const marginY = 1.96 * Math.sqrt(sonarData.reduce((sum, p) => sum + Math.pow(p.y - avgY, 2), 0) / sonarData.length);
+            drawSonarMap(avgX, avgY, marginX, marginY);
+          } else {
+            drawSonarMap(0, 0, 0, 0);
+          }
+        });
+        
+        document.getElementById('sonar-zoom-out').addEventListener('click', function() {
+          mapZoom = Math.max(mapZoom / 1.2, 0.2);
+          if (sonarData.length > 0) {
+            const avgX = sonarData.reduce((sum, p) => sum + p.x, 0) / sonarData.length;
+            const avgY = sonarData.reduce((sum, p) => sum + p.y, 0) / sonarData.length;
+            const marginX = 1.96 * Math.sqrt(sonarData.reduce((sum, p) => sum + Math.pow(p.x - avgX, 2), 0) / sonarData.length);
+            const marginY = 1.96 * Math.sqrt(sonarData.reduce((sum, p) => sum + Math.pow(p.y - avgY, 2), 0) / sonarData.length);
+            drawSonarMap(avgX, avgY, marginX, marginY);
+          } else {
+            drawSonarMap(0, 0, 0, 0);
+          }
+        });
+        
+        document.getElementById('sonar-reset-view').addEventListener('click', function() {
+          mapZoom = 1;
+          mapOffsetX = 0;
+          mapOffsetY = 0;
+          if (sonarData.length > 0) {
+            const avgX = sonarData.reduce((sum, p) => sum + p.x, 0) / sonarData.length;
+            const avgY = sonarData.reduce((sum, p) => sum + p.y, 0) / sonarData.length;
+            const marginX = 1.96 * Math.sqrt(sonarData.reduce((sum, p) => sum + Math.pow(p.x - avgX, 2), 0) / sonarData.length);
+            const marginY = 1.96 * Math.sqrt(sonarData.reduce((sum, p) => sum + Math.pow(p.y - avgY, 2), 0) / sonarData.length);
+            drawSonarMap(avgX, avgY, marginX, marginY);
+          } else {
+            drawSonarMap(0, 0, 0, 0);
+          }
+        });
+        
+        // 声纳地图鼠标按下事件
+        sonarCanvas.addEventListener('mousedown', function(e) {
+          isDragging = true;
+          const rect = sonarCanvas.getBoundingClientRect();
+          lastMouseX = e.clientX - rect.left;
+          lastMouseY = e.clientY - rect.top;
+          sonarCanvas.style.cursor = 'grabbing';
+        });
+        
+        // 声纳地图鼠标移动事件
+        sonarCanvas.addEventListener('mousemove', function(e) {
+          const rect = sonarCanvas.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+          
+          if (isDragging) {
+            const deltaX = mouseX - lastMouseX;
+            const deltaY = mouseY - lastMouseY;
+            mapOffsetX += deltaX;
+            mapOffsetY += deltaY;
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
+            
+            // 重新绘制声纳地图
+            if (sonarData.length > 0) {
+              const avgX = sonarData.reduce((sum, p) => sum + p.x, 0) / sonarData.length;
+              const avgY = sonarData.reduce((sum, p) => sum + p.y, 0) / sonarData.length;
+              const marginX = 1.96 * Math.sqrt(sonarData.reduce((sum, p) => sum + Math.pow(p.x - avgX, 2), 0) / sonarData.length);
+              const marginY = 1.96 * Math.sqrt(sonarData.reduce((sum, p) => sum + Math.pow(p.y - avgY, 2), 0) / sonarData.length);
+              drawSonarMap(avgX, avgY, marginX, marginY);
+            } else {
+              drawSonarMap(0, 0, 0, 0);
+            }
+          }
+          
+          // 更新坐标显示
+          const worldX = ((mouseX - mapOffsetX) / mapZoom - rect.width/2) * 6 / rect.width - 1;
+          const worldY = 3 - ((mouseY - mapOffsetY) / mapZoom) * 4 / rect.height;
+          document.getElementById('sonar-coordinate-display').textContent = `坐标: (${worldX.toFixed(1)}, ${worldY.toFixed(1)}) km`;
+        });
+        
+        // 声纳地图鼠标抬起事件
+        sonarCanvas.addEventListener('mouseup', function() {
+          isDragging = false;
+          sonarCanvas.style.cursor = 'crosshair';
+        });
+        
+        // 声纳地图鼠标离开事件
+        sonarCanvas.addEventListener('mouseleave', function() {
+          isDragging = false;
+          sonarCanvas.style.cursor = 'crosshair';
+        });
+        
+        // 声纳地图滚轮缩放事件
+        sonarCanvas.addEventListener('wheel', function(e) {
+          e.preventDefault();
+          const rect = sonarCanvas.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+          
+          const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+          const newZoom = Math.max(0.5, Math.min(5, mapZoom * zoomFactor));
+          
+          // 以鼠标位置为中心缩放
+          const zoomRatio = newZoom / mapZoom;
+          mapOffsetX = mouseX - (mouseX - mapOffsetX) * zoomRatio;
+          mapOffsetY = mouseY - (mouseY - mapOffsetY) * zoomRatio;
+          mapZoom = newZoom;
+          
+          // 重新绘制声纳地图
+          if (sonarData.length > 0) {
+            const avgX = sonarData.reduce((sum, p) => sum + p.x, 0) / sonarData.length;
+            const avgY = sonarData.reduce((sum, p) => sum + p.y, 0) / sonarData.length;
+            const marginX = 1.96 * Math.sqrt(sonarData.reduce((sum, p) => sum + Math.pow(p.x - avgX, 2), 0) / sonarData.length);
+            const marginY = 1.96 * Math.sqrt(sonarData.reduce((sum, p) => sum + Math.pow(p.y - avgY, 2), 0) / sonarData.length);
+            drawSonarMap(avgX, avgY, marginX, marginY);
+          } else {
+            drawSonarMap(0, 0, 0, 0);
+          }
+        });
+        
+        document
+          .getElementById("display-mode")
+          .addEventListener("change", function() {
+            drawMinecraftMap();
+          });
+      });
+    </script>
+  </body>
+</html>
