@@ -520,7 +520,7 @@
             </p>
             <div class="mt-6 pt-4 border-t border-gray-800">
               <a
-                href="#"
+                href="hypothesis_testing.html"
                 class="text-neon-blue hover:text-white transition-colors flex items-center"
               >
                 深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
@@ -1476,9 +1476,15 @@
             icon.classList.replace("fa-times", "fa-bars");
           }
 
-          document.querySelector(this.getAttribute("href")).scrollIntoView({
-            behavior: "smooth",
-          });
+          const href = this.getAttribute("href");
+          if (href && href !== "#") {
+            const target = document.querySelector(href);
+            if (target) {
+              target.scrollIntoView({
+                behavior: "smooth",
+              });
+            }
+          }
         });
       });
 

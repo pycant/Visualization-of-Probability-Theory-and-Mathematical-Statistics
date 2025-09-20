@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>假设检验 | 概率维度</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
+
+    <!-- Markdown和LaTeX渲染库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "neon-blue": "#00f3ff",
+              "neon-purple": "#bf00ff",
+              "neon-green": "#00ff66",
+              "neon-orange": "#ff8c00",
+              "dark-bg": "#050a1a",
+              "dark-card": "#0f1730",
+            },
+            fontFamily: {
+              future: ["Orbitron", "sans-serif"],
+              data: ["Rajdhani", "sans-serif"],
+            },
+            animation: {
+              "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              glow: "glow 2s ease-in-out infinite alternate",
+              "magic-pulse": "magic-pulse 3s ease-in-out infinite",
+              "detective-scan": "detective-scan 2s ease-in-out infinite",
+            },
+            keyframes: {
+              glow: {
+                "0%": {
+                  textShadow:
+                    "0 0 5px #fff, 0 0 10px #00f3ff, 0 0 15px #00f3ff",
+                },
+                "100%": {
+                  textShadow:
+                    "0 0 10px #fff, 0 0 20px #00f3ff, 0 0 30px #00f3ff, 0 0 40px #00f3ff",
+                },
+              },
+              "magic-pulse": {
+                "0%, 100%": {
+                  transform: "scale(1)",
+                  boxShadow: "0 0 20px rgba(191, 0, 255, 0.5)",
+                },
+                "50%": {
+                  transform: "scale(1.05)",
+                  boxShadow: "0 0 40px rgba(191, 0, 255, 0.8)",
+                },
+              },
+              "detective-scan": {
+                "0%, 100%": {
+                  transform: "translateX(-100%)",
+                  opacity: 0,
+                },
+                "50%": {
+                  transform: "translateX(100%)",
+                  opacity: 1,
+                },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .text-shadow-neon {
+          text-shadow: 0 0 10px rgba(0, 243, 255, 0.7),
+            0 0 20px rgba(0, 243, 255, 0.5);
+        }
+        .text-shadow-purple {
+          text-shadow: 0 0 10px rgba(191, 0, 255, 0.7),
+            0 0 20px rgba(191, 0, 255, 0.5);
+        }
+        .border-glow {
+          box-shadow: 0 0 5px theme("colors.neon-blue"),
+            0 0 10px theme("colors.neon-blue/30");
+        }
+        .border-glow-purple {
+          box-shadow: 0 0 5px theme("colors.neon-purple"),
+            0 0 10px theme("colors.neon-purple/30");
+        }
+        .bg-grid {
+          background-image: linear-gradient(
+              rgba(0, 243, 255, 0.1) 1px,
+              transparent 1px
+            ),
+            linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+          background-size: 20px 20px;
+        }
+        .glass-effect {
+          backdrop-filter: blur(10px);
+          background-color: rgba(15, 23, 48, 0.6);
+        }
+        .magic-bottle {
+          background: linear-gradient(45deg, #bf00ff, #00f3ff);
+          border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        }
+        .detective-badge {
+          background: radial-gradient(circle, #ffd700, #ffb347);
+          clip-path: polygon(
+            50% 0%,
+            61% 35%,
+            98% 35%,
+            68% 57%,
+            79% 91%,
+            50% 70%,
+            21% 91%,
+            32% 57%,
+            2% 35%,
+            39% 35%
+          );
+        }
+      }
+    </style>
+
+    <!-- 引入Google字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-dark-bg text-gray-200 font-data overflow-x-hidden">
+    <!-- 粒子背景容器 -->
+    <div id="particles-container" class="fixed inset-0 z-0 opacity-30"></div>
+
+    <!-- 导航栏 -->
+    <nav
+      class="glass-effect fixed w-full z-50 transition-all duration-300"
+      id="main-nav"
+    >
+      <div
+        class="container mx-auto px-4 py-3 flex justify-between items-center"
+      >
+        <div class="flex items-center space-x-2">
+          <div
+            class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center"
+          >
+            <i class="fa fa-flask text-white text-xl"></i>
+          </div>
+          <h1 class="text-xl md:text-2xl font-future font-bold text-white">
+            <span class="text-neon-blue">假设</span
+            ><span class="text-white">检验</span>
+          </h1>
+        </div>
+
+        <!-- 导航链接 -->
+        <div class="hidden md:flex items-center space-x-8">
+          <a
+            href="#logic-foundation"
+            class="hover:text-neon-blue transition-colors duration-300"
+            >逻辑基础</a
+          >
+          <a
+            href="#magic-potion"
+            class="hover:text-neon-purple transition-colors duration-300"
+            >魔法药水</a
+          >
+          <a
+            href="#detective-classroom"
+            class="hover:text-neon-green transition-colors duration-300"
+            >侦探教室</a
+          >
+          <a
+            href="index.html"
+            class="px-4 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-white transition-all duration-300"
+            >返回首页</a
+          >
+        </div>
+
+        <!-- 移动端菜单按钮 -->
+        <button
+          class="md:hidden text-white text-2xl"
+          id="menu-toggle"
+          aria-label="打开导航菜单"
+          title="打开导航菜单"
+        >
+          <i class="fa fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header
+      class="relative min-h-screen flex items-center justify-center overflow-hidden bg-grid pt-16"
+    >
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-dark-bg/70 via-dark-bg/50 to-dark-bg"
+      ></div>
+
+      <!-- 动态图形元素 -->
+      <div
+        class="absolute w-64 h-64 rounded-full bg-neon-purple/20 blur-3xl -top-20 -left-20 animate-pulse-slow"
+      ></div>
+      <div
+        class="absolute w-96 h-96 rounded-full bg-neon-blue/20 blur-3xl -bottom-40 -right-20 animate-pulse-slow"
+        style="animation-delay: 1s"
+      ></div>
+
+      <div class="container mx-auto px-4 z-10 text-center">
+        <h1
+          class="text-[clamp(2.5rem,8vw,5rem)] font-future font-bold leading-tight mb-6 animate-glow"
+        >
+          <span class="block text-white">假设检验</span>
+          <span class="text-neon-purple">概率版反证法</span>
+        </h1>
+        <p
+          class="text-[clamp(1rem,3vw,1.5rem)] text-gray-300 max-w-3xl mx-auto mb-10"
+        >
+          从反证法到概率世界的逻辑推导，用数据证据破解统计之谜
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a
+            href="#magic-potion"
+            class="px-8 py-3 bg-neon-purple text-white font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300 transform hover:scale-105 border-glow-purple"
+          >
+            魔法实验 <i class="fa fa-magic ml-2"></i>
+          </a>
+          <a
+            href="#detective-classroom"
+            class="px-8 py-3 bg-transparent border border-neon-blue text-neon-blue font-bold rounded-md hover:bg-neon-blue/10 transition-all duration-300"
+          >
+            侦探推理 <i class="fa fa-search ml-2"></i>
+          </a>
+        </div>
+
+        <!-- 滚动指示器 -->
+        <div
+          class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce"
+        >
+          <i class="fa fa-angle-down text-neon-purple text-3xl"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- 逻辑基础部分 -->
+    <section id="logic-foundation" class="py-20 relative">
+      <div class="absolute inset-0 bg-grid opacity-20"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            <span class="text-neon-blue">逻辑</span>基础
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            理解假设检验的核心思想：概率世界中的反证法
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <!-- 左侧：反证法解释 -->
+          <div class="bg-dark-card rounded-xl p-8 border border-gray-800">
+            <h3
+              class="text-2xl font-future font-semibold mb-6 text-neon-blue flex items-center"
+            >
+              <i class="fa fa-lightbulb-o mr-3"></i>传统反证法
+            </h3>
+            <div class="space-y-4 text-gray-300">
+              <p class="leading-relaxed">
+                在数学中，<strong class="text-neon-blue">反证法</strong
+                >是一种经典的证明思路：
+              </p>
+              <ol class="list-decimal list-inside space-y-2 ml-4">
+                <li>先假设"结论不成立"（即"反设"）</li>
+                <li>通过逻辑推理推出矛盾</li>
+                <li>最终证明"原结论成立"</li>
+              </ol>
+              <div class="bg-gray-800 rounded-lg p-4 mt-6">
+                <p class="text-sm text-gray-400 mb-2">
+                  经典例子：证明\(\sqrt{2}\)是无理数
+                </p>
+                <p class="text-neon-blue">
+                  假设\(\sqrt{2}\)是有理数 → 推导出矛盾 →
+                  确认\(\sqrt{2}\)是无理数
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧：假设检验解释 -->
+          <div class="bg-dark-card rounded-xl p-8 border border-gray-800">
+            <h3
+              class="text-2xl font-future font-semibold mb-6 text-neon-purple flex items-center"
+            >
+              <i class="fa fa-flask mr-3"></i>假设检验
+            </h3>
+            <div class="space-y-4 text-gray-300">
+              <p class="leading-relaxed">
+                假设检验是反证法在<strong class="text-neon-purple"
+                  >充满随机性的现实世界</strong
+                >中的延伸：
+              </p>
+              <ol class="list-decimal list-inside space-y-2 ml-4">
+                <li>
+                  <strong>设定原假设(\(H_0\))</strong>：我们想尝试推翻的假设
+                </li>
+                <li>
+                  <strong>计算\(p\)值</strong
+                  >：如果\(H_0\)成立，出现当前结果的概率
+                </li>
+                <li>
+                  <strong>对比显著性水平(\(\alpha\))</strong
+                  >：判断是否拒绝\(H_0\)
+                </li>
+              </ol>
+              <div class="bg-gray-800 rounded-lg p-4 mt-6">
+                <p class="text-sm text-gray-400 mb-2">核心逻辑：</p>
+                <p class="text-neon-purple">
+                  如果\(p <
+                  \alpha\)，说明\(H_0\)成立时当前结果极不可能发生（类似"矛盾"）
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 公式展示 -->
+        <div class="mt-16 bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-xl font-future font-semibold mb-6 text-center text-white"
+          >
+            假设检验的数学表达
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div class="space-y-4">
+              <h4 class="text-neon-blue font-semibold">1. 设定假设</h4>
+              <div class="bg-gray-800 rounded-lg p-4">
+                <div class="katex-display">\(H_0: \mu = \mu_0\)</div>
+                <div class="katex-display">\(H_1: \mu \neq \mu_0\)</div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <h4 class="text-neon-purple font-semibold">2. 计算统计量</h4>
+              <div class="bg-gray-800 rounded-lg p-4">
+                <div class="katex-display">
+                  \(Z = \frac{\bar{X} - \mu_0}{\sigma/\sqrt{n}}\)
+                </div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <h4 class="text-neon-green font-semibold">3. 决策规则</h4>
+              <div class="bg-gray-800 rounded-lg p-4">
+                <div class="text-sm">如果 p < α，拒绝H₀</div>
+                <div class="text-sm">如果 p ≥ α，不拒绝H₀</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 魔法药水实验部分 -->
+    <section
+      id="magic-potion"
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            <span class="text-neon-purple">魔法药水</span>效果检验
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            通过交互实验，直观感受假设检验的核心思想
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- 左侧：实验控制面板 -->
+          <div class="bg-dark-card rounded-xl p-8 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-cogs text-neon-purple mr-3"></i>实验设置
+            </h3>
+
+            <!-- 场景介绍 -->
+            <div class="bg-gray-800 rounded-lg p-4 mb-6">
+              <p class="text-sm text-gray-300 leading-relaxed">
+                🧙‍♂️ 你是魔法学院的学生，得到了一瓶声称"能提高注意力"的神秘药水。
+                让我们通过科学的假设检验来验证它的效果！
+              </p>
+            </div>
+
+            <!-- 参数设置 -->
+            <div class="space-y-6">
+              <div>
+                <label class="block text-gray-300 mb-2">显著性水平 (α):</label>
+                <select
+                  id="alpha-level"
+                  class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-purple focus:outline-none"
+                >
+                  <option value="0.01">0.01 (严格标准)</option>
+                  <option value="0.05" selected>0.05 (常用标准)</option>
+                  <option value="0.10">0.10 (宽松标准)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-gray-300 mb-2"
+                  >样本量 (志愿者人数):</label
+                >
+                <div class="flex items-center">
+                  <input
+                    type="range"
+                    id="sample-size"
+                    min="10"
+                    max="100"
+                    step="5"
+                    value="30"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                  />
+                  <span
+                    id="sample-size-value"
+                    class="ml-4 text-neon-purple font-bold"
+                    >30</span
+                  >
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-gray-300 mb-2"
+                  >药水真实效果 (平均提升分数):</label
+                >
+                <div class="flex items-center">
+                  <input
+                    type="range"
+                    id="true-effect"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value="3"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                  <span
+                    id="true-effect-value"
+                    class="ml-4 text-neon-green font-bold"
+                    >3</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- 假设设定 -->
+            <div class="mt-8 p-4 bg-gray-800 rounded-lg">
+              <h4 class="text-neon-blue font-semibold mb-2">假设设定：</h4>
+              <div class="space-y-1 text-sm">
+                <div><strong>H₀:</strong> 药水没有效果 (μ = μ₀)</div>
+                <div><strong>H₁:</strong> 药水有效果 (μ > μ₀)</div>
+              </div>
+            </div>
+
+            <!-- 开始实验按钮 -->
+            <button
+              id="start-experiment"
+              class="w-full mt-6 px-6 py-3 bg-neon-purple text-white font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300 transform hover:scale-105 animate-magic-pulse"
+            >
+              🧪 开始魔法实验 <i class="fa fa-magic ml-2"></i>
+            </button>
+          </div>
+
+          <!-- 右侧：实验结果展示 -->
+          <div class="bg-dark-card rounded-xl p-8 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-flask text-neon-blue mr-3"></i>实验结果
+            </h3>
+
+            <!-- 魔法药瓶动画 -->
+            <div class="text-center mb-8">
+              <div
+                id="magic-bottle"
+                class="inline-block w-24 h-32 magic-bottle relative mx-auto opacity-50 transition-all duration-1000"
+              >
+                <div
+                  class="absolute top-2 left-1/2 transform -translate-x-1/2 w-6 h-4 bg-gray-800 rounded-t-lg"
+                ></div>
+                <div
+                  class="absolute top-6 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rounded-full animate-pulse"
+                ></div>
+              </div>
+              <p id="bottle-status" class="text-gray-400 mt-2">
+                等待实验开始...
+              </p>
+            </div>
+
+            <!-- 实验数据展示 -->
+            <div id="experiment-data" class="hidden space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-800 rounded-lg p-3">
+                  <div class="text-xs text-gray-400">样本均值</div>
+                  <div
+                    id="sample-mean"
+                    class="text-lg font-bold text-neon-blue"
+                  >
+                    --
+                  </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-3">
+                  <div class="text-xs text-gray-400">标准差</div>
+                  <div
+                    id="sample-std"
+                    class="text-lg font-bold text-neon-green"
+                  >
+                    --
+                  </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-3">
+                  <div class="text-xs text-gray-400">t统计量</div>
+                  <div
+                    id="t-statistic"
+                    class="text-lg font-bold text-neon-purple"
+                  >
+                    --
+                  </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-3">
+                  <div class="text-xs text-gray-400">p值</div>
+                  <div id="p-value" class="text-lg font-bold text-neon-orange">
+                    --
+                  </div>
+                </div>
+              </div>
+
+              <!-- 结论展示 -->
+              <div
+                id="conclusion"
+                class="p-4 rounded-lg border-2 transition-all duration-500"
+              >
+                <div id="conclusion-text" class="font-semibold"></div>
+                <div id="conclusion-explanation" class="text-sm mt-2"></div>
+              </div>
+            </div>
+
+            <!-- 数据可视化 -->
+            <div class="mt-6">
+              <canvas id="experiment-chart" class="hidden"></canvas>
+            </div>
+
+            <!-- 重复实验按钮 -->
+            <button
+              id="repeat-experiment"
+              class="w-full mt-6 px-6 py-2 bg-gray-600 text-white font-bold rounded-md hover:bg-gray-500 transition-all duration-300 hidden"
+            >
+              🔄 重复实验
+            </button>
+          </div>
+        </div>
+
+        <!-- 错误类型说明 -->
+        <div class="mt-16 bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-xl font-future font-semibold mb-6 text-center text-white"
+          >
+            两类错误的理解
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-6">
+              <h4 class="text-red-400 font-semibold mb-3 flex items-center">
+                <i class="fa fa-exclamation-triangle mr-2"></i>第一类错误 (α)
+              </h4>
+              <p class="text-gray-300 mb-2">药水实际无效，却错误认为"有效"</p>
+              <p class="text-sm text-gray-400">类似：冤枉了无辜的人</p>
+            </div>
+            <div
+              class="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-6"
+            >
+              <h4 class="text-yellow-400 font-semibold mb-3 flex items-center">
+                <i class="fa fa-question-circle mr-2"></i>第二类错误 (β)
+              </h4>
+              <p class="text-gray-300 mb-2">药水实际有效，却错误认为"无效"</p>
+              <p class="text-sm text-gray-400">类似：放过了真正的罪犯</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 侦探教室部分 -->
+    <section id="detective-classroom" class="py-20 relative">
+      <div class="absolute inset-0 bg-grid opacity-20"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            <span class="text-neon-green">侦探教室</span>
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            破解假设检验之谜：将理论推导转化为侦探破案的互动旅程
+          </p>
+        </div>
+
+        <!-- 侦探徽章 -->
+        <div class="text-center mb-12">
+          <div class="inline-block w-20 h-20 detective-badge relative">
+            <i
+              class="fa fa-search absolute inset-0 flex items-center justify-center text-dark-bg text-2xl"
+            ></i>
+          </div>
+          <p class="text-neon-green mt-2 font-semibold">侦探学院</p>
+        </div>
+
+        <!-- 引言 -->
+        <div class="bg-dark-card rounded-xl p-8 border border-gray-800 mb-12">
+          <p class="text-lg text-gray-300 text-center leading-relaxed">
+            🕵️ 欢迎来到侦探学院！今天你将学习如何用数据证据破解谜案。<br />
+            原假设H₀是我们的"初始嫌疑"（通常是无辜的），而备择假设H₁是我们要寻找的"真相"。
+          </p>
+        </div>
+
+        <!-- 步骤式学习 -->
+        <div class="space-y-8">
+          <!-- 步骤1：设立假设 -->
+          <div
+            class="bg-dark-card rounded-xl border border-gray-800 overflow-hidden"
+          >
+            <div class="bg-neon-blue/10 p-6 border-b border-gray-800">
+              <h3
+                class="text-xl font-future font-semibold text-neon-blue flex items-center"
+              >
+                <span
+                  class="bg-neon-blue text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >1</span
+                >
+                设立假设——确定调查方向
+              </h3>
+            </div>
+            <div class="p-6">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <h4 class="text-white font-semibold mb-4">核心概念</h4>
+                  <p class="text-gray-300 mb-4 leading-relaxed">
+                    就像侦探查案必须先明确「调查目标」：
+                  </p>
+                  <ul class="space-y-2 text-gray-300">
+                    <li>
+                      •
+                      <strong class="text-neon-blue">原假设(H₀)</strong
+                      >：案件的「默认现状」（如"嫌疑人无罪"）
+                    </li>
+                    <li>
+                      •
+                      <strong class="text-neon-purple">备择假设(H₁)</strong
+                      >：我们怀疑的「异常情况」（如"嫌疑人有罪"）
+                    </li>
+                  </ul>
+
+                  <div class="mt-6 bg-gray-800 rounded-lg p-4">
+                    <h5 class="text-neon-green font-semibold mb-2">
+                      🔍 案例：珠宝店失窃案
+                    </h5>
+                    <div class="text-sm space-y-1">
+                      <div><strong>H₀:</strong> "店员无盗窃行为"</div>
+                      <div><strong>H₁:</strong> "店员有盗窃行为"</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 class="text-white font-semibold mb-4">数学表达</h4>
+                  <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                    <div class="katex-display">\(H_0: \mu = \mu_0\)</div>
+                    <div class="text-sm text-gray-400 text-center mb-2">
+                      vs.
+                    </div>
+                    <div class="katex-display">\(H_1: \mu \neq \mu_0\)</div>
+                  </div>
+                  <p class="text-sm text-gray-400">
+                    H₀默认"无差异"，H₁表示"有差异"
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤2：收集证据 -->
+          <div
+            class="bg-dark-card rounded-xl border border-gray-800 overflow-hidden"
+          >
+            <div class="bg-neon-purple/10 p-6 border-b border-gray-800">
+              <h3
+                class="text-xl font-future font-semibold text-neon-purple flex items-center"
+              >
+                <span
+                  class="bg-neon-purple text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >2</span
+                >
+                收集证据——计算统计量
+              </h3>
+            </div>
+            <div class="p-6">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <h4 class="text-white font-semibold mb-4">侦探思维</h4>
+                  <p class="text-gray-300 mb-4 leading-relaxed">
+                    侦探需要收集证据来支持或反驳假设：
+                  </p>
+                  <ul class="space-y-2 text-gray-300">
+                    <li>
+                      • 📊
+                      <strong class="text-neon-blue">样本数据</strong
+                      >：实地调查获得的信息
+                    </li>
+                    <li>
+                      • 🔢
+                      <strong class="text-neon-purple">统计量</strong
+                      >：将证据量化的工具
+                    </li>
+                    <li>
+                      • 📏
+                      <strong class="text-neon-green">标准化</strong
+                      >：让不同案件可以比较
+                    </li>
+                  </ul>
+
+                  <div class="mt-6 bg-gray-800 rounded-lg p-4">
+                    <h5 class="text-neon-green font-semibold mb-2">
+                      🔍 继续珠宝店案例
+                    </h5>
+                    <p class="text-sm text-gray-300">
+                      调查发现：店员最近3个月的销售记录异常，平均每月"遗失"珠宝价值比正常水平高出很多...
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 class="text-white font-semibold mb-4">统计量计算</h4>
+                  <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                    <div class="text-center mb-2">
+                      Z统计量（标准化证据强度）
+                    </div>
+                    <div class="katex-display">
+                      \(Z = \frac{\bar{X} - \mu_0}{\sigma/\sqrt{n}}\)
+                    </div>
+                  </div>
+                  <div class="text-sm text-gray-400 space-y-1">
+                    <div>• \(\bar{X}\)：样本均值（观察到的平均值）</div>
+                    <div>• \(\mu_0\)：H₀假设的理论值</div>
+                    <div>• \(\sigma\)：总体标准差</div>
+                    <div>• \(n\)：样本量</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤3：计算p值 -->
+          <div
+            class="bg-dark-card rounded-xl border border-gray-800 overflow-hidden"
+          >
+            <div class="bg-neon-green/10 p-6 border-b border-gray-800">
+              <h3
+                class="text-xl font-future font-semibold text-neon-green flex items-center"
+              >
+                <span
+                  class="bg-neon-green text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >3</span
+                >
+                计算p值——评估证据强度
+              </h3>
+            </div>
+            <div class="p-6">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <h4 class="text-white font-semibold mb-4">p值的含义</h4>
+                  <p class="text-gray-300 mb-4 leading-relaxed">
+                    p值回答了一个关键问题：
+                  </p>
+                  <div
+                    class="bg-neon-green/10 border border-neon-green/30 rounded-lg p-4 mb-4"
+                  >
+                    <p class="text-neon-green font-semibold text-center">
+                      "如果嫌疑人真的无辜(H₀成立)，<br />
+                      出现当前这些证据的概率有多大？"
+                    </p>
+                  </div>
+                  <ul class="space-y-2 text-gray-300">
+                    <li>• p值很小 → 证据很"异常"，H₀可疑</li>
+                    <li>• p值较大 → 证据"正常"，H₀合理</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 class="text-white font-semibold mb-4">交互式p值计算器</h4>
+                  <div class="bg-gray-800 rounded-lg p-4">
+                    <div class="mb-4">
+                      <label class="block text-gray-300 mb-2"
+                        >Z统计量值：</label
+                      >
+                      <input
+                        type="range"
+                        id="z-value-slider"
+                        min="-3"
+                        max="3"
+                        step="0.1"
+                        value="0"
+                        class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                      />
+                      <div
+                        class="flex justify-between text-sm text-gray-400 mt-1"
+                      >
+                        <span>-3</span>
+                        <span
+                          id="z-value-display"
+                          class="text-neon-green font-bold"
+                          >0.0</span
+                        >
+                        <span>3</span>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <div class="text-sm text-gray-400">对应的p值：</div>
+                      <div
+                        id="p-value-display"
+                        class="text-2xl font-bold text-neon-orange"
+                      >
+                        1.0000
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤4：做出决策 -->
+          <div
+            class="bg-dark-card rounded-xl border border-gray-800 overflow-hidden"
+          >
+            <div class="bg-neon-orange/10 p-6 border-b border-gray-800">
+              <h3
+                class="text-xl font-future font-semibold text-neon-orange flex items-center"
+              >
+                <span
+                  class="bg-neon-orange text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >4</span
+                >
+                做出决策——判断是否拒绝H₀
+              </h3>
+            </div>
+            <div class="p-6">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <h4 class="text-white font-semibold mb-4">决策规则</h4>
+                  <p class="text-gray-300 mb-4 leading-relaxed">
+                    就像法庭需要"超越合理怀疑"的证据标准：
+                  </p>
+
+                  <div class="space-y-4">
+                    <div
+                      class="bg-red-900/20 border border-red-500/30 rounded-lg p-4"
+                    >
+                      <h5 class="text-red-400 font-semibold mb-2">
+                        🚨 拒绝H₀ (有罪判决)
+                      </h5>
+                      <p class="text-sm text-gray-300">
+                        当 p < α 时，证据足够强烈
+                      </p>
+                    </div>
+
+                    <div
+                      class="bg-gray-700/20 border border-gray-500/30 rounded-lg p-4"
+                    >
+                      <h5 class="text-gray-400 font-semibold mb-2">
+                        ⚖️ 不拒绝H₀ (证据不足)
+                      </h5>
+                      <p class="text-sm text-gray-300">
+                        当 p ≥ α 时，证据不够充分
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 class="text-white font-semibold mb-4">交互式决策器</h4>
+                  <div class="bg-gray-800 rounded-lg p-4">
+                    <div class="mb-4">
+                      <label class="block text-gray-300 mb-2"
+                        >显著性水平 α：</label
+                      >
+                      <select
+                        id="alpha-selector"
+                        class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                      >
+                        <option value="0.01">0.01 (严格标准)</option>
+                        <option value="0.05" selected>0.05 (常用标准)</option>
+                        <option value="0.10">0.10 (宽松标准)</option>
+                      </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                      <div class="text-center">
+                        <div class="text-sm text-gray-400">当前p值</div>
+                        <div
+                          id="current-p-value"
+                          class="text-lg font-bold text-neon-orange"
+                        >
+                          1.0000
+                        </div>
+                      </div>
+                      <div class="text-center">
+                        <div class="text-sm text-gray-400">α水平</div>
+                        <div
+                          id="current-alpha"
+                          class="text-lg font-bold text-neon-blue"
+                        >
+                          0.05
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="text-center p-3 bg-gray-700 rounded-lg">
+                      <div class="text-sm text-gray-400">决策结果：</div>
+                      <div
+                        id="decision-result"
+                        class="mt-2 font-semibold text-gray-400"
+                      >
+                        不拒绝 H₀
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 理解程度自测 -->
+        <div class="mt-16 bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-xl font-future font-semibold mb-6 text-center text-white"
+          >
+            🎯 理解程度自测
+          </h3>
+          <p class="text-gray-300 text-center mb-6">
+            经过侦探训练，你觉得自己对假设检验的理解程度如何？
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <button
+              class="understanding-btn px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors"
+              data-level="1"
+            >
+              1 - 完全不懂
+            </button>
+            <button
+              class="understanding-btn px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-lg transition-colors"
+              data-level="2"
+            >
+              2 - 略有理解
+            </button>
+            <button
+              class="understanding-btn px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg transition-colors"
+              data-level="3"
+            >
+              3 - 基本掌握
+            </button>
+            <button
+              class="understanding-btn px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors"
+              data-level="4"
+            >
+              4 - 理解较好
+            </button>
+            <button
+              class="understanding-btn px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors"
+              data-level="5"
+            >
+              5 - 完全掌握
+            </button>
+          </div>
+        </div>
+
+        <!-- 可视化分布图 -->
+        <div class="mt-16 bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-xl font-future font-semibold mb-6 text-center text-white"
+          >
+            📊 标准正态分布可视化
+          </h3>
+          <div class="text-center">
+            <canvas
+              id="distribution-chart"
+              width="600"
+              height="300"
+              class="border border-gray-600 rounded-lg bg-gray-900"
+            ></canvas>
+            <p class="text-sm text-gray-400 mt-2">
+              蓝色曲线：标准正态分布 | 白色虚线：均值位置
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 总结部分 -->
+    <section
+      class="py-20 relative bg-gradient-to-b from-dark-card/50 to-dark-bg"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            <span class="text-neon-blue">总结</span>与<span
+              class="text-neon-purple"
+              >思考</span
+            >
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            假设检验：概率世界中的反证法艺术
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- 核心思想 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <div class="text-center mb-4">
+              <div
+                class="w-16 h-16 bg-neon-blue/20 rounded-full flex items-center justify-center mx-auto mb-3"
+              >
+                <i class="fa fa-lightbulb-o text-neon-blue text-2xl"></i>
+              </div>
+              <h3 class="text-lg font-future font-semibold text-neon-blue">
+                核心思想
+              </h3>
+            </div>
+            <ul class="text-gray-300 space-y-2 text-sm">
+              <li>• 反证法的概率版本</li>
+              <li>• 通过"矛盾"推翻假设</li>
+              <li>• 小概率事件的逻辑</li>
+              <li>• 科学决策的工具</li>
+            </ul>
+          </div>
+
+          <!-- 关键步骤 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <div class="text-center mb-4">
+              <div
+                class="w-16 h-16 bg-neon-purple/20 rounded-full flex items-center justify-center mx-auto mb-3"
+              >
+                <i class="fa fa-list-ol text-neon-purple text-2xl"></i>
+              </div>
+              <h3 class="text-lg font-future font-semibold text-neon-purple">
+                关键步骤
+              </h3>
+            </div>
+            <ol
+              class="text-gray-300 space-y-2 text-sm list-decimal list-inside"
+            >
+              <li>设立假设(H₀ vs H₁)</li>
+              <li>收集数据计算统计量</li>
+              <li>计算p值</li>
+              <li>与α比较做决策</li>
+            </ol>
+          </div>
+
+          <!-- 实际应用 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <div class="text-center mb-4">
+              <div
+                class="w-16 h-16 bg-neon-green/20 rounded-full flex items-center justify-center mx-auto mb-3"
+              >
+                <i class="fa fa-rocket text-neon-green text-2xl"></i>
+              </div>
+              <h3 class="text-lg font-future font-semibold text-neon-green">
+                实际应用
+              </h3>
+            </div>
+            <ul class="text-gray-300 space-y-2 text-sm">
+              <li>• 药物效果检验</li>
+              <li>• 质量控制</li>
+              <li>• A/B测试</li>
+              <li>• 科学研究</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 重要提醒 -->
+        <div
+          class="mt-12 bg-gradient-to-r from-neon-blue/10 to-neon-purple/10 border border-neon-blue/30 rounded-xl p-8"
+        >
+          <h3
+            class="text-xl font-future font-semibold mb-4 text-center text-white flex items-center justify-center"
+          >
+            <i class="fa fa-exclamation-triangle text-neon-orange mr-3"></i>
+            重要提醒
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-300">
+            <div>
+              <h4 class="font-semibold text-neon-blue mb-2">
+                假设检验不能证明H₀正确
+              </h4>
+              <p class="text-sm">
+                "不拒绝H₀"≠"接受H₀"。我们只能说"没有足够证据反驳H₀"，就像法庭的"证据不足"不等于"无罪"。
+              </p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-neon-purple mb-2">
+                p值不是H₀正确的概率
+              </h4>
+              <p class="text-sm">
+                p值是"假设H₀成立时，观察到当前数据的概率"，而不是"H₀成立的概率"。这是常见的误解。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark-card border-t border-gray-800 py-12">
+      <div class="container mx-auto px-4">
+        <div class="text-center">
+          <div class="flex items-center justify-center space-x-2 mb-4">
+            <div
+              class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center"
+            >
+              <i class="fa fa-flask text-white"></i>
+            </div>
+            <h3 class="text-xl font-future font-bold text-white">
+              <span class="text-neon-blue">概率</span
+              ><span class="text-white">维度</span>
+            </h3>
+          </div>
+          <p class="text-gray-400 mb-6">
+            让统计学变得生动有趣，让数据科学触手可及
+          </p>
+          <div class="flex justify-center space-x-6">
+            <a
+              href="index.html"
+              class="text-gray-400 hover:text-neon-blue transition-colors"
+            >
+              <i class="fa fa-home mr-2"></i>首页
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-neon-purple transition-colors"
+            >
+              <i class="fa fa-book mr-2"></i>教程
+            </a>
+            <a
+              href="#"
+              class="text-gray-400 hover:text-neon-green transition-colors"
+            >
+              <i class="fa fa-envelope mr-2"></i>联系
+            </a>
+          </div>
+          <div class="mt-8 pt-8 border-t border-gray-800">
+            <p class="text-gray-500 text-sm">
+              © 2024 概率维度. 让学习成为一场精彩的冒险.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // 初始化粒子背景
+      function initParticles() {
+        const container = document.getElementById("particles-container");
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        // 创建粒子
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+          posArray[i] = (Math.random() - 0.5) * 10;
+        }
+
+        particlesGeometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(posArray, 3)
+        );
+        const particlesMaterial = new THREE.PointsMaterial({
+          size: 0.005,
+          color: 0x00f3ff,
+          transparent: true,
+          opacity: 0.8,
+        });
+
+        const particlesMesh = new THREE.Points(
+          particlesGeometry,
+          particlesMaterial
+        );
+        scene.add(particlesMesh);
+        camera.position.z = 3;
+
+        // 动画循环
+        function animate() {
+          requestAnimationFrame(animate);
+          particlesMesh.rotation.x += 0.0005;
+          particlesMesh.rotation.y += 0.0005;
+          renderer.render(scene, camera);
+        }
+        animate();
+
+        // 响应式调整
+        window.addEventListener("resize", () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      }
+
+      // 魔法药水实验
+      class MagicPotionExperiment {
+        constructor() {
+          this.chart = null;
+          this.initializeElements();
+          this.bindEvents();
+        }
+
+        initializeElements() {
+          this.alphaLevel = document.getElementById("alpha-level");
+          this.sampleSize = document.getElementById("sample-size");
+          this.sampleSizeValue = document.getElementById("sample-size-value");
+          this.trueEffect = document.getElementById("true-effect");
+          this.trueEffectValue = document.getElementById("true-effect-value");
+          this.startButton = document.getElementById("start-experiment");
+          this.repeatButton = document.getElementById("repeat-experiment");
+          this.magicBottle = document.getElementById("magic-bottle");
+          this.bottleStatus = document.getElementById("bottle-status");
+          this.experimentData = document.getElementById("experiment-data");
+        }
+
+        bindEvents() {
+          this.sampleSize.addEventListener("input", (e) => {
+            this.sampleSizeValue.textContent = e.target.value;
+          });
+
+          this.trueEffect.addEventListener("input", (e) => {
+            this.trueEffectValue.textContent = e.target.value;
+          });
+
+          this.startButton.addEventListener("click", () =>
+            this.runExperiment()
+          );
+          this.repeatButton.addEventListener("click", () =>
+            this.runExperiment()
+          );
+        }
+
+        async runExperiment() {
+          const n = parseInt(this.sampleSize.value);
+          const trueEffect = parseFloat(this.trueEffect.value);
+          const alpha = parseFloat(this.alphaLevel.value);
+
+          // 动画效果
+          this.magicBottle.style.opacity = "1";
+          this.magicBottle.style.transform = "scale(1.1)";
+          this.bottleStatus.textContent = "🧪 实验进行中...";
+
+          // 模拟实验延迟
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+
+          // 生成模拟数据
+          const baselineScore = 75; // 基准分数
+          const data = [];
+          for (let i = 0; i < n; i++) {
+            const score =
+              baselineScore + trueEffect + (Math.random() - 0.5) * 20;
+            data.push(Math.max(0, Math.min(100, score)));
+          }
+
+          // 计算统计量
+          const mean = data.reduce((a, b) => a + b) / n;
+          const variance =
+            data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (n - 1);
+          const std = Math.sqrt(variance);
+          const tStat = (mean - baselineScore) / (std / Math.sqrt(n));
+          const pValue = this.calculatePValue(tStat, n - 1);
+
+          // 显示结果
+          this.displayResults(mean, std, tStat, pValue, alpha);
+          this.createChart(data, mean, baselineScore);
+
+          this.experimentData.classList.remove("hidden");
+          this.repeatButton.classList.remove("hidden");
+          this.bottleStatus.textContent = "✨ 实验完成！";
+        }
+
+        calculatePValue(t, df) {
+          // 简化的t分布p值计算（单尾检验）
+          const absT = Math.abs(t);
+          if (absT > 3) return 0.001;
+          if (absT > 2.5) return 0.01;
+          if (absT > 2) return 0.025;
+          if (absT > 1.5) return 0.05;
+          if (absT > 1) return 0.1;
+          return 0.5;
+        }
+
+        displayResults(mean, std, tStat, pValue, alpha) {
+          document.getElementById("sample-mean").textContent = mean.toFixed(2);
+          document.getElementById("sample-std").textContent = std.toFixed(2);
+          document.getElementById("t-statistic").textContent = tStat.toFixed(3);
+          document.getElementById("p-value").textContent = pValue.toFixed(4);
+
+          const conclusion = document.getElementById("conclusion");
+          const conclusionText = document.getElementById("conclusion-text");
+          const conclusionExplanation = document.getElementById(
+            "conclusion-explanation"
+          );
+
+          if (pValue < alpha) {
+            conclusion.className =
+              "p-4 rounded-lg border-2 border-neon-purple bg-neon-purple/10";
+            conclusionText.textContent = "🎉 拒绝原假设！药水有效果！";
+            conclusionText.className = "font-semibold text-neon-purple";
+            conclusionExplanation.textContent = `p值(${pValue.toFixed(
+              4
+            )}) < α(${alpha})，证据强烈支持药水有效果的假设。`;
+          } else {
+            conclusion.className =
+              "p-4 rounded-lg border-2 border-gray-500 bg-gray-500/10";
+            conclusionText.textContent = "🤔 不拒绝原假设，证据不足";
+            conclusionText.className = "font-semibold text-gray-400";
+            conclusionExplanation.textContent = `p值(${pValue.toFixed(
+              4
+            )}) ≥ α(${alpha})，没有足够证据证明药水有效果。`;
+          }
+        }
+
+        createChart(data, mean, baseline) {
+          const ctx = document.getElementById("experiment-chart");
+          ctx.classList.remove("hidden");
+
+          if (this.chart) {
+            this.chart.destroy();
+          }
+
+          this.chart = new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: data.map((_, i) => `志愿者${i + 1}`),
+              datasets: [
+                {
+                  label: "测试分数",
+                  data: data,
+                  backgroundColor: "rgba(191, 0, 255, 0.6)",
+                  borderColor: "rgba(191, 0, 255, 1)",
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  labels: { color: "#ffffff" },
+                },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  grid: { color: "rgba(255, 255, 255, 0.1)" },
+                  ticks: { color: "#ffffff" },
+                },
+                x: {
+                  grid: { color: "rgba(255, 255, 255, 0.1)" },
+                  ticks: { color: "#ffffff", maxTicksLimit: 10 },
+                },
+              },
+              annotation: {
+                annotations: {
+                  baseline: {
+                    type: "line",
+                    yMin: baseline,
+                    yMax: baseline,
+                    borderColor: "#00f3ff",
+                    borderWidth: 2,
+                    label: {
+                      content: "基准线",
+                      enabled: true,
+                      position: "end",
+                    },
+                  },
+                  mean: {
+                    type: "line",
+                    yMin: mean,
+                    yMax: mean,
+                    borderColor: "#00ff66",
+                    borderWidth: 2,
+                    label: {
+                      content: "样本均值",
+                      enabled: true,
+                      position: "start",
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+      }
+
+      // 侦探教室交互
+      class DetectiveClassroom {
+        constructor() {
+          this.initializeElements();
+          this.bindEvents();
+          this.drawDistribution();
+        }
+
+        initializeElements() {
+          this.zSlider = document.getElementById("z-value-slider");
+          this.zDisplay = document.getElementById("z-value-display");
+          this.pValueDisplay = document.getElementById("p-value-display");
+          this.alphaSelector = document.getElementById("alpha-selector");
+          this.currentPValue = document.getElementById("current-p-value");
+          this.currentAlpha = document.getElementById("current-alpha");
+          this.decisionResult = document.getElementById("decision-result");
+        }
+
+        bindEvents() {
+          this.zSlider.addEventListener("input", (e) => {
+            const zValue = parseFloat(e.target.value);
+            this.updatePValue(zValue);
+          });
+
+          this.alphaSelector.addEventListener("change", (e) => {
+            this.updateDecision();
+          });
+
+          // 理解程度按钮
+          document.querySelectorAll(".understanding-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              const level = e.target.dataset.level;
+              this.showUnderstandingFeedback(level);
+            });
+          });
+        }
+
+        updatePValue(zValue) {
+          this.zDisplay.textContent = zValue.toFixed(1);
+          const pValue = this.calculateStandardNormalPValue(zValue);
+          this.pValueDisplay.textContent = pValue.toFixed(4);
+          this.currentPValue.textContent = pValue.toFixed(4);
+          this.updateDecision();
+        }
+
+        calculateStandardNormalPValue(z) {
+          // 简化的标准正态分布p值计算（双尾检验）
+          const absZ = Math.abs(z);
+          if (absZ >= 3) return 0.0027;
+          if (absZ >= 2.5) return 0.0124;
+          if (absZ >= 2) return 0.0455;
+          if (absZ >= 1.5) return 0.1336;
+          if (absZ >= 1) return 0.3173;
+          if (absZ >= 0.5) return 0.6171;
+          return 1.0;
+        }
+
+        updateDecision() {
+          const pValue = parseFloat(this.currentPValue.textContent);
+          const alpha = parseFloat(this.alphaSelector.value);
+          this.currentAlpha.textContent = alpha;
+
+          if (pValue < alpha) {
+            this.decisionResult.textContent = "拒绝 H₀";
+            this.decisionResult.className =
+              "mt-2 font-semibold text-neon-purple";
+          } else {
+            this.decisionResult.textContent = "不拒绝 H₀";
+            this.decisionResult.className = "mt-2 font-semibold text-gray-400";
+          }
+        }
+
+        drawDistribution() {
+          const canvas = document.getElementById("distribution-chart");
+          if (!canvas) return;
+
+          const ctx = canvas.getContext("2d");
+          const width = canvas.width;
+          const height = canvas.height;
+
+          // 清空画布
+          ctx.clearRect(0, 0, width, height);
+
+          // 绘制正态分布曲线
+          ctx.strokeStyle = "#00f3ff";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+
+          for (let x = 0; x < width; x++) {
+            const z = (x - width / 2) / (width / 6); // 映射到-3到3的范围
+            const y =
+              height -
+              ((height * 0.8 * Math.exp(-0.5 * z * z)) /
+                Math.sqrt(2 * Math.PI)) *
+                2.5;
+            if (x === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
+          }
+          ctx.stroke();
+
+          // 绘制中心线
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1;
+          ctx.setLineDash([5, 5]);
+          ctx.beginPath();
+          ctx.moveTo(width / 2, 0);
+          ctx.lineTo(width / 2, height);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        showUnderstandingFeedback(level) {
+          const messages = {
+            1: "别担心，假设检验确实需要时间理解。建议先复习概率基础知识。",
+            2: "你已经有了基础理解！继续学习p值的含义会很有帮助。",
+            3: "不错的理解水平！试着多做几个实际例子来巩固。",
+            4: "很好的掌握程度！你可以尝试解释给别人听来加深理解。",
+            5: "优秀！你已经很好地掌握了假设检验的核心概念。",
+          };
+
+          alert(`理解程度 ${level}/5: ${messages[level]}`);
+        }
+      }
+
+      // 页面加载完成后初始化
+      document.addEventListener("DOMContentLoaded", function () {
+        // 渲染LaTeX公式
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\(", right: "\\)", display: false },
+            { left: "\\[", right: "\\]", display: true },
+          ],
+        });
+
+        // 初始化各个模块
+        initParticles();
+        new MagicPotionExperiment();
+        new DetectiveClassroom();
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const href = this.getAttribute("href");
+           if (href && href !== "#") {
+             const target = document.querySelector(href);
+             if (target) {
+               target.scrollIntoView({
+                 behavior: "smooth",
+               });
+             }
+           }
+         });
+       });
+
+        // 导航栏滚动效果
+        window.addEventListener("scroll", function () {
+          const nav = document.getElementById("main-nav");
+          if (window.scrollY > 100) {
+            nav.style.backgroundColor = "rgba(15, 23, 48, 0.95)";
+          } else {
+            nav.style.backgroundColor = "rgba(15, 23, 48, 0.6)";
+          }
+        });
+
+        // 移动端菜单
+        const menuToggle = document.getElementById("menu-toggle");
+        if (menuToggle) {
+          menuToggle.addEventListener("click", function () {
+            // 这里可以添加移动端菜单逻辑
+            alert("移动端菜单功能待实现");
+          });
+        }
+      });
+    </script>
+    
+    <!-- 引入工具箱脚本 -->
+    <script src="../static/js/toolbox.js"></script>
+  </body>
+</html>
