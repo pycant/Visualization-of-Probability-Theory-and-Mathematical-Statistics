@@ -1,1543 +1,2003 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>期望与方差 | 概率维度</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
 
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    
+    <!-- KaTeX CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+    />
+    <!-- KaTeX JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
     <!-- 配置Tailwind自定义颜色和字体 -->
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'neon-blue': '#00f3ff',
-                        'neon-purple': '#bf00ff',
-                        'neon-green': '#00ff66',
-                        'neon-pink': '#ff0080',
-                        'dark-bg': '#050a1a',
-                        'dark-card': '#0f1730',
-                    },
-                    fontFamily: {
-                        'future': ['Orbitron', 'sans-serif'],
-                        'data': ['Rajdhani', 'sans-serif'],
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
-                        'float': 'float 6s ease-in-out infinite',
-                        'rotate-slow': 'rotate 20s linear infinite',
-                    },
-                    keyframes: {
-                        glow: {
-                            '0%': { textShadow: '0 0 5px #fff, 0 0 10px #00ff66, 0 0 15px #00ff66' },
-                            '100%': { textShadow: '0 0 10px #fff, 0 0 20px #00ff66, 0 0 30px #00ff66, 0 0 40px #00ff66' }
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-20px)' }
-                        },
-                        rotate: {
-                            '0%': { transform: 'rotate(0deg)' },
-                            '100%': { transform: 'rotate(360deg)' }
-                        }
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "neon-blue": "#00f3ff",
+              "neon-purple": "#bf00ff",
+              "neon-green": "#00ff66",
+              "neon-pink": "#ff0080",
+              "dark-bg": "#050a1a",
+              "dark-card": "#0f1730",
+            },
+            fontFamily: {
+              future: ["Orbitron", "sans-serif"],
+              data: ["Rajdhani", "sans-serif"],
+            },
+            animation: {
+              "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              glow: "glow 2s ease-in-out infinite alternate",
+              float: "float 6s ease-in-out infinite",
+              "rotate-slow": "rotate 20s linear infinite",
+            },
+            keyframes: {
+              glow: {
+                "0%": {
+                  textShadow:
+                    "0 0 5px #fff, 0 0 10px #00ff66, 0 0 15px #00ff66",
+                },
+                "100%": {
+                  textShadow:
+                    "0 0 10px #fff, 0 0 20px #00ff66, 0 0 30px #00ff66, 0 0 40px #00ff66",
+                },
+              },
+              float: {
+                "0%, 100%": { transform: "translateY(0px)" },
+                "50%": { transform: "translateY(-20px)" },
+              },
+              rotate: {
+                "0%": { transform: "rotate(0deg)" },
+                "100%": { transform: "rotate(360deg)" },
+              },
+            },
+          },
+        },
+      };
     </script>
-    
+
     <style type="text/tailwindcss">
-        @layer utilities {
-            .text-shadow-neon {
-                text-shadow: 0 0 10px rgba(0, 255, 102, 0.7), 0 0 20px rgba(0, 255, 102, 0.5);
-            }
-            .text-shadow-purple {
-                text-shadow: 0 0 10px rgba(191, 0, 255, 0.7), 0 0 20px rgba(191, 0, 255, 0.5);
-            }
-            .border-glow {
-                box-shadow: 0 0 5px theme('colors.neon-green'), 0 0 10px theme('colors.neon-green/30');
-            }
-            .bg-grid {
-                background-image: linear-gradient(rgba(0, 255, 102, 0.1) 1px, transparent 1px),
-                                  linear-gradient(90deg, rgba(0, 255, 102, 0.1) 1px, transparent 1px);
-                background-size: 20px 20px;
-            }
-            .clip-path-slant {
-                clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
-            }
-            .glass-effect {
-                backdrop-filter: blur(10px);
-                background-color: rgba(15, 23, 48, 0.6);
-            }
-            .math-formula {
-                background: rgba(0, 255, 102, 0.1);
-                border: 1px solid rgba(0, 255, 102, 0.3);
-                border-radius: 8px;
-                padding: 1rem;
-                margin: 1rem 0;
-                text-align: center;
-            }
-            .interactive-card {
-                transition: all 0.3s ease;
-                transform-style: preserve-3d;
-            }
-            .interactive-card:hover {
-                transform: translateY(-10px) rotateX(5deg);
-                box-shadow: 0 20px 40px rgba(0, 255, 102, 0.2);
-            }
-
-            /* 思考动画样式 */
-            .thinking-animation {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-            }
-
-            .thinking-animation .dot {
-                width: 6px;
-                height: 6px;
-                border-radius: 50%;
-                background-color: #00f3ff;
-                animation: thinking-pulse 1.4s ease-in-out infinite both;
-            }
-
-            .thinking-animation .dot:nth-child(1) {
-                animation-delay: -0.32s;
-            }
-
-            .thinking-animation .dot:nth-child(2) {
-                animation-delay: -0.16s;
-            }
-
-            .thinking-animation .dot:nth-child(3) {
-                animation-delay: 0s;
-            }
-
-            @keyframes thinking-pulse {
-                0%,
-                80%,
-                100% {
-                    transform: scale(0.8);
-                    opacity: 0.5;
-                }
-                40% {
-                    transform: scale(1.2);
-                    opacity: 1;
-                }
-            }
-
-            /* Markdown内容样式 */
-            .message-content {
-                line-height: 1.6;
-            }
-
-            .message-content h1,
-            .message-content h2,
-            .message-content h3,
-            .message-content h4,
-            .message-content h5,
-            .message-content h6 {
-                margin-top: 1.5rem;
-                margin-bottom: 0.5rem;
-                font-weight: 600;
-            }
-
-            .message-content p {
-                margin-bottom: 1rem;
-            }
-
-            .message-content ul,
-            .message-content ol {
-                margin-bottom: 1rem;
-                padding-left: 1.5rem;
-            }
-
-            .message-content li {
-                margin-bottom: 0.25rem;
-            }
-
-            .message-content table {
-                width: 100%;
-                border-collapse: collapse;
-                margin: 1rem 0;
-                background-color: rgba(30, 41, 59, 0.5);
-                border-radius: 0.5rem;
-                overflow: hidden;
-            }
-
-            .message-content th,
-            .message-content td {
-                padding: 0.75rem;
-                text-align: left;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            .message-content th {
-                background-color: rgba(0, 243, 255, 0.1);
-                font-weight: 600;
-                color: #00f3ff;
-            }
-
-            .message-content code {
-                background-color: rgba(30, 41, 59, 0.8);
-                padding: 0.25rem 0.5rem;
-                border-radius: 0.25rem;
-                font-family: 'Courier New', monospace;
-                color: #00ff66;
-            }
-
-            .message-content pre {
-                background-color: rgba(30, 41, 59, 0.8);
-                padding: 1rem;
-                border-radius: 0.5rem;
-                overflow-x: auto;
-                margin: 1rem 0;
-            }
-
-            .message-content pre code {
-                background: none;
-                padding: 0;
-            }
-
-            .message-content blockquote {
-                border-left: 4px solid #00f3ff;
-                padding-left: 1rem;
-                margin: 1rem 0;
-                font-style: italic;
-                color: #cbd5e1;
-            }
-
-            .message-content .katex {
-                color: #e5e7eb !important;
-            }
-
-            .message-content .katex-display {
-                margin: 1rem 0;
-            }
+      @layer utilities {
+        .text-shadow-neon {
+          text-shadow: 0 0 10px rgba(0, 255, 102, 0.7),
+            0 0 20px rgba(0, 255, 102, 0.5);
         }
+        .text-shadow-purple {
+          text-shadow: 0 0 10px rgba(191, 0, 255, 0.7),
+            0 0 20px rgba(191, 0, 255, 0.5);
+        }
+        .border-glow {
+          box-shadow: 0 0 5px theme("colors.neon-green"),
+            0 0 10px theme("colors.neon-green/30");
+        }
+        .bg-grid {
+          background-image: linear-gradient(
+              rgba(0, 255, 102, 0.1) 1px,
+              transparent 1px
+            ),
+            linear-gradient(90deg, rgba(0, 255, 102, 0.1) 1px, transparent 1px);
+          background-size: 20px 20px;
+        }
+        .clip-path-slant {
+          clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+        .glass-effect {
+          backdrop-filter: blur(10px);
+          background-color: rgba(15, 23, 48, 0.6);
+        }
+        .math-formula {
+          background: rgba(0, 255, 102, 0.1);
+          border: 1px solid rgba(0, 255, 102, 0.3);
+          border-radius: 8px;
+          padding: 1rem;
+          margin: 1rem 0;
+          text-align: center;
+        }
+        .interactive-card {
+          transition: all 0.3s ease;
+          transform-style: preserve-3d;
+        }
+        .interactive-card:hover {
+          transform: translateY(-10px) rotateX(5deg);
+          box-shadow: 0 20px 40px rgba(0, 255, 102, 0.2);
+        }
+
+        /* 思考动画样式 */
+        .thinking-animation {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .thinking-animation .dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background-color: #00f3ff;
+          animation: thinking-pulse 1.4s ease-in-out infinite both;
+        }
+
+        .thinking-animation .dot:nth-child(1) {
+          animation-delay: -0.32s;
+        }
+
+        .thinking-animation .dot:nth-child(2) {
+          animation-delay: -0.16s;
+        }
+
+        .thinking-animation .dot:nth-child(3) {
+          animation-delay: 0s;
+        }
+
+        @keyframes thinking-pulse {
+          0%,
+          80%,
+          100% {
+            transform: scale(0.8);
+            opacity: 0.5;
+          }
+          40% {
+            transform: scale(1.2);
+            opacity: 1;
+          }
+        }
+
+        /* Markdown内容样式 */
+        .message-content {
+          line-height: 1.6;
+        }
+
+        .message-content h1,
+        .message-content h2,
+        .message-content h3,
+        .message-content h4,
+        .message-content h5,
+        .message-content h6 {
+          margin-top: 1.5rem;
+          margin-bottom: 0.5rem;
+          font-weight: 600;
+        }
+
+        .message-content p {
+          margin-bottom: 1rem;
+        }
+
+        .message-content ul,
+        .message-content ol {
+          margin-bottom: 1rem;
+          padding-left: 1.5rem;
+        }
+
+        .message-content li {
+          margin-bottom: 0.25rem;
+        }
+
+        .message-content table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 1rem 0;
+          background-color: rgba(30, 41, 59, 0.5);
+          border-radius: 0.5rem;
+          overflow: hidden;
+        }
+
+        .message-content th,
+        .message-content td {
+          padding: 0.75rem;
+          text-align: left;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .message-content th {
+          background-color: rgba(0, 243, 255, 0.1);
+          font-weight: 600;
+          color: #00f3ff;
+        }
+
+        .message-content code {
+          background-color: rgba(30, 41, 59, 0.8);
+          padding: 0.25rem 0.5rem;
+          border-radius: 0.25rem;
+          font-family: "Courier New", monospace;
+          color: #00ff66;
+        }
+
+        .message-content pre {
+          background-color: rgba(30, 41, 59, 0.8);
+          padding: 1rem;
+          border-radius: 0.5rem;
+          overflow-x: auto;
+          margin: 1rem 0;
+        }
+
+        .message-content pre code {
+          background: none;
+          padding: 0;
+        }
+
+        .message-content blockquote {
+          border-left: 4px solid #00f3ff;
+          padding-left: 1rem;
+          margin: 1rem 0;
+          font-style: italic;
+          color: #cbd5e1;
+        }
+
+        .message-content .katex {
+          color: #e5e7eb !important;
+        }
+
+        .message-content .katex-display {
+          margin: 1rem 0;
+        }
+      }
     </style>
-    
+
     <!-- 引入Google字体 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- MathJax配置 -->
     <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            },
-            svg: {
-                fontCache: 'global'
-            }
-        };
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+        },
+        svg: {
+          fontCache: "global",
+        },
+      };
     </script>
-</head>
+  </head>
 
-<body class="bg-dark-bg text-gray-200 font-data overflow-x-hidden">
+  <body class="bg-dark-bg text-gray-200 font-data overflow-x-hidden">
     <!-- 粒子背景容器 -->
     <div id="particles-container" class="fixed inset-0 -z-10 opacity-30"></div>
-    
+
     <!-- 导航栏 -->
-    <nav class="glass-effect fixed w-full z-50 transition-all duration-300" id="main-nav">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-green to-neon-blue flex items-center justify-center">
-                    <i class="fa fa-calculator text-white text-xl"></i>
-                </div>
-                <h1 class="text-xl md:text-2xl font-future font-bold text-white">
-                    <span class="text-neon-green">期望</span><span class="text-white">与</span><span class="text-neon-blue">方差</span>
-                </h1>
-            </div>
-            
-            <div class="flex items-center space-x-4">
-                <a href="index.html" class="px-4 py-2 bg-neon-green/20 text-neon-green rounded-md hover:bg-neon-green/30 transition-all duration-300">
-                    <i class="fa fa-home mr-2"></i>返回首页
-                </a>
-            </div>
+    <nav
+      class="glass-effect fixed w-full z-50 transition-all duration-300"
+      id="main-nav"
+    >
+      <div
+        class="container mx-auto px-4 py-3 flex justify-between items-center"
+      >
+        <div class="flex items-center space-x-2">
+          <div
+            class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-green to-neon-blue flex items-center justify-center"
+          >
+            <i class="fa fa-calculator text-white text-xl"></i>
+          </div>
+          <h1 class="text-xl md:text-2xl font-future font-bold text-white">
+            <span class="text-neon-green">期望</span
+            ><span class="text-white">与</span
+            ><span class="text-neon-blue">方差</span>
+          </h1>
         </div>
+
+        <div class="flex items-center space-x-4">
+          <a
+            href="index.html"
+            class="px-4 py-2 bg-neon-green/20 text-neon-green rounded-md hover:bg-neon-green/30 transition-all duration-300"
+          >
+            <i class="fa fa-home mr-2"></i>返回首页
+          </a>
+        </div>
+      </div>
     </nav>
 
     <!-- 英雄区域 -->
-    <header class="relative min-h-screen flex items-center justify-center overflow-hidden bg-grid pt-16">
-        <div class="absolute inset-0 bg-gradient-to-b from-dark-bg/70 via-dark-bg/50 to-dark-bg"></div>
-        
-        <!-- 动态图形元素 -->
-        <div class="absolute w-64 h-64 rounded-full bg-neon-green/20 blur-3xl -top-20 -left-20 animate-pulse-slow"></div>
-        <div class="absolute w-96 h-96 rounded-full bg-neon-blue/20 blur-3xl -bottom-40 -right-20 animate-pulse-slow" style="animation-delay: 1s;"></div>
-        
-        <!-- 浮动数学符号 -->
-        <div class="absolute top-1/4 left-1/4 text-6xl text-neon-green/30 animate-float" style="animation-delay: 0s;">μ</div>
-        <div class="absolute top-1/3 right-1/4 text-5xl text-neon-blue/30 animate-float" style="animation-delay: 2s;">σ²</div>
-        <div class="absolute bottom-1/3 left-1/3 text-4xl text-neon-purple/30 animate-float" style="animation-delay: 4s;">E[X]</div>
-        
-        <div class="container mx-auto px-4 z-10 text-center">
-            <h1 class="text-[clamp(2.5rem,8vw,5rem)] font-future font-bold leading-tight mb-6 animate-glow">
-                <span class="text-neon-green">期望</span><span class="text-white">与</span><span class="text-neon-blue">方差</span>
-            </h1>
-            <p class="text-[clamp(1rem,3vw,1.5rem)] text-gray-300 max-w-3xl mx-auto mb-10">
-                探索随机变量的数字特征，理解数据的集中趋势与离散程度
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#theory" class="px-8 py-3 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-white transition-all duration-300 transform hover:scale-105 border-glow">
-                    理论探索 <i class="fa fa-book ml-2"></i>
-                </a>
-                <a href="#interactive" class="px-8 py-3 bg-transparent border border-neon-green text-neon-green font-bold rounded-md hover:bg-neon-green/10 transition-all duration-300">
-                    交互实验 <i class="fa fa-flask ml-2"></i>
-                </a>
-            </div>
-            
-            <!-- 滚动指示器 -->
-            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-                <i class="fa fa-angle-down text-neon-green text-3xl"></i>
-            </div>
+    <header
+      class="relative min-h-screen flex items-center justify-center overflow-hidden bg-grid pt-16"
+    >
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-dark-bg/70 via-dark-bg/50 to-dark-bg"
+      ></div>
+
+      <!-- 动态图形元素 -->
+      <div
+        class="absolute w-64 h-64 rounded-full bg-neon-green/20 blur-3xl -top-20 -left-20 animate-pulse-slow"
+      ></div>
+      <div
+        class="absolute w-96 h-96 rounded-full bg-neon-blue/20 blur-3xl -bottom-40 -right-20 animate-pulse-slow"
+        style="animation-delay: 1s"
+      ></div>
+
+      <!-- 浮动数学符号 -->
+      <div
+        class="absolute top-1/4 left-1/4 text-6xl text-neon-green/30 animate-float"
+        style="animation-delay: 0s"
+      >
+        μ
+      </div>
+      <div
+        class="absolute top-1/3 right-1/4 text-5xl text-neon-blue/30 animate-float"
+        style="animation-delay: 2s"
+      >
+        σ²
+      </div>
+      <div
+        class="absolute bottom-1/3 left-1/3 text-4xl text-neon-purple/30 animate-float"
+        style="animation-delay: 4s"
+      >
+        E[X]
+      </div>
+
+      <div class="container mx-auto px-4 z-10 text-center">
+        <h1
+          class="text-[clamp(2.5rem,8vw,5rem)] font-future font-bold leading-tight mb-6 animate-glow"
+        >
+          <span class="text-neon-green">期望</span
+          ><span class="text-white">与</span
+          ><span class="text-neon-blue">方差</span>
+        </h1>
+        <p
+          class="text-[clamp(1rem,3vw,1.5rem)] text-gray-300 max-w-3xl mx-auto mb-10"
+        >
+          探索随机变量的数字特征，理解数据的集中趋势与离散程度
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a
+            href="#theory"
+            class="px-8 py-3 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-white transition-all duration-300 transform hover:scale-105 border-glow"
+          >
+            理论探索 <i class="fa fa-book ml-2"></i>
+          </a>
+          <a
+            href="#interactive"
+            class="px-8 py-3 bg-transparent border border-neon-green text-neon-green font-bold rounded-md hover:bg-neon-green/10 transition-all duration-300"
+          >
+            交互实验 <i class="fa fa-flask ml-2"></i>
+          </a>
         </div>
+
+        <!-- 滚动指示器 -->
+        <div
+          class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce"
+        >
+          <i class="fa fa-angle-down text-neon-green text-3xl"></i>
+        </div>
+      </div>
     </header>
 
     <!-- 理论知识部分 -->
     <section id="theory" class="py-20 relative">
-        <div class="absolute inset-0 bg-grid opacity-20 -z-10"></div>
-        <div class="container mx-auto px-4 relative z-10">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
-                    <span class="text-neon-green">理论</span>基础
-                </h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">深入理解期望与方差的数学定义、性质和应用</p>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-                <!-- 期望理论 -->
-                <div class="bg-dark-card rounded-xl p-8 border border-gray-800 interactive-card">
-                    <div class="flex items-center mb-6">
-                        <div class="w-16 h-16 rounded-full bg-neon-green/20 flex items-center justify-center mr-4">
-                            <i class="fa fa-bullseye text-neon-green text-2xl"></i>
-                        </div>
-                        <h3 class="text-2xl font-future font-bold text-white">数学期望</h3>
-                    </div>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <h4 class="text-lg font-semibold text-neon-green mb-3">定义</h4>
-                            <p class="text-gray-300 mb-4">
-                                数学期望（均值）是随机变量的平均值，反映了随机变量取值的集中趋势。
-                            </p>
-                            
-                            <div class="math-formula">
-                                <h5 class="text-sm font-semibold text-neon-green mb-2">离散型随机变量</h5>
-                                $$E[X] = \sum_{i} x_i P(X = x_i)$$
-                            </div>
-                            
-                            <div class="math-formula">
-                                <h5 class="text-sm font-semibold text-neon-green mb-2">连续型随机变量</h5>
-                                $$E[X] = \int_{-\infty}^{\infty} x f(x) dx$$
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <h4 class="text-lg font-semibold text-neon-green mb-3">重要性质</h4>
-                            <ul class="text-gray-300 space-y-2">
-                                <li>• <strong>线性性：</strong>$E[aX + bY] = aE[X] + bE[Y]$</li>
-                                <li>• <strong>常数性：</strong>$E[c] = c$（c为常数）</li>
-                                <li>• <strong>独立性：</strong>若X,Y独立，则$E[XY] = E[X]E[Y]$</li>
-                                <li>• <strong>单调性：</strong>若$X \leq Y$，则$E[X] \leq E[Y]$</li>
-                            </ul>
-                        </div>
-                        
-                        <div>
-                            <h4 class="text-lg font-semibold text-neon-green mb-3">几何意义</h4>
-                            <p class="text-gray-300">
-                                期望值是概率分布的"重心"，表示随机变量在长期重复试验中的平均值。
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 方差理论 -->
-                <div class="bg-dark-card rounded-xl p-8 border border-gray-800 interactive-card">
-                    <div class="flex items-center mb-6">
-                        <div class="w-16 h-16 rounded-full bg-neon-blue/20 flex items-center justify-center mr-4">
-                            <i class="fa fa-expand text-neon-blue text-2xl"></i>
-                        </div>
-                        <h3 class="text-2xl font-future font-bold text-white">方差</h3>
-                    </div>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <h4 class="text-lg font-semibold text-neon-blue mb-3">定义</h4>
-                            <p class="text-gray-300 mb-4">
-                                方差衡量随机变量取值相对于期望值的离散程度，反映数据的波动性。
-                            </p>
-                            
-                            <div class="math-formula">
-                                <h5 class="text-sm font-semibold text-neon-blue mb-2">基本定义</h5>
-                                $$Var(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2$$
-                            </div>
-                            
-                            <div class="math-formula">
-                                <h5 class="text-sm font-semibold text-neon-blue mb-2">标准差</h5>
-                                $$\sigma = \sqrt{Var(X)}$$
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <h4 class="text-lg font-semibold text-neon-blue mb-3">重要性质</h4>
-                            <ul class="text-gray-300 space-y-2">
-                                <li>• <strong>非负性：</strong>$Var(X) \geq 0$</li>
-                                <li>• <strong>常数性：</strong>$Var(c) = 0$（c为常数）</li>
-                                <li>• <strong>线性变换：</strong>$Var(aX + b) = a^2Var(X)$</li>
-                                <li>• <strong>独立性：</strong>若X,Y独立，则$Var(X + Y) = Var(X) + Var(Y)$</li>
-                            </ul>
-                        </div>
-                        
-                        <div>
-                            <h4 class="text-lg font-semibold text-neon-blue mb-3">几何意义</h4>
-                            <p class="text-gray-300">
-                                方差表示数据点相对于均值的平均偏离程度，标准差具有与原数据相同的量纲。
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 常见分布的期望与方差 -->
-            <div class="bg-dark-card rounded-xl p-8 border border-gray-800 mb-16">
-                <h3 class="text-2xl font-future font-bold text-center mb-8 text-white">
-                    常见分布的<span class="text-neon-green">期望</span>与<span class="text-neon-blue">方差</span>
-                </h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- 正态分布 -->
-                    <div class="bg-gradient-to-br from-neon-green/10 to-neon-green/5 rounded-lg p-6 border border-neon-green/30">
-                        <h4 class="text-lg font-semibold text-neon-green mb-4 flex items-center">
-                            <i class="fa fa-bell mr-2"></i>正态分布 N(μ,σ²)
-                        </h4>
-                        <div class="space-y-2 text-gray-300">
-                            <div class="flex justify-between">
-                                <span>期望:</span>
-                                <span class="text-neon-green font-semibold">E[X] = μ</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>方差:</span>
-                                <span class="text-neon-blue font-semibold">Var(X) = σ²</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 二项分布 -->
-                    <div class="bg-gradient-to-br from-neon-purple/10 to-neon-purple/5 rounded-lg p-6 border border-neon-purple/30">
-                        <h4 class="text-lg font-semibold text-neon-purple mb-4 flex items-center">
-                            <i class="fa fa-dice mr-2"></i>二项分布 B(n,p)
-                        </h4>
-                        <div class="space-y-2 text-gray-300">
-                            <div class="flex justify-between">
-                                <span>期望:</span>
-                                <span class="text-neon-green font-semibold">E[X] = np</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>方差:</span>
-                                <span class="text-neon-blue font-semibold">Var(X) = np(1-p)</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 泊松分布 -->
-                    <div class="bg-gradient-to-br from-neon-pink/10 to-neon-pink/5 rounded-lg p-6 border border-neon-pink/30">
-                        <h4 class="text-lg font-semibold text-neon-pink mb-4 flex items-center">
-                            <i class="fa fa-flash mr-2"></i>泊松分布 P(λ)
-                        </h4>
-                        <div class="space-y-2 text-gray-300">
-                            <div class="flex justify-between">
-                                <span>期望:</span>
-                                <span class="text-neon-green font-semibold">E[X] = λ</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>方差:</span>
-                                <span class="text-neon-blue font-semibold">Var(X) = λ</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 指数分布 -->
-                    <div class="bg-gradient-to-br from-neon-blue/10 to-neon-blue/5 rounded-lg p-6 border border-neon-blue/30">
-                        <h4 class="text-lg font-semibold text-neon-blue mb-4 flex items-center">
-                            <i class="fa fa-line-chart mr-2"></i>指数分布 Exp(λ)
-                        </h4>
-                        <div class="space-y-2 text-gray-300">
-                            <div class="flex justify-between">
-                                <span>期望:</span>
-                                <span class="text-neon-green font-semibold">E[X] = 1/λ</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>方差:</span>
-                                <span class="text-neon-blue font-semibold">Var(X) = 1/λ²</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 均匀分布 -->
-                    <div class="bg-gradient-to-br from-neon-green/10 to-neon-blue/10 rounded-lg p-6 border border-neon-green/30">
-                        <h4 class="text-lg font-semibold text-neon-green mb-4 flex items-center">
-                            <i class="fa fa-minus mr-2"></i>均匀分布 U(a,b)
-                        </h4>
-                        <div class="space-y-2 text-gray-300">
-                            <div class="flex justify-between">
-                                <span>期望:</span>
-                                <span class="text-neon-green font-semibold">E[X] = (a+b)/2</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>方差:</span>
-                                <span class="text-neon-blue font-semibold">Var(X) = (b-a)²/12</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 卡方分布 -->
-                    <div class="bg-gradient-to-br from-neon-purple/10 to-neon-blue/10 rounded-lg p-6 border border-neon-purple/30">
-                        <h4 class="text-lg font-semibold text-neon-purple mb-4 flex items-center">
-                            <i class="fa fa-area-chart mr-2"></i>卡方分布 χ²(k)
-                        </h4>
-                        <div class="space-y-2 text-gray-300">
-                            <div class="flex justify-between">
-                                <span>期望:</span>
-                                <span class="text-neon-green font-semibold">E[X] = k</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>方差:</span>
-                                <span class="text-neon-blue font-semibold">Var(X) = 2k</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="absolute inset-0 bg-grid opacity-20 -z-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            <span class="text-neon-green">理论</span>基础
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            深入理解期望与方差的数学定义、性质和应用
+          </p>
         </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+          <!-- 期望理论 -->
+          <div
+            class="bg-dark-card rounded-xl p-8 border border-gray-800 interactive-card"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-16 h-16 rounded-full bg-neon-green/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-bullseye text-neon-green text-2xl"></i>
+              </div>
+              <h3 class="text-2xl font-future font-bold text-white">
+                数学期望
+              </h3>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-green mb-3">定义</h4>
+                <p class="text-gray-300 mb-4">
+                  数学期望（均值）是随机变量的平均值，反映了随机变量取值的集中趋势。
+                </p>
+
+                <div class="math-formula">
+                  <h5 class="text-sm font-semibold text-neon-green mb-2">
+                    离散型随机变量
+                  </h5>
+                  $$E[X] = \sum_{i} x_i P(X = x_i)$$
+                </div>
+
+                <div class="math-formula">
+                  <h5 class="text-sm font-semibold text-neon-green mb-2">
+                    连续型随机变量
+                  </h5>
+                  $$E[X] = \int_{-\infty}^{\infty} x f(x) dx$$
+                </div>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-green mb-3">
+                  重要性质
+                </h4>
+                <ul class="text-gray-300 space-y-2">
+                  <li>
+                    • <strong>线性性：</strong>$E[aX + bY] = aE[X] + bE[Y]$
+                  </li>
+                  <li>• <strong>常数性：</strong>$E[c] = c$（c为常数）</li>
+                  <li>
+                    • <strong>独立性：</strong>若X,Y独立，则$E[XY] = E[X]E[Y]$
+                  </li>
+                  <li>
+                    • <strong>单调性：</strong>若$X \leq Y$，则$E[X] \leq E[Y]$
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-green mb-3">
+                  几何意义
+                </h4>
+                <p class="text-gray-300">
+                  期望值是概率分布的"重心"，表示随机变量在长期重复试验中的平均值。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 方差理论 -->
+          <div
+            class="bg-dark-card rounded-xl p-8 border border-gray-800 interactive-card"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-16 h-16 rounded-full bg-neon-blue/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-expand text-neon-blue text-2xl"></i>
+              </div>
+              <h3 class="text-2xl font-future font-bold text-white">方差</h3>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-3">定义</h4>
+                <p class="text-gray-300 mb-4">
+                  方差衡量随机变量取值相对于期望值的离散程度，反映数据的波动性。
+                </p>
+
+                <div class="math-formula">
+                  <h5 class="text-sm font-semibold text-neon-blue mb-2">
+                    基本定义
+                  </h5>
+                  $$Var(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2$$
+                </div>
+
+                <div class="math-formula">
+                  <h5 class="text-sm font-semibold text-neon-blue mb-2">
+                    标准差
+                  </h5>
+                  $$\sigma = \sqrt{Var(X)}$$
+                </div>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-3">
+                  重要性质
+                </h4>
+                <ul class="text-gray-300 space-y-2">
+                  <li>• <strong>非负性：</strong>$Var(X) \geq 0$</li>
+                  <li>• <strong>常数性：</strong>$Var(c) = 0$（c为常数）</li>
+                  <li>
+                    • <strong>线性变换：</strong>$Var(aX + b) = a^2Var(X)$
+                  </li>
+                  <li>
+                    • <strong>独立性：</strong>若X,Y独立，则$Var(X + Y) = Var(X)
+                    + Var(Y)$
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-3">
+                  几何意义
+                </h4>
+                <p class="text-gray-300">
+                  方差表示数据点相对于均值的平均偏离程度，标准差具有与原数据相同的量纲。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 常见分布的期望与方差 -->
+        <div class="bg-dark-card rounded-xl p-8 border border-gray-800 mb-16">
+          <h3
+            class="text-2xl font-future font-bold text-center mb-8 text-white"
+          >
+            常见分布的<span class="text-neon-green">期望</span>与<span
+              class="text-neon-blue"
+              >方差</span
+            >
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 正态分布 -->
+            <div
+              class="bg-gradient-to-br from-neon-green/10 to-neon-green/5 rounded-lg p-6 border border-neon-green/30"
+            >
+              <h4
+                class="text-lg font-semibold text-neon-green mb-4 flex items-center"
+              >
+                <i class="fa fa-bell mr-2"></i>正态分布 N(μ,σ²)
+              </h4>
+              <div class="space-y-2 text-gray-300">
+                <div class="flex justify-between">
+                  <span>期望:</span>
+                  <span class="text-neon-green font-semibold">E[X] = μ</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>方差:</span>
+                  <span class="text-neon-blue font-semibold">Var(X) = σ²</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 二项分布 -->
+            <div
+              class="bg-gradient-to-br from-neon-purple/10 to-neon-purple/5 rounded-lg p-6 border border-neon-purple/30"
+            >
+              <h4
+                class="text-lg font-semibold text-neon-purple mb-4 flex items-center"
+              >
+                <i class="fa fa-dice mr-2"></i>二项分布 B(n,p)
+              </h4>
+              <div class="space-y-2 text-gray-300">
+                <div class="flex justify-between">
+                  <span>期望:</span>
+                  <span class="text-neon-green font-semibold">E[X] = np</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>方差:</span>
+                  <span class="text-neon-blue font-semibold"
+                    >Var(X) = np(1-p)</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- 泊松分布 -->
+            <div
+              class="bg-gradient-to-br from-neon-pink/10 to-neon-pink/5 rounded-lg p-6 border border-neon-pink/30"
+            >
+              <h4
+                class="text-lg font-semibold text-neon-pink mb-4 flex items-center"
+              >
+                <i class="fa fa-flash mr-2"></i>泊松分布 P(λ)
+              </h4>
+              <div class="space-y-2 text-gray-300">
+                <div class="flex justify-between">
+                  <span>期望:</span>
+                  <span class="text-neon-green font-semibold">E[X] = λ</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>方差:</span>
+                  <span class="text-neon-blue font-semibold">Var(X) = λ</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 指数分布 -->
+            <div
+              class="bg-gradient-to-br from-neon-blue/10 to-neon-blue/5 rounded-lg p-6 border border-neon-blue/30"
+            >
+              <h4
+                class="text-lg font-semibold text-neon-blue mb-4 flex items-center"
+              >
+                <i class="fa fa-line-chart mr-2"></i>指数分布 Exp(λ)
+              </h4>
+              <div class="space-y-2 text-gray-300">
+                <div class="flex justify-between">
+                  <span>期望:</span>
+                  <span class="text-neon-green font-semibold">E[X] = 1/λ</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>方差:</span>
+                  <span class="text-neon-blue font-semibold"
+                    >Var(X) = 1/λ²</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- 均匀分布 -->
+            <div
+              class="bg-gradient-to-br from-neon-green/10 to-neon-blue/10 rounded-lg p-6 border border-neon-green/30"
+            >
+              <h4
+                class="text-lg font-semibold text-neon-green mb-4 flex items-center"
+              >
+                <i class="fa fa-minus mr-2"></i>均匀分布 U(a,b)
+              </h4>
+              <div class="space-y-2 text-gray-300">
+                <div class="flex justify-between">
+                  <span>期望:</span>
+                  <span class="text-neon-green font-semibold"
+                    >E[X] = (a+b)/2</span
+                  >
+                </div>
+                <div class="flex justify-between">
+                  <span>方差:</span>
+                  <span class="text-neon-blue font-semibold"
+                    >Var(X) = (b-a)²/12</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- 卡方分布 -->
+            <div
+              class="bg-gradient-to-br from-neon-purple/10 to-neon-blue/10 rounded-lg p-6 border border-neon-purple/30"
+            >
+              <h4
+                class="text-lg font-semibold text-neon-purple mb-4 flex items-center"
+              >
+                <i class="fa fa-area-chart mr-2"></i>卡方分布 χ²(k)
+              </h4>
+              <div class="space-y-2 text-gray-300">
+                <div class="flex justify-between">
+                  <span>期望:</span>
+                  <span class="text-neon-green font-semibold">E[X] = k</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>方差:</span>
+                  <span class="text-neon-blue font-semibold">Var(X) = 2k</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 交互实验部分 -->
-    <section id="interactive" class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50 clip-path-slant">
-        <div class="absolute inset-0 bg-grid opacity-10 -z-10"></div>
-        <div class="container mx-auto px-4 relative z-10">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
-                    交互式<span class="text-neon-green">实验</span>室
-                </h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">通过可视化实验直观理解期望与方差的概念和性质</p>
-            </div>
-            
-            <!-- 分布参数调节器 -->
-            <div class="bg-dark-card rounded-xl p-8 border border-gray-800 mb-12">
-                <h3 class="text-xl font-future font-semibold mb-6 text-white flex items-center">
-                    <i class="fa fa-sliders text-neon-green mr-3"></i> 分布参数调节
-                </h3>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- 参数控制面板 -->
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-gray-300 mb-2">分布类型:</label>
-                            <select id="distribution-type" class="w-full px-4 py-2 bg-dark-bg border border-gray-700 rounded-lg text-white focus:border-neon-green">
-                                <option value="normal">正态分布</option>
-                                <option value="binomial">二项分布</option>
-                                <option value="poisson">泊松分布</option>
-                                <option value="exponential">指数分布</option>
-                                <option value="uniform">均匀分布</option>
-                            </select>
-                        </div>
-                        
-                        <!-- 正态分布参数 -->
-                        <div id="normal-params" class="param-group">
-                            <div class="mb-4">
-                                <label class="block text-gray-300 mb-2">均值 (μ): <span id="normal-mean-value">0</span></label>
-                                <input type="range" id="normal-mean" min="-5" max="5" step="0.1" value="0" 
-                                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green">
-                            </div>
-                            <div class="mb-4">
-                                <label class="block text-gray-300 mb-2">标准差 (σ): <span id="normal-std-value">1</span></label>
-                                <input type="range" id="normal-std" min="0.1" max="3" step="0.1" value="1" 
-                                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green">
-                            </div>
-                        </div>
-                        
-                        <!-- 二项分布参数 -->
-                        <div id="binomial-params" class="param-group hidden">
-                            <div class="mb-4">
-                                <label class="block text-gray-300 mb-2">试验次数 (n): <span id="binomial-n-value">20</span></label>
-                                <input type="range" id="binomial-n" min="1" max="50" step="1" value="20" 
-                                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green">
-                            </div>
-                            <div class="mb-4">
-                                <label class="block text-gray-300 mb-2">成功概率 (p): <span id="binomial-p-value">0.5</span></label>
-                                <input type="range" id="binomial-p" min="0.01" max="0.99" step="0.01" value="0.5" 
-                                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green">
-                            </div>
-                        </div>
-                        
-                        <!-- 泊松分布参数 -->
-                        <div id="poisson-params" class="param-group hidden">
-                            <div class="mb-4">
-                                <label class="block text-gray-300 mb-2">强度参数 (λ): <span id="poisson-lambda-value">3</span></label>
-                                <input type="range" id="poisson-lambda" min="0.1" max="10" step="0.1" value="3" 
-                                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green">
-                            </div>
-                        </div>
-                        
-                        <!-- 指数分布参数 -->
-                        <div id="exponential-params" class="param-group hidden">
-                            <div class="mb-4">
-                                <label class="block text-gray-300 mb-2">速率参数 (λ): <span id="exponential-lambda-value">1</span></label>
-                                <input type="range" id="exponential-lambda" min="0.1" max="5" step="0.1" value="1" 
-                                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green">
-                            </div>
-                        </div>
-                        
-                        <!-- 均匀分布参数 -->
-                        <div id="uniform-params" class="param-group hidden">
-                            <div class="mb-4">
-                                <label class="block text-gray-300 mb-2">下界 (a): <span id="uniform-a-value">0</span></label>
-                                <input type="range" id="uniform-a" min="-5" max="5" step="0.1" value="0" 
-                                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green">
-                            </div>
-                            <div class="mb-4">
-                                <label class="block text-gray-300 mb-2">上界 (b): <span id="uniform-b-value">2</span></label>
-                                <input type="range" id="uniform-b" min="-5" max="10" step="0.1" value="2" 
-                                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 数值特征显示 -->
-                    <div class="space-y-4">
-                        <h4 class="text-lg font-semibold text-white mb-4">数值特征</h4>
-                        <div class="grid grid-cols-1 gap-4">
-                            <div class="bg-gray-800 p-4 rounded-lg">
-                                <div class="text-sm text-gray-400">期望值 E[X]</div>
-                                <div id="expectation-display" class="text-2xl font-semibold text-neon-green">0.00</div>
-                            </div>
-                            <div class="bg-gray-800 p-4 rounded-lg">
-                                <div class="text-sm text-gray-400">方差 Var(X)</div>
-                                <div id="variance-display" class="text-2xl font-semibold text-neon-blue">1.00</div>
-                            </div>
-                            <div class="bg-gray-800 p-4 rounded-lg">
-                                <div class="text-sm text-gray-400">标准差 σ</div>
-                                <div id="std-display" class="text-2xl font-semibold text-neon-purple">1.00</div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-6">
-                            <button id="generate-samples" class="w-full px-6 py-3 bg-neon-green text-dark-bg font-bold rounded-lg hover:bg-neon-green/80 transition-all duration-300">
-                                <i class="fa fa-refresh mr-2"></i>生成样本
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- 图表显示 -->
-                    <div class="h-80">
-                        <canvas id="distribution-chart"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 样本统计实验 -->
-            <div class="bg-dark-card rounded-xl p-8 border border-gray-800 mb-12">
-                <h3 class="text-xl font-future font-semibold mb-6 text-white flex items-center">
-                    <i class="fa fa-bar-chart text-neon-blue mr-3"></i> 样本统计实验
-                </h3>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-gray-300 mb-2">样本大小: <span id="sample-size-value">100</span></label>
-                            <input type="range" id="sample-size" min="10" max="1000" step="10" value="100" 
-                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-gray-300 mb-2">重复次数: <span id="repeat-times-value">50</span></label>
-                            <input type="range" id="repeat-times" min="10" max="200" step="10" value="50" 
-                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue">
-                        </div>
-                        
-                        <button id="run-sampling" class="w-full px-6 py-3 bg-neon-blue text-dark-bg font-bold rounded-lg hover:bg-neon-blue/80 transition-all duration-300">
-                            <i class="fa fa-play mr-2"></i>开始抽样实验
-                        </button>
-                        
-                        <div class="bg-gray-800 rounded-lg p-4">
-                            <h4 class="text-lg font-semibold text-neon-blue mb-3">实验结果</h4>
-                            <div class="space-y-2 text-gray-300">
-                                <div class="flex justify-between">
-                                    <span>样本均值的均值:</span>
-                                    <span id="sample-mean-mean" class="text-neon-green">--</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>样本均值的方差:</span>
-                                    <span id="sample-mean-var" class="text-neon-blue">--</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>理论方差/n:</span>
-                                    <span id="theoretical-var-n" class="text-neon-purple">--</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="h-80">
-                        <canvas id="sampling-chart"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 中心极限定理演示 -->
-            <div class="bg-dark-card rounded-xl p-8 border border-gray-800">
-                <h3 class="text-xl font-future font-semibold mb-6 text-white flex items-center">
-                    <i class="fa fa-magic text-neon-purple mr-3"></i> 中心极限定理演示
-                </h3>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-gray-300 mb-2">原始分布:</label>
-                            <select id="clt-distribution" class="w-full px-4 py-2 bg-dark-bg border border-gray-700 rounded-lg text-white focus:border-neon-purple">
-                                <option value="uniform">均匀分布</option>
-                                <option value="exponential">指数分布</option>
-                                <option value="binomial">二项分布</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-gray-300 mb-2">样本大小: <span id="clt-sample-size-value">30</span></label>
-                            <input type="range" id="clt-sample-size" min="1" max="100" step="1" value="30" 
-                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-gray-300 mb-2">样本数量: <span id="clt-num-samples-value">1000</span></label>
-                            <input type="range" id="clt-num-samples" min="100" max="5000" step="100" value="1000" 
-                                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple">
-                        </div>
-                        
-                        <button id="run-clt" class="w-full px-6 py-3 bg-neon-purple text-white font-bold rounded-lg hover:bg-neon-purple/80 transition-all duration-300">
-                            <i class="fa fa-play mr-2"></i>运行演示
-                        </button>
-                        
-                        <div class="bg-gray-800 rounded-lg p-4">
-                            <h4 class="text-lg font-semibold text-neon-purple mb-3">统计信息</h4>
-                            <div class="space-y-2 text-gray-300 text-sm">
-                                <div class="flex justify-between">
-                                    <span>理论均值:</span>
-                                    <span id="clt-theoretical-mean" class="text-neon-green">--</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>样本均值:</span>
-                                    <span id="clt-sample-mean" class="text-neon-green">--</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>理论标准误:</span>
-                                    <span id="clt-theoretical-se" class="text-neon-blue">--</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>样本标准误:</span>
-                                    <span id="clt-sample-se" class="text-neon-blue">--</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="lg:col-span-2 space-y-4">
-                        <div class="h-40">
-                            <canvas id="clt-original-chart"></canvas>
-                        </div>
-                        <div class="h-40">
-                            <canvas id="clt-sampling-chart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <section
+      id="interactive"
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50 clip-path-slant"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10 -z-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            交互式<span class="text-neon-green">实验</span>室
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            通过可视化实验直观理解期望与方差的概念和性质
+          </p>
         </div>
+
+        <!-- 分布参数调节器 -->
+        <div class="bg-dark-card rounded-xl p-8 border border-gray-800 mb-12">
+          <h3
+            class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-sliders text-neon-green mr-3"></i> 分布参数调节
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 参数控制面板 -->
+            <div class="space-y-6">
+              <div>
+                <label class="block text-gray-300 mb-2">分布类型:</label>
+                <select
+                  id="distribution-type"
+                  class="w-full px-4 py-2 bg-dark-bg border border-gray-700 rounded-lg text-white focus:border-neon-green"
+                >
+                  <option value="normal">正态分布</option>
+                  <option value="binomial">二项分布</option>
+                  <option value="poisson">泊松分布</option>
+                  <option value="exponential">指数分布</option>
+                  <option value="uniform">均匀分布</option>
+                </select>
+              </div>
+
+              <!-- 正态分布参数 -->
+              <div id="normal-params" class="param-group">
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2"
+                    >均值 (μ): <span id="normal-mean-value">0</span></label
+                  >
+                  <input
+                    type="range"
+                    id="normal-mean"
+                    min="-5"
+                    max="5"
+                    step="0.1"
+                    value="0"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2"
+                    >标准差 (σ): <span id="normal-std-value">1</span></label
+                  >
+                  <input
+                    type="range"
+                    id="normal-std"
+                    min="0.1"
+                    max="3"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                </div>
+              </div>
+
+              <!-- 二项分布参数 -->
+              <div id="binomial-params" class="param-group hidden">
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2"
+                    >试验次数 (n): <span id="binomial-n-value">20</span></label
+                  >
+                  <input
+                    type="range"
+                    id="binomial-n"
+                    min="1"
+                    max="50"
+                    step="1"
+                    value="20"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2"
+                    >成功概率 (p): <span id="binomial-p-value">0.5</span></label
+                  >
+                  <input
+                    type="range"
+                    id="binomial-p"
+                    min="0.01"
+                    max="0.99"
+                    step="0.01"
+                    value="0.5"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                </div>
+              </div>
+
+              <!-- 泊松分布参数 -->
+              <div id="poisson-params" class="param-group hidden">
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2"
+                    >强度参数 (λ):
+                    <span id="poisson-lambda-value">3</span></label
+                  >
+                  <input
+                    type="range"
+                    id="poisson-lambda"
+                    min="0.1"
+                    max="10"
+                    step="0.1"
+                    value="3"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                </div>
+              </div>
+
+              <!-- 指数分布参数 -->
+              <div id="exponential-params" class="param-group hidden">
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2"
+                    >速率参数 (λ):
+                    <span id="exponential-lambda-value">1</span></label
+                  >
+                  <input
+                    type="range"
+                    id="exponential-lambda"
+                    min="0.1"
+                    max="5"
+                    step="0.1"
+                    value="1"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                </div>
+              </div>
+
+              <!-- 均匀分布参数 -->
+              <div id="uniform-params" class="param-group hidden">
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2"
+                    >下界 (a): <span id="uniform-a-value">0</span></label
+                  >
+                  <input
+                    type="range"
+                    id="uniform-a"
+                    min="-5"
+                    max="5"
+                    step="0.1"
+                    value="0"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2"
+                    >上界 (b): <span id="uniform-b-value">2</span></label
+                  >
+                  <input
+                    type="range"
+                    id="uniform-b"
+                    min="-5"
+                    max="10"
+                    step="0.1"
+                    value="2"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- 数值特征显示 -->
+            <div class="space-y-4">
+              <h4 class="text-lg font-semibold text-white mb-4">数值特征</h4>
+              <div class="grid grid-cols-1 gap-4">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                  <div class="text-sm text-gray-400">期望值 E[X]</div>
+                  <div
+                    id="expectation-display"
+                    class="text-2xl font-semibold text-neon-green"
+                  >
+                    0.00
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                  <div class="text-sm text-gray-400">方差 Var(X)</div>
+                  <div
+                    id="variance-display"
+                    class="text-2xl font-semibold text-neon-blue"
+                  >
+                    1.00
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                  <div class="text-sm text-gray-400">标准差 σ</div>
+                  <div
+                    id="std-display"
+                    class="text-2xl font-semibold text-neon-purple"
+                  >
+                    1.00
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-6">
+                <button
+                  id="generate-samples"
+                  class="w-full px-6 py-3 bg-neon-green text-dark-bg font-bold rounded-lg hover:bg-neon-green/80 transition-all duration-300"
+                >
+                  <i class="fa fa-refresh mr-2"></i>生成样本
+                </button>
+              </div>
+            </div>
+
+            <!-- 图表显示 -->
+            <div class="h-80">
+              <canvas id="distribution-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 样本统计实验 -->
+        <div class="bg-dark-card rounded-xl p-8 border border-gray-800 mb-12">
+          <h3
+            class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-bar-chart text-neon-blue mr-3"></i> 样本统计实验
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-6">
+              <div>
+                <label class="block text-gray-300 mb-2"
+                  >样本大小: <span id="sample-size-value">100</span></label
+                >
+                <input
+                  type="range"
+                  id="sample-size"
+                  min="10"
+                  max="1000"
+                  step="10"
+                  value="100"
+                  class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                />
+              </div>
+
+              <div>
+                <label class="block text-gray-300 mb-2"
+                  >重复次数: <span id="repeat-times-value">50</span></label
+                >
+                <input
+                  type="range"
+                  id="repeat-times"
+                  min="10"
+                  max="200"
+                  step="10"
+                  value="50"
+                  class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                />
+              </div>
+
+              <button
+                id="run-sampling"
+                class="w-full px-6 py-3 bg-neon-blue text-dark-bg font-bold rounded-lg hover:bg-neon-blue/80 transition-all duration-300"
+              >
+                <i class="fa fa-play mr-2"></i>开始抽样实验
+              </button>
+
+              <div class="bg-gray-800 rounded-lg p-4">
+                <h4 class="text-lg font-semibold text-neon-blue mb-3">
+                  实验结果
+                </h4>
+                <div class="space-y-2 text-gray-300">
+                  <div class="flex justify-between">
+                    <span>样本均值的均值:</span>
+                    <span id="sample-mean-mean" class="text-neon-green"
+                      >--</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span>样本均值的方差:</span>
+                    <span id="sample-mean-var" class="text-neon-blue">--</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>理论方差/n:</span>
+                    <span id="theoretical-var-n" class="text-neon-purple"
+                      >--</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-80">
+              <canvas id="sampling-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 中心极限定理演示 -->
+        <div class="bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-magic text-neon-purple mr-3"></i> 中心极限定理演示
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="space-y-6">
+              <div>
+                <label class="block text-gray-300 mb-2">原始分布:</label>
+                <select
+                  id="clt-distribution"
+                  class="w-full px-4 py-2 bg-dark-bg border border-gray-700 rounded-lg text-white focus:border-neon-purple"
+                >
+                  <option value="uniform">均匀分布</option>
+                  <option value="exponential">指数分布</option>
+                  <option value="binomial">二项分布</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-gray-300 mb-2"
+                  >样本大小: <span id="clt-sample-size-value">30</span></label
+                >
+                <input
+                  type="range"
+                  id="clt-sample-size"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value="30"
+                  class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                />
+              </div>
+
+              <div>
+                <label class="block text-gray-300 mb-2"
+                  >样本数量: <span id="clt-num-samples-value">1000</span></label
+                >
+                <input
+                  type="range"
+                  id="clt-num-samples"
+                  min="100"
+                  max="5000"
+                  step="100"
+                  value="1000"
+                  class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                />
+              </div>
+
+              <button
+                id="run-clt"
+                class="w-full px-6 py-3 bg-neon-purple text-white font-bold rounded-lg hover:bg-neon-purple/80 transition-all duration-300"
+              >
+                <i class="fa fa-play mr-2"></i>运行演示
+              </button>
+
+              <div class="bg-gray-800 rounded-lg p-4">
+                <h4 class="text-lg font-semibold text-neon-purple mb-3">
+                  统计信息
+                </h4>
+                <div class="space-y-2 text-gray-300 text-sm">
+                  <div class="flex justify-between">
+                    <span>理论均值:</span>
+                    <span id="clt-theoretical-mean" class="text-neon-green"
+                      >--</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span>样本均值:</span>
+                    <span id="clt-sample-mean" class="text-neon-green">--</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>理论标准误:</span>
+                    <span id="clt-theoretical-se" class="text-neon-blue"
+                      >--</span
+                    >
+                  </div>
+                  <div class="flex justify-between">
+                    <span>样本标准误:</span>
+                    <span id="clt-sample-se" class="text-neon-blue">--</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-2 space-y-4">
+              <div class="h-40">
+                <canvas id="clt-original-chart"></canvas>
+              </div>
+              <div class="h-40">
+                <canvas id="clt-sampling-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 应用场景部分 -->
     <section id="applications" class="py-20 relative">
-        <div class="absolute inset-0 bg-grid opacity-20 -z-10"></div>
-        <div class="container mx-auto px-4 relative z-10">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
-                    实际<span class="text-neon-green">应用</span>
-                </h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">期望与方差在各个领域的重要应用</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- 金融风险管理 -->
-                <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group">
-                    <div class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors">
-                        <i class="fa fa-line-chart text-neon-green text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-future font-semibold mb-3 text-white">金融风险管理</h3>
-                    <p class="text-gray-400 mb-4">
-                        期望收益率衡量投资的平均回报，方差和标准差衡量投资风险。投资组合理论基于这些概念优化风险收益比。
-                    </p>
-                    <ul class="text-sm text-gray-300 space-y-1">
-                        <li>• 投资组合优化</li>
-                        <li>• VaR风险度量</li>
-                        <li>• 期权定价模型</li>
-                    </ul>
-                </div>
-                
-                <!-- 质量控制 -->
-                <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group">
-                    <div class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors">
-                        <i class="fa fa-cogs text-neon-blue text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-future font-semibold mb-3 text-white">质量控制</h3>
-                    <p class="text-gray-400 mb-4">
-                        在制造业中，产品质量指标的期望值代表目标值，方差反映生产过程的稳定性和一致性。
-                    </p>
-                    <ul class="text-sm text-gray-300 space-y-1">
-                        <li>• 过程能力分析</li>
-                        <li>• 控制图设计</li>
-                        <li>• 六西格玛管理</li>
-                    </ul>
-                </div>
-                
-                <!-- 机器学习 -->
-                <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group">
-                    <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors">
-                        <i class="fa fa-brain text-neon-purple text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-future font-semibold mb-3 text-white">机器学习</h3>
-                    <p class="text-gray-400 mb-4">
-                        期望和方差是机器学习中的核心概念，用于模型评估、特征选择和算法优化。
-                    </p>
-                    <ul class="text-sm text-gray-300 space-y-1">
-                        <li>• 偏差-方差权衡</li>
-                        <li>• 特征标准化</li>
-                        <li>• 模型不确定性量化</li>
-                    </ul>
-                </div>
-                
-                <!-- 保险精算 -->
-                <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-pink transition-all duration-300 transform hover:-translate-y-2 group">
-                    <div class="w-14 h-14 rounded-lg bg-neon-pink/10 flex items-center justify-center mb-6 group-hover:bg-neon-pink/20 transition-colors">
-                        <i class="fa fa-shield text-neon-pink text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-future font-semibold mb-3 text-white">保险精算</h3>
-                    <p class="text-gray-400 mb-4">
-                        保险公司使用期望损失计算保费，用方差评估风险的不确定性，确保公司的长期盈利能力。
-                    </p>
-                    <ul class="text-sm text-gray-300 space-y-1">
-                        <li>• 保费计算</li>
-                        <li>• 准备金评估</li>
-                        <li>• 再保险策略</li>
-                    </ul>
-                </div>
-                
-                <!-- 医学统计 -->
-                <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group">
-                    <div class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors">
-                        <i class="fa fa-heartbeat text-neon-green text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-future font-semibold mb-3 text-white">医学统计</h3>
-                    <p class="text-gray-400 mb-4">
-                        在临床试验中，治疗效果的期望值表示平均疗效，方差反映个体差异和治疗的一致性。
-                    </p>
-                    <ul class="text-sm text-gray-300 space-y-1">
-                        <li>• 临床试验设计</li>
-                        <li>• 生物等效性评价</li>
-                        <li>• 流行病学调查</li>
-                    </ul>
-                </div>
-                
-                <!-- 经济学 -->
-                <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group">
-                    <div class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors">
-                        <i class="fa fa-dollar text-neon-blue text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-future font-semibold mb-3 text-white">经济学研究</h3>
-                    <p class="text-gray-400 mb-4">
-                        经济指标的期望值反映经济发展趋势，方差衡量经济波动性，为政策制定提供量化依据。
-                    </p>
-                    <ul class="text-sm text-gray-300 space-y-1">
-                        <li>• 宏观经济预测</li>
-                        <li>• 政策效果评估</li>
-                        <li>• 市场波动分析</li>
-                    </ul>
-                </div>
-            </div>
+      <div class="absolute inset-0 bg-grid opacity-20 -z-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            实际<span class="text-neon-green">应用</span>
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            期望与方差在各个领域的重要应用
+          </p>
         </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- 金融风险管理 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors"
+            >
+              <i class="fa fa-line-chart text-neon-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              金融风险管理
+            </h3>
+            <p class="text-gray-400 mb-4">
+              期望收益率衡量投资的平均回报，方差和标准差衡量投资风险。投资组合理论基于这些概念优化风险收益比。
+            </p>
+            <ul class="text-sm text-gray-300 space-y-1">
+              <li>• 投资组合优化</li>
+              <li>• VaR风险度量</li>
+              <li>• 期权定价模型</li>
+            </ul>
+          </div>
+
+          <!-- 质量控制 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors"
+            >
+              <i class="fa fa-cogs text-neon-blue text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              质量控制
+            </h3>
+            <p class="text-gray-400 mb-4">
+              在制造业中，产品质量指标的期望值代表目标值，方差反映生产过程的稳定性和一致性。
+            </p>
+            <ul class="text-sm text-gray-300 space-y-1">
+              <li>• 过程能力分析</li>
+              <li>• 控制图设计</li>
+              <li>• 六西格玛管理</li>
+            </ul>
+          </div>
+
+          <!-- 机器学习 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors"
+            >
+              <i class="fa fa-brain text-neon-purple text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              机器学习
+            </h3>
+            <p class="text-gray-400 mb-4">
+              期望和方差是机器学习中的核心概念，用于模型评估、特征选择和算法优化。
+            </p>
+            <ul class="text-sm text-gray-300 space-y-1">
+              <li>• 偏差-方差权衡</li>
+              <li>• 特征标准化</li>
+              <li>• 模型不确定性量化</li>
+            </ul>
+          </div>
+
+          <!-- 保险精算 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-pink transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-pink/10 flex items-center justify-center mb-6 group-hover:bg-neon-pink/20 transition-colors"
+            >
+              <i class="fa fa-shield text-neon-pink text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              保险精算
+            </h3>
+            <p class="text-gray-400 mb-4">
+              保险公司使用期望损失计算保费，用方差评估风险的不确定性，确保公司的长期盈利能力。
+            </p>
+            <ul class="text-sm text-gray-300 space-y-1">
+              <li>• 保费计算</li>
+              <li>• 准备金评估</li>
+              <li>• 再保险策略</li>
+            </ul>
+          </div>
+
+          <!-- 医学统计 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors"
+            >
+              <i class="fa fa-heartbeat text-neon-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              医学统计
+            </h3>
+            <p class="text-gray-400 mb-4">
+              在临床试验中，治疗效果的期望值表示平均疗效，方差反映个体差异和治疗的一致性。
+            </p>
+            <ul class="text-sm text-gray-300 space-y-1">
+              <li>• 临床试验设计</li>
+              <li>• 生物等效性评价</li>
+              <li>• 流行病学调查</li>
+            </ul>
+          </div>
+
+          <!-- 经济学 -->
+          <div
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors"
+            >
+              <i class="fa fa-dollar text-neon-blue text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">
+              经济学研究
+            </h3>
+            <p class="text-gray-400 mb-4">
+              经济指标的期望值反映经济发展趋势，方差衡量经济波动性，为政策制定提供量化依据。
+            </p>
+            <ul class="text-sm text-gray-300 space-y-1">
+              <li>• 宏观经济预测</li>
+              <li>• 政策效果评估</li>
+              <li>• 市场波动分析</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 页脚 -->
     <footer class="bg-dark-card py-12 border-t border-gray-800">
-        <div class="container mx-auto px-4">
-            <div class="text-center">
-                <div class="flex items-center justify-center space-x-2 mb-4">
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-green to-neon-blue flex items-center justify-center">
-                        <i class="fa fa-calculator text-white text-sm"></i>
-                    </div>
-                    <h3 class="text-lg font-future font-bold text-white">
-                        <span class="text-neon-green">期望</span><span class="text-white">与</span><span class="text-neon-blue">方差</span>
-                    </h3>
-                </div>
-                <p class="text-gray-400 mb-6">探索随机变量的数字特征，理解数据的本质规律</p>
-                <div class="flex justify-center space-x-6">
-                    <a href="index.html" class="text-gray-400 hover:text-neon-green transition-colors">
-                        <i class="fa fa-home mr-2"></i>首页
-                    </a>
-                    <a href="probability_distributions.html" class="text-gray-400 hover:text-neon-blue transition-colors">
-                        <i class="fa fa-area-chart mr-2"></i>概率分布
-                    </a>
-                    <a href="random_variables.html" class="text-gray-400 hover:text-neon-purple transition-colors">
-                        <i class="fa fa-random mr-2"></i>随机变量
-                    </a>
-                </div>
+      <div class="container mx-auto px-4">
+        <div class="text-center">
+          <div class="flex items-center justify-center space-x-2 mb-4">
+            <div
+              class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-green to-neon-blue flex items-center justify-center"
+            >
+              <i class="fa fa-calculator text-white text-sm"></i>
             </div>
+            <h3 class="text-lg font-future font-bold text-white">
+              <span class="text-neon-green">期望</span
+              ><span class="text-white">与</span
+              ><span class="text-neon-blue">方差</span>
+            </h3>
+          </div>
+          <p class="text-gray-400 mb-6">
+            探索随机变量的数字特征，理解数据的本质规律
+          </p>
+          <div class="flex justify-center space-x-6">
+            <a
+              href="index.html"
+              class="text-gray-400 hover:text-neon-green transition-colors"
+            >
+              <i class="fa fa-home mr-2"></i>首页
+            </a>
+            <a
+              href="probability_distributions.html"
+              class="text-gray-400 hover:text-neon-blue transition-colors"
+            >
+              <i class="fa fa-area-chart mr-2"></i>概率分布
+            </a>
+            <a
+              href="random_variables.html"
+              class="text-gray-400 hover:text-neon-purple transition-colors"
+            >
+              <i class="fa fa-random mr-2"></i>随机变量
+            </a>
+          </div>
         </div>
+      </div>
     </footer>
 
     <!-- JavaScript -->
     <script>
-        // 全局变量
-        let distributionChart = null;
-        let samplingChart = null;
-        let cltOriginalChart = null;
-        let cltSamplingChart = null;
-        
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeParticles();
-            initializeEventListeners();
-            updateDistribution();
+      // 全局变量
+      let distributionChart = null;
+      let samplingChart = null;
+      let cltOriginalChart = null;
+      let cltSamplingChart = null;
+
+      // 初始化
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeParticles();
+        initializeEventListeners();
+        updateDistribution();
+      });
+
+      // 粒子背景效果
+      function initializeParticles() {
+        const container = document.getElementById("particles-container");
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        // 创建粒子
+        const geometry = new THREE.BufferGeometry();
+        const vertices = [];
+        const colors = [];
+
+        for (let i = 0; i < 1000; i++) {
+          vertices.push(
+            (Math.random() - 0.5) * 2000,
+            (Math.random() - 0.5) * 2000,
+            (Math.random() - 0.5) * 2000
+          );
+
+          const color = new THREE.Color();
+          color.setHSL(Math.random() * 0.3 + 0.3, 0.7, 0.5);
+          colors.push(color.r, color.g, color.b);
+        }
+
+        geometry.setAttribute(
+          "position",
+          new THREE.Float32BufferAttribute(vertices, 3)
+        );
+        geometry.setAttribute(
+          "color",
+          new THREE.Float32BufferAttribute(colors, 3)
+        );
+
+        const material = new THREE.PointsMaterial({
+          size: 2,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.6,
         });
-        
-        // 粒子背景效果
-        function initializeParticles() {
-            const container = document.getElementById('particles-container');
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true });
-            
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            container.appendChild(renderer.domElement);
-            
-            // 创建粒子
-            const geometry = new THREE.BufferGeometry();
-            const vertices = [];
-            const colors = [];
-            
-            for (let i = 0; i < 1000; i++) {
-                vertices.push(
-                    (Math.random() - 0.5) * 2000,
-                    (Math.random() - 0.5) * 2000,
-                    (Math.random() - 0.5) * 2000
-                );
-                
-                const color = new THREE.Color();
-                color.setHSL(Math.random() * 0.3 + 0.3, 0.7, 0.5);
-                colors.push(color.r, color.g, color.b);
-            }
-            
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-            
-            const material = new THREE.PointsMaterial({ 
-                size: 2, 
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.6
-            });
-            
-            const particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-            
-            camera.position.z = 1000;
-            
-            // 动画循环
-            function animate() {
-                requestAnimationFrame(animate);
-                particles.rotation.x += 0.0005;
-                particles.rotation.y += 0.001;
-                renderer.render(scene, camera);
-            }
-            animate();
-            
-            // 响应式调整
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        camera.position.z = 1000;
+
+        // 动画循环
+        function animate() {
+          requestAnimationFrame(animate);
+          particles.rotation.x += 0.0005;
+          particles.rotation.y += 0.001;
+          renderer.render(scene, camera);
         }
-        
-        // 初始化事件监听器
-        function initializeEventListeners() {
-            // 分布类型切换
-            document.getElementById('distribution-type').addEventListener('change', function() {
-                showParameterGroup(this.value);
-                updateDistribution();
-            });
-            
-            // 参数滑块事件
-            const sliders = document.querySelectorAll('input[type="range"]');
-            sliders.forEach(slider => {
-                slider.addEventListener('input', function() {
-                    updateSliderValue(this);
-                    if (this.id.includes('clt')) {
-                        updateCLTInfo();
-                    } else {
-                        updateDistribution();
-                    }
-                });
-            });
-            
-            // 按钮事件 - 添加安全检查
-            const generateSamplesBtn = document.getElementById('generate-samples');
-            if (generateSamplesBtn) {
-                generateSamplesBtn.addEventListener('click', updateDistribution);
+        animate();
+
+        // 响应式调整
+        window.addEventListener("resize", () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      }
+
+      // 初始化事件监听器
+      function initializeEventListeners() {
+        // 分布类型切换
+        document
+          .getElementById("distribution-type")
+          .addEventListener("change", function () {
+            showParameterGroup(this.value);
+            updateDistribution();
+          });
+
+        // 参数滑块事件
+        const sliders = document.querySelectorAll('input[type="range"]');
+        sliders.forEach((slider) => {
+          slider.addEventListener("input", function () {
+            updateSliderValue(this);
+            if (this.id.includes("clt")) {
+              updateCLTInfo();
+            } else {
+              updateDistribution();
             }
-            
-            const runSamplingBtn = document.getElementById('run-sampling');
-            if (runSamplingBtn) {
-                runSamplingBtn.addEventListener('click', runSamplingExperiment);
-            }
-            
-            const runCltBtn = document.getElementById('run-clt');
-            if (runCltBtn) {
-                runCltBtn.addEventListener('click', runCLTDemo);
-            }
-            
-            // 中心极限定理分布切换
-            const cltDistribution = document.getElementById('clt-distribution');
-            if (cltDistribution) {
-                cltDistribution.addEventListener('change', updateCLTInfo);
-            }
+          });
+        });
+
+        // 按钮事件 - 添加安全检查
+        const generateSamplesBtn = document.getElementById("generate-samples");
+        if (generateSamplesBtn) {
+          generateSamplesBtn.addEventListener("click", updateDistribution);
         }
-        
-        // 显示参数组
-        function showParameterGroup(distribution) {
-            const groups = document.querySelectorAll('.param-group');
-            groups.forEach(group => group.classList.add('hidden'));
-            
-            const targetGroup = document.getElementById(distribution + '-params');
-            if (targetGroup) {
-                targetGroup.classList.remove('hidden');
-            }
+
+        const runSamplingBtn = document.getElementById("run-sampling");
+        if (runSamplingBtn) {
+          runSamplingBtn.addEventListener("click", runSamplingExperiment);
         }
-        
-        // 更新滑块显示值
-        function updateSliderValue(slider) {
-            const valueSpan = document.getElementById(slider.id + '-value');
-            if (valueSpan) {
-                valueSpan.textContent = slider.value;
-            }
+
+        const runCltBtn = document.getElementById("run-clt");
+        if (runCltBtn) {
+          runCltBtn.addEventListener("click", runCLTDemo);
         }
-        
-        // 更新分布显示
-        function updateDistribution() {
-            const distributionType = document.getElementById('distribution-type').value;
-            const { expectation, variance, stdDev } = calculateMoments(distributionType);
-            
-            // 更新数值显示
-            document.getElementById('expectation-display').textContent = expectation.toFixed(3);
-            document.getElementById('variance-display').textContent = variance.toFixed(3);
-            document.getElementById('std-display').textContent = stdDev.toFixed(3);
-            
-            // 更新图表
-            updateDistributionChart(distributionType, expectation, variance);
+
+        // 中心极限定理分布切换
+        const cltDistribution = document.getElementById("clt-distribution");
+        if (cltDistribution) {
+          cltDistribution.addEventListener("change", updateCLTInfo);
         }
-        
-        // 计算分布的矩
-        function calculateMoments(distributionType) {
-            let expectation, variance, stdDev;
-            
-            switch (distributionType) {
-                case 'normal':
-                    const mu = parseFloat(document.getElementById('normal-mean').value);
-                    const sigma = parseFloat(document.getElementById('normal-std').value);
-                    expectation = mu;
-                    variance = sigma * sigma;
-                    stdDev = sigma;
-                    break;
-                    
-                case 'binomial':
-                    const n = parseInt(document.getElementById('binomial-n').value);
-                    const p = parseFloat(document.getElementById('binomial-p').value);
-                    expectation = n * p;
-                    variance = n * p * (1 - p);
-                    stdDev = Math.sqrt(variance);
-                    break;
-                    
-                case 'poisson':
-                    const lambda = parseFloat(document.getElementById('poisson-lambda').value);
-                    expectation = lambda;
-                    variance = lambda;
-                    stdDev = Math.sqrt(lambda);
-                    break;
-                    
-                case 'exponential':
-                    const expLambda = parseFloat(document.getElementById('exponential-lambda').value);
-                    expectation = 1 / expLambda;
-                    variance = 1 / (expLambda * expLambda);
-                    stdDev = 1 / expLambda;
-                    break;
-                    
-                case 'uniform':
-                    const a = parseFloat(document.getElementById('uniform-a').value);
-                    const b = parseFloat(document.getElementById('uniform-b').value);
-                    expectation = (a + b) / 2;
-                    variance = (b - a) * (b - a) / 12;
-                    stdDev = Math.sqrt(variance);
-                    break;
-            }
-            
-            return { expectation, variance, stdDev };
+      }
+
+      // 显示参数组
+      function showParameterGroup(distribution) {
+        const groups = document.querySelectorAll(".param-group");
+        groups.forEach((group) => group.classList.add("hidden"));
+
+        const targetGroup = document.getElementById(distribution + "-params");
+        if (targetGroup) {
+          targetGroup.classList.remove("hidden");
         }
-        
-        // 更新分布图表
-        function updateDistributionChart(distributionType, expectation, variance) {
-            const ctx = document.getElementById('distribution-chart').getContext('2d');
-            
-            if (distributionChart) {
-                distributionChart.destroy();
-            }
-            
-            const data = generateDistributionData(distributionType);
-            
-            distributionChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.x,
-                    datasets: [{
-                        label: '概率密度函数',
-                        data: data.y,
-                        borderColor: '#00ff66',
-                        backgroundColor: 'rgba(0, 255, 102, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }, {
-                        label: '期望值',
-                        data: data.x.map(() => null),
-                        borderColor: '#00f3ff',
-                        backgroundColor: '#00f3ff',
-                        pointRadius: 0,
-                        showLine: false,
-                        pointStyle: 'line'
-                    }]
+      }
+
+      // 更新滑块显示值
+      function updateSliderValue(slider) {
+        const valueSpan = document.getElementById(slider.id + "-value");
+        if (valueSpan) {
+          valueSpan.textContent = slider.value;
+        }
+      }
+
+      // 更新分布显示
+      function updateDistribution() {
+        const distributionType =
+          document.getElementById("distribution-type").value;
+        const { expectation, variance, stdDev } =
+          calculateMoments(distributionType);
+
+        // 更新数值显示
+        document.getElementById("expectation-display").textContent =
+          expectation.toFixed(3);
+        document.getElementById("variance-display").textContent =
+          variance.toFixed(3);
+        document.getElementById("std-display").textContent = stdDev.toFixed(3);
+
+        // 更新图表
+        updateDistributionChart(distributionType, expectation, variance);
+      }
+
+      // 计算分布的矩
+      function calculateMoments(distributionType) {
+        let expectation, variance, stdDev;
+
+        switch (distributionType) {
+          case "normal":
+            const mu = parseFloat(document.getElementById("normal-mean").value);
+            const sigma = parseFloat(
+              document.getElementById("normal-std").value
+            );
+            expectation = mu;
+            variance = sigma * sigma;
+            stdDev = sigma;
+            break;
+
+          case "binomial":
+            const n = parseInt(document.getElementById("binomial-n").value);
+            const p = parseFloat(document.getElementById("binomial-p").value);
+            expectation = n * p;
+            variance = n * p * (1 - p);
+            stdDev = Math.sqrt(variance);
+            break;
+
+          case "poisson":
+            const lambda = parseFloat(
+              document.getElementById("poisson-lambda").value
+            );
+            expectation = lambda;
+            variance = lambda;
+            stdDev = Math.sqrt(lambda);
+            break;
+
+          case "exponential":
+            const expLambda = parseFloat(
+              document.getElementById("exponential-lambda").value
+            );
+            expectation = 1 / expLambda;
+            variance = 1 / (expLambda * expLambda);
+            stdDev = 1 / expLambda;
+            break;
+
+          case "uniform":
+            const a = parseFloat(document.getElementById("uniform-a").value);
+            const b = parseFloat(document.getElementById("uniform-b").value);
+            expectation = (a + b) / 2;
+            variance = ((b - a) * (b - a)) / 12;
+            stdDev = Math.sqrt(variance);
+            break;
+        }
+
+        return { expectation, variance, stdDev };
+      }
+
+      // 更新分布图表
+      function updateDistributionChart(
+        distributionType,
+        expectation,
+        variance
+      ) {
+        const ctx = document
+          .getElementById("distribution-chart")
+          .getContext("2d");
+
+        if (distributionChart) {
+          distributionChart.destroy();
+        }
+
+        const data = generateDistributionData(distributionType);
+
+        distributionChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: data.x,
+            datasets: [
+              {
+                label: "概率密度函数",
+                data: data.y,
+                borderColor: "#00ff66",
+                backgroundColor: "rgba(0, 255, 102, 0.1)",
+                fill: true,
+                tension: 0.4,
+              },
+              {
+                label: "期望值",
+                data: data.x.map(() => null),
+                borderColor: "#00f3ff",
+                backgroundColor: "#00f3ff",
+                pointRadius: 0,
+                showLine: false,
+                pointStyle: "line",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: "#ffffff",
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#ffffff'
-                            }
-                        }
+              },
+            },
+            scales: {
+              x: {
+                ticks: {
+                  color: "#ffffff",
+                },
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+              },
+              y: {
+                ticks: {
+                  color: "#ffffff",
+                },
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+              },
+            },
+            plugins: {
+              annotation: {
+                annotations: {
+                  expectationLine: {
+                    type: "line",
+                    xMin: expectation,
+                    xMax: expectation,
+                    borderColor: "#00f3ff",
+                    borderWidth: 2,
+                    label: {
+                      content: "E[X] = " + expectation.toFixed(2),
+                      enabled: true,
+                      position: "top",
                     },
-                    scales: {
-                        x: {
-                            ticks: {
-                                color: '#ffffff'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                color: '#ffffff'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        annotation: {
-                            annotations: {
-                                expectationLine: {
-                                    type: 'line',
-                                    xMin: expectation,
-                                    xMax: expectation,
-                                    borderColor: '#00f3ff',
-                                    borderWidth: 2,
-                                    label: {
-                                        content: 'E[X] = ' + expectation.toFixed(2),
-                                        enabled: true,
-                                        position: 'top'
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        // 生成分布数据
-        function generateDistributionData(distributionType) {
-            let x = [], y = [];
-            
-            switch (distributionType) {
-                case 'normal':
-                    const mu = parseFloat(document.getElementById('normal-mean').value);
-                    const sigma = parseFloat(document.getElementById('normal-std').value);
-                    for (let i = mu - 4*sigma; i <= mu + 4*sigma; i += 0.1) {
-                        x.push(i);
-                        y.push(normalPDF(i, mu, sigma));
-                    }
-                    break;
-                    
-                case 'binomial':
-                    const n = parseInt(document.getElementById('binomial-n').value);
-                    const p = parseFloat(document.getElementById('binomial-p').value);
-                    for (let k = 0; k <= n; k++) {
-                        x.push(k);
-                        y.push(binomialPMF(k, n, p));
-                    }
-                    break;
-                    
-                case 'poisson':
-                    const lambda = parseFloat(document.getElementById('poisson-lambda').value);
-                    for (let k = 0; k <= Math.max(20, lambda * 3); k++) {
-                        x.push(k);
-                        y.push(poissonPMF(k, lambda));
-                    }
-                    break;
-                    
-                case 'exponential':
-                    const expLambda = parseFloat(document.getElementById('exponential-lambda').value);
-                    for (let t = 0; t <= 5/expLambda; t += 0.1) {
-                        x.push(t);
-                        y.push(exponentialPDF(t, expLambda));
-                    }
-                    break;
-                    
-                case 'uniform':
-                    const a = parseFloat(document.getElementById('uniform-a').value);
-                    const b = parseFloat(document.getElementById('uniform-b').value);
-                    const step = (b - a) / 100;
-                    for (let i = a - 1; i <= b + 1; i += step) {
-                        x.push(i);
-                        y.push(i >= a && i <= b ? 1/(b-a) : 0);
-                    }
-                    break;
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // 生成分布数据
+      function generateDistributionData(distributionType) {
+        let x = [],
+          y = [];
+
+        switch (distributionType) {
+          case "normal":
+            const mu = parseFloat(document.getElementById("normal-mean").value);
+            const sigma = parseFloat(
+              document.getElementById("normal-std").value
+            );
+            for (let i = mu - 4 * sigma; i <= mu + 4 * sigma; i += 0.1) {
+              x.push(i);
+              y.push(normalPDF(i, mu, sigma));
             }
-            
-            return { x, y };
-        }
-        
-        // 概率密度函数
-        function normalPDF(x, mu, sigma) {
-            return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
-        }
-        
-        function binomialPMF(k, n, p) {
-            return combination(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
-        }
-        
-        function poissonPMF(k, lambda) {
-            return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
-        }
-        
-        function exponentialPDF(x, lambda) {
-            return x >= 0 ? lambda * Math.exp(-lambda * x) : 0;
-        }
-        
-        // 数学辅助函数
-        function combination(n, k) {
-            if (k > n) return 0;
-            if (k === 0 || k === n) return 1;
-            return factorial(n) / (factorial(k) * factorial(n - k));
-        }
-        
-        function factorial(n) {
-            if (n <= 1) return 1;
-            let result = 1;
-            for (let i = 2; i <= n; i++) {
-                result *= i;
+            break;
+
+          case "binomial":
+            const n = parseInt(document.getElementById("binomial-n").value);
+            const p = parseFloat(document.getElementById("binomial-p").value);
+            for (let k = 0; k <= n; k++) {
+              x.push(k);
+              y.push(binomialPMF(k, n, p));
             }
-            return result;
-        }
-        
-        // 蒙特卡洛模拟
-        function runMonteCarloSimulation() {
-            const distributionType = document.getElementById('distribution-select').value;
-            const sampleSize = parseInt(document.getElementById('sample-size').value);
-            
-            let samples = [];
-            
-            for (let i = 0; i < sampleSize; i++) {
-                samples.push(generateRandomSample(distributionType));
+            break;
+
+          case "poisson":
+            const lambda = parseFloat(
+              document.getElementById("poisson-lambda").value
+            );
+            for (let k = 0; k <= Math.max(20, lambda * 3); k++) {
+              x.push(k);
+              y.push(poissonPMF(k, lambda));
             }
-            
-            const empiricalMean = samples.reduce((sum, x) => sum + x, 0) / sampleSize;
-            const empiricalVariance = samples.reduce((sum, x) => sum + Math.pow(x - empiricalMean, 2), 0) / (sampleSize - 1);
-            
-            const { expectation, variance } = calculateExpectationVariance(distributionType);
-            
-            // 更新结果显示
-            document.getElementById('theoretical-expectation').textContent = expectation.toFixed(4);
-            document.getElementById('empirical-expectation').textContent = empiricalMean.toFixed(4);
-            document.getElementById('theoretical-variance').textContent = variance.toFixed(4);
-            document.getElementById('empirical-variance').textContent = empiricalVariance.toFixed(4);
-            
-            // 更新直方图
-            updateHistogram(samples);
-        }
-        
-        function generateRandomSample(distributionType) {
-            switch (distributionType) {
-                case 'normal':
-                    const mu = parseFloat(document.getElementById('normal-mean').value);
-                    const sigma = parseFloat(document.getElementById('normal-std').value);
-                    return normalRandom(mu, sigma);
-                    
-                case 'binomial':
-                    const n = parseInt(document.getElementById('binomial-n').value);
-                    const p = parseFloat(document.getElementById('binomial-p').value);
-                    return binomialRandom(n, p);
-                    
-                case 'poisson':
-                    const lambda = parseFloat(document.getElementById('poisson-lambda').value);
-                    return poissonRandom(lambda);
-                    
-                case 'exponential':
-                    const expLambda = parseFloat(document.getElementById('exponential-lambda').value);
-                    return exponentialRandom(expLambda);
-                    
-                case 'uniform':
-                    const a = parseFloat(document.getElementById('uniform-a').value);
-                    const b = parseFloat(document.getElementById('uniform-b').value);
-                    return uniformRandom(a, b);
-                    
-                default:
-                    return 0;
+            break;
+
+          case "exponential":
+            const expLambda = parseFloat(
+              document.getElementById("exponential-lambda").value
+            );
+            for (let t = 0; t <= 5 / expLambda; t += 0.1) {
+              x.push(t);
+              y.push(exponentialPDF(t, expLambda));
             }
-        }
-        
-        // 随机数生成函数
-        function normalRandom(mu, sigma) {
-            let u = 0, v = 0;
-            while(u === 0) u = Math.random();
-            while(v === 0) v = Math.random();
-            return mu + sigma * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-        }
-        
-        function binomialRandom(n, p) {
-            let count = 0;
-            for (let i = 0; i < n; i++) {
-                if (Math.random() < p) count++;
+            break;
+
+          case "uniform":
+            const a = parseFloat(document.getElementById("uniform-a").value);
+            const b = parseFloat(document.getElementById("uniform-b").value);
+            const step = (b - a) / 100;
+            for (let i = a - 1; i <= b + 1; i += step) {
+              x.push(i);
+              y.push(i >= a && i <= b ? 1 / (b - a) : 0);
             }
-            return count;
+            break;
         }
-        
-        function poissonRandom(lambda) {
-            let L = Math.exp(-lambda);
-            let k = 0;
-            let p = 1;
-            do {
-                k++;
-                p *= Math.random();
-            } while (p > L);
-            return k - 1;
+
+        return { x, y };
+      }
+
+      // 概率密度函数
+      function normalPDF(x, mu, sigma) {
+        return (
+          (1 / (sigma * Math.sqrt(2 * Math.PI))) *
+          Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2))
+        );
+      }
+
+      function binomialPMF(k, n, p) {
+        return combination(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+      }
+
+      function poissonPMF(k, lambda) {
+        return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+      }
+
+      function exponentialPDF(x, lambda) {
+        return x >= 0 ? lambda * Math.exp(-lambda * x) : 0;
+      }
+
+      // 数学辅助函数
+      function combination(n, k) {
+        if (k > n) return 0;
+        if (k === 0 || k === n) return 1;
+        return factorial(n) / (factorial(k) * factorial(n - k));
+      }
+
+      function factorial(n) {
+        if (n <= 1) return 1;
+        let result = 1;
+        for (let i = 2; i <= n; i++) {
+          result *= i;
         }
-        
-        function exponentialRandom(lambda) {
-            return -Math.log(1 - Math.random()) / lambda;
+        return result;
+      }
+
+      // 蒙特卡洛模拟
+      function runMonteCarloSimulation() {
+        const distributionType = document.getElementById(
+          "distribution-select"
+        ).value;
+        const sampleSize = parseInt(
+          document.getElementById("sample-size").value
+        );
+
+        let samples = [];
+
+        for (let i = 0; i < sampleSize; i++) {
+          samples.push(generateRandomSample(distributionType));
         }
-        
-        function uniformRandom(a, b) {
-            return a + (b - a) * Math.random();
-        }
-        
+
+        const empiricalMean =
+          samples.reduce((sum, x) => sum + x, 0) / sampleSize;
+        const empiricalVariance =
+          samples.reduce((sum, x) => sum + Math.pow(x - empiricalMean, 2), 0) /
+          (sampleSize - 1);
+
+        const { expectation, variance } =
+          calculateExpectationVariance(distributionType);
+
+        // 更新结果显示
+        document.getElementById("theoretical-expectation").textContent =
+          expectation.toFixed(4);
+        document.getElementById("empirical-expectation").textContent =
+          empiricalMean.toFixed(4);
+        document.getElementById("theoretical-variance").textContent =
+          variance.toFixed(4);
+        document.getElementById("empirical-variance").textContent =
+          empiricalVariance.toFixed(4);
+
         // 更新直方图
-        function updateHistogram(samples) {
-            const ctx = document.getElementById('histogram-chart').getContext('2d');
-            
-            if (histogramChart) {
-                histogramChart.destroy();
-            }
-            
-            // 计算直方图数据
-            const bins = 20;
-            const min = Math.min(...samples);
-            const max = Math.max(...samples);
-            const binWidth = (max - min) / bins;
-            
-            let binCounts = new Array(bins).fill(0);
-            let binLabels = [];
-            
-            for (let i = 0; i < bins; i++) {
-                binLabels.push((min + i * binWidth).toFixed(2));
-            }
-            
-            samples.forEach(sample => {
-                const binIndex = Math.min(Math.floor((sample - min) / binWidth), bins - 1);
-                binCounts[binIndex]++;
-            });
-            
-            histogramChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: binLabels,
-                    datasets: [{
-                        label: '频数',
-                        data: binCounts,
-                        backgroundColor: 'rgba(0, 255, 102, 0.6)',
-                        borderColor: '#00ff66',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#ffffff'
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: {
-                                color: '#ffffff'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                color: '#ffffff'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        }
-                    }
-                }
-            });
+        updateHistogram(samples);
+      }
+
+      function generateRandomSample(distributionType) {
+        switch (distributionType) {
+          case "normal":
+            const mu = parseFloat(document.getElementById("normal-mean").value);
+            const sigma = parseFloat(
+              document.getElementById("normal-std").value
+            );
+            return normalRandom(mu, sigma);
+
+          case "binomial":
+            const n = parseInt(document.getElementById("binomial-n").value);
+            const p = parseFloat(document.getElementById("binomial-p").value);
+            return binomialRandom(n, p);
+
+          case "poisson":
+            const lambda = parseFloat(
+              document.getElementById("poisson-lambda").value
+            );
+            return poissonRandom(lambda);
+
+          case "exponential":
+            const expLambda = parseFloat(
+              document.getElementById("exponential-lambda").value
+            );
+            return exponentialRandom(expLambda);
+
+          case "uniform":
+            const a = parseFloat(document.getElementById("uniform-a").value);
+            const b = parseFloat(document.getElementById("uniform-b").value);
+            return uniformRandom(a, b);
+
+          default:
+            return 0;
         }
-        
-        // 粒子系统
-        function initParticleSystem() {
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true });
-            
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setClearColor(0x000000, 0);
-            const particleContainer = document.getElementById('particles-container');
-            if (particleContainer) {
-                particleContainer.appendChild(renderer.domElement);
-            }
-            
-            // 创建粒子
-            const particleCount = 1000;
-            const particles = new THREE.BufferGeometry();
-            const positions = new Float32Array(particleCount * 3);
-            const colors = new Float32Array(particleCount * 3);
-            
-            for (let i = 0; i < particleCount * 3; i += 3) {
-                positions[i] = (Math.random() - 0.5) * 2000;
-                positions[i + 1] = (Math.random() - 0.5) * 2000;
-                positions[i + 2] = (Math.random() - 0.5) * 2000;
-                
-                colors[i] = Math.random();
-                colors[i + 1] = Math.random() * 0.5 + 0.5;
-                colors[i + 2] = 1;
-            }
-            
-            particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            
-            const particleMaterial = new THREE.PointsMaterial({
-                size: 2,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.8
-            });
-            
-            const particleSystem = new THREE.Points(particles, particleMaterial);
-            scene.add(particleSystem);
-            
-            camera.position.z = 1000;
-            
-            function animate() {
-                requestAnimationFrame(animate);
-                
-                particleSystem.rotation.x += 0.001;
-                particleSystem.rotation.y += 0.002;
-                
-                renderer.render(scene, camera);
-            }
-            
-            animate();
-            
-            // 响应式调整
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
+      }
+
+      // 随机数生成函数
+      function normalRandom(mu, sigma) {
+        let u = 0,
+          v = 0;
+        while (u === 0) u = Math.random();
+        while (v === 0) v = Math.random();
+        return (
+          mu + sigma * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v)
+        );
+      }
+
+      function binomialRandom(n, p) {
+        let count = 0;
+        for (let i = 0; i < n; i++) {
+          if (Math.random() < p) count++;
         }
-        
-        // 缺失的函数定义
-        function runSamplingExperiment() {
-            console.log('采样实验功能待实现');
+        return count;
+      }
+
+      function poissonRandom(lambda) {
+        let L = Math.exp(-lambda);
+        let k = 0;
+        let p = 1;
+        do {
+          k++;
+          p *= Math.random();
+        } while (p > L);
+        return k - 1;
+      }
+
+      function exponentialRandom(lambda) {
+        return -Math.log(1 - Math.random()) / lambda;
+      }
+
+      function uniformRandom(a, b) {
+        return a + (b - a) * Math.random();
+      }
+
+      // 更新直方图
+      function updateHistogram(samples) {
+        const ctx = document.getElementById("histogram-chart").getContext("2d");
+
+        if (histogramChart) {
+          histogramChart.destroy();
         }
-        
-        function runCLTDemo() {
-            console.log('中心极限定理演示功能待实现');
+
+        // 计算直方图数据
+        const bins = 20;
+        const min = Math.min(...samples);
+        const max = Math.max(...samples);
+        const binWidth = (max - min) / bins;
+
+        let binCounts = new Array(bins).fill(0);
+        let binLabels = [];
+
+        for (let i = 0; i < bins; i++) {
+          binLabels.push((min + i * binWidth).toFixed(2));
         }
-        
-        function updateCLTInfo() {
-            console.log('更新中心极限定理信息');
-        }
-        
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化MathJax
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise();
-            }
-            
-            // 初始化粒子系统
-            initParticleSystem();
-            
-            // 初始化图表
-            updateDistribution();
-            
-            // 绑定事件监听器 - 添加安全检查
-            const distributionSelect = document.getElementById('distribution-select');
-            if (distributionSelect) {
-                distributionSelect.addEventListener('change', updateDistribution);
-            }
-            
-            const runSimulationBtn = document.getElementById('run-simulation');
-            if (runSimulationBtn) {
-                runSimulationBtn.addEventListener('click', runMonteCarloSimulation);
-            }
-            
-            // 为所有参数输入框绑定事件
-            const paramInputs = document.querySelectorAll('.param-input');
-            paramInputs.forEach(input => {
-                input.addEventListener('input', updateDistribution);
-            });
+
+        samples.forEach((sample) => {
+          const binIndex = Math.min(
+            Math.floor((sample - min) / binWidth),
+            bins - 1
+          );
+          binCounts[binIndex]++;
         });
+
+        histogramChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: binLabels,
+            datasets: [
+              {
+                label: "频数",
+                data: binCounts,
+                backgroundColor: "rgba(0, 255, 102, 0.6)",
+                borderColor: "#00ff66",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: "#ffffff",
+                },
+              },
+            },
+            scales: {
+              x: {
+                ticks: {
+                  color: "#ffffff",
+                },
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+              },
+              y: {
+                ticks: {
+                  color: "#ffffff",
+                },
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // 粒子系统
+      function initParticleSystem() {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0);
+        const particleContainer = document.getElementById(
+          "particles-container"
+        );
+        if (particleContainer) {
+          particleContainer.appendChild(renderer.domElement);
+        }
+
+        // 创建粒子
+        const particleCount = 1000;
+        const particles = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i += 3) {
+          positions[i] = (Math.random() - 0.5) * 2000;
+          positions[i + 1] = (Math.random() - 0.5) * 2000;
+          positions[i + 2] = (Math.random() - 0.5) * 2000;
+
+          colors[i] = Math.random();
+          colors[i + 1] = Math.random() * 0.5 + 0.5;
+          colors[i + 2] = 1;
+        }
+
+        particles.setAttribute(
+          "position",
+          new THREE.BufferAttribute(positions, 3)
+        );
+        particles.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+        const particleMaterial = new THREE.PointsMaterial({
+          size: 2,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.8,
+        });
+
+        const particleSystem = new THREE.Points(particles, particleMaterial);
+        scene.add(particleSystem);
+
+        camera.position.z = 1000;
+
+        function animate() {
+          requestAnimationFrame(animate);
+
+          particleSystem.rotation.x += 0.001;
+          particleSystem.rotation.y += 0.002;
+
+          renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // 响应式调整
+        window.addEventListener("resize", () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      }
+
+      // 缺失的函数定义
+      function runSamplingExperiment() {
+        console.log("采样实验功能待实现");
+      }
+
+      function runCLTDemo() {
+        console.log("中心极限定理演示功能待实现");
+      }
+
+      function updateCLTInfo() {
+        console.log("更新中心极限定理信息");
+      }
+
+      // 页面加载完成后初始化
+      document.addEventListener("DOMContentLoaded", function () {
+        // 初始化KaTeX数学公式渲染
+        if (typeof renderMathInElement !== "undefined") {
+          renderMathInElement(document.body, {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false },
+              { left: "\\(", right: "\\)", display: false },
+              { left: "\\[", right: "\\]", display: true },
+            ],
+          });
+        }
+
+        // 初始化粒子系统
+        initParticleSystem();
+
+        // 初始化图表
+        updateDistribution();
+
+        // 绑定事件监听器 - 添加安全检查
+        const distributionSelect = document.getElementById(
+          "distribution-select"
+        );
+        if (distributionSelect) {
+          distributionSelect.addEventListener("change", updateDistribution);
+        }
+
+        const runSimulationBtn = document.getElementById("run-simulation");
+        if (runSimulationBtn) {
+          runSimulationBtn.addEventListener("click", runMonteCarloSimulation);
+        }
+
+        // 为所有参数输入框绑定事件
+        const paramInputs = document.querySelectorAll(".param-input");
+        paramInputs.forEach((input) => {
+          input.addEventListener("input", updateDistribution);
+        });
+      });
     </script>
-    
+
     <!-- 工具箱组件 -->
     <script src="/static/js/toolbox.js"></script>
-</body>
+  </body>
 </html>

@@ -10,6 +10,7 @@
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.4.0/chartjs-plugin-annotation.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
 
@@ -113,8 +114,92 @@
           background-color: rgba(15, 23, 48, 0.6);
         }
         .magic-bottle {
-          background: linear-gradient(45deg, #bf00ff, #00f3ff);
-          border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+          background: linear-gradient(
+            135deg,
+            #1a1a2e 0%,
+            #16213e 25%,
+            #0f3460 50%,
+            #533483 75%,
+            #7209b7 100%
+          );
+          border-radius: 20% 20% 50% 50% / 30% 30% 70% 70%;
+          box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.5),
+            inset 10px 10px 20px rgba(255, 255, 255, 0.1),
+            0 0 30px rgba(114, 9, 183, 0.4), 0 0 60px rgba(114, 9, 183, 0.2);
+          position: relative;
+          overflow: hidden;
+        }
+        .magic-bottle::before {
+          content: "";
+          position: absolute;
+          top: 10%;
+          left: 15%;
+          width: 30%;
+          height: 60%;
+          background: linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.3) 0%,
+            rgba(255, 255, 255, 0.1) 50%,
+            transparent 100%
+          );
+          border-radius: 50%;
+          transform: rotate(-20deg);
+        }
+        .magic-bottle::after {
+          content: "";
+          position: absolute;
+          bottom: 20%;
+          right: 20%;
+          width: 20%;
+          height: 20%;
+          background: radial-gradient(
+            circle,
+            rgba(0, 243, 255, 0.6) 0%,
+            rgba(0, 243, 255, 0.2) 50%,
+            transparent 100%
+          );
+          border-radius: 50%;
+          animation: glow-pulse 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow-pulse {
+          0% {
+            opacity: 0.4;
+            transform: scale(1);
+          }
+          100% {
+            opacity: 0.8;
+            transform: scale(1.2);
+          }
+        }
+        .bottle-neck {
+          background: linear-gradient(180deg, #2a2a3e 0%, #1a1a2e 100%);
+          box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.5),
+            inset 2px 2px 4px rgba(255, 255, 255, 0.1);
+        }
+        .bottle-cork {
+          background: linear-gradient(180deg, #8b4513 0%, #654321 100%);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3),
+            inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+        .magic-bubble {
+          background: radial-gradient(
+            circle,
+            rgba(0, 243, 255, 0.8) 0%,
+            rgba(191, 0, 255, 0.6) 50%,
+            transparent 100%
+          );
+          animation: bubble-float 3s ease-in-out infinite;
+        }
+        @keyframes bubble-float {
+          0%,
+          100% {
+            transform: translateY(0) scale(1);
+            opacity: 0.6;
+          }
+          50% {
+            transform: translateY(-10px) scale(1.1);
+            opacity: 1;
+          }
         }
         .detective-badge {
           background: radial-gradient(circle, #ffd700, #ffb347);
@@ -271,7 +356,14 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <!-- 左侧：反证法解释 -->
-          <div class="bg-dark-card rounded-xl p-8 border border-gray-800">
+          <div
+            class="bg-dark-card rounded-xl p-8 border border-gray-800 relative"
+          >
+            <div
+              class="absolute -top-3 -right-3 bg-neon-blue text-dark-bg px-3 py-1 rounded-full text-sm font-bold"
+            >
+              确定性世界
+            </div>
             <h3
               class="text-2xl font-future font-semibold mb-6 text-neon-blue flex items-center"
             >
@@ -282,25 +374,66 @@
                 在数学中，<strong class="text-neon-blue">反证法</strong
                 >是一种经典的证明思路：
               </p>
-              <ol class="list-decimal list-inside space-y-2 ml-4">
-                <li>先假设"结论不成立"（即"反设"）</li>
-                <li>通过逻辑推理推出矛盾</li>
-                <li>最终证明"原结论成立"</li>
-              </ol>
+              <div
+                class="bg-gradient-to-r from-neon-blue/10 to-transparent rounded-lg p-4 border-l-4 border-neon-blue"
+              >
+                <div class="space-y-3">
+                  <div class="flex items-center space-x-3">
+                    <div
+                      class="w-8 h-8 bg-neon-blue/20 rounded-full flex items-center justify-center text-neon-blue font-bold"
+                    >
+                      1
+                    </div>
+                    <span>假设"结论不成立"（反设）</span>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <div
+                      class="w-8 h-8 bg-neon-blue/20 rounded-full flex items-center justify-center text-neon-blue font-bold"
+                    >
+                      2
+                    </div>
+                    <span
+                      >通过<strong class="text-neon-blue">严格逻辑推理</strong
+                      >推出矛盾</span
+                    >
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <div
+                      class="w-8 h-8 bg-neon-blue/20 rounded-full flex items-center justify-center text-neon-blue font-bold"
+                    >
+                      3
+                    </div>
+                    <span>确认"原结论成立"</span>
+                  </div>
+                </div>
+              </div>
               <div class="bg-gray-800 rounded-lg p-4 mt-6">
-                <p class="text-sm text-gray-400 mb-2">
-                  经典例子：证明\(\sqrt{2}\)是无理数
+                <p class="text-sm text-gray-400 mb-2 flex items-center">
+                  <i class="fa fa-calculator mr-2"></i
+                  >经典例子：证明\(\sqrt{2}\)是无理数
                 </p>
-                <p class="text-neon-blue">
-                  假设\(\sqrt{2}\)是有理数 → 推导出矛盾 →
-                  确认\(\sqrt{2}\)是无理数
-                </p>
+                <div
+                  class="bg-neon-blue/10 rounded p-3 border border-neon-blue/30"
+                >
+                  <p class="text-neon-blue text-center">
+                    假设\(\sqrt{2}\)是有理数 →
+                    <span class="text-red-400 font-bold">逻辑矛盾</span> →
+                    确认\(\sqrt{2}\)是无理数
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- 右侧：假设检验解释 -->
-          <div class="bg-dark-card rounded-xl p-8 border border-gray-800">
+          <div
+            class="bg-dark-card rounded-xl p-8 border border-gray-800 relative"
+          >
+            <div
+              class="absolute -top-3 -right-3 bg-neon-purple text-dark-bg px-3 py-1 rounded-full text-sm font-bold"
+            >
+              随机性世界
+            </div>
             <h3
               class="text-2xl font-future font-semibold mb-6 text-neon-purple flex items-center"
             >
@@ -312,27 +445,211 @@
                   >充满随机性的现实世界</strong
                 >中的延伸：
               </p>
-              <ol class="list-decimal list-inside space-y-2 ml-4">
-                <li>
-                  <strong>设定原假设(\(H_0\))</strong>：我们想尝试推翻的假设
-                </li>
-                <li>
-                  <strong>计算\(p\)值</strong
-                  >：如果\(H_0\)成立，出现当前结果的概率
-                </li>
-                <li>
-                  <strong>对比显著性水平(\(\alpha\))</strong
-                  >：判断是否拒绝\(H_0\)
-                </li>
-              </ol>
+              <div
+                class="bg-gradient-to-r from-neon-purple/10 to-transparent rounded-lg p-4 border-l-4 border-neon-purple"
+              >
+                <div class="space-y-3">
+                  <div class="flex items-center space-x-3">
+                    <div
+                      class="w-8 h-8 bg-neon-purple/20 rounded-full flex items-center justify-center text-neon-purple font-bold"
+                    >
+                      1
+                    </div>
+                    <span>设定原假设\(H_0\)（我们想推翻的假设）</span>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <div
+                      class="w-8 h-8 bg-neon-purple/20 rounded-full flex items-center justify-center text-neon-purple font-bold"
+                    >
+                      2
+                    </div>
+                    <span
+                      >通过<strong class="text-neon-purple">概率计算</strong
+                      >得到\(p\)值</span
+                    >
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <div
+                      class="w-8 h-8 bg-neon-purple/20 rounded-full flex items-center justify-center text-neon-purple font-bold"
+                    >
+                      3
+                    </div>
+                    <span>对比显著性水平\(\alpha\)做出决策</span>
+                  </div>
+                </div>
+              </div>
               <div class="bg-gray-800 rounded-lg p-4 mt-6">
-                <p class="text-sm text-gray-400 mb-2">核心逻辑：</p>
-                <p class="text-neon-purple">
-                  如果\(p <
-                  \alpha\)，说明\(H_0\)成立时当前结果极不可能发生（类似"矛盾"）
+                <p class="text-sm text-gray-400 mb-2 flex items-center">
+                  <i class="fa fa-bar-chart mr-2"></i>核心逻辑：
                 </p>
+                <div
+                  class="bg-neon-purple/10 rounded p-3 border border-neon-purple/30"
+                >
+                  <p class="text-neon-purple text-center">
+                    如果\(p < \alpha\) →
+                    <span class="text-red-400 font-bold">统计矛盾</span> →
+                    拒绝\(H_0\)
+                  </p>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- 类比对比说明 -->
+        <div
+          class="mt-16 bg-gradient-to-r from-dark-card to-dark-bg rounded-2xl p-8 border border-gray-700"
+        >
+          <h3
+            class="text-3xl font-future font-bold text-center mb-8 bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent"
+          >
+            <i class="fa fa-exchange mr-3"></i>核心类比：从确定到不确定
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- 相似性 -->
+            <div
+              class="bg-neon-green/10 rounded-xl p-6 border border-neon-green/30"
+            >
+              <h4
+                class="text-xl font-semibold text-neon-green mb-4 flex items-center"
+              >
+                <i class="fa fa-check-circle mr-2"></i>相似性
+              </h4>
+              <ul class="space-y-3 text-gray-300">
+                <li class="flex items-start space-x-2">
+                  <i class="fa fa-arrow-right text-neon-green mt-1"></i>
+                  <span
+                    >都采用<strong class="text-neon-green"
+                      >"反向思维"</strong
+                    ></span
+                  >
+                </li>
+                <li class="flex items-start space-x-2">
+                  <i class="fa fa-arrow-right text-neon-green mt-1"></i>
+                  <span
+                    >都寻找<strong class="text-neon-green"
+                      >"矛盾证据"</strong
+                    ></span
+                  >
+                </li>
+                <li class="flex items-start space-x-2">
+                  <i class="fa fa-arrow-right text-neon-green mt-1"></i>
+                  <span
+                    >都通过<strong class="text-neon-green">否定假设</strong
+                    >得出结论</span
+                  >
+                </li>
+                <li class="flex items-start space-x-2">
+                  <i class="fa fa-arrow-right text-neon-green mt-1"></i>
+                  <span
+                    >都有<strong class="text-neon-green"
+                      >严格的逻辑框架</strong
+                    ></span
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <!-- 关键差异 -->
+            <div class="bg-red-500/10 rounded-xl p-6 border border-red-500/30">
+              <h4
+                class="text-xl font-semibold text-red-400 mb-4 flex items-center"
+              >
+                <i class="fa fa-exclamation-triangle mr-2"></i>关键差异
+              </h4>
+              <div class="space-y-4 text-gray-300">
+                <div class="bg-gray-800 rounded p-3">
+                  <p class="text-sm text-gray-400 mb-1">矛盾性质：</p>
+                  <p class="text-neon-blue">
+                    反证法：<strong>绝对矛盾</strong>
+                  </p>
+                  <p class="text-neon-purple">
+                    假设检验：<strong>统计矛盾</strong>
+                  </p>
+                </div>
+                <div class="bg-gray-800 rounded p-3">
+                  <p class="text-sm text-gray-400 mb-1">结论确定性：</p>
+                  <p class="text-neon-blue">
+                    反证法：<strong>100%确定</strong>
+                  </p>
+                  <p class="text-neon-purple">
+                    假设检验：<strong>有错误风险</strong>
+                  </p>
+                </div>
+                <div class="bg-gray-800 rounded p-3">
+                  <p class="text-sm text-gray-400 mb-1">适用环境：</p>
+                  <p class="text-neon-blue">
+                    反证法：<strong>理论数学</strong>
+                  </p>
+                  <p class="text-neon-purple">
+                    假设检验：<strong>实际数据</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 进化关系 -->
+            <div
+              class="bg-yellow-500/10 rounded-xl p-6 border border-yellow-500/30"
+            >
+              <h4
+                class="text-xl font-semibold text-yellow-400 mb-4 flex items-center"
+              >
+                <i class="fa fa-lightbulb-o mr-2"></i>进化关系
+              </h4>
+              <div class="space-y-4 text-gray-300">
+                <div class="text-center">
+                  <div
+                    class="bg-neon-blue/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-2"
+                  >
+                    <i class="fa fa-calculator text-neon-blue text-xl"></i>
+                  </div>
+                  <p class="text-sm text-neon-blue font-semibold">传统反证法</p>
+                  <p class="text-xs text-gray-400">确定性数学</p>
+                </div>
+
+                <div class="flex justify-center">
+                  <i
+                    class="fa fa-arrow-down text-yellow-400 text-2xl animate-bounce"
+                  ></i>
+                </div>
+
+                <div class="text-center">
+                  <div
+                    class="bg-neon-purple/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-2"
+                  >
+                    <i class="fa fa-bar-chart text-neon-purple text-xl"></i>
+                  </div>
+                  <p class="text-sm text-neon-purple font-semibold">假设检验</p>
+                  <p class="text-xs text-gray-400">统计推断</p>
+                </div>
+
+                <div class="bg-yellow-500/20 rounded p-3 mt-4">
+                  <p class="text-xs text-yellow-400 text-center">
+                    <strong>"当数学遇见现实"</strong><br />
+                    从绝对真理到概率推断
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 底部总结 -->
+          <div
+            class="mt-8 bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl p-6 border border-gray-600"
+          >
+            <p class="text-center text-lg text-gray-300 leading-relaxed">
+              <i class="fa fa-quote-left text-neon-blue mr-2"></i>
+              假设检验本质上是<strong class="text-neon-blue">反证法</strong
+              >在<strong class="text-neon-purple">不确定世界</strong
+              >中的智慧延伸， 它保持了反证法的<strong class="text-neon-green"
+                >逻辑精神</strong
+              >，同时适应了现实世界的<strong class="text-yellow-400"
+                >随机性特征</strong
+              >。
+              <i class="fa fa-quote-right text-neon-purple ml-2"></i>
+            </p>
           </div>
         </div>
 
@@ -491,19 +808,51 @@
 
             <!-- 魔法药瓶动画 -->
             <div class="text-center mb-8">
-              <div
-                id="magic-bottle"
-                class="inline-block w-24 h-32 magic-bottle relative mx-auto opacity-50 transition-all duration-1000"
-              >
+              <div class="relative inline-block">
+                <!-- 瓶颈 -->
+                <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-6 h-8 bottle-neck rounded-t-sm z-20"></div>
+                
+                <!-- 瓶口软木塞 -->
+                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 w-8 h-3 bottle-cork rounded-t-lg z-30"></div>
+                
                 <div
-                  class="absolute top-2 left-1/2 transform -translate-x-1/2 w-6 h-4 bg-gray-800 rounded-t-lg"
+                  id="magic-bottle"
+                  class="inline-block w-28 h-36 magic-bottle relative mx-auto opacity-50 transition-all duration-1000"
+                >
+
+                  <!-- 魔法气泡 -->
+                  <div
+                    class="absolute top-12 left-4 w-3 h-3 magic-bubble rounded-full"
+                    style="animation-delay: 0s"
+                  ></div>
+                  <div
+                    class="absolute top-20 right-5 w-2 h-2 magic-bubble rounded-full"
+                    style="animation-delay: 1s"
+                  ></div>
+                  <div
+                    class="absolute bottom-8 left-6 w-2.5 h-2.5 magic-bubble rounded-full"
+                    style="animation-delay: 2s"
+                  ></div>
+
+                  <!-- 液体表面波纹效果 -->
+                  <div
+                    class="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-60 animate-pulse"
+                  ></div>
+                </div>
+
+                <!-- 魔法光环 -->
+                <div
+                  class="absolute inset-0 rounded-full border-2 border-purple-500 opacity-20 animate-spin"
+                  style="animation-duration: 8s"
                 ></div>
                 <div
-                  class="absolute top-6 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rounded-full animate-pulse"
+                  class="absolute inset-2 rounded-full border border-cyan-400 opacity-30 animate-spin"
+                  style="animation-duration: 6s; animation-direction: reverse"
                 ></div>
               </div>
-              <p id="bottle-status" class="text-gray-400 mt-2">
-                等待实验开始...
+
+              <p id="bottle-status" class="text-gray-400 mt-4 font-medium">
+                🧪 等待实验开始...
               </p>
             </div>
 
@@ -1128,6 +1477,460 @@
       </div>
     </section>
 
+    <!-- 实践应用部分 -->
+    <section id="practical-applications" class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/30">
+      <div class="absolute inset-0 bg-grid opacity-15"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+            <span class="text-neon-green">实践应用</span>
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            将假设检验理论应用到奇幻世界的实际问题中
+          </p>
+        </div>
+
+        <!-- 应用示例导航 -->
+        <div class="flex justify-center mb-12">
+          <div class="bg-dark-card rounded-xl p-2 border border-gray-800">
+            <button id="hero-balance-tab" class="application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg">
+              🗡️ 英雄平衡性检验
+            </button>
+            <button id="magic-agriculture-tab" class="application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white">
+              🌱 奇幻农业效果评估
+            </button>
+          </div>
+        </div>
+
+        <!-- 英雄平衡性检验 -->
+        <div id="hero-balance-content" class="application-content">
+          <div class="bg-dark-card rounded-xl border border-gray-800 overflow-hidden mb-8">
+            <div class="bg-neon-blue/10 p-6 border-b border-gray-800">
+              <h3 class="text-2xl font-future font-bold text-neon-blue mb-2">
+                🗡️ 英雄平衡性检验
+              </h3>
+              <p class="text-gray-300">
+                游戏设计师需要确保新英雄的胜率不会破坏游戏平衡
+              </p>
+            </div>
+            
+            <div class="p-8">
+              <!-- 问题背景 -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div>
+                  <h4 class="text-xl font-semibold text-white mb-4">📋 问题背景</h4>
+                  <div class="bg-gray-800 rounded-lg p-6">
+                    <p class="text-gray-300 mb-4">
+                      游戏中推出了新英雄"暗影刺客"，设计目标是保持50%的胜率以维持游戏平衡。
+                    </p>
+                    <p class="text-gray-300 mb-4">
+                      经过100场排位赛测试，该英雄获得了58场胜利。
+                    </p>
+                    <p class="text-neon-orange font-semibold">
+                      问题：这个胜率是否显著偏离了设计目标？
+                    </p>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 class="text-xl font-semibold text-white mb-4">🎯 假设设定</h4>
+                  <div class="space-y-4">
+                    <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+                      <h5 class="text-blue-400 font-semibold mb-2">原假设 H₀</h5>
+                      <p class="text-gray-300 text-sm">英雄胜率 = 50%（平衡状态）</p>
+                      <div class="katex-display text-sm mt-2">\(H_0: p = 0.5\)</div>
+                    </div>
+                    <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
+                      <h5 class="text-purple-400 font-semibold mb-2">备择假设 H₁</h5>
+                      <p class="text-gray-300 text-sm">英雄胜率 ≠ 50%（不平衡）</p>
+                      <div class="katex-display text-sm mt-2">\(H_1: p \neq 0.5\)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 交互式计算器 -->
+              <div class="bg-gray-800 rounded-xl p-6 mb-8">
+                <h4 class="text-xl font-semibold text-white mb-6 text-center">
+                  🧮 交互式假设检验计算器
+                </h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                  <div>
+                    <label class="block text-gray-300 mb-2">样本量 (n):</label>
+                    <input type="number" id="hero-sample-size" value="100" min="10" max="1000" 
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">胜利次数 (x):</label>
+                    <input type="number" id="hero-wins" value="58" min="0" max="1000"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">显著性水平 (α):</label>
+                    <select id="hero-alpha" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                      <option value="0.01">0.01</option>
+                      <option value="0.05" selected>0.05</option>
+                      <option value="0.10">0.10</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <button id="calculate-hero-test" 
+                        class="w-full bg-neon-blue hover:bg-neon-blue/80 text-dark-bg font-semibold py-3 rounded-lg transition-colors mb-6">
+                  🔍 执行假设检验
+                </button>
+                
+                <!-- 结果显示 -->
+                <div id="hero-results" class="hidden">
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                      <div class="text-sm text-gray-400">样本胜率</div>
+                      <div id="hero-sample-rate" class="text-lg font-bold text-neon-green">0.58</div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                      <div class="text-sm text-gray-400">Z统计量</div>
+                      <div id="hero-z-stat" class="text-lg font-bold text-neon-blue">1.60</div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                      <div class="text-sm text-gray-400">p值</div>
+                      <div id="hero-p-value" class="text-lg font-bold text-neon-orange">0.110</div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                      <div class="text-sm text-gray-400">检验结论</div>
+                      <div id="hero-conclusion" class="text-lg font-bold text-gray-400">不拒绝H₀</div>
+                    </div>
+                  </div>
+                  
+                  <div class="bg-gradient-to-r from-neon-blue/10 to-neon-purple/10 border border-neon-blue/30 rounded-lg p-6">
+                    <h5 class="text-white font-semibold mb-3">📊 结果解释</h5>
+                    <div id="hero-interpretation" class="text-gray-300">
+                      <!-- 动态生成解释内容 -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 奇幻农业效果评估 -->
+        <div id="magic-agriculture-content" class="application-content hidden">
+          <div class="bg-dark-card rounded-xl border border-gray-800 overflow-hidden mb-8">
+            <div class="bg-neon-green/10 p-6 border-b border-gray-800">
+              <h3 class="text-2xl font-future font-bold text-neon-green mb-2">
+                🌱 奇幻农业：神奇肥料效果评估
+              </h3>
+              <p class="text-gray-300">
+                农业魔法师需要验证新研发的神奇肥料是否真的能提高作物产量
+              </p>
+            </div>
+            
+            <div class="p-8">
+              <!-- 问题背景 -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div>
+                  <h4 class="text-xl font-semibold text-white mb-4">🌾 实验背景</h4>
+                  <div class="bg-gray-800 rounded-lg p-6">
+                    <p class="text-gray-300 mb-4">
+                      魔法农场的普通小麦平均产量为每亩500公斤。
+                    </p>
+                    <p class="text-gray-300 mb-4">
+                      使用新型"生长之源"肥料的25块试验田，平均产量为520公斤，标准差为30公斤。
+                    </p>
+                    <p class="text-neon-orange font-semibold">
+                      问题：这种肥料是否真的能显著提高产量？
+                    </p>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 class="text-xl font-semibold text-white mb-4">🎯 假设设定</h4>
+                  <div class="space-y-4">
+                    <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+                      <h5 class="text-blue-400 font-semibold mb-2">原假设 H₀</h5>
+                      <p class="text-gray-300 text-sm">肥料无效果，产量仍为500公斤</p>
+                      <div class="katex-display text-sm mt-2">\(H_0: \mu = 500\)</div>
+                    </div>
+                    <div class="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+                      <h5 class="text-green-400 font-semibold mb-2">备择假设 H₁</h5>
+                      <p class="text-gray-300 text-sm">肥料有效，产量大于500公斤</p>
+                      <div class="katex-display text-sm mt-2">\(H_1: \mu > 500\)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 交互式计算器 -->
+              <div class="bg-gray-800 rounded-xl p-6 mb-8">
+                <h4 class="text-xl font-semibold text-white mb-6 text-center">
+                  🧪 农业实验假设检验
+                </h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                  <div>
+                    <label class="block text-gray-300 mb-2">样本量 (n):</label>
+                    <input type="number" id="agri-sample-size" value="25" min="5" max="100" 
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">样本均值 (x̄):</label>
+                    <input type="number" id="agri-sample-mean" value="520" min="400" max="600" step="0.1"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">样本标准差 (s):</label>
+                    <input type="number" id="agri-sample-std" value="30" min="1" max="100" step="0.1"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">显著性水平 (α):</label>
+                    <select id="agri-alpha" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                      <option value="0.01">0.01</option>
+                      <option value="0.05" selected>0.05</option>
+                      <option value="0.10">0.10</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <button id="calculate-agri-test" 
+                        class="w-full bg-neon-green hover:bg-neon-green/80 text-dark-bg font-semibold py-3 rounded-lg transition-colors mb-6">
+                  🌱 执行产量检验
+                </button>
+                
+                <!-- 结果显示 -->
+                <div id="agri-results" class="hidden">
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                      <div class="text-sm text-gray-400">产量提升</div>
+                      <div id="agri-improvement" class="text-lg font-bold text-neon-green">+20kg</div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                      <div class="text-sm text-gray-400">t统计量</div>
+                      <div id="agri-t-stat" class="text-lg font-bold text-neon-blue">3.33</div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                      <div class="text-sm text-gray-400">p值</div>
+                      <div id="agri-p-value" class="text-lg font-bold text-neon-orange">0.001</div>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4 text-center">
+                      <div class="text-sm text-gray-400">检验结论</div>
+                      <div id="agri-conclusion" class="text-lg font-bold text-neon-green">拒绝H₀</div>
+                    </div>
+                  </div>
+                  
+                  <div class="bg-gradient-to-r from-neon-green/10 to-neon-blue/10 border border-neon-green/30 rounded-lg p-6">
+                    <h5 class="text-white font-semibold mb-3">🌾 结果解释</h5>
+                    <div id="agri-interpretation" class="text-gray-300">
+                      <!-- 动态生成解释内容 -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 课后问题部分 -->
+    <section id="exercises" class="py-20 bg-gradient-to-br from-dark-bg via-purple-900/20 to-dark-bg">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-bold mb-6 bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">
+            📚 课后问题
+          </h2>
+          <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+            通过分层练习巩固假设检验知识，从基础概念到实际应用
+          </p>
+        </div>
+
+        <!-- 难度级别选择 -->
+        <div class="flex justify-center mb-12">
+          <div class="bg-dark-card/50 backdrop-blur-sm rounded-xl p-2 border border-neon-blue/20">
+            <button id="level1-tab" class="exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg">
+              Level 1: 基础概念
+            </button>
+            <button id="level2-tab" class="exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white">
+              Level 2: 计算解读
+            </button>
+            <button id="level3-tab" class="exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white">
+              Level 3: 分析设计
+            </button>
+          </div>
+        </div>
+
+        <!-- Level 1: 基础概念 -->
+        <div id="level1-content" class="exercise-content">
+          <div class="grid md:grid-cols-2 gap-8">
+            <!-- 题目1 -->
+            <div class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-blue/20">
+              <h3 class="text-xl font-bold mb-4 text-neon-blue">🎯 选择题 1</h3>
+              <p class="text-gray-300 mb-4">P值的正确定义是什么？</p>
+              <div class="space-y-3">
+                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded">
+                  <input type="radio" name="q1" value="A" class="text-neon-blue">
+                  <span class="text-gray-300">A. 原假设为真的概率</span>
+                </label>
+                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded">
+                  <input type="radio" name="q1" value="B" class="text-neon-blue">
+                  <span class="text-gray-300">B. 在原假设为真的条件下，观察到当前样本结果或更极端结果的概率</span>
+                </label>
+                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded">
+                  <input type="radio" name="q1" value="C" class="text-neon-blue">
+                  <span class="text-gray-300">C. 备择假设为真的概率</span>
+                </label>
+                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded">
+                  <input type="radio" name="q1" value="D" class="text-neon-blue">
+                  <span class="text-gray-300">D. 犯第一类错误的概率</span>
+                </label>
+              </div>
+              <button onclick="checkAnswer('q1', 'B')" class="mt-4 bg-neon-blue text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-blue/80 transition-colors">
+                检查答案
+              </button>
+              <div id="q1-result" class="mt-4 hidden"></div>
+            </div>
+
+            <!-- 题目2 -->
+            <div class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-purple/20">
+              <h3 class="text-xl font-bold mb-4 text-neon-purple">✅ 判断题 1</h3>
+              <p class="text-gray-300 mb-4">判断：显著性水平α是当H₀为假时拒绝它的概率。</p>
+              <div class="space-y-3">
+                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-purple/10 p-2 rounded">
+                  <input type="radio" name="q2" value="true" class="text-neon-purple">
+                  <span class="text-gray-300">正确</span>
+                </label>
+                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-purple/10 p-2 rounded">
+                  <input type="radio" name="q2" value="false" class="text-neon-purple">
+                  <span class="text-gray-300">错误</span>
+                </label>
+              </div>
+              <button onclick="checkAnswer('q2', 'false')" class="mt-4 bg-neon-purple text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-purple/80 transition-colors">
+                检查答案
+              </button>
+              <div id="q2-result" class="mt-4 hidden"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Level 2: 计算解读 -->
+        <div id="level2-content" class="exercise-content hidden">
+          <div class="grid md:grid-cols-1 gap-8">
+            <!-- 计算题 -->
+            <div class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-green/20">
+              <h3 class="text-xl font-bold mb-4 text-neon-green">🧮 计算题</h3>
+              <div class="bg-dark-bg/50 p-4 rounded-lg mb-4">
+                <p class="text-gray-300 mb-2"><strong>场景：</strong>某魔法学院声称其新研发的"智慧药水"能显著提高学生的考试成绩。</p>
+                <p class="text-gray-300 mb-2"><strong>已知：</strong>历史数据显示学生平均成绩为75分，标准差为10分。</p>
+                <p class="text-gray-300 mb-2"><strong>实验：</strong>随机选择25名学生服用智慧药水后，平均成绩为78分。</p>
+                <p class="text-gray-300"><strong>问题：</strong>在α=0.05的显著性水平下，能否认为智慧药水有效？</p>
+              </div>
+              
+              <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 class="font-semibold mb-3 text-neon-green">计算步骤：</h4>
+                  <div class="space-y-3">
+                    <div>
+                      <label class="block text-sm text-gray-400 mb-1">1. 检验统计量 Z =</label>
+                      <input type="number" id="calc-z" step="0.01" class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white" placeholder="输入Z值">
+                    </div>
+                    <div>
+                      <label class="block text-sm text-gray-400 mb-1">2. P值 =</label>
+                      <input type="number" id="calc-p" step="0.001" class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white" placeholder="输入P值">
+                    </div>
+                    <div>
+                      <label class="block text-sm text-gray-400 mb-1">3. 结论：</label>
+                      <select id="calc-conclusion" class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white">
+                        <option value="">选择结论</option>
+                        <option value="reject">拒绝H₀，智慧药水有效</option>
+                        <option value="not-reject">不拒绝H₀，智慧药水无效</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button onclick="checkCalculation()" class="mt-4 bg-neon-green text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-green/80 transition-colors">
+                    检查计算
+                  </button>
+                </div>
+                
+                <div>
+                  <h4 class="font-semibold mb-3 text-neon-green">提示公式：</h4>
+                  <div class="bg-dark-bg/50 p-4 rounded-lg text-sm">
+                    <p class="text-gray-300 mb-2">H₀: μ = 75 vs H₁: μ > 75</p>
+                    <p class="text-gray-300 mb-2">Z = (x̄ - μ₀) / (σ/√n)</p>
+                    <p class="text-gray-300 mb-2">其中：x̄ = 78, μ₀ = 75, σ = 10, n = 25</p>
+                    <p class="text-gray-300">单尾检验，α = 0.05</p>
+                  </div>
+                </div>
+              </div>
+              <div id="calc-result" class="mt-4 hidden"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Level 3: 分析设计 -->
+        <div id="level3-content" class="exercise-content hidden">
+          <div class="grid md:grid-cols-1 gap-8">
+            <!-- 思考题1 -->
+            <div class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-orange/20">
+              <h3 class="text-xl font-bold mb-4 text-neon-orange">🤔 思考题 1</h3>
+              <p class="text-gray-300 mb-4">第一类错误和第二类错误的概率之间有什么关系？在实际应用中如何平衡这两种错误？</p>
+              <textarea id="thinking1" rows="4" class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white" placeholder="请输入你的思考..."></textarea>
+              <button onclick="showThinkingAnswer(1)" class="mt-4 bg-neon-orange text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-orange/80 transition-colors">
+                查看参考答案
+              </button>
+              <div id="thinking1-answer" class="mt-4 hidden bg-dark-bg/50 p-4 rounded-lg">
+                <h4 class="font-semibold mb-2 text-neon-orange">参考答案：</h4>
+                <p class="text-gray-300 mb-2">• <strong>关系：</strong>在样本量固定的情况下，第一类错误概率α和第二类错误概率β通常呈反比关系</p>
+                <p class="text-gray-300 mb-2">• <strong>权衡：</strong>降低α会增加β，反之亦然</p>
+                <p class="text-gray-300 mb-2">• <strong>平衡策略：</strong></p>
+                <p class="text-gray-300 ml-4 mb-1">- 增加样本量可同时降低两种错误</p>
+                <p class="text-gray-300 ml-4 mb-1">- 根据实际后果选择合适的α水平</p>
+                <p class="text-gray-300 ml-4">- 考虑功效分析来优化检验设计</p>
+              </div>
+            </div>
+
+            <!-- 思考题2 -->
+            <div class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-pink/20">
+              <h3 class="text-xl font-bold mb-4 text-neon-pink">🎨 设计题</h3>
+              <p class="text-gray-300 mb-4">设计一个实验来检验一种新的魔法咒语是否比传统咒语施法速度更快。请详细说明你的实验设计，包括假设设定、样本选择、数据收集和统计分析方法。</p>
+              <textarea id="design1" rows="6" class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white" placeholder="请详细描述你的实验设计..."></textarea>
+              <button onclick="showDesignAnswer(1)" class="mt-4 bg-neon-pink text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-pink/80 transition-colors">
+                查看设计要点
+              </button>
+              <div id="design1-answer" class="mt-4 hidden bg-dark-bg/50 p-4 rounded-lg">
+                <h4 class="font-semibold mb-2 text-neon-pink">设计要点：</h4>
+                <div class="space-y-3 text-gray-300">
+                  <div>
+                    <strong>1. 假设设定：</strong>
+                    <p class="ml-4">H₀: μ_new = μ_old (新咒语施法时间等于传统咒语)</p>
+                    <p class="ml-4">H₁: μ_new < μ_old (新咒语施法时间更短)</p>
+                  </div>
+                  <div>
+                    <strong>2. 实验设计：</strong>
+                    <p class="ml-4">• 随机选择法师，分为两组或使用配对设计</p>
+                    <p class="ml-4">• 控制变量：法师技能水平、咒语复杂度、环境条件</p>
+                    <p class="ml-4">• 盲法设计：避免主观偏差</p>
+                  </div>
+                  <div>
+                    <strong>3. 数据收集：</strong>
+                    <p class="ml-4">• 精确测量施法时间（毫秒级）</p>
+                    <p class="ml-4">• 记录成功率和副作用</p>
+                    <p class="ml-4">• 足够的样本量保证统计功效</p>
+                  </div>
+                  <div>
+                    <strong>4. 统计分析：</strong>
+                    <p class="ml-4">• 使用t检验比较两组均值</p>
+                    <p class="ml-4">• 检查数据分布和方差齐性</p>
+                    <p class="ml-4">• 计算效应大小和置信区间</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- 页脚 -->
     <footer class="bg-dark-card border-t border-gray-800 py-12">
       <div class="container mx-auto px-4">
@@ -1361,6 +2164,10 @@
             this.chart.destroy();
           }
 
+          // 计算合适的y轴范围
+          const minScore = Math.min(...data, baseline, mean) - 5;
+          const maxScore = Math.max(...data, baseline, mean) + 5;
+
           this.chart = new Chart(ctx, {
             type: "bar",
             data: {
@@ -1381,42 +2188,81 @@
                 legend: {
                   labels: { color: "#ffffff" },
                 },
+                annotation: {
+                  annotations: {
+                    baseline: {
+                      type: "line",
+                      yMin: baseline,
+                      yMax: baseline,
+                      borderColor: "#ff6b6b",
+                      borderWidth: 4,
+                      borderDash: [8, 4],
+                      label: {
+                        content: `🎯 实验前平均分: ${baseline}分`,
+                        enabled: true,
+                        position: "end",
+                        backgroundColor: "rgba(255, 107, 107, 0.9)",
+                        color: "#ffffff",
+                        font: {
+                          size: 13,
+                          weight: "bold",
+                        },
+                        padding: 8,
+                        cornerRadius: 6,
+                      },
+                    },
+                    mean: {
+                      type: "line",
+                      yMin: mean,
+                      yMax: mean,
+                      borderColor: "#4ecdc4",
+                      borderWidth: 4,
+                      label: {
+                        content: `🚀 实验后平均分: ${mean.toFixed(1)}分`,
+                        enabled: true,
+                        position: "start",
+                        backgroundColor: "rgba(78, 205, 196, 0.9)",
+                        color: "#ffffff",
+                        font: {
+                          size: 13,
+                          weight: "bold",
+                        },
+                        padding: 8,
+                        cornerRadius: 6,
+                      },
+                    },
+                  },
+                },
               },
               scales: {
                 y: {
-                  beginAtZero: true,
+                  min: Math.max(0, minScore),
+                  max: maxScore,
                   grid: { color: "rgba(255, 255, 255, 0.1)" },
-                  ticks: { color: "#ffffff" },
+                  ticks: {
+                    color: "#ffffff",
+                    stepSize: 2,
+                  },
+                  title: {
+                    display: true,
+                    text: "测试分数",
+                    color: "#ffffff",
+                    font: {
+                      size: 14,
+                      weight: "bold",
+                    },
+                  },
                 },
                 x: {
                   grid: { color: "rgba(255, 255, 255, 0.1)" },
                   ticks: { color: "#ffffff", maxTicksLimit: 10 },
-                },
-              },
-              annotation: {
-                annotations: {
-                  baseline: {
-                    type: "line",
-                    yMin: baseline,
-                    yMax: baseline,
-                    borderColor: "#00f3ff",
-                    borderWidth: 2,
-                    label: {
-                      content: "基准线",
-                      enabled: true,
-                      position: "end",
-                    },
-                  },
-                  mean: {
-                    type: "line",
-                    yMin: mean,
-                    yMax: mean,
-                    borderColor: "#00ff66",
-                    borderWidth: 2,
-                    label: {
-                      content: "样本均值",
-                      enabled: true,
-                      position: "start",
+                  title: {
+                    display: true,
+                    text: "志愿者",
+                    color: "#ffffff",
+                    font: {
+                      size: 14,
+                      weight: "bold",
                     },
                   },
                 },
@@ -1424,6 +2270,357 @@
             },
           });
         }
+      }
+
+      // 实践应用交互
+      class PracticalApplications {
+        constructor() {
+          this.initializeElements();
+          this.bindEvents();
+        }
+
+        initializeElements() {
+          this.heroTab = document.getElementById('hero-balance-tab');
+          this.agriTab = document.getElementById('magic-agriculture-tab');
+          this.heroContent = document.getElementById('hero-balance-content');
+          this.agriContent = document.getElementById('magic-agriculture-content');
+          
+          // 英雄平衡检验元素
+          this.heroSampleSize = document.getElementById('hero-sample-size');
+          this.heroWins = document.getElementById('hero-wins');
+          this.heroAlpha = document.getElementById('hero-alpha');
+          this.calculateHeroBtn = document.getElementById('calculate-hero-test');
+          this.heroResults = document.getElementById('hero-results');
+          
+          // 农业检验元素
+          this.agriSampleSize = document.getElementById('agri-sample-size');
+          this.agriSampleMean = document.getElementById('agri-sample-mean');
+          this.agriSampleStd = document.getElementById('agri-sample-std');
+          this.agriAlpha = document.getElementById('agri-alpha');
+          this.calculateAgriBtn = document.getElementById('calculate-agri-test');
+          this.agriResults = document.getElementById('agri-results');
+        }
+
+        bindEvents() {
+          // 标签切换
+          if (this.heroTab) this.heroTab.addEventListener('click', () => this.switchTab('hero'));
+          if (this.agriTab) this.agriTab.addEventListener('click', () => this.switchTab('agri'));
+          
+          // 计算按钮
+          if (this.calculateHeroBtn) this.calculateHeroBtn.addEventListener('click', () => this.calculateHeroTest());
+          if (this.calculateAgriBtn) this.calculateAgriBtn.addEventListener('click', () => this.calculateAgriTest());
+        }
+
+        switchTab(tab) {
+          if (tab === 'hero') {
+            this.heroTab.className = 'application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg';
+            this.agriTab.className = 'application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white';
+            this.heroContent.classList.remove('hidden');
+            this.agriContent.classList.add('hidden');
+          } else {
+            this.agriTab.className = 'application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-green text-dark-bg';
+            this.heroTab.className = 'application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white';
+            this.agriContent.classList.remove('hidden');
+            this.heroContent.classList.add('hidden');
+          }
+        }
+
+        calculateHeroTest() {
+          const n = parseInt(this.heroSampleSize.value);
+          const x = parseInt(this.heroWins.value);
+          const alpha = parseFloat(this.heroAlpha.value);
+          const p0 = 0.5; // 原假设胜率
+          
+          // 计算样本胜率
+          const pHat = x / n;
+          
+          // 计算Z统计量
+          const zStat = (pHat - p0) / Math.sqrt(p0 * (1 - p0) / n);
+          
+          // 计算p值（双尾检验）
+          const pValue = 2 * (1 - this.normalCDF(Math.abs(zStat)));
+          
+          // 显示结果
+          document.getElementById('hero-sample-rate').textContent = pHat.toFixed(3);
+          document.getElementById('hero-z-stat').textContent = zStat.toFixed(3);
+          document.getElementById('hero-p-value').textContent = pValue.toFixed(4);
+          
+          const conclusion = document.getElementById('hero-conclusion');
+          const interpretation = document.getElementById('hero-interpretation');
+          
+          if (pValue < alpha) {
+            conclusion.textContent = '拒绝H₀';
+            conclusion.className = 'text-lg font-bold text-red-400';
+            interpretation.innerHTML = `
+              <p class="mb-3">🚨 <strong>检验结论：拒绝原假设</strong></p>
+              <p class="mb-2">• p值(${pValue.toFixed(4)}) < α(${alpha})，证据显著</p>
+              <p class="mb-2">• 暗影刺客的胜率(${(pHat*100).toFixed(1)}%)显著偏离50%的平衡目标</p>
+              <p class="text-neon-orange">🎮 <strong>游戏建议：</strong>需要调整英雄技能或属性以恢复游戏平衡</p>
+            `;
+          } else {
+            conclusion.textContent = '不拒绝H₀';
+            conclusion.className = 'text-lg font-bold text-gray-400';
+            interpretation.innerHTML = `
+              <p class="mb-3">✅ <strong>检验结论：不拒绝原假设</strong></p>
+              <p class="mb-2">• p值(${pValue.toFixed(4)}) ≥ α(${alpha})，证据不足</p>
+              <p class="mb-2">• 暗影刺客的胜率(${(pHat*100).toFixed(1)}%)与50%的差异可能由随机波动造成</p>
+              <p class="text-neon-green">🎮 <strong>游戏建议：</strong>英雄平衡性良好，可以正式发布</p>
+            `;
+          }
+          
+          this.heroResults.classList.remove('hidden');
+        }
+
+        calculateAgriTest() {
+          const n = parseInt(this.agriSampleSize.value);
+          const xBar = parseFloat(this.agriSampleMean.value);
+          const s = parseFloat(this.agriSampleStd.value);
+          const alpha = parseFloat(this.agriAlpha.value);
+          const mu0 = 500; // 原假设产量
+          
+          // 计算t统计量
+          const tStat = (xBar - mu0) / (s / Math.sqrt(n));
+          
+          // 计算p值（单尾检验，右尾）
+          const pValue = 1 - this.tCDF(tStat, n - 1);
+          
+          // 显示结果
+          document.getElementById('agri-improvement').textContent = `+${(xBar - mu0).toFixed(1)}kg`;
+          document.getElementById('agri-t-stat').textContent = tStat.toFixed(3);
+          document.getElementById('agri-p-value').textContent = pValue.toFixed(4);
+          
+          const conclusion = document.getElementById('agri-conclusion');
+          const interpretation = document.getElementById('agri-interpretation');
+          
+          if (pValue < alpha) {
+            conclusion.textContent = '拒绝H₀';
+            conclusion.className = 'text-lg font-bold text-neon-green';
+            interpretation.innerHTML = `
+              <p class="mb-3">🌟 <strong>检验结论：拒绝原假设</strong></p>
+              <p class="mb-2">• p值(${pValue.toFixed(4)}) < α(${alpha})，证据显著</p>
+              <p class="mb-2">• "生长之源"肥料显著提高了小麦产量，平均增产${(xBar - mu0).toFixed(1)}公斤/亩</p>
+              <p class="mb-2">• 提升幅度：${((xBar - mu0) / mu0 * 100).toFixed(1)}%</p>
+              <p class="text-neon-green">🌱 <strong>农业建议：</strong>可以大规模推广使用这种神奇肥料</p>
+            `;
+          } else {
+            conclusion.textContent = '不拒绝H₀';
+            conclusion.className = 'text-lg font-bold text-gray-400';
+            interpretation.innerHTML = `
+              <p class="mb-3">🤔 <strong>检验结论：不拒绝原假设</strong></p>
+              <p class="mb-2">• p值(${pValue.toFixed(4)}) ≥ α(${alpha})，证据不足</p>
+              <p class="mb-2">• 虽然观察到${(xBar - mu0).toFixed(1)}公斤的产量提升，但统计上不显著</p>
+              <p class="mb-2">• 可能是随机波动或样本量不足导致</p>
+              <p class="text-neon-orange">🌱 <strong>农业建议：</strong>需要更多试验数据或改进肥料配方</p>
+            `;
+          }
+          
+          this.agriResults.classList.remove('hidden');
+        }
+
+        // 标准正态分布累积分布函数近似
+        normalCDF(x) {
+          return 0.5 * (1 + this.erf(x / Math.sqrt(2)));
+        }
+
+        // 误差函数近似
+        erf(x) {
+          const a1 =  0.254829592;
+          const a2 = -0.284496736;
+          const a3 =  1.421413741;
+          const a4 = -1.453152027;
+          const a5 =  1.061405429;
+          const p  =  0.3275911;
+          
+          const sign = x >= 0 ? 1 : -1;
+          x = Math.abs(x);
+          
+          const t = 1.0 / (1.0 + p * x);
+          const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+          
+          return sign * y;
+        }
+
+        // t分布累积分布函数近似
+        tCDF(t, df) {
+          if (df >= 30) {
+            return this.normalCDF(t);
+          }
+          
+          // 简化的t分布近似
+          const x = t / Math.sqrt(df);
+          const approx = this.normalCDF(x * (1 - 1/(4*df)));
+          return approx;
+        }
+      }
+
+      // 课后问题管理
+      class ExerciseManager {
+        constructor() {
+          this.initializeElements();
+          this.bindEvents();
+        }
+
+        initializeElements() {
+          this.level1Tab = document.getElementById('level1-tab');
+          this.level2Tab = document.getElementById('level2-tab');
+          this.level3Tab = document.getElementById('level3-tab');
+          this.level1Content = document.getElementById('level1-content');
+          this.level2Content = document.getElementById('level2-content');
+          this.level3Content = document.getElementById('level3-content');
+        }
+
+        bindEvents() {
+          if (this.level1Tab) this.level1Tab.addEventListener('click', () => this.switchLevel(1));
+          if (this.level2Tab) this.level2Tab.addEventListener('click', () => this.switchLevel(2));
+          if (this.level3Tab) this.level3Tab.addEventListener('click', () => this.switchLevel(3));
+        }
+
+        switchLevel(level) {
+          // 重置所有标签样式
+          [this.level1Tab, this.level2Tab, this.level3Tab].forEach(tab => {
+            if (tab) tab.className = 'exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white';
+          });
+          
+          // 隐藏所有内容
+          [this.level1Content, this.level2Content, this.level3Content].forEach(content => {
+            if (content) content.classList.add('hidden');
+          });
+          
+          // 激活选中的级别
+          if (level === 1) {
+            this.level1Tab.className = 'exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg';
+            this.level1Content.classList.remove('hidden');
+          } else if (level === 2) {
+            this.level2Tab.className = 'exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-green text-dark-bg';
+            this.level2Content.classList.remove('hidden');
+          } else if (level === 3) {
+            this.level3Tab.className = 'exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-orange text-dark-bg';
+            this.level3Content.classList.remove('hidden');
+          }
+        }
+      }
+
+      // 全局函数：检查答案
+      function checkAnswer(questionName, correctAnswer) {
+        const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+        const resultDiv = document.getElementById(`${questionName}-result`);
+        
+        if (!selectedOption) {
+          resultDiv.innerHTML = '<p class="text-yellow-400">⚠️ 请先选择一个答案</p>';
+          resultDiv.classList.remove('hidden');
+          return;
+        }
+        
+        const isCorrect = selectedOption.value === correctAnswer;
+        
+        if (isCorrect) {
+          if (questionName === 'q1') {
+            resultDiv.innerHTML = `
+              <div class="bg-green-900/30 border border-green-500/50 rounded-lg p-4">
+                <p class="text-green-400 font-semibold mb-2">✅ 正确！</p>
+                <p class="text-gray-300 text-sm">P值确实是在原假设为真的条件下，观察到当前样本结果或更极端结果的概率。这是假设检验的核心概念。</p>
+              </div>
+            `;
+          } else if (questionName === 'q2') {
+            resultDiv.innerHTML = `
+              <div class="bg-green-900/30 border border-green-500/50 rounded-lg p-4">
+                <p class="text-green-400 font-semibold mb-2">✅ 正确！</p>
+                <p class="text-gray-300 text-sm">显著性水平α是当H₀为真时错误拒绝它的概率（第一类错误），而不是当H₀为假时拒绝它的概率。</p>
+              </div>
+            `;
+          }
+        } else {
+          if (questionName === 'q1') {
+            resultDiv.innerHTML = `
+              <div class="bg-red-900/30 border border-red-500/50 rounded-lg p-4">
+                <p class="text-red-400 font-semibold mb-2">❌ 不正确</p>
+                <p class="text-gray-300 text-sm">P值不是原假设为真的概率，而是在原假设为真的前提下，观察到当前或更极端结果的概率。请重新思考。</p>
+              </div>
+            `;
+          } else if (questionName === 'q2') {
+            resultDiv.innerHTML = `
+              <div class="bg-red-900/30 border border-red-500/50 rounded-lg p-4">
+                <p class="text-red-400 font-semibold mb-2">❌ 不正确</p>
+                <p class="text-gray-300 text-sm">显著性水平α是第一类错误的概率，即当H₀为真时错误拒绝它的概率，不是当H₀为假时拒绝它的概率。</p>
+              </div>
+            `;
+          }
+        }
+        
+        resultDiv.classList.remove('hidden');
+      }
+
+      // 全局函数：检查计算题
+      function checkCalculation() {
+        const zInput = document.getElementById('calc-z');
+        const pInput = document.getElementById('calc-p');
+        const conclusionSelect = document.getElementById('calc-conclusion');
+        const resultDiv = document.getElementById('calc-result');
+        
+        const zValue = parseFloat(zInput.value);
+        const pValue = parseFloat(pInput.value);
+        const conclusion = conclusionSelect.value;
+        
+        // 正确答案
+        const correctZ = 1.5; // (78-75)/(10/√25) = 3/2 = 1.5
+        const correctP = 0.0668; // P(Z > 1.5) ≈ 0.0668
+        const correctConclusion = 'not-reject'; // p > 0.05
+        
+        let feedback = [];
+        let allCorrect = true;
+        
+        // 检查Z值
+        if (Math.abs(zValue - correctZ) < 0.1) {
+          feedback.push('<p class="text-green-400">✅ Z统计量计算正确</p>');
+        } else {
+          feedback.push('<p class="text-red-400">❌ Z统计量不正确，正确答案是1.5</p>');
+          allCorrect = false;
+        }
+        
+        // 检查P值
+        if (Math.abs(pValue - correctP) < 0.01) {
+          feedback.push('<p class="text-green-400">✅ P值计算正确</p>');
+        } else {
+          feedback.push('<p class="text-red-400">❌ P值不正确，正确答案约为0.067</p>');
+          allCorrect = false;
+        }
+        
+        // 检查结论
+        if (conclusion === correctConclusion) {
+          feedback.push('<p class="text-green-400">✅ 结论正确</p>');
+        } else {
+          feedback.push('<p class="text-red-400">❌ 结论不正确，应该是不拒绝H₀</p>');
+          allCorrect = false;
+        }
+        
+        const borderColor = allCorrect ? 'border-green-500/50' : 'border-yellow-500/50';
+        const bgColor = allCorrect ? 'bg-green-900/30' : 'bg-yellow-900/30';
+        
+        resultDiv.innerHTML = `
+          <div class="${bgColor} border ${borderColor} rounded-lg p-4">
+            ${feedback.join('')}
+            <div class="mt-4 pt-4 border-t border-gray-600">
+              <p class="text-gray-300 font-semibold mb-2">解题步骤：</p>
+              <p class="text-gray-300 text-sm mb-1">1. Z = (78-75)/(10/√25) = 3/2 = 1.5</p>
+              <p class="text-gray-300 text-sm mb-1">2. P值 = P(Z > 1.5) ≈ 0.0668</p>
+              <p class="text-gray-300 text-sm">3. 因为P值(0.0668) > α(0.05)，所以不拒绝H₀，智慧药水效果不显著</p>
+            </div>
+          </div>
+        `;
+        
+        resultDiv.classList.remove('hidden');
+      }
+
+      // 全局函数：显示思考题答案
+      function showThinkingAnswer(questionNum) {
+        const answerDiv = document.getElementById(`thinking${questionNum}-answer`);
+        answerDiv.classList.toggle('hidden');
+      }
+
+      // 全局函数：显示设计题答案
+      function showDesignAnswer(questionNum) {
+        const answerDiv = document.getElementById(`design${questionNum}-answer`);
+        answerDiv.classList.toggle('hidden');
       }
 
       // 侦探教室交互
@@ -1569,22 +2766,24 @@
         initParticles();
         new MagicPotionExperiment();
         new DetectiveClassroom();
+        new PracticalApplications();
+        new ExerciseManager();
 
         // 平滑滚动
         document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", function (e) {
-          e.preventDefault();
-          const href = this.getAttribute("href");
-           if (href && href !== "#") {
-             const target = document.querySelector(href);
-             if (target) {
-               target.scrollIntoView({
-                 behavior: "smooth",
-               });
-             }
-           }
-         });
-       });
+          anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            const href = this.getAttribute("href");
+            if (href && href !== "#") {
+              const target = document.querySelector(href);
+              if (target) {
+                target.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }
+            }
+          });
+        });
 
         // 导航栏滚动效果
         window.addEventListener("scroll", function () {
@@ -1606,7 +2805,7 @@
         }
       });
     </script>
-    
+
     <!-- 引入工具箱脚本 -->
     <script src="../static/js/toolbox.js"></script>
   </body>
