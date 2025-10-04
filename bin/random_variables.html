@@ -1,0 +1,4904 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>随机变量探索 - 概率统计可视化</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.4.0/chartjs-plugin-annotation.min.js"></script>
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    
+    <!-- KaTeX for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false},
+            {left: "\\[", right: "\\]", display: true},
+            {left: "\\(", right: "\\)", display: false}
+          ]
+        });
+      });
+    </script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+      :root {
+        --dark-bg: #0f172a;
+        --dark-card: #1e293b;
+        --neon-blue: #00f3ff;
+        --neon-purple: #bf00ff;
+        --neon-green: #00ff66;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: var(--dark-bg);
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      .font-future {
+        font-family: "Roboto", sans-serif;
+        letter-spacing: 0.05em;
+      }
+
+      .text-neon-blue {
+        color: var(--neon-blue);
+      }
+
+      .text-neon-purple {
+        color: var(--neon-purple);
+      }
+
+      .text-neon-green {
+        color: var(--neon-green);
+      }
+
+      .bg-neon-blue {
+        background-color: var(--neon-blue);
+      }
+
+      .bg-neon-purple {
+        background-color: var(--neon-purple);
+      }
+
+      .bg-neon-green {
+        background-color: var(--neon-green);
+      }
+
+      .bg-dark-bg {
+        background-color: var(--dark-bg);
+      }
+
+      /* 思考动画样式 */
+      .thinking-animation {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .thinking-animation .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #00f3ff;
+        animation: thinking-pulse 1.4s ease-in-out infinite both;
+      }
+
+      .thinking-animation .dot:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+
+      .thinking-animation .dot:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+
+      .thinking-animation .dot:nth-child(3) {
+        animation-delay: 0s;
+      }
+
+      @keyframes thinking-pulse {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.5;
+        }
+        40% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+      }
+
+      /* Markdown内容样式 */
+      .message-content {
+        line-height: 1.6;
+      }
+
+      .message-content h1,
+      .message-content h2,
+      .message-content h3,
+      .message-content h4,
+      .message-content h5,
+      .message-content h6 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      .message-content p {
+        margin-bottom: 1rem;
+      }
+
+      .message-content ul,
+      .message-content ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+      }
+
+      .message-content li {
+        margin-bottom: 0.25rem;
+      }
+
+      .message-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        background-color: rgba(30, 41, 59, 0.5);
+        border-radius: 0.5rem;
+        overflow: hidden;
+      }
+
+      .message-content th,
+      .message-content td {
+        padding: 0.75rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .message-content th {
+        background-color: rgba(0, 243, 255, 0.1);
+        font-weight: 600;
+        color: #00f3ff;
+      }
+
+      .message-content code {
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-family: 'Courier New', monospace;
+        color: #00ff66;
+      }
+
+      .message-content pre {
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1rem 0;
+      }
+
+      .message-content pre code {
+        background: none;
+        padding: 0;
+      }
+
+      .message-content blockquote {
+        border-left: 4px solid #00f3ff;
+        padding-left: 1rem;
+        margin: 1rem 0;
+        font-style: italic;
+        color: #cbd5e1;
+      }
+
+      .message-content .katex {
+        color: #e5e7eb !important;
+      }
+
+      .message-content .katex-display {
+        margin: 1rem 0;
+      }
+
+      .bg-dark-card {
+        background-color: var(--dark-card);
+      }
+
+      .accent-neon-blue {
+        accent-color: var(--neon-blue);
+      }
+
+      .accent-neon-purple {
+        accent-color: var(--neon-purple);
+      }
+
+      .accent-neon-green {
+        accent-color: var(--neon-green);
+      }
+
+      .clip-path-slant {
+        clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+      }
+
+      .bg-grid {
+        background-image: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          );
+        background-size: 20px 20px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      /* 粒子动画 */
+      #particles-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.5;
+        animation: float 15s infinite ease-in-out;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) translateX(0);
+        }
+        25% {
+          transform: translateY(-30px) translateX(15px);
+        }
+        50% {
+          transform: translateY(-15px) translateX(-15px);
+        }
+        75% {
+          transform: translateY(30px) translateX(15px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 粒子背景 -->
+    <div id="particles-container"></div>
+
+    <!-- 导航栏 -->
+    <nav
+      class="bg-dark-bg/80 backdrop-blur-md py-4 sticky top-0 z-50 border-b border-gray-800"
+    >
+      <div class="container mx-auto px-4 flex justify-between items-center">
+        <a
+          href="index.html"
+          class="text-2xl font-future font-bold flex items-center"
+        >
+          <span class="text-neon-blue">概率统计</span
+          ><span class="ml-2">可视化</span>
+        </a>
+        <div class="flex space-x-6">
+          <a
+            href="index.html"
+            class="text-gray-300 hover:text-neon-blue transition-colors duration-300"
+            >首页</a
+          >
+          <a
+            href="random_variables.html"
+            class="text-neon-blue border-b-2 border-neon-blue pb-1"
+            >随机变量</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <section
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50 clip-path-slant"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h1 class="text-[clamp(2rem,6vw,4rem)] font-future font-bold mb-4">
+            <span class="text-neon-blue">随机变量</span>探索
+          </h1>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            通过交互式可视化，理解随机变量的本质和特性
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 随机变量部分 -->
+    <section
+      id="random-variables"
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- 离散型随机变量 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-cubes text-neon-blue mr-3"></i> 离散型随机变量
+            </h3>
+
+            <div class="mb-6">
+              <p class="text-gray-300 mb-4">
+                离散型随机变量只能取有限个或可数无限个值，如掷骰子的点数、抛硬币的正反面等。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h4 class="text-gray-200 mb-2 font-semibold">
+                  示例：掷两个骰子的点数和
+                </h4>
+                <div class="flex justify-center mb-4">
+                  <div
+                    id="dice1"
+                    class="w-16 h-16 bg-white rounded-lg flex items-center justify-center text-dark-bg text-2xl font-bold mr-4"
+                  >
+                    1
+                  </div>
+                  <div
+                    id="dice2"
+                    class="w-16 h-16 bg-white rounded-lg flex items-center justify-center text-dark-bg text-2xl font-bold"
+                  >
+                    1
+                  </div>
+                </div>
+                <div class="text-center mb-4">
+                  <span class="text-gray-300">点数和: </span>
+                  <span id="dice-sum" class="text-neon-blue font-bold text-xl"
+                    >2</span
+                  >
+                </div>
+                <div class="text-center mb-4">
+                  <span class="text-gray-300">总次数: </span>
+                  <span
+                    id="total-rolls"
+                    class="text-neon-green font-bold text-lg"
+                    >0</span
+                  >
+                </div>
+                <div class="flex justify-center space-x-4">
+                  <button
+                    id="roll-dice-btn"
+                    class="px-6 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300 transform hover:scale-105"
+                  >
+                    掷1次骰子 <i class="fa fa-refresh ml-2"></i>
+                  </button>
+                  <button
+                    id="roll-dice-ten-btn"
+                    class="px-6 py-2 bg-neon-purple text-dark-bg font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300 transform hover:scale-105"
+                  >
+                    掷10次骰子 <i class="fa fa-dice ml-2"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-64">
+              <canvas id="discrete-rv-chart"></canvas>
+            </div>
+
+            <div
+              class="mt-6 pt-4 border-t border-gray-800 text-sm text-gray-400"
+            >
+              <p>
+                概率质量函数(PMF)描述了离散随机变量在各个可能取值上的概率。上图展示了两个骰子点数和的概率分布。
+              </p>
+            </div>
+          </div>
+
+          <!-- 连续型随机变量 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-wave-square text-neon-purple mr-3"></i>
+              连续型随机变量
+            </h3>
+
+            <div class="mb-6">
+              <p class="text-gray-300 mb-4">
+                连续型随机变量可以取某个区间内的任意值，如身高、体重、时间等。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h4 class="text-gray-200 mb-2 font-semibold">随机数生成器</h4>
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2">分布类型:</label>
+                  <select
+                    id="continuous-distribution"
+                    class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-neon-purple"
+                  >
+                    <option value="uniform">均匀分布</option>
+                    <option value="normal">正态分布</option>
+                    <option value="exponential">指数分布</option>
+                  </select>
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2"
+                    >样本数量:
+                    <span id="continuous-samples-value">1000</span></label
+                  >
+                  <input
+                    type="range"
+                    id="continuous-samples"
+                    min="100"
+                    max="10000"
+                    step="100"
+                    value="1000"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2"
+                    >X轴最小值: <span id="x-axis-min-value">-5</span></label
+                  >
+                  <input
+                    type="range"
+                    id="x-axis-min"
+                    min="-10"
+                    max="0"
+                    step="0.5"
+                    value="-5"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2"
+                    >X轴最大值: <span id="x-axis-max-value">5</span></label
+                  >
+                  <input
+                    type="range"
+                    id="x-axis-max"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value="5"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                  />
+                </div>
+                <div class="flex justify-center">
+                  <button
+                    id="generate-samples-btn"
+                    class="px-6 py-2 bg-neon-purple text-dark-bg font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300 transform hover:scale-105"
+                  >
+                    生成样本 <i class="fa fa-random ml-2"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-64">
+              <canvas id="continuous-rv-chart"></canvas>
+            </div>
+
+            <div
+              class="mt-6 pt-4 border-t border-gray-800 text-sm text-gray-400"
+            >
+              <p>
+                概率密度函数(PDF)描述了连续随机变量的概率分布。上图展示了不同分布类型的样本直方图与理论密度曲线。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 随机变量数字特征 -->
+        <div class="mt-12 bg-dark-card rounded-xl p-6 border border-gray-800">
+          <h3
+            class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-chart-line text-neon-green mr-3"></i>
+            随机变量数字特征
+          </h3>
+
+          <div class="mb-6">
+            <p class="text-gray-300 mb-4">
+              随机变量的数字特征（如期望、方差、标准差）提供了对其分布的重要描述。调整参数，观察这些特征的变化。
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="bg-dark-bg rounded-lg p-4">
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-2">分布类型:</label>
+                  <select
+                    id="rv-distribution"
+                    class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-neon-green"
+                  >
+                    <option value="normal">正态分布</option>
+                    <option value="uniform">均匀分布</option>
+                    <option value="exponential">指数分布</option>
+                    <option value="binomial">二项分布</option>
+                  </select>
+                </div>
+
+                <!-- 正态分布参数 -->
+                <div id="rv-normal-params" class="mb-4 rv-params">
+                  <div class="mb-3">
+                    <label class="block text-gray-300 mb-1"
+                      >均值 (μ): <span id="rv-normal-mean-value">0</span></label
+                    >
+                    <input
+                      type="range"
+                      id="rv-normal-mean"
+                      min="-5"
+                      max="5"
+                      step="0.1"
+                      value="0"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="block text-gray-300 mb-1"
+                      >标准差 (σ):
+                      <span id="rv-normal-std-value">1</span></label
+                    >
+                    <input
+                      type="range"
+                      id="rv-normal-std"
+                      min="0.1"
+                      max="3"
+                      step="0.1"
+                      value="1"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                </div>
+
+                <!-- 均匀分布参数 -->
+                <div id="rv-uniform-params" class="mb-4 rv-params hidden">
+                  <div class="mb-3">
+                    <label class="block text-gray-300 mb-1"
+                      >最小值 (a):
+                      <span id="rv-uniform-min-value">-2</span></label
+                    >
+                    <input
+                      type="range"
+                      id="rv-uniform-min"
+                      min="-5"
+                      max="0"
+                      step="0.1"
+                      value="-2"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="block text-gray-300 mb-1"
+                      >最大值 (b):
+                      <span id="rv-uniform-max-value">2</span></label
+                    >
+                    <input
+                      type="range"
+                      id="rv-uniform-max"
+                      min="0"
+                      max="5"
+                      step="0.1"
+                      value="2"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                </div>
+
+                <!-- 指数分布参数 -->
+                <div id="rv-exponential-params" class="mb-4 rv-params hidden">
+                  <div class="mb-3">
+                    <label class="block text-gray-300 mb-1"
+                      >λ参数:
+                      <span id="rv-exponential-lambda-value">1</span></label
+                    >
+                    <input
+                      type="range"
+                      id="rv-exponential-lambda"
+                      min="0.1"
+                      max="3"
+                      step="0.1"
+                      value="1"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                </div>
+
+                <!-- 二项分布参数 -->
+                <div id="rv-binomial-params" class="mb-4 rv-params hidden">
+                  <div class="mb-3">
+                    <label class="block text-gray-300 mb-1"
+                      >试验次数 (n):
+                      <span id="rv-binomial-n-value">10</span></label
+                    >
+                    <input
+                      type="range"
+                      id="rv-binomial-n"
+                      min="1"
+                      max="30"
+                      step="1"
+                      value="10"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="block text-gray-300 mb-1"
+                      >成功概率 (p):
+                      <span id="rv-binomial-p-value">0.5</span></label
+                    >
+                    <input
+                      type="range"
+                      id="rv-binomial-p"
+                      min="0.1"
+                      max="0.9"
+                      step="0.05"
+                      value="0.5"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                </div>
+
+                <!-- X轴范围控制 -->
+                <div class="mb-4">
+                  <h5 class="text-gray-200 mb-3 font-semibold">图表X轴范围</h5>
+                  <div class="mb-3">
+                    <label class="block text-gray-300 mb-1"
+                      >X轴最小值:
+                      <span id="rv-x-axis-min-value">-5</span></label
+                    >
+                    <input
+                      type="range"
+                      id="rv-x-axis-min"
+                      min="-10"
+                      max="0"
+                      step="0.5"
+                      value="-5"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="block text-gray-300 mb-1"
+                      >X轴最大值: <span id="rv-x-axis-max-value">5</span></label
+                    >
+                    <input
+                      type="range"
+                      id="rv-x-axis-max"
+                      min="0"
+                      max="10"
+                      step="0.5"
+                      value="5"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 text-center">
+                  <div class="bg-gray-800 p-3 rounded-lg">
+                    <div class="text-sm text-gray-400">期望 E[X]</div>
+                    <div
+                      id="rv-expectation"
+                      class="text-xl font-semibold text-neon-green"
+                    >
+                      0.00
+                    </div>
+                  </div>
+                  <div class="bg-gray-800 p-3 rounded-lg">
+                    <div class="text-sm text-gray-400">方差 Var[X]</div>
+                    <div
+                      id="rv-variance"
+                      class="text-xl font-semibold text-neon-green"
+                    >
+                      1.00
+                    </div>
+                  </div>
+                  <div class="bg-gray-800 p-3 rounded-lg">
+                    <div class="text-sm text-gray-400">标准差 σ</div>
+                    <div
+                      id="rv-std"
+                      class="text-xl font-semibold text-neon-green"
+                    >
+                      1.00
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="h-64">
+                <canvas id="rv-features-chart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-gray-800 text-sm text-gray-400">
+            <p>
+              期望值表示随机变量的平均值，方差和标准差则描述了随机变量取值的离散程度。上图展示了不同参数下的概率密度函数和期望值位置。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 理论知识部分 -->
+    <section
+      id="theory-knowledge"
+      class="py-20 relative bg-gradient-to-b from-dark-card/50 to-dark-bg"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.5rem,4vw,3rem)] font-future font-bold mb-4">
+            <span class="text-neon-purple">理论知识</span>深入探索
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            深入理解随机变量的数学原理、分布之间的关系以及重要定理
+          </p>
+        </div>
+
+        <!-- 二项分布与正态分布的关系 -->
+        <div class="mb-12 bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-2xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-link text-neon-blue mr-3"></i>
+            二项分布与正态分布的关系
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <h4 class="text-xl font-semibold mb-4 text-neon-blue">
+                德莫弗-拉普拉斯定理
+              </h4>
+              <p class="text-gray-300 mb-4">
+                当二项分布的参数n足够大时，二项分布近似服从正态分布。这是概率论中的一个重要极限定理。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  定理表述
+                </h5>
+                <p class="text-gray-300 mb-2">
+                  设 $X \sim B(n, p)$，当 $n \to \infty$ 时：
+                </p>
+                <div class="bg-gray-900 p-4 rounded-lg text-center">
+                  <div class="text-neon-green mb-3 text-lg">
+                    $$X \sim B(n, p) \approx N(\mu, \sigma^2)$$
+                  </div>
+                  <div class="text-gray-300">其中：</div>
+                  <div class="text-gray-300 mt-2">
+                    $$\mu = np \quad \text{（期望）}$$
+                  </div>
+                  <div class="text-gray-300">
+                    $$\sigma^2 = np(1-p) \quad \text{（方差）}$$
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  适用条件
+                </h5>
+                <ul class="text-gray-300 space-y-2">
+                  <li class="flex items-center">
+                    <i class="fa fa-check text-neon-green mr-2"></i> n ≥ 30
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fa fa-check text-neon-green mr-2"></i> np ≥ 5
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fa fa-check text-neon-green mr-2"></i> n(1-p) ≥ 5
+                  </li>
+                </ul>
+              </div>
+
+              <!-- 二项分布与正态分布对比图 -->
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  分布对比可视化
+                </h5>
+
+                <!-- 参数控制 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2"
+                      >试验次数 n</label
+                    >
+                    <input
+                      type="range"
+                      id="binomial-n"
+                      min="10"
+                      max="200"
+                      value="50"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                    />
+                    <div
+                      class="text-center text-neon-blue mt-1"
+                      id="binomial-n-value"
+                    >
+                      50
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2"
+                      >成功概率 p</label
+                    >
+                    <input
+                      type="range"
+                      id="binomial-p"
+                      min="0.1"
+                      max="0.9"
+                      step="0.05"
+                      value="0.5"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                    />
+                    <div
+                      class="text-center text-neon-blue mt-1"
+                      id="binomial-p-value"
+                    >
+                      0.5
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2"
+                      >显示范围</label
+                    >
+                    <input
+                      type="range"
+                      id="binomial-range"
+                      min="2"
+                      max="4"
+                      step="0.5"
+                      value="3"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                    />
+                    <div
+                      class="text-center text-neon-blue mt-1"
+                      id="binomial-range-value"
+                    >
+                      3σ
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 图表容器 -->
+                <div class="bg-gray-900 rounded-lg p-4">
+                  <canvas
+                    id="binomial-normal-chart"
+                    width="800"
+                    height="400"
+                  ></canvas>
+                </div>
+
+                <!-- 统计信息 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div class="bg-gray-900 rounded-lg p-3">
+                    <h6 class="text-sm font-semibold text-neon-blue mb-2">
+                      二项分布 B(n,p)
+                    </h6>
+                    <div class="text-xs text-gray-300 space-y-1">
+                      <div>
+                        期望:
+                        <span id="binomial-mean" class="text-neon-blue"
+                          >25</span
+                        >
+                      </div>
+                      <div>
+                        方差:
+                        <span id="binomial-var" class="text-neon-blue"
+                          >12.5</span
+                        >
+                      </div>
+                      <div>
+                        标准差:
+                        <span id="binomial-std" class="text-neon-blue"
+                          >3.54</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-gray-900 rounded-lg p-3">
+                    <h6 class="text-sm font-semibold text-neon-green mb-2">
+                      正态分布 N(μ,σ²)
+                    </h6>
+                    <div class="text-xs text-gray-300 space-y-1">
+                      <div>
+                        期望:
+                        <span id="normal-mean" class="text-neon-green">25</span>
+                      </div>
+                      <div>
+                        方差:
+                        <span id="normal-var" class="text-neon-green"
+                          >12.5</span
+                        >
+                      </div>
+                      <div>
+                        标准差:
+                        <span id="normal-std" class="text-neon-green"
+                          >3.54</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-xl font-semibold mb-4 text-neon-purple">
+                连续性修正
+              </h4>
+              <p class="text-gray-300 mb-4">
+                由于二项分布是离散的而正态分布是连续的，在使用正态分布近似时需要进行连续性修正。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  修正公式
+                </h5>
+                <div class="bg-gray-900 p-4 rounded-lg text-center space-y-3">
+                  <div class="text-neon-purple text-lg">
+                    $$P(X = k) \approx P(k-0.5 < Y < k+0.5)$$
+                  </div>
+                  <div class="text-neon-purple text-lg">
+                    $$P(X \leq k) \approx P(Y < k+0.5)$$
+                  </div>
+                  <div class="text-neon-purple text-lg">
+                    $$P(X \geq k) \approx P(Y > k-0.5)$$
+                  </div>
+                </div>
+                <p class="text-gray-400 text-sm mt-2 text-center">
+                  其中 $Y \sim N(np, np(1-p))$
+                </p>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  实际应用
+                </h5>
+                <p class="text-gray-300 text-sm">
+                  连续性修正在质量控制、医学统计、市场调研等领域有广泛应用，特别是在样本量较大的假设检验中。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 概率密度函数推导 -->
+        <div class="mb-12 bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-2xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-calculator text-neon-green mr-3"></i>
+            概率密度函数推导
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <h4 class="text-xl font-semibold mb-4 text-neon-green">
+                正态分布PDF推导
+              </h4>
+              <p class="text-gray-300 mb-4">
+                正态分布的概率密度函数是概率论中最重要的函数之一，其推导涉及微积分和数理统计的深层理论。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  标准正态分布
+                </h5>
+                <div class="bg-gray-900 p-4 rounded-lg text-center">
+                  <div class="text-neon-green text-lg">
+                    $$\varphi(x) = \frac{1}{\sqrt{2\pi}} e^{-\frac{x^2}{2}}$$
+                  </div>
+                </div>
+                <p class="text-gray-400 text-sm mt-2 text-center">
+                  其中 $x \in (-\infty, +\infty)$
+                </p>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  一般正态分布
+                </h5>
+                <div class="bg-gray-900 p-4 rounded-lg text-center">
+                  <div class="text-neon-green text-lg">
+                    $$f(x) = \frac{1}{\sigma\sqrt{2\pi}}
+                    e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
+                  </div>
+                </div>
+                <p class="text-gray-400 text-sm mt-2 text-center">
+                  通过标准化变换 $Z = \frac{X-\mu}{\sigma}$ 得到
+                </p>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  推导要点
+                </h5>
+                <ul class="text-gray-300 space-y-2 text-sm">
+                  <li class="flex items-start">
+                    <i class="fa fa-arrow-right text-neon-green mr-2 mt-1"></i>
+                    基于中心极限定理
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fa fa-arrow-right text-neon-green mr-2 mt-1"></i>
+                    满足概率密度函数性质
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fa fa-arrow-right text-neon-green mr-2 mt-1"></i>
+                    积分等于1的约束条件
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fa fa-arrow-right text-neon-green mr-2 mt-1"></i>
+                    最大熵原理的应用
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-xl font-semibold mb-4 text-neon-blue">
+                指数分布PDF推导
+              </h4>
+              <p class="text-gray-300 mb-4">
+                指数分布常用于描述事件发生的时间间隔，如设备故障时间、客户到达间隔等。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  概率密度函数
+                </h5>
+                <div class="bg-gray-900 p-4 rounded-lg text-center">
+                  <div class="text-neon-blue text-lg mb-2">
+                    $$f(x) = \lambda e^{-\lambda x}, \quad x \geq 0$$
+                  </div>
+                  <div class="text-gray-300">其中 $\lambda > 0$ 为率参数</div>
+                </div>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  数字特征
+                </h5>
+                <div class="bg-gray-900 p-4 rounded-lg text-center space-y-2">
+                  <div class="text-neon-blue text-lg">
+                    $$E[X] = \frac{1}{\lambda}$$
+                  </div>
+                  <div class="text-neon-blue text-lg">
+                    $$\text{Var}[X] = \frac{1}{\lambda^2}$$
+                  </div>
+                  <div class="text-neon-blue text-lg">
+                    $$\sigma = \frac{1}{\lambda}$$
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  无记忆性
+                </h5>
+                <p class="text-gray-300 text-sm mb-2">
+                  指数分布具有无记忆性质：
+                </p>
+                <div class="bg-gray-900 p-4 rounded-lg text-center">
+                  <div class="text-neon-blue text-lg">
+                    $$P(X > s+t \mid X > s) = P(X > t)$$
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 中心极限定理 -->
+        <div class="mb-12 bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-2xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-bullseye text-neon-purple mr-3"></i> 中心极限定理
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2">
+              <h4 class="text-xl font-semibold mb-4 text-neon-purple">
+                定理表述
+              </h4>
+              <p class="text-gray-300 mb-4">
+                中心极限定理是概率论中最重要的定理之一，它说明了在一定条件下，大量独立随机变量的平均值近似服从正态分布。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  数学表述
+                </h5>
+                <p class="text-gray-300 mb-2">
+                  设 $X_1, X_2, \ldots, X_n$ 是独立同分布的随机变量，$E[X_i] =
+                  \mu$, $\text{Var}[X_i] = \sigma^2$，则：
+                </p>
+                <div class="bg-gray-900 p-4 rounded-lg text-center space-y-2">
+                  <div class="text-neon-purple text-lg">
+                    $$\bar{X}_n = \frac{X_1 + X_2 + \cdots + X_n}{n}$$
+                  </div>
+                  <div class="text-neon-purple text-lg">
+                    当 $n \to \infty$ 时：
+                  </div>
+                  <div class="text-neon-purple text-lg">
+                    $$\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \xrightarrow{d}
+                    N(0,1)$$
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  实际意义
+                </h5>
+                <ul class="text-gray-300 space-y-2 text-sm">
+                  <li class="flex items-start">
+                    <i class="fa fa-star text-neon-purple mr-2 mt-1"></i>
+                    样本均值的分布趋向正态
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fa fa-star text-neon-purple mr-2 mt-1"></i>
+                    不依赖于原分布的具体形式
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fa fa-star text-neon-purple mr-2 mt-1"></i>
+                    统计推断的理论基础
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fa fa-star text-neon-purple mr-2 mt-1"></i>
+                    质量控制和假设检验的依据
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-xl font-semibold mb-4 text-neon-green">
+                应用条件
+              </h4>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  基本要求
+                </h5>
+                <ul class="text-gray-300 space-y-2 text-sm">
+                  <li class="flex items-center">
+                    <i class="fa fa-check text-neon-green mr-2"></i> 独立性
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fa fa-check text-neon-green mr-2"></i> 同分布
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fa fa-check text-neon-green mr-2"></i> 有限方差
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fa fa-check text-neon-green mr-2"></i> n 足够大
+                  </li>
+                </ul>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  经验法则
+                </h5>
+                <ul class="text-gray-300 space-y-2 text-sm">
+                  <li class="flex items-center">
+                    <i class="fa fa-arrow-right text-neon-green mr-2"></i> n ≥
+                    30 通常足够
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fa fa-arrow-right text-neon-green mr-2"></i>
+                    原分布越对称，n 可以越小
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fa fa-arrow-right text-neon-green mr-2"></i>
+                    原分布越偏斜，需要更大的 n
+                  </li>
+                </ul>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  实际应用
+                </h5>
+                <p class="text-gray-300 text-sm">
+                  广泛应用于统计推断、置信区间构造、假设检验、质量控制等领域。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 大数定律 -->
+        <div class="bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-2xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-balance-scale text-neon-blue mr-3"></i> 大数定律
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <h4 class="text-xl font-semibold mb-4 text-neon-blue">
+                弱大数定律（辛钦定律）
+              </h4>
+              <p class="text-gray-300 mb-4">
+                当样本量趋于无穷时，样本均值依概率收敛到总体均值。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  数学表述
+                </h5>
+                <div class="bg-gray-900 p-4 rounded-lg text-center">
+                  <div class="text-neon-blue text-lg mb-2">
+                    $$\lim_{n \to \infty} P(|\bar{X}_n - \mu| < \varepsilon) =
+                    1$$
+                  </div>
+                </div>
+                <p class="text-gray-400 text-sm mt-2 text-center">
+                  对任意 $\varepsilon > 0$
+                </p>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  实际意义
+                </h5>
+                <p class="text-gray-300 text-sm">
+                  频率稳定于概率，为统计推断提供了理论依据，是蒙特卡罗方法的基础。
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-xl font-semibold mb-4 text-neon-green">
+                强大数定律
+              </h4>
+              <p class="text-gray-300 mb-4">
+                样本均值以概率1收敛到总体均值，是比弱大数定律更强的结果。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  数学表述
+                </h5>
+                <div class="bg-gray-900 p-4 rounded-lg text-center">
+                  <div class="text-neon-green text-lg mb-2">
+                    $$P\left(\lim_{n \to \infty} \bar{X}_n = \mu\right) = 1$$
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  区别与联系
+                </h5>
+                <ul class="text-gray-300 space-y-2 text-sm">
+                  <li class="flex items-start">
+                    <i class="fa fa-arrow-right text-neon-green mr-2 mt-1"></i>
+                    强大数定律 ⟹ 弱大数定律
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fa fa-arrow-right text-neon-green mr-2 mt-1"></i>
+                    几乎必然收敛 vs 依概率收敛
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fa fa-arrow-right text-neon-green mr-2 mt-1"></i>
+                    更强的收敛性质
+                  </li>
+                </ul>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  应用价值
+                </h5>
+                <p class="text-gray-300 text-sm">
+                  为频率解释概率提供了严格的数学基础，在随机模拟和数值计算中具有重要意义。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 蒙特卡洛模拟部分 -->
+    <section
+      id="monte-carlo"
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-[clamp(1.5rem,4vw,3rem)] font-future font-bold mb-4">
+            <span class="text-neon-green">蒙特卡洛模拟</span>实际应用
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            通过随机抽样解决复杂数学问题，体验概率统计在实际问题中的强大应用
+          </p>
+        </div>
+
+        <!-- π值估算 -->
+        <div class="mb-12 bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-2xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-circle text-neon-blue mr-3"></i> π值估算模拟
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <h4 class="text-xl font-semibold mb-4 text-neon-blue">
+                原理说明
+              </h4>
+              <p class="text-gray-300 mb-4">
+                利用单位圆内接正方形的面积比来估算π值。在正方形内随机投点，统计落在圆内的点数比例。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  数学原理
+                </h5>
+                <div class="bg-gray-900 p-4 rounded-lg text-center space-y-2">
+                  <div class="text-neon-blue text-lg">
+                    圆面积：$S_{circle} = \pi r^2 = \pi$
+                  </div>
+                  <div class="text-neon-blue text-lg">
+                    正方形面积：$S_{square} = (2r)^2 = 4$
+                  </div>
+                  <div class="text-neon-blue text-lg">
+                    面积比：$\frac{S_{circle}}{S_{square}} = \frac{\pi}{4}$
+                  </div>
+                  <div class="text-neon-green text-lg mt-3">
+                    $\pi \approx 4 \times \frac{N_{circle}}{N_{total}}$
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  控制参数
+                </h5>
+                <div class="mb-3">
+                  <label class="block text-gray-300 mb-1"
+                    >模拟点数: <span id="pi-points-value">1000</span></label
+                  >
+                  <input
+                    type="range"
+                    id="pi-points"
+                    min="100"
+                    max="50000"
+                    step="100"
+                    value="1000"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-1"
+                    >动画速度: <span id="pi-speed-value">50ms</span></label
+                  >
+                  <input
+                    type="range"
+                    id="pi-speed"
+                    min="10"
+                    max="200"
+                    step="10"
+                    value="50"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                </div>
+                <div class="flex space-x-4">
+                  <button
+                    id="pi-start-btn"
+                    class="px-6 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300 transform hover:scale-105"
+                  >
+                    开始模拟 <i class="fa fa-play ml-2"></i>
+                  </button>
+                  <button
+                    id="pi-reset-btn"
+                    class="px-6 py-2 bg-gray-600 text-white font-bold rounded-md hover:bg-gray-500 transition-all duration-300"
+                  >
+                    重置 <i class="fa fa-refresh ml-2"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">估算π值</div>
+                  <div
+                    id="pi-estimate"
+                    class="text-xl font-semibold text-neon-blue"
+                  >
+                    0.0000
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">误差</div>
+                  <div
+                    id="pi-error"
+                    class="text-xl font-semibold text-neon-green"
+                  >
+                    0.0000
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">圆内点数</div>
+                  <div
+                    id="pi-inside"
+                    class="text-xl font-semibold text-neon-purple"
+                  >
+                    0
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">总点数</div>
+                  <div id="pi-total" class="text-xl font-semibold text-white">
+                    0
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="h-96 bg-dark-bg rounded-lg p-4 relative">
+                <canvas
+                  id="pi-canvas"
+                  width="350"
+                  height="350"
+                  class="border border-gray-700 rounded"
+                ></canvas>
+              </div>
+              <div class="mt-4 h-32">
+                <canvas id="pi-convergence-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 积分计算 -->
+        <div class="mb-12 bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-2xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-area-chart text-neon-purple mr-3"></i> 积分计算模拟
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <h4 class="text-xl font-semibold mb-4 text-neon-purple">
+                函数积分估算
+              </h4>
+              <p class="text-gray-300 mb-4">
+                使用蒙特卡洛方法计算复杂函数的定积分，特别适用于高维积分和复杂区域。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  示例函数
+                </h5>
+                <div class="mb-3">
+                  <label class="block text-gray-300 mb-2">选择函数:</label>
+                  <select
+                    id="integral-function"
+                    class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-neon-purple"
+                  >
+                    <option value="sin">$f(x) = \sin(x)$</option>
+                    <option value="exp">$f(x) = e^{-x^2}$</option>
+                    <option value="sqrt">$f(x) = \sqrt{1-x^2}$</option>
+                    <option value="poly">$f(x) = x^3 - 2x^2 + x$</option>
+                  </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <label class="block text-gray-300 mb-1"
+                      >下限 a: <span id="integral-a-value">0</span></label
+                    >
+                    <input
+                      type="range"
+                      id="integral-a"
+                      min="-2"
+                      max="2"
+                      step="0.1"
+                      value="0"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-1"
+                      >上限 b: <span id="integral-b-value">1</span></label
+                    >
+                    <input
+                      type="range"
+                      id="integral-b"
+                      min="-2"
+                      max="2"
+                      step="0.1"
+                      value="1"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                    />
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="block text-gray-300 mb-1"
+                    >采样点数:
+                    <span id="integral-samples-value">10000</span></label
+                  >
+                  <input
+                    type="range"
+                    id="integral-samples"
+                    min="1000"
+                    max="100000"
+                    step="1000"
+                    value="10000"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-1"
+                    >动画速度:
+                    <span id="integral-speed-value">50ms</span></label
+                  >
+                  <input
+                    type="range"
+                    id="integral-speed"
+                    min="10"
+                    max="200"
+                    step="10"
+                    value="50"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                  />
+                </div>
+                <div class="flex space-x-4 mb-4">
+                  <button
+                    id="integral-calculate-btn"
+                    class="px-6 py-2 bg-neon-purple text-dark-bg font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300 transform hover:scale-105"
+                  >
+                    计算积分 <i class="fa fa-calculator ml-2"></i>
+                  </button>
+                  <button
+                    id="integral-animate-btn"
+                    class="px-6 py-2 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-neon-green/80 transition-all duration-300"
+                  >
+                    开始动画 <i class="fa fa-play ml-2"></i>
+                  </button>
+                  <button
+                    id="integral-pause-btn"
+                    class="px-6 py-2 bg-yellow-500 text-dark-bg font-bold rounded-md hover:bg-yellow-400 transition-all duration-300"
+                    style="display: none"
+                  >
+                    暂停 <i class="fa fa-pause ml-2"></i>
+                  </button>
+                  <button
+                    id="integral-reset-btn"
+                    class="px-6 py-2 bg-gray-600 text-white font-bold rounded-md hover:bg-gray-500 transition-all duration-300"
+                  >
+                    重置 <i class="fa fa-refresh ml-2"></i>
+                  </button>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg mb-4">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-gray-400">进度</span>
+                    <span
+                      id="integral-progress-text"
+                      class="text-sm text-neon-purple"
+                      >0%</span
+                    >
+                  </div>
+                  <div class="w-full bg-gray-700 rounded-full h-2">
+                    <div
+                      id="integral-progress-bar"
+                      class="bg-neon-purple h-2 rounded-full transition-all duration-300"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">蒙特卡洛估值</div>
+                  <div
+                    id="integral-mc-result"
+                    class="text-xl font-semibold text-neon-purple"
+                  >
+                    0.0000
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">理论值</div>
+                  <div
+                    id="integral-exact-result"
+                    class="text-xl font-semibold text-neon-blue"
+                  >
+                    0.0000
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">相对误差</div>
+                  <div
+                    id="integral-error"
+                    class="text-xl font-semibold text-neon-green"
+                  >
+                    0.00%
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">当前采样点</div>
+                  <div
+                    id="integral-current-samples"
+                    class="text-xl font-semibold text-white"
+                  >
+                    0
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 gap-4 mt-4">
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">计算时间</div>
+                  <div
+                    id="integral-time"
+                    class="text-xl font-semibold text-white"
+                  >
+                    0ms
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="h-64 mb-4">
+                <canvas id="integral-chart"></canvas>
+              </div>
+              <div class="h-32">
+                <canvas id="integral-convergence-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 期权定价 -->
+        <div class="mb-12 bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-2xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-line-chart text-neon-green mr-3"></i> 期权定价模拟
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <h4 class="text-xl font-semibold mb-4 text-neon-green">
+                Black-Scholes模型
+              </h4>
+              <p class="text-gray-300 mb-4">
+                使用蒙特卡洛方法模拟股价路径，计算欧式期权的理论价格。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  模型参数
+                </h5>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <label class="block text-gray-300 mb-1"
+                      >初始价格 S₀: <span id="option-s0-value">100</span></label
+                    >
+                    <input
+                      type="range"
+                      id="option-s0"
+                      min="50"
+                      max="200"
+                      step="5"
+                      value="100"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-1"
+                      >执行价格 K: <span id="option-k-value">100</span></label
+                    >
+                    <input
+                      type="range"
+                      id="option-k"
+                      min="50"
+                      max="200"
+                      step="5"
+                      value="100"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <label class="block text-gray-300 mb-1"
+                      >到期时间 T: <span id="option-t-value">1</span>年</label
+                    >
+                    <input
+                      type="range"
+                      id="option-t"
+                      min="0.1"
+                      max="2"
+                      step="0.1"
+                      value="1"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-1"
+                      >无风险利率 r: <span id="option-r-value">5</span>%</label
+                    >
+                    <input
+                      type="range"
+                      id="option-r"
+                      min="0"
+                      max="10"
+                      step="0.5"
+                      value="5"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <label class="block text-gray-300 mb-1"
+                      >波动率 σ: <span id="option-sigma-value">20</span>%</label
+                    >
+                    <input
+                      type="range"
+                      id="option-sigma"
+                      min="5"
+                      max="50"
+                      step="1"
+                      value="20"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-1"
+                      >模拟路径:
+                      <span id="option-paths-value">10000</span></label
+                    >
+                    <input
+                      type="range"
+                      id="option-paths"
+                      min="1000"
+                      max="50000"
+                      step="1000"
+                      value="10000"
+                      class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="block text-gray-300 mb-2">期权类型:</label>
+                  <select
+                    id="option-type"
+                    class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-neon-green"
+                  >
+                    <option value="call">看涨期权 (Call)</option>
+                    <option value="put">看跌期权 (Put)</option>
+                  </select>
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-1"
+                    >动画速度: <span id="option-speed-value">100ms</span></label
+                  >
+                  <input
+                    type="range"
+                    id="option-speed"
+                    min="50"
+                    max="500"
+                    step="50"
+                    value="100"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                </div>
+                <div class="flex space-x-4 mb-4">
+                  <button
+                    id="option-simulate-btn"
+                    class="px-6 py-2 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-neon-green/80 transition-all duration-300 transform hover:scale-105"
+                  >
+                    开始模拟 <i class="fa fa-play ml-2"></i>
+                  </button>
+                  <button
+                    id="option-animate-btn"
+                    class="px-6 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300"
+                  >
+                    开始动画 <i class="fa fa-play ml-2"></i>
+                  </button>
+                  <button
+                    id="option-pause-btn"
+                    class="px-6 py-2 bg-yellow-500 text-dark-bg font-bold rounded-md hover:bg-yellow-400 transition-all duration-300"
+                    style="display: none"
+                  >
+                    继续 <i class="fa fa-play ml-2"></i>
+                  </button>
+                  <button
+                    id="option-reset-btn"
+                    class="px-6 py-2 bg-gray-600 text-white font-bold rounded-md hover:bg-gray-500 transition-all duration-300"
+                  >
+                    重置 <i class="fa fa-refresh ml-2"></i>
+                  </button>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg mb-4">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-gray-400">进度</span>
+                    <span
+                      id="option-progress-text"
+                      class="text-sm text-neon-green"
+                      >0%</span
+                    >
+                  </div>
+                  <div class="w-full bg-gray-700 rounded-full h-2">
+                    <div
+                      id="option-progress-bar"
+                      class="bg-neon-green h-2 rounded-full transition-all duration-300"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">蒙特卡洛价格</div>
+                  <div
+                    id="option-mc-price"
+                    class="text-xl font-semibold text-neon-green"
+                  >
+                    0.00
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">Black-Scholes价格</div>
+                  <div
+                    id="option-bs-price"
+                    class="text-xl font-semibold text-neon-blue"
+                  >
+                    0.00
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">价格差异</div>
+                  <div
+                    id="option-price-diff"
+                    class="text-xl font-semibold text-neon-purple"
+                  >
+                    0.00
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">当前路径数</div>
+                  <div
+                    id="option-current-paths"
+                    class="text-xl font-semibold text-white"
+                  >
+                    0
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 gap-4 mt-4">
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">计算时间</div>
+                  <div
+                    id="option-time"
+                    class="text-xl font-semibold text-white"
+                  >
+                    0ms
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="h-64 mb-4">
+                <canvas id="option-path-chart"></canvas>
+              </div>
+              <div class="h-32">
+                <canvas id="option-convergence-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 排队系统模拟 -->
+        <div class="bg-dark-card rounded-xl p-8 border border-gray-800">
+          <h3
+            class="text-2xl font-future font-semibold mb-6 text-white flex items-center"
+          >
+            <i class="fa fa-users text-neon-blue mr-3"></i> 排队系统模拟
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <h4 class="text-xl font-semibold mb-4 text-neon-blue">
+                M/M/1排队模型
+              </h4>
+              <p class="text-gray-300 mb-4">
+                模拟单服务台排队系统，分析客户到达、服务时间对系统性能的影响。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <h5 class="text-lg font-semibold mb-3 text-gray-200">
+                  系统参数
+                </h5>
+                <div class="mb-3">
+                  <label class="block text-gray-300 mb-1"
+                    >到达率 λ:
+                    <span id="queue-arrival-rate-value">2</span>
+                    客户/分钟</label
+                  >
+                  <input
+                    type="range"
+                    id="queue-arrival-rate"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value="2"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="block text-gray-300 mb-1"
+                    >服务率 μ:
+                    <span id="queue-service-rate-value">3</span>
+                    客户/分钟</label
+                  >
+                  <input
+                    type="range"
+                    id="queue-service-rate"
+                    min="1"
+                    max="6"
+                    step="0.1"
+                    value="3"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="block text-gray-300 mb-1"
+                    >模拟时间:
+                    <span id="queue-max-time-value">60</span> 分钟</label
+                  >
+                  <input
+                    type="range"
+                    id="queue-max-time"
+                    min="30"
+                    max="180"
+                    step="10"
+                    value="60"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-gray-300 mb-1"
+                    >动画速度: <span id="queue-speed-value">100ms</span></label
+                  >
+                  <input
+                    type="range"
+                    id="queue-speed"
+                    min="50"
+                    max="500"
+                    step="50"
+                    value="100"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                </div>
+                <div class="flex space-x-4">
+                  <button
+                    id="queue-start-btn"
+                    class="px-6 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300 transform hover:scale-105"
+                  >
+                    开始模拟 <i class="fa fa-play ml-2"></i>
+                  </button>
+                  <button
+                    id="queue-pause-btn"
+                    class="px-6 py-2 bg-yellow-500 text-dark-bg font-bold rounded-md hover:bg-yellow-400 transition-all duration-300"
+                    disabled
+                  >
+                    暂停 <i class="fa fa-pause ml-2"></i>
+                  </button>
+                  <button
+                    id="queue-reset-btn"
+                    class="px-6 py-2 bg-gray-600 text-white font-bold rounded-md hover:bg-gray-500 transition-all duration-300"
+                  >
+                    重置 <i class="fa fa-refresh ml-2"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">平均队长</div>
+                  <div
+                    id="queue-avg-length"
+                    class="text-xl font-semibold text-neon-blue"
+                  >
+                    0.00
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">平均等待时间</div>
+                  <div
+                    id="queue-avg-wait"
+                    class="text-xl font-semibold text-neon-green"
+                  >
+                    0.00分钟
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">服务利用率</div>
+                  <div
+                    id="queue-utilization"
+                    class="text-xl font-semibold text-neon-purple"
+                  >
+                    0.00%
+                  </div>
+                </div>
+                <div class="bg-gray-800 p-3 rounded-lg text-center">
+                  <div class="text-sm text-gray-400">已服务客户</div>
+                  <div
+                    id="queue-served"
+                    class="text-xl font-semibold text-white"
+                  >
+                    0
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="h-48 mb-4">
+                <canvas id="queue-chart"></canvas>
+              </div>
+              <div class="h-48">
+                <canvas id="queue-metrics-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark-bg py-8 border-t border-gray-800">
+      <div class="container mx-auto px-4">
+        <div class="text-center text-gray-400">
+          <p>
+            © 2023 概率统计可视化教学案例 | 使用 Chart.js 和 Tailwind CSS 构建
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // 全局变量
+      let discreteRvChart, continuousRvChart, rvFeaturesChart;
+      let diceResults = Array(11).fill(0);
+      let diceRolls = 0;
+
+      // 创建粒子背景
+      function createParticles() {
+        const container = document.getElementById("particles-container");
+        const particleCount = 20;
+        const colors = ["#00f3ff33", "#bf00ff33", "#00ff6633"];
+
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+
+          const size = Math.random() * 150 + 50;
+          const color = colors[Math.floor(Math.random() * colors.length)];
+
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          particle.style.backgroundColor = color;
+          particle.style.left = `${Math.random() * 100}%`;
+          particle.style.top = `${Math.random() * 100}%`;
+          particle.style.animationDelay = `${Math.random() * 5}s`;
+
+          container.appendChild(particle);
+        }
+      }
+
+      // 初始化离散型随机变量图表
+      function initDiscreteRvChart() {
+        const ctx = document
+          .getElementById("discrete-rv-chart")
+          .getContext("2d");
+
+        discreteRvChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+            datasets: [
+              {
+                label: "观测频率",
+                data: Array(11).fill(0),
+                backgroundColor: "rgba(0, 243, 255, 0.6)",
+                borderColor: "rgba(0, 243, 255, 1)",
+                borderWidth: 1,
+              },
+              {
+                label: "理论概率",
+                data: [
+                  1 / 36,
+                  2 / 36,
+                  3 / 36,
+                  4 / 36,
+                  5 / 36,
+                  6 / 36,
+                  5 / 36,
+                  4 / 36,
+                  3 / 36,
+                  2 / 36,
+                  1 / 36,
+                ],
+                type: "line",
+                backgroundColor: "rgba(191, 0, 255, 0.2)",
+                borderColor: "rgba(191, 0, 255, 1)",
+                borderWidth: 2,
+                pointRadius: 3,
+                fill: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 0.2,
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+              x: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // 初始化连续型随机变量图表
+      function initContinuousRvChart() {
+        const ctx = document
+          .getElementById("continuous-rv-chart")
+          .getContext("2d");
+
+        continuousRvChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: Array.from({ length: 20 }, (_, i) =>
+              ((i - 10) / 2).toFixed(1)
+            ),
+            datasets: [
+              {
+                label: "样本直方图",
+                data: Array(20).fill(0),
+                backgroundColor: "rgba(191, 0, 255, 0.6)",
+                borderColor: "rgba(191, 0, 255, 1)",
+                borderWidth: 1,
+              },
+              {
+                label: "理论密度",
+                data: [],
+                type: "line",
+                backgroundColor: "rgba(0, 255, 102, 0.2)",
+                borderColor: "rgba(0, 255, 102, 1)",
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+              x: {
+                min: -5,
+                max: 5,
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // 初始化随机变量数字特征图表
+      function initRvFeaturesChart() {
+        const ctx = document
+          .getElementById("rv-features-chart")
+          .getContext("2d");
+
+        rvFeaturesChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: Array.from({ length: 100 }, (_, i) =>
+              ((i - 50) / 10).toFixed(1)
+            ),
+            datasets: [
+              {
+                label: "概率密度函数",
+                data: [],
+                backgroundColor: "rgba(0, 255, 102, 0.2)",
+                borderColor: "rgba(0, 255, 102, 1)",
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+              x: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "rgba(255, 255, 255, 0.7)",
+                },
+              },
+              annotation: {
+                annotations: {
+                  expectation: {
+                    type: "line",
+                    yMin: 0,
+                    yMax: 1,
+                    xMin: 0,
+                    xMax: 0,
+                    borderColor: "rgba(255, 255, 255, 0.7)",
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    label: {
+                      content: "E[X]",
+                      enabled: true,
+                      position: "top",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // 掷两个骰子
+      function rollTwoDice() {
+        const dice1Value = Math.floor(Math.random() * 6) + 1;
+        const dice2Value = Math.floor(Math.random() * 6) + 1;
+        const sum = dice1Value + dice2Value;
+
+        // 更新骰子显示
+        document.getElementById("dice1").textContent = dice1Value;
+        document.getElementById("dice2").textContent = dice2Value;
+        document.getElementById("dice-sum").textContent = sum;
+
+        // 更新结果统计
+        diceResults[sum - 2]++;
+        diceRolls++;
+
+        // 更新总次数显示
+        document.getElementById("total-rolls").textContent = diceRolls;
+
+        // 更新图表
+        discreteRvChart.data.datasets[0].data = diceResults.map(
+          (count) => count / diceRolls
+        );
+        discreteRvChart.update();
+
+        // 如果掷出十二点，显示金色特效
+        if (sum === 12) {
+          showGoldenEffect(dice1Value, dice2Value);
+        }
+      }
+
+      // 一键掷10次骰子
+      function rollTenTimes() {
+        // 禁用按钮，防止重复点击
+        const rollBtn = document.getElementById("roll-dice-btn");
+        const rollTenBtn = document.getElementById("roll-dice-ten-btn");
+        rollBtn.disabled = true;
+        rollTenBtn.disabled = true;
+
+        let count = 0;
+        const interval = setInterval(() => {
+          rollTwoDice();
+          count++;
+
+          if (count >= 10) {
+            clearInterval(interval);
+            // 恢复按钮
+            rollBtn.disabled = false;
+            rollTenBtn.disabled = false;
+          }
+        }, 300); // 每300毫秒掷一次骰子
+      }
+
+      // 显示金色特效（类似原神抽卡）
+      function showGoldenEffect(dice1Val, dice2Val) {
+        // 创建特效容器
+        const effectContainer = document.createElement("div");
+        effectContainer.style.position = "fixed";
+        effectContainer.style.top = "0";
+        effectContainer.style.left = "0";
+        effectContainer.style.width = "100%";
+        effectContainer.style.height = "100%";
+        effectContainer.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+        effectContainer.style.zIndex = "1000";
+        effectContainer.style.display = "flex";
+        effectContainer.style.justifyContent = "center";
+        effectContainer.style.alignItems = "center";
+        effectContainer.style.flexDirection = "column";
+        effectContainer.style.animation = "fadeIn 0.5s ease-in-out";
+
+        // 创建闪光效果
+        const shine = document.createElement("div");
+        shine.style.width = "200px";
+        shine.style.height = "200px";
+        shine.style.background =
+          "radial-gradient(circle, rgba(255,215,0,1) 0%, rgba(255,215,0,0) 70%)";
+        shine.style.animation = "pulse 1.5s infinite";
+        shine.style.position = "absolute";
+
+        // 创建文字
+        const text = document.createElement("div");
+        text.textContent = "恭喜！掷出十二点！";
+        text.style.color = "gold";
+        text.style.fontSize = "2rem";
+        text.style.fontWeight = "bold";
+        text.style.textShadow = "0 0 10px rgba(255,215,0,0.8)";
+        text.style.marginTop = "20px";
+        text.style.animation = "scaleIn 0.5s ease-in-out";
+
+        // 创建骰子显示
+        const diceDisplay = document.createElement("div");
+        diceDisplay.style.display = "flex";
+        diceDisplay.style.justifyContent = "center";
+        diceDisplay.style.alignItems = "center";
+        diceDisplay.style.marginTop = "20px";
+
+        const dice1 = document.createElement("div");
+        dice1.textContent = dice1Val;
+        dice1.style.width = "80px";
+        dice1.style.height = "80px";
+        dice1.style.backgroundColor = "gold";
+        dice1.style.borderRadius = "10px";
+        dice1.style.display = "flex";
+        dice1.style.justifyContent = "center";
+        dice1.style.alignItems = "center";
+        dice1.style.fontSize = "2.5rem";
+        dice1.style.fontWeight = "bold";
+        dice1.style.color = "#333";
+        dice1.style.margin = "0 10px";
+        dice1.style.boxShadow = "0 0 20px rgba(255,215,0,0.8)";
+
+        const dice2 = document.createElement("div");
+        dice2.textContent = dice2Val;
+        dice2.style.width = "80px";
+        dice2.style.height = "80px";
+        dice2.style.backgroundColor = "gold";
+        dice2.style.borderRadius = "10px";
+        dice2.style.display = "flex";
+        dice2.style.justifyContent = "center";
+        dice2.style.alignItems = "center";
+        dice2.style.fontSize = "2.5rem";
+        dice2.style.fontWeight = "bold";
+        dice2.style.color = "#333";
+        dice2.style.margin = "0 10px";
+        dice2.style.boxShadow = "0 0 20px rgba(255,215,0,0.8)";
+
+        diceDisplay.appendChild(dice1);
+        diceDisplay.appendChild(dice2);
+
+        // 添加元素到容器
+        effectContainer.appendChild(shine);
+        effectContainer.appendChild(text);
+        effectContainer.appendChild(diceDisplay);
+
+        // 添加到页面
+        document.body.appendChild(effectContainer);
+
+        // 添加CSS动画
+        const style = document.createElement("style");
+        style.textContent = `
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes pulse {
+                    0% { transform: scale(1); opacity: 0.8; }
+                    50% { transform: scale(1.5); opacity: 0.5; }
+                    100% { transform: scale(1); opacity: 0.8; }
+                }
+                @keyframes scaleIn {
+                    from { transform: scale(0); }
+                    to { transform: scale(1); }
+                }
+            `;
+        document.head.appendChild(style);
+
+        // 添加点击事件关闭特效
+        effectContainer.addEventListener("click", () => {
+          document.body.removeChild(effectContainer);
+        });
+
+        // 5秒后自动关闭
+        setTimeout(() => {
+          if (document.body.contains(effectContainer)) {
+            document.body.removeChild(effectContainer);
+          }
+        }, 5000);
+      }
+
+      // 生成连续型随机变量样本
+      function generateContinuousSamples() {
+        const distribution = document.getElementById(
+          "continuous-distribution"
+        ).value;
+        const sampleCount = parseInt(
+          document.getElementById("continuous-samples").value
+        );
+        const xMin = parseFloat(document.getElementById("x-axis-min").value);
+        const xMax = parseFloat(document.getElementById("x-axis-max").value);
+
+        // 生成样本
+        const samples = [];
+        switch (distribution) {
+          case "uniform":
+            for (let i = 0; i < sampleCount; i++) {
+              samples.push(Math.random() * (xMax - xMin) + xMin); // 均匀分布在[xMin, xMax]区间
+            }
+            break;
+          case "normal":
+            for (let i = 0; i < sampleCount; i++) {
+              // Box-Muller变换生成正态分布随机数
+              const u1 = Math.random();
+              const u2 = Math.random();
+              const z =
+                Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+              samples.push(z); // 标准正态分布
+            }
+            break;
+          case "exponential":
+            for (let i = 0; i < sampleCount; i++) {
+              samples.push(-Math.log(Math.random()) / 1); // λ=1的指数分布
+            }
+            break;
+        }
+
+        // 计算直方图数据
+        const histData = Array(20).fill(0);
+        const binWidth = (xMax - xMin) / 20; // 区间宽度
+
+        samples.forEach((sample) => {
+          const binIndex = Math.floor((sample - xMin) / binWidth);
+          if (binIndex >= 0 && binIndex < 20) {
+            histData[binIndex]++;
+          }
+        });
+
+        // 归一化直方图
+        const normalizedHist = histData.map(
+          (count) => count / (sampleCount * binWidth)
+        );
+
+        // 计算理论密度曲线
+        const xValues = Array.from({ length: 20 }, (_, i) =>
+          (xMin + (i + 0.5) * binWidth).toFixed(1)
+        );
+        let theoreticalDensity;
+
+        switch (distribution) {
+          case "uniform":
+            theoreticalDensity = xValues.map((x) => {
+              const val = parseFloat(x);
+              return val >= xMin && val <= xMax ? 1 / (xMax - xMin) : 0;
+            });
+            break;
+          case "normal":
+            theoreticalDensity = xValues.map((x) => {
+              const z = parseFloat(x);
+              return Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI);
+            });
+            break;
+          case "exponential":
+            theoreticalDensity = xValues.map((x) => {
+              const val = parseFloat(x);
+              return val >= 0 ? Math.exp(-val) : 0;
+            });
+            break;
+        }
+
+        // 更新图表标签和数据
+        continuousRvChart.data.labels = xValues;
+        continuousRvChart.data.datasets[0].data = normalizedHist;
+        continuousRvChart.data.datasets[1].data = theoreticalDensity;
+
+        // 更新x轴范围
+        continuousRvChart.options.scales.x.min = xMin;
+        continuousRvChart.options.scales.x.max = xMax;
+
+        continuousRvChart.update();
+      }
+
+      // 更新随机变量数字特征
+      function updateRvFeatures() {
+        const distribution = document.getElementById("rv-distribution").value;
+
+        // 隐藏所有参数控制区域
+        document.querySelectorAll(".rv-params").forEach((el) => {
+          el.classList.add("hidden");
+        });
+
+        // 显示当前分布的参数控制区域
+        const paramsEl = document.getElementById(`rv-${distribution}-params`);
+        if (paramsEl) {
+          paramsEl.classList.remove("hidden");
+        }
+
+        // 获取x轴范围
+        const xMin = parseFloat(document.getElementById("rv-x-axis-min").value);
+        const xMax = parseFloat(document.getElementById("rv-x-axis-max").value);
+
+        // 计算数字特征和概率密度函数
+        let expectation, variance, std;
+        const xValues = Array.from(
+          { length: 100 },
+          (_, i) => xMin + (i / 99) * (xMax - xMin)
+        );
+        let pdfValues;
+
+        switch (distribution) {
+          case "normal":
+            const mean = parseFloat(
+              document.getElementById("rv-normal-mean").value
+            );
+            const stdDev = parseFloat(
+              document.getElementById("rv-normal-std").value
+            );
+
+            expectation = mean;
+            variance = stdDev * stdDev;
+            std = stdDev;
+
+            pdfValues = xValues.map((x) => {
+              const z = (x - mean) / stdDev;
+              return Math.exp(-0.5 * z * z) / (stdDev * Math.sqrt(2 * Math.PI));
+            });
+            break;
+
+          case "uniform":
+            const a = parseFloat(
+              document.getElementById("rv-uniform-min").value
+            );
+            const b = parseFloat(
+              document.getElementById("rv-uniform-max").value
+            );
+
+            expectation = (a + b) / 2;
+            variance = Math.pow(b - a, 2) / 12;
+            std = Math.sqrt(variance);
+
+            pdfValues = xValues.map((x) =>
+              x >= a && x <= b ? 1 / (b - a) : 0
+            );
+            break;
+
+          case "exponential":
+            const lambda = parseFloat(
+              document.getElementById("rv-exponential-lambda").value
+            );
+
+            expectation = 1 / lambda;
+            variance = 1 / (lambda * lambda);
+            std = Math.sqrt(variance);
+
+            pdfValues = xValues.map((x) =>
+              x >= 0 ? lambda * Math.exp(-lambda * x) : 0
+            );
+            break;
+
+          case "binomial":
+            const n = parseInt(document.getElementById("rv-binomial-n").value);
+            const p = parseFloat(
+              document.getElementById("rv-binomial-p").value
+            );
+
+            expectation = n * p;
+            variance = n * p * (1 - p);
+            std = Math.sqrt(variance);
+
+            // 二项分布的PMF
+            pdfValues = xValues.map((k) => {
+              k = Math.round(k);
+              if (k < 0 || k > n) return 0;
+
+              // 计算组合数 C(n,k)
+              let comb = 1;
+              for (let i = 1; i <= k; i++) {
+                comb = (comb * (n - k + i)) / i;
+              }
+              return comb * Math.pow(p, k) * Math.pow(1 - p, n - k);
+            });
+            break;
+        }
+
+        // 更新数字特征显示
+        document.getElementById("rv-expectation").textContent =
+          expectation.toFixed(2);
+        document.getElementById("rv-variance").textContent =
+          variance.toFixed(2);
+        document.getElementById("rv-std").textContent = std.toFixed(2);
+
+        // 更新图表
+        rvFeaturesChart.data.labels = xValues;
+        rvFeaturesChart.data.datasets[0].data = pdfValues;
+
+        // 更新x轴范围
+        rvFeaturesChart.options.scales.x.min = xMin;
+        rvFeaturesChart.options.scales.x.max = xMax;
+
+        // 更新期望值标记线
+        if (
+          rvFeaturesChart.options.plugins.annotation.annotations.expectation
+        ) {
+          rvFeaturesChart.options.plugins.annotation.annotations.expectation.xMin =
+            expectation;
+          rvFeaturesChart.options.plugins.annotation.annotations.expectation.xMax =
+            expectation;
+        }
+
+        rvFeaturesChart.update();
+      }
+
+      // 初始化随机变量参数滑块事件
+      function initRvParamEvents() {
+        // 正态分布参数
+        const rvNormalMean = document.getElementById("rv-normal-mean");
+        const rvNormalStd = document.getElementById("rv-normal-std");
+
+        if (rvNormalMean && rvNormalStd) {
+          rvNormalMean.addEventListener("input", function () {
+            document.getElementById("rv-normal-mean-value").textContent =
+              this.value;
+            updateRvFeatures();
+          });
+
+          rvNormalStd.addEventListener("input", function () {
+            document.getElementById("rv-normal-std-value").textContent =
+              this.value;
+            updateRvFeatures();
+          });
+        }
+
+        // 均匀分布参数
+        const rvUniformMin = document.getElementById("rv-uniform-min");
+        const rvUniformMax = document.getElementById("rv-uniform-max");
+
+        if (rvUniformMin && rvUniformMax) {
+          rvUniformMin.addEventListener("input", function () {
+            document.getElementById("rv-uniform-min-value").textContent =
+              this.value;
+            updateRvFeatures();
+          });
+
+          rvUniformMax.addEventListener("input", function () {
+            document.getElementById("rv-uniform-max-value").textContent =
+              this.value;
+            updateRvFeatures();
+          });
+        }
+
+        // 指数分布参数
+        const rvExponentialLambda = document.getElementById(
+          "rv-exponential-lambda"
+        );
+
+        if (rvExponentialLambda) {
+          rvExponentialLambda.addEventListener("input", function () {
+            document.getElementById("rv-exponential-lambda-value").textContent =
+              this.value;
+            updateRvFeatures();
+          });
+        }
+
+        // 二项分布参数
+        const rvBinomialN = document.getElementById("rv-binomial-n");
+        const rvBinomialP = document.getElementById("rv-binomial-p");
+
+        if (rvBinomialN && rvBinomialP) {
+          rvBinomialN.addEventListener("input", function () {
+            document.getElementById("rv-binomial-n-value").textContent =
+              this.value;
+            updateRvFeatures();
+          });
+
+          rvBinomialP.addEventListener("input", function () {
+            document.getElementById("rv-binomial-p-value").textContent =
+              this.value;
+            updateRvFeatures();
+          });
+        }
+
+        // 分布类型选择
+        const rvDistribution = document.getElementById("rv-distribution");
+        if (rvDistribution) {
+          rvDistribution.addEventListener("change", updateRvFeatures);
+        }
+
+        // 连续分布样本数量
+        const continuousSamples = document.getElementById("continuous-samples");
+        if (continuousSamples) {
+          continuousSamples.addEventListener("input", function () {
+            document.getElementById("continuous-samples-value").textContent =
+              this.value;
+          });
+        }
+
+        // X轴范围控制（连续分布）
+        const xAxisMin = document.getElementById("x-axis-min");
+        const xAxisMax = document.getElementById("x-axis-max");
+
+        if (xAxisMin) {
+          xAxisMin.addEventListener("input", function () {
+            document.getElementById("x-axis-min-value").textContent =
+              this.value;
+            generateContinuousSamples();
+          });
+        }
+
+        if (xAxisMax) {
+          xAxisMax.addEventListener("input", function () {
+            document.getElementById("x-axis-max-value").textContent =
+              this.value;
+            generateContinuousSamples();
+          });
+        }
+
+        // 二项分布与正态分布对比图
+        let binomialNormalChart = null;
+
+        function initBinomialNormalChart() {
+          const ctx = document.getElementById("binomial-normal-chart");
+          if (!ctx) return;
+
+          binomialNormalChart = new Chart(ctx, {
+            type: "line",
+            data: {
+              datasets: [
+                {
+                  label: "二项分布 B(n,p)",
+                  data: [],
+                  borderColor: "#00f5ff",
+                  backgroundColor: "rgba(0, 245, 255, 0.1)",
+                  borderWidth: 2,
+                  fill: false,
+                  pointRadius: 3,
+                  pointHoverRadius: 5,
+                },
+                {
+                  label: "正态分布 N(μ,σ²)",
+                  data: [],
+                  borderColor: "#39ff14",
+                  backgroundColor: "rgba(57, 255, 20, 0.1)",
+                  borderWidth: 2,
+                  fill: false,
+                  pointRadius: 0,
+                  pointHoverRadius: 3,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  labels: {
+                    color: "#e5e7eb",
+                    font: {
+                      family: "Inter, system-ui, sans-serif",
+                    },
+                  },
+                },
+                title: {
+                  display: true,
+                  text: "二项分布与正态分布对比",
+                  color: "#e5e7eb",
+                  font: {
+                    size: 16,
+                    family: "Inter, system-ui, sans-serif",
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  type: "linear",
+                  title: {
+                    display: true,
+                    text: "X",
+                    color: "#9ca3af",
+                  },
+                  ticks: {
+                    color: "#9ca3af",
+                  },
+                  grid: {
+                    color: "rgba(156, 163, 175, 0.2)",
+                  },
+                },
+                y: {
+                  title: {
+                    display: true,
+                    text: "概率密度",
+                    color: "#9ca3af",
+                  },
+                  ticks: {
+                    color: "#9ca3af",
+                  },
+                  grid: {
+                    color: "rgba(156, 163, 175, 0.2)",
+                  },
+                },
+              },
+            },
+          });
+
+          updateBinomialNormalChart();
+        }
+
+        function updateBinomialNormalChart() {
+          if (!binomialNormalChart) return;
+
+          const n = parseInt(document.getElementById("binomial-n").value);
+          const p = parseFloat(document.getElementById("binomial-p").value);
+          const range = parseFloat(
+            document.getElementById("binomial-range").value
+          );
+
+          // 计算统计量
+          const mean = n * p;
+          const variance = n * p * (1 - p);
+          const std = Math.sqrt(variance);
+
+          // 更新统计信息显示
+          document.getElementById("binomial-mean").textContent =
+            mean.toFixed(2);
+          document.getElementById("binomial-var").textContent =
+            variance.toFixed(2);
+          document.getElementById("binomial-std").textContent = std.toFixed(2);
+          document.getElementById("normal-mean").textContent = mean.toFixed(2);
+          document.getElementById("normal-var").textContent =
+            variance.toFixed(2);
+          document.getElementById("normal-std").textContent = std.toFixed(2);
+
+          // 计算显示范围
+          const xMin = Math.max(0, Math.floor(mean - range * std));
+          const xMax = Math.min(n, Math.ceil(mean + range * std));
+
+          // 生成二项分布数据
+          const binomialData = [];
+          for (let k = xMin; k <= xMax; k++) {
+            const prob = binomialProbability(n, k, p);
+            binomialData.push({ x: k, y: prob });
+          }
+
+          // 生成正态分布数据
+          const normalData = [];
+          const step = (xMax - xMin) / 200;
+          for (let x = xMin; x <= xMax; x += step) {
+            const prob = normalProbability(x, mean, std);
+            normalData.push({ x: x, y: prob });
+          }
+
+          // 更新图表数据
+          binomialNormalChart.data.datasets[0].data = binomialData;
+          binomialNormalChart.data.datasets[1].data = normalData;
+          binomialNormalChart.update();
+        }
+
+        // 二项分布概率质量函数
+        function binomialProbability(n, k, p) {
+          if (k < 0 || k > n) return 0;
+          return combination(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+        }
+
+        // 组合数计算
+        function combination(n, k) {
+          if (k > n - k) k = n - k;
+          let result = 1;
+          for (let i = 0; i < k; i++) {
+            result = (result * (n - i)) / (i + 1);
+          }
+          return result;
+        }
+
+        // 正态分布概率密度函数
+        function normalProbability(x, mean, std) {
+          const coefficient = 1 / (std * Math.sqrt(2 * Math.PI));
+          const exponent = -0.5 * Math.pow((x - mean) / std, 2);
+          return coefficient * Math.exp(exponent);
+        }
+
+        // 二项分布对比图参数控制
+        const binomialN = document.getElementById("binomial-n");
+        const binomialP = document.getElementById("binomial-p");
+        const binomialRange = document.getElementById("binomial-range");
+
+        if (binomialN) {
+          binomialN.addEventListener("input", function () {
+            document.getElementById("binomial-n-value").textContent =
+              this.value;
+            updateBinomialNormalChart();
+          });
+        }
+
+        if (binomialP) {
+          binomialP.addEventListener("input", function () {
+            document.getElementById("binomial-p-value").textContent =
+              this.value;
+            updateBinomialNormalChart();
+          });
+        }
+
+        if (binomialRange) {
+          binomialRange.addEventListener("input", function () {
+            document.getElementById("binomial-range-value").textContent =
+              this.value + "σ";
+            updateBinomialNormalChart();
+          });
+        }
+
+        // 初始化二项分布对比图
+        initBinomialNormalChart();
+
+        // X轴范围控制（随机变量数字特征）
+        const rvXAxisMin = document.getElementById("rv-x-axis-min");
+        const rvXAxisMax = document.getElementById("rv-x-axis-max");
+
+        if (rvXAxisMin) {
+          rvXAxisMin.addEventListener("input", function () {
+            document.getElementById("rv-x-axis-min-value").textContent =
+              this.value;
+            updateRvFeatures();
+          });
+        }
+
+        if (rvXAxisMax) {
+          rvXAxisMax.addEventListener("input", function () {
+            document.getElementById("rv-x-axis-max-value").textContent =
+              this.value;
+            updateRvFeatures();
+          });
+        }
+      }
+
+      // 蒙特卡洛模拟相关变量
+      let piSimulation = {
+        isRunning: false,
+        points: [],
+        insideCount: 0,
+        totalCount: 0,
+        convergenceData: [],
+        canvas: null,
+        ctx: null,
+        convergenceChart: null,
+      };
+
+      let integralSimulation = {
+        chart: null,
+        convergenceChart: null,
+        isAnimating: false,
+        isPaused: false,
+        currentSample: 0,
+        totalSamples: 0,
+        sum: 0,
+        samplePoints: [],
+        convergenceData: [],
+        animationId: null,
+      };
+
+      // 期权定价模拟变量
+      let optionSimulation = {
+        pathChart: null,
+        convergenceChart: null,
+        isSimulating: false,
+        isPaused: false,
+        currentPath: 0,
+        totalPaths: 0,
+        paths: [],
+        payoffs: [],
+        convergenceData: [],
+        animationId: null,
+        totalPayoff: 0,
+      };
+
+      // 排队系统模拟变量
+      let queueSimulation = {
+        chart: null,
+        metricsChart: null,
+        isRunning: false,
+        isPaused: false,
+        isAnimating: false,
+        animationId: null,
+        customers: [],
+        currentTime: 0,
+        totalCustomers: 0,
+        totalWaitTime: 0,
+        totalServiceTime: 0,
+        serverBusy: false,
+        nextArrival: 0,
+        nextDeparture: Infinity,
+        maxTime: 10,
+        stepCount: 0,
+        maxSteps: 200,
+        timeData: [],
+        queueLengthData: [],
+        serverStatusData: [],
+        avgWaitData: [],
+        utilizationData: [],
+      };
+
+      // π值估算模拟
+      function initPiSimulation() {
+        piSimulation.canvas = document.getElementById("pi-canvas");
+        piSimulation.ctx = piSimulation.canvas.getContext("2d");
+
+        // 初始化收敛图表
+        const convergenceCtx = document
+          .getElementById("pi-convergence-chart")
+          .getContext("2d");
+        piSimulation.convergenceChart = new Chart(convergenceCtx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "π估算值",
+                data: [],
+                borderColor: "#00d4ff",
+                backgroundColor: "rgba(0, 212, 255, 0.1)",
+                tension: 0.4,
+                pointRadius: 0,
+              },
+              {
+                label: "π真实值",
+                data: [],
+                borderColor: "#00ff88",
+                backgroundColor: "transparent",
+                borderDash: [5, 5],
+                pointRadius: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: "#ffffff" },
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+              y: {
+                min: 2.5,
+                max: 3.5,
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+            },
+          },
+        });
+
+        drawPiCanvas();
+      }
+
+      // 积分计算模拟
+      function initIntegralSimulation() {
+        // 初始化函数图表
+        const integralCtx = document
+          .getElementById("integral-chart")
+          .getContext("2d");
+        integralSimulation.chart = new Chart(integralCtx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "函数曲线",
+                data: [],
+                borderColor: "#a855f7",
+                backgroundColor: "rgba(168, 85, 247, 0.1)",
+                fill: true,
+                tension: 0.4,
+                pointRadius: 0,
+              },
+              {
+                label: "采样点",
+                data: [],
+                backgroundColor: "#00ff88",
+                borderColor: "#00ff88",
+                type: "scatter",
+                pointRadius: 2,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: "#ffffff" },
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+              y: {
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+            },
+          },
+        });
+
+        // 初始化收敛图表
+        const convergenceCtx = document
+          .getElementById("integral-convergence-chart")
+          .getContext("2d");
+        integralSimulation.convergenceChart = new Chart(convergenceCtx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "蒙特卡洛估值",
+                data: [],
+                borderColor: "#a855f7",
+                backgroundColor: "rgba(168, 85, 247, 0.1)",
+                tension: 0.4,
+                pointRadius: 0,
+              },
+              {
+                label: "理论值",
+                data: [],
+                borderColor: "#00d4ff",
+                backgroundColor: "transparent",
+                borderDash: [5, 5],
+                pointRadius: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: "#ffffff" },
+              },
+            },
+            scales: {
+              x: {
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+              y: {
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+            },
+          },
+        });
+
+        updateIntegralChart();
+      }
+
+      // 获取函数值
+      function getFunction(type, x) {
+        switch (type) {
+          case "sin":
+            return Math.sin(x);
+          case "exp":
+            return Math.exp(-x * x);
+          case "sqrt":
+            return x >= -1 && x <= 1 ? Math.sqrt(1 - x * x) : 0;
+          case "poly":
+            return x * x * x - 2 * x * x + x;
+          default:
+            return 0;
+        }
+      }
+
+      // 获取理论积分值
+      function getExactIntegral(type, a, b) {
+        switch (type) {
+          case "sin":
+            return -Math.cos(b) + Math.cos(a);
+          case "exp":
+            // 高斯积分的近似值
+            return 0.5 * Math.sqrt(Math.PI) * (erf(b) - erf(a));
+          case "sqrt":
+            // 半圆面积
+            const aClamp = Math.max(-1, Math.min(1, a));
+            const bClamp = Math.max(-1, Math.min(1, b));
+            return (
+              0.5 *
+              (bClamp * Math.sqrt(1 - bClamp * bClamp) +
+                Math.asin(bClamp) -
+                aClamp * Math.sqrt(1 - aClamp * aClamp) -
+                Math.asin(aClamp))
+            );
+          case "poly":
+            return (
+              Math.pow(b, 4) / 4 -
+              (2 * Math.pow(b, 3)) / 3 +
+              Math.pow(b, 2) / 2 -
+              (Math.pow(a, 4) / 4 -
+                (2 * Math.pow(a, 3)) / 3 +
+                Math.pow(a, 2) / 2)
+            );
+          default:
+            return 0;
+        }
+      }
+
+      // 误差函数近似
+      function erf(x) {
+        const a1 = 0.254829592;
+        const a2 = -0.284496736;
+        const a3 = 1.421413741;
+        const a4 = -1.453152027;
+        const a5 = 1.061405429;
+        const p = 0.3275911;
+
+        const sign = x >= 0 ? 1 : -1;
+        x = Math.abs(x);
+
+        const t = 1.0 / (1.0 + p * x);
+        const y =
+          1.0 -
+          ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+
+        return sign * y;
+      }
+
+      function updateIntegralChart() {
+        const functionType = document.getElementById("integral-function").value;
+        const a = parseFloat(document.getElementById("integral-a").value);
+        const b = parseFloat(document.getElementById("integral-b").value);
+
+        // 生成函数曲线数据
+        const xValues = [];
+        const yValues = [];
+        const step = (b - a) / 100;
+
+        for (let x = a; x <= b; x += step) {
+          xValues.push(x.toFixed(3));
+          yValues.push(getFunction(functionType, x));
+        }
+
+        // 更新图表
+        integralSimulation.chart.data.labels = xValues;
+        integralSimulation.chart.data.datasets[0].data = yValues;
+        integralSimulation.chart.data.datasets[1].data = []; // 清空采样点
+        integralSimulation.chart.update();
+      }
+
+      function calculateIntegral() {
+        const functionType = document.getElementById("integral-function").value;
+        const a = parseFloat(document.getElementById("integral-a").value);
+        const b = parseFloat(document.getElementById("integral-b").value);
+        const samples = parseInt(
+          document.getElementById("integral-samples").value
+        );
+
+        if (a >= b) {
+          alert("下限必须小于上限！");
+          return;
+        }
+
+        const startTime = performance.now();
+
+        // 蒙特卡洛积分计算
+        let sum = 0;
+        const convergenceData = [];
+
+        for (let i = 0; i < samples; i++) {
+          const x = a + Math.random() * (b - a);
+          const y = getFunction(functionType, x);
+          sum += y;
+
+          // 记录收敛过程
+          if (i % Math.floor(samples / 50) === 0 || i < 100) {
+            const estimate = (sum / (i + 1)) * (b - a);
+            convergenceData.push({ x: i + 1, y: estimate });
+          }
+        }
+
+        const mcResult = (sum / samples) * (b - a);
+        const exactResult = getExactIntegral(functionType, a, b);
+        const error = Math.abs((mcResult - exactResult) / exactResult) * 100;
+        const endTime = performance.now();
+
+        // 更新显示
+        document.getElementById("integral-mc-result").textContent =
+          mcResult.toFixed(4);
+        document.getElementById("integral-exact-result").textContent =
+          exactResult.toFixed(4);
+        document.getElementById("integral-error").textContent =
+          error.toFixed(2) + "%";
+        document.getElementById("integral-time").textContent =
+          Math.round(endTime - startTime) + "ms";
+
+        // 更新收敛图表
+        integralSimulation.convergenceChart.data.labels = convergenceData.map(
+          (d) => d.x
+        );
+        integralSimulation.convergenceChart.data.datasets[0].data =
+          convergenceData.map((d) => d.y);
+        integralSimulation.convergenceChart.data.datasets[1].data =
+          convergenceData.map((d) => exactResult);
+        integralSimulation.convergenceChart.update();
+      }
+
+      function animateIntegral() {
+        if (integralSimulation.isAnimating && !integralSimulation.isPaused)
+          return;
+
+        const functionType = document.getElementById("integral-function").value;
+        const a = parseFloat(document.getElementById("integral-a").value);
+        const b = parseFloat(document.getElementById("integral-b").value);
+        const speed = parseInt(document.getElementById("integral-speed").value);
+
+        if (!integralSimulation.isAnimating) {
+          // 开始新的动画
+          integralSimulation.totalSamples = parseInt(
+            document.getElementById("integral-samples").value
+          );
+          integralSimulation.isAnimating = true;
+          integralSimulation.isPaused = false;
+          integralSimulation.currentSample = 0;
+          integralSimulation.sum = 0;
+          integralSimulation.samplePoints = [];
+          integralSimulation.convergenceData = [];
+
+          // 更新按钮状态
+          document.getElementById("integral-animate-btn").style.display =
+            "none";
+          document.getElementById("integral-pause-btn").style.display =
+            "inline-block";
+
+          // 清空图表
+          integralSimulation.chart.data.datasets[1].data = [];
+          integralSimulation.chart.update();
+
+          // 重置显示
+          document.getElementById("integral-current-samples").textContent = "0";
+          document.getElementById("integral-progress-text").textContent = "0%";
+          document.getElementById("integral-progress-bar").style.width = "0%";
+        } else {
+          // 继续暂停的动画
+          integralSimulation.isPaused = false;
+          document.getElementById("integral-pause-btn").innerHTML =
+            '暂停 <i class="fa fa-pause ml-2"></i>';
+        }
+
+        const addSample = () => {
+          if (
+            integralSimulation.currentSample >=
+              integralSimulation.totalSamples ||
+            !integralSimulation.isAnimating ||
+            integralSimulation.isPaused
+          ) {
+            if (
+              integralSimulation.currentSample >=
+              integralSimulation.totalSamples
+            ) {
+              integralSimulation.isAnimating = false;
+              document.getElementById("integral-animate-btn").style.display =
+                "inline-block";
+              document.getElementById("integral-pause-btn").style.display =
+                "none";
+            }
+            return;
+          }
+
+          // 生成随机采样点
+          const x = a + Math.random() * (b - a);
+          const y = getFunction(functionType, x);
+          integralSimulation.sum += y;
+          integralSimulation.currentSample++;
+
+          integralSimulation.samplePoints.push({ x: x, y: y });
+
+          // 更新图表中的采样点（每10个点更新一次以提高性能）
+          if (
+            integralSimulation.currentSample % 10 === 0 ||
+            integralSimulation.currentSample <= 100
+          ) {
+            integralSimulation.chart.data.datasets[1].data =
+              integralSimulation.samplePoints.slice(-500); // 只显示最近500个点
+            integralSimulation.chart.update("none");
+          }
+
+          // 计算当前估算值
+          const estimate =
+            (integralSimulation.sum / integralSimulation.currentSample) *
+            (b - a);
+          const exactValue = getExactIntegral(functionType, a, b);
+          const error =
+            exactValue !== 0
+              ? Math.abs(((estimate - exactValue) / exactValue) * 100)
+              : 0;
+
+          // 更新显示
+          document.getElementById("integral-mc-result").textContent =
+            estimate.toFixed(4);
+          document.getElementById("integral-exact-result").textContent =
+            exactValue.toFixed(4);
+          document.getElementById("integral-error").textContent =
+            error.toFixed(2) + "%";
+          document.getElementById("integral-current-samples").textContent =
+            integralSimulation.currentSample;
+
+          // 更新进度
+          const progress =
+            (integralSimulation.currentSample /
+              integralSimulation.totalSamples) *
+            100;
+          document.getElementById("integral-progress-text").textContent =
+            progress.toFixed(1) + "%";
+          document.getElementById("integral-progress-bar").style.width =
+            progress + "%";
+
+          // 更新收敛图表
+          if (
+            integralSimulation.currentSample % 100 === 0 ||
+            integralSimulation.currentSample <= 100
+          ) {
+            integralSimulation.convergenceChart.data.labels.push(
+              integralSimulation.currentSample
+            );
+            integralSimulation.convergenceChart.data.datasets[0].data.push(
+              estimate
+            );
+            integralSimulation.convergenceChart.data.datasets[1].data.push(
+              exactValue
+            );
+            integralSimulation.convergenceChart.update("none");
+          }
+
+          integralSimulation.animationId = setTimeout(addSample, speed);
+        };
+
+        addSample();
+      }
+
+      function pauseIntegralAnimation() {
+        if (!integralSimulation.isAnimating) return;
+
+        integralSimulation.isPaused = !integralSimulation.isPaused;
+
+        if (integralSimulation.isPaused) {
+          document.getElementById("integral-pause-btn").innerHTML =
+            '继续 <i class="fa fa-play ml-2"></i>';
+          if (integralSimulation.animationId) {
+            clearTimeout(integralSimulation.animationId);
+          }
+        } else {
+          document.getElementById("integral-pause-btn").innerHTML =
+            '暂停 <i class="fa fa-pause ml-2"></i>';
+          animateIntegral(); // 继续动画
+        }
+      }
+
+      function resetIntegralAnimation() {
+        integralSimulation.isAnimating = false;
+        integralSimulation.isPaused = false;
+        integralSimulation.currentSample = 0;
+        integralSimulation.sum = 0;
+        integralSimulation.samplePoints = [];
+
+        if (integralSimulation.animationId) {
+          clearTimeout(integralSimulation.animationId);
+        }
+
+        // 重置按钮状态
+        document.getElementById("integral-animate-btn").style.display =
+          "inline-block";
+        document.getElementById("integral-pause-btn").style.display = "none";
+
+        // 重置显示
+        document.getElementById("integral-mc-result").textContent = "0.0000";
+        document.getElementById("integral-exact-result").textContent = "0.0000";
+        document.getElementById("integral-error").textContent = "0.00%";
+        document.getElementById("integral-current-samples").textContent = "0";
+        document.getElementById("integral-progress-text").textContent = "0%";
+        document.getElementById("integral-progress-bar").style.width = "0%";
+
+        // 清空图表
+        if (integralSimulation.chart) {
+          integralSimulation.chart.data.datasets[1].data = [];
+          integralSimulation.chart.update();
+        }
+
+        if (integralSimulation.convergenceChart) {
+          integralSimulation.convergenceChart.data.labels = [];
+          integralSimulation.convergenceChart.data.datasets[0].data = [];
+          integralSimulation.convergenceChart.data.datasets[1].data = [];
+          integralSimulation.convergenceChart.update();
+        }
+      }
+
+      // 期权定价模拟
+      function initOptionSimulation() {
+        // 初始化股价路径图表
+        const pathCtx = document
+          .getElementById("option-path-chart")
+          .getContext("2d");
+        optionSimulation.pathChart = new Chart(pathCtx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: "#ffffff" },
+              },
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "时间",
+                  color: "#ffffff",
+                },
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "股价",
+                  color: "#ffffff",
+                },
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+            },
+          },
+        });
+
+        // 初始化收敛图表
+        const convergenceCtx = document
+          .getElementById("option-convergence-chart")
+          .getContext("2d");
+        optionSimulation.convergenceChart = new Chart(convergenceCtx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "蒙特卡洛估值",
+                data: [],
+                borderColor: "#a855f7",
+                backgroundColor: "rgba(168, 85, 247, 0.1)",
+                tension: 0.4,
+                pointRadius: 0,
+              },
+              {
+                label: "Black-Scholes理论值",
+                data: [],
+                borderColor: "#00d4ff",
+                backgroundColor: "transparent",
+                borderDash: [5, 5],
+                pointRadius: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: "#ffffff" },
+              },
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "模拟次数",
+                  color: "#ffffff",
+                },
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "期权价值",
+                  color: "#ffffff",
+                },
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+            },
+          },
+        });
+      }
+
+      // Black-Scholes期权定价公式
+      function blackScholesCall(S, K, T, r, sigma) {
+        const d1 =
+          (Math.log(S / K) + (r + 0.5 * sigma * sigma) * T) /
+          (sigma * Math.sqrt(T));
+        const d2 = d1 - sigma * Math.sqrt(T);
+
+        return S * normalCDF(d1) - K * Math.exp(-r * T) * normalCDF(d2);
+      }
+
+      function blackScholesPut(S, K, T, r, sigma) {
+        const d1 =
+          (Math.log(S / K) + (r + 0.5 * sigma * sigma) * T) /
+          (sigma * Math.sqrt(T));
+        const d2 = d1 - sigma * Math.sqrt(T);
+
+        return K * Math.exp(-r * T) * normalCDF(-d2) - S * normalCDF(-d1);
+      }
+
+      // 标准正态分布累积分布函数
+      function normalCDF(x) {
+        return 0.5 * (1 + erf(x / Math.sqrt(2)));
+      }
+
+      // 生成几何布朗运动路径
+      function generateStockPath(S0, mu, sigma, T, steps) {
+        const dt = T / steps;
+        const path = [S0];
+        let S = S0;
+
+        for (let i = 1; i <= steps; i++) {
+          const dW = Math.sqrt(dt) * normalRandom();
+          S = S * Math.exp((mu - 0.5 * sigma * sigma) * dt + sigma * dW);
+          path.push(S);
+        }
+
+        return path;
+      }
+
+      // 生成标准正态随机数（Box-Muller变换）
+      function normalRandom() {
+        if (normalRandom.spare !== undefined) {
+          const spare = normalRandom.spare;
+          delete normalRandom.spare;
+          return spare;
+        }
+
+        const u1 = Math.random();
+        const u2 = Math.random();
+        const mag = Math.sqrt(-2 * Math.log(u1));
+        const z0 = mag * Math.cos(2 * Math.PI * u2);
+        const z1 = mag * Math.sin(2 * Math.PI * u2);
+
+        normalRandom.spare = z1;
+        return z0;
+      }
+
+      function simulateOption() {
+        const S0 = parseFloat(document.getElementById("option-s0").value);
+        const K = parseFloat(document.getElementById("option-k").value);
+        const T = parseFloat(document.getElementById("option-t").value);
+        const r = parseFloat(document.getElementById("option-r").value) / 100;
+        const sigma =
+          parseFloat(document.getElementById("option-sigma").value) / 100;
+        const paths = parseInt(document.getElementById("option-paths").value);
+        const steps = 100;
+        const optionType = document.getElementById("option-type").value;
+
+        const startTime = performance.now();
+
+        // 清空之前的数据
+        optionSimulation.paths = [];
+        optionSimulation.payoffs = [];
+
+        // 生成股价路径并计算期权收益
+        let totalPayoff = 0;
+        const convergenceData = [];
+
+        for (let i = 0; i < paths; i++) {
+          const path = generateStockPath(S0, r, sigma, T, steps);
+          const finalPrice = path[path.length - 1];
+
+          let payoff;
+          if (optionType === "call") {
+            payoff = Math.max(finalPrice - K, 0);
+          } else {
+            payoff = Math.max(K - finalPrice, 0);
+          }
+
+          totalPayoff += payoff;
+          optionSimulation.payoffs.push(payoff);
+
+          // 只保存前几条路径用于显示
+          if (i < 20) {
+            optionSimulation.paths.push(path);
+          }
+
+          // 记录收敛过程
+          if (i % Math.floor(paths / 50) === 0 || i < 100) {
+            const mcPrice = Math.exp(-r * T) * (totalPayoff / (i + 1));
+            convergenceData.push({ x: i + 1, y: mcPrice });
+          }
+        }
+
+        const mcPrice = Math.exp(-r * T) * (totalPayoff / paths);
+        const bsPrice =
+          optionType === "call"
+            ? blackScholesCall(S0, K, T, r, sigma)
+            : blackScholesPut(S0, K, T, r, sigma);
+        const error = Math.abs((mcPrice - bsPrice) / bsPrice) * 100;
+        const endTime = performance.now();
+
+        // 更新显示
+        document.getElementById("option-mc-price").textContent =
+          mcPrice.toFixed(4);
+        document.getElementById("option-bs-price").textContent =
+          bsPrice.toFixed(4);
+        document.getElementById("option-error").textContent =
+          error.toFixed(2) + "%";
+        document.getElementById("option-time").textContent =
+          Math.round(endTime - startTime) + "ms";
+
+        // 更新股价路径图表
+        updatePathChart();
+
+        // 更新收敛图表
+        optionSimulation.convergenceChart.data.labels = convergenceData.map(
+          (d) => d.x
+        );
+        optionSimulation.convergenceChart.data.datasets[0].data =
+          convergenceData.map((d) => d.y);
+        optionSimulation.convergenceChart.data.datasets[1].data =
+          convergenceData.map((d) => bsPrice);
+        optionSimulation.convergenceChart.update();
+      }
+
+      function updatePathChart() {
+        const T = parseFloat(document.getElementById("option-t").value);
+        const steps = 100;
+        const timeLabels = [];
+
+        for (let i = 0; i <= steps; i++) {
+          timeLabels.push(((i * T) / steps).toFixed(2));
+        }
+
+        // 准备数据集
+        const datasets = optionSimulation.paths.map((path, index) => ({
+          label: `路径 ${index + 1}`,
+          data: path,
+          borderColor: `hsl(${
+            (index * 360) / optionSimulation.paths.length
+          }, 70%, 60%)`,
+          backgroundColor: "transparent",
+          borderWidth: 1,
+          pointRadius: 0,
+          tension: 0.1,
+        }));
+
+        optionSimulation.pathChart.data.labels = timeLabels;
+        optionSimulation.pathChart.data.datasets = datasets;
+        optionSimulation.pathChart.update();
+      }
+
+      function animateOptionPaths() {
+        if (optionSimulation.isSimulating && !optionSimulation.isPaused) {
+          // 如果正在运行且未暂停，则暂停
+          pauseOptionAnimation();
+          return;
+        }
+
+        if (optionSimulation.isPaused) {
+          // 如果已暂停，则继续
+          optionSimulation.isPaused = false;
+          document.getElementById("option-animate-btn").textContent = "暂停";
+          document.getElementById("option-animate-btn").innerHTML =
+            '暂停 <i class="fa fa-pause ml-2"></i>';
+          document.getElementById("option-pause-btn").style.display = "none";
+          continueOptionAnimation();
+          return;
+        }
+
+        // 开始新的动画
+        const totalPaths = parseInt(
+          document.getElementById("option-paths").value
+        );
+
+        optionSimulation.isSimulating = true;
+        optionSimulation.isPaused = false;
+        optionSimulation.currentPath = 0;
+        optionSimulation.totalPaths = totalPaths;
+        optionSimulation.paths = [];
+        optionSimulation.payoffs = [];
+        optionSimulation.convergenceData = [];
+        optionSimulation.totalPayoff = 0;
+
+        // 更新按钮状态
+        document.getElementById("option-animate-btn").textContent = "暂停";
+        document.getElementById("option-animate-btn").innerHTML =
+          '暂停 <i class="fa fa-pause ml-2"></i>';
+        document.getElementById("option-pause-btn").style.display = "none";
+
+        // 重置显示
+        document.getElementById("option-mc-price").textContent = "0.00";
+        document.getElementById("option-current-paths").textContent = "0";
+        document.getElementById("option-progress-text").textContent = "0%";
+        document.getElementById("option-progress-bar").style.width = "0%";
+
+        // 清空图表
+        if (optionSimulation.pathChart) {
+          optionSimulation.pathChart.data.datasets = [];
+          optionSimulation.pathChart.update();
+        }
+
+        if (optionSimulation.convergenceChart) {
+          optionSimulation.convergenceChart.data.labels = [];
+          optionSimulation.convergenceChart.data.datasets[0].data = [];
+          optionSimulation.convergenceChart.data.datasets[1].data = [];
+          optionSimulation.convergenceChart.update();
+        }
+
+        continueOptionAnimation();
+      }
+
+      function continueOptionAnimation() {
+        if (!optionSimulation.isSimulating || optionSimulation.isPaused) return;
+
+        const S0 = parseFloat(document.getElementById("option-s0").value);
+        const K = parseFloat(document.getElementById("option-k").value);
+        const T = parseFloat(document.getElementById("option-t").value);
+        const r = parseFloat(document.getElementById("option-r").value) / 100;
+        const sigma =
+          parseFloat(document.getElementById("option-sigma").value) / 100;
+        const optionType = document.getElementById("option-type").value;
+        const speed = parseInt(document.getElementById("option-speed").value);
+        const steps = 100;
+
+        if (optionSimulation.currentPath >= optionSimulation.totalPaths) {
+          // 动画完成
+          optionSimulation.isSimulating = false;
+          document.getElementById("option-animate-btn").textContent =
+            "开始动画";
+          document.getElementById("option-animate-btn").innerHTML =
+            '开始动画 <i class="fa fa-play ml-2"></i>';
+          return;
+        }
+
+        // 生成新的股价路径
+        const path = generateStockPath(S0, r, sigma, T, steps);
+        const finalPrice = path[path.length - 1];
+
+        let payoff;
+        if (optionType === "call") {
+          payoff = Math.max(finalPrice - K, 0);
+        } else {
+          payoff = Math.max(K - finalPrice, 0);
+        }
+
+        optionSimulation.totalPayoff += payoff;
+        optionSimulation.payoffs.push(payoff);
+        optionSimulation.paths.push(path);
+        optionSimulation.currentPath++;
+
+        // 计算当前蒙特卡洛价格
+        const mcPrice =
+          Math.exp(-r * T) *
+          (optionSimulation.totalPayoff / optionSimulation.currentPath);
+        const bsPrice =
+          optionType === "call"
+            ? blackScholesCall(S0, K, T, r, sigma)
+            : blackScholesPut(S0, K, T, r, sigma);
+
+        // 更新显示
+        document.getElementById("option-mc-price").textContent =
+          mcPrice.toFixed(4);
+        document.getElementById("option-bs-price").textContent =
+          bsPrice.toFixed(4);
+        document.getElementById("option-current-paths").textContent =
+          optionSimulation.currentPath;
+
+        const progress =
+          (optionSimulation.currentPath / optionSimulation.totalPaths) * 100;
+        document.getElementById("option-progress-text").textContent =
+          progress.toFixed(1) + "%";
+        document.getElementById("option-progress-bar").style.width =
+          progress + "%";
+
+        const error = Math.abs((mcPrice - bsPrice) / bsPrice) * 100;
+        document.getElementById("option-price-diff").textContent =
+          error.toFixed(2) + "%";
+
+        // 记录收敛数据
+        optionSimulation.convergenceData.push({
+          x: optionSimulation.currentPath,
+          y: mcPrice,
+        });
+
+        // 更新路径图表（只显示最近的几条路径）
+        updatePathChart();
+
+        // 更新收敛图表
+        if (
+          optionSimulation.convergenceChart &&
+          optionSimulation.currentPath % 10 === 0
+        ) {
+          optionSimulation.convergenceChart.data.labels =
+            optionSimulation.convergenceData.map((d) => d.x);
+          optionSimulation.convergenceChart.data.datasets[0].data =
+            optionSimulation.convergenceData.map((d) => d.y);
+          optionSimulation.convergenceChart.data.datasets[1].data =
+            optionSimulation.convergenceData.map((d) => bsPrice);
+          optionSimulation.convergenceChart.update("none");
+        }
+
+        // 继续下一次迭代
+        optionSimulation.animationId = setTimeout(
+          continueOptionAnimation,
+          speed
+        );
+      }
+
+      function pauseOptionAnimation() {
+        if (!optionSimulation.isSimulating) return;
+
+        optionSimulation.isPaused = true;
+        if (optionSimulation.animationId) {
+          clearTimeout(optionSimulation.animationId);
+        }
+
+        document.getElementById("option-animate-btn").textContent = "继续";
+        document.getElementById("option-animate-btn").innerHTML =
+          '继续 <i class="fa fa-play ml-2"></i>';
+        document.getElementById("option-pause-btn").style.display =
+          "inline-block";
+      }
+
+      function resetOptionAnimation() {
+        optionSimulation.isSimulating = false;
+        optionSimulation.isPaused = false;
+        optionSimulation.currentPath = 0;
+        optionSimulation.totalPaths = 0;
+        optionSimulation.paths = [];
+        optionSimulation.payoffs = [];
+        optionSimulation.convergenceData = [];
+        optionSimulation.totalPayoff = 0;
+
+        if (optionSimulation.animationId) {
+          clearTimeout(optionSimulation.animationId);
+        }
+
+        // 重置按钮状态
+        document.getElementById("option-animate-btn").textContent = "开始动画";
+        document.getElementById("option-animate-btn").innerHTML =
+          '开始动画 <i class="fa fa-play ml-2"></i>';
+        document.getElementById("option-pause-btn").style.display = "none";
+
+        // 重置显示
+        document.getElementById("option-mc-price").textContent = "0.00";
+        document.getElementById("option-bs-price").textContent = "0.00";
+        document.getElementById("option-price-diff").textContent = "0.00";
+        document.getElementById("option-current-paths").textContent = "0";
+        document.getElementById("option-progress-text").textContent = "0%";
+        document.getElementById("option-progress-bar").style.width = "0%";
+
+        // 清空图表
+        if (optionSimulation.pathChart) {
+          optionSimulation.pathChart.data.datasets = [];
+          optionSimulation.pathChart.update();
+        }
+
+        if (optionSimulation.convergenceChart) {
+          optionSimulation.convergenceChart.data.labels = [];
+          optionSimulation.convergenceChart.data.datasets[0].data = [];
+          optionSimulation.convergenceChart.data.datasets[1].data = [];
+          optionSimulation.convergenceChart.update();
+        }
+      }
+
+      // 排队系统模拟
+      function initQueueSimulation() {
+        // 初始化队列状态图表
+        const queueCtx = document
+          .getElementById("queue-chart")
+          .getContext("2d");
+        queueSimulation.chart = new Chart(queueCtx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "队列长度",
+                data: [],
+                borderColor: "#a855f7",
+                backgroundColor: "rgba(168, 85, 247, 0.1)",
+                fill: true,
+                tension: 0.4,
+                pointRadius: 1,
+              },
+              {
+                label: "服务器状态",
+                data: [],
+                borderColor: "#00ff88",
+                backgroundColor: "rgba(0, 255, 136, 0.1)",
+                fill: false,
+                tension: 0,
+                pointRadius: 1,
+                stepped: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: "#ffffff" },
+              },
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "时间",
+                  color: "#ffffff",
+                },
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "数量",
+                  color: "#ffffff",
+                },
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+
+        // 初始化性能指标图表
+        const metricsCtx = document
+          .getElementById("queue-metrics-chart")
+          .getContext("2d");
+        queueSimulation.metricsChart = new Chart(metricsCtx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "平均等待时间",
+                data: [],
+                borderColor: "#ff6b6b",
+                backgroundColor: "rgba(255, 107, 107, 0.1)",
+                tension: 0.4,
+                pointRadius: 1,
+                yAxisID: "y",
+              },
+              {
+                label: "系统利用率",
+                data: [],
+                borderColor: "#4ecdc4",
+                backgroundColor: "rgba(78, 205, 196, 0.1)",
+                tension: 0.4,
+                pointRadius: 1,
+                yAxisID: "y1",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: "#ffffff" },
+              },
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "时间",
+                  color: "#ffffff",
+                },
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+              y: {
+                type: "linear",
+                display: true,
+                position: "left",
+                title: {
+                  display: true,
+                  text: "等待时间",
+                  color: "#ffffff",
+                },
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+              },
+              y1: {
+                type: "linear",
+                display: true,
+                position: "right",
+                title: {
+                  display: true,
+                  text: "利用率 (%)",
+                  color: "#ffffff",
+                },
+                ticks: { color: "#ffffff" },
+                grid: { drawOnChartArea: false },
+              },
+            },
+          },
+        });
+      }
+
+      // 生成指数分布随机数
+      function exponentialRandom(lambda) {
+        return -Math.log(1 - Math.random()) / lambda;
+      }
+
+      // 重置排队系统
+      function resetQueueSystem() {
+        queueSimulation.isRunning = false;
+        queueSimulation.customers = [];
+        queueSimulation.currentTime = 0;
+        queueSimulation.totalCustomers = 0;
+        queueSimulation.totalWaitTime = 0;
+        queueSimulation.totalServiceTime = 0;
+        queueSimulation.serverBusy = false;
+        queueSimulation.nextArrival = 0;
+        queueSimulation.nextDeparture = Infinity;
+
+        // 重置显示
+        document.getElementById("queue-avg-length").textContent = "0.00";
+        document.getElementById("queue-avg-wait").textContent = "0.00分钟";
+        document.getElementById("queue-utilization").textContent = "0.00%";
+        document.getElementById("queue-served").textContent = "0";
+
+        // 重置图表
+        queueSimulation.chart.data.labels = [];
+        queueSimulation.chart.data.datasets[0].data = [];
+        queueSimulation.chart.data.datasets[1].data = [];
+        queueSimulation.chart.update();
+
+        queueSimulation.metricsChart.data.labels = [];
+        queueSimulation.metricsChart.data.datasets[0].data = [];
+        queueSimulation.metricsChart.data.datasets[1].data = [];
+        queueSimulation.metricsChart.update();
+      }
+
+      function startQueueSimulation() {
+        if (queueSimulation.isRunning) return;
+
+        const arrivalRate = parseFloat(
+          document.getElementById("queue-arrival-rate").value
+        );
+        const serviceRate = parseFloat(
+          document.getElementById("queue-service-rate").value
+        );
+        const maxTime = parseFloat(
+          document.getElementById("queue-max-time").value
+        );
+
+        if (arrivalRate >= serviceRate) {
+          alert("到达率必须小于服务率，否则队列会无限增长！");
+          return;
+        }
+
+        resetQueueSystem();
+        queueSimulation.isRunning = true;
+
+        // 初始化第一个到达事件
+        queueSimulation.nextArrival = exponentialRandom(arrivalRate);
+
+        const timeData = [];
+        const queueLengthData = [];
+        const serverStatusData = [];
+        const avgWaitData = [];
+        const utilizationData = [];
+
+        // 事件驱动模拟
+        while (
+          queueSimulation.currentTime < maxTime &&
+          queueSimulation.isRunning
+        ) {
+          // 确定下一个事件
+          if (queueSimulation.nextArrival < queueSimulation.nextDeparture) {
+            // 处理到达事件
+            queueSimulation.currentTime = queueSimulation.nextArrival;
+
+            const customer = {
+              id: queueSimulation.totalCustomers++,
+              arrivalTime: queueSimulation.currentTime,
+              serviceStartTime: null,
+              departureTime: null,
+            };
+
+            if (!queueSimulation.serverBusy) {
+              // 服务器空闲，立即开始服务
+              customer.serviceStartTime = queueSimulation.currentTime;
+              queueSimulation.serverBusy = true;
+              const serviceTime = exponentialRandom(serviceRate);
+              customer.departureTime =
+                queueSimulation.currentTime + serviceTime;
+              queueSimulation.nextDeparture = customer.departureTime;
+              queueSimulation.totalServiceTime += serviceTime;
+            } else {
+              // 服务器忙碌，加入队列
+              queueSimulation.customers.push(customer);
+            }
+
+            // 生成下一个到达事件
+            queueSimulation.nextArrival =
+              queueSimulation.currentTime + exponentialRandom(arrivalRate);
+          } else {
+            // 处理离开事件
+            queueSimulation.currentTime = queueSimulation.nextDeparture;
+
+            if (queueSimulation.customers.length > 0) {
+              // 队列中有等待的顾客
+              const nextCustomer = queueSimulation.customers.shift();
+              nextCustomer.serviceStartTime = queueSimulation.currentTime;
+              queueSimulation.totalWaitTime +=
+                nextCustomer.serviceStartTime - nextCustomer.arrivalTime;
+
+              const serviceTime = exponentialRandom(serviceRate);
+              nextCustomer.departureTime =
+                queueSimulation.currentTime + serviceTime;
+              queueSimulation.nextDeparture = nextCustomer.departureTime;
+              queueSimulation.totalServiceTime += serviceTime;
+            } else {
+              // 队列为空，服务器变为空闲
+              queueSimulation.serverBusy = false;
+              queueSimulation.nextDeparture = Infinity;
+            }
+          }
+
+          // 记录数据点（每隔一定时间间隔）
+          if (
+            timeData.length === 0 ||
+            queueSimulation.currentTime - timeData[timeData.length - 1] >= 0.1
+          ) {
+            timeData.push(queueSimulation.currentTime.toFixed(2));
+            queueLengthData.push(queueSimulation.customers.length);
+            serverStatusData.push(queueSimulation.serverBusy ? 1 : 0);
+
+            const avgWait =
+              queueSimulation.totalCustomers > 0
+                ? queueSimulation.totalWaitTime / queueSimulation.totalCustomers
+                : 0;
+            const utilization =
+              queueSimulation.currentTime > 0
+                ? (queueSimulation.totalServiceTime /
+                    queueSimulation.currentTime) *
+                  100
+                : 0;
+
+            avgWaitData.push(avgWait);
+            utilizationData.push(utilization);
+          }
+        }
+
+        // 更新图表
+        queueSimulation.chart.data.labels = timeData;
+        queueSimulation.chart.data.datasets[0].data = queueLengthData;
+        queueSimulation.chart.data.datasets[1].data = serverStatusData;
+        queueSimulation.chart.update();
+
+        queueSimulation.metricsChart.data.labels = timeData;
+        queueSimulation.metricsChart.data.datasets[0].data = avgWaitData;
+        queueSimulation.metricsChart.data.datasets[1].data = utilizationData;
+        queueSimulation.metricsChart.update();
+
+        // 更新最终统计
+        const finalAvgWait =
+          queueSimulation.totalCustomers > 0
+            ? queueSimulation.totalWaitTime / queueSimulation.totalCustomers
+            : 0;
+        const finalUtilization =
+          queueSimulation.currentTime > 0
+            ? (queueSimulation.totalServiceTime / queueSimulation.currentTime) *
+              100
+            : 0;
+        const throughput =
+          queueSimulation.totalCustomers / queueSimulation.currentTime;
+
+        document.getElementById("queue-avg-length").textContent =
+          queueSimulation.customers.length.toFixed(2);
+        document.getElementById("queue-avg-wait").textContent =
+          finalAvgWait.toFixed(2) + "分钟";
+        document.getElementById("queue-utilization").textContent =
+          finalUtilization.toFixed(2) + "%";
+        document.getElementById("queue-served").textContent =
+          queueSimulation.totalCustomers - queueSimulation.customers.length;
+
+        queueSimulation.isRunning = false;
+      }
+
+      function animateQueueSimulation() {
+        if (queueSimulation.isAnimating && !queueSimulation.isPaused) return;
+
+        const arrivalRate = parseFloat(
+          document.getElementById("queue-arrival-rate").value
+        );
+        const serviceRate = parseFloat(
+          document.getElementById("queue-service-rate").value
+        );
+        const maxTime = parseFloat(
+          document.getElementById("queue-max-time").value
+        );
+
+        if (arrivalRate >= serviceRate) {
+          alert("到达率必须小于服务率，否则队列会无限增长！");
+          return;
+        }
+
+        if (!queueSimulation.isAnimating) {
+          // 开始新的动画
+          resetQueueSystem();
+          queueSimulation.isAnimating = true;
+          queueSimulation.isPaused = false;
+          queueSimulation.maxTime = maxTime;
+          queueSimulation.stepCount = 0;
+          queueSimulation.maxSteps = 200;
+          queueSimulation.timeData = [];
+          queueSimulation.queueLengthData = [];
+          queueSimulation.serverStatusData = [];
+          queueSimulation.avgWaitData = [];
+          queueSimulation.utilizationData = [];
+
+          // 初始化第一个到达事件
+          queueSimulation.nextArrival = exponentialRandom(arrivalRate);
+
+          // 更新按钮状态
+          document.getElementById("queue-start-btn").style.display = "none";
+          document.getElementById("queue-pause-btn").style.display =
+            "inline-block";
+          document.getElementById("queue-pause-btn").disabled = false;
+          document.getElementById("queue-pause-btn").innerHTML =
+            '暂停 <i class="fa fa-pause ml-2"></i>';
+        } else if (queueSimulation.isPaused) {
+          // 继续动画
+          queueSimulation.isPaused = false;
+          document.getElementById("queue-pause-btn").innerHTML =
+            '暂停 <i class="fa fa-pause ml-2"></i>';
+        }
+
+        const simulateStep = () => {
+          if (!queueSimulation.isAnimating || queueSimulation.isPaused) {
+            return;
+          }
+
+          if (
+            queueSimulation.stepCount >= queueSimulation.maxSteps ||
+            queueSimulation.currentTime >= queueSimulation.maxTime
+          ) {
+            queueSimulation.isAnimating = false;
+            document.getElementById("queue-start-btn").style.display =
+              "inline-block";
+            document.getElementById("queue-pause-btn").style.display = "none";
+            return;
+          }
+
+          // 处理一个事件
+          if (queueSimulation.nextArrival < queueSimulation.nextDeparture) {
+            // 到达事件
+            queueSimulation.currentTime = queueSimulation.nextArrival;
+
+            const customer = {
+              id: queueSimulation.totalCustomers++,
+              arrivalTime: queueSimulation.currentTime,
+              serviceStartTime: null,
+              departureTime: null,
+            };
+
+            if (!queueSimulation.serverBusy) {
+              customer.serviceStartTime = queueSimulation.currentTime;
+              queueSimulation.serverBusy = true;
+              const serviceTime = exponentialRandom(serviceRate);
+              customer.departureTime =
+                queueSimulation.currentTime + serviceTime;
+              queueSimulation.nextDeparture = customer.departureTime;
+              queueSimulation.totalServiceTime += serviceTime;
+            } else {
+              queueSimulation.customers.push(customer);
+            }
+
+            queueSimulation.nextArrival =
+              queueSimulation.currentTime + exponentialRandom(arrivalRate);
+          } else {
+            // 离开事件
+            queueSimulation.currentTime = queueSimulation.nextDeparture;
+
+            if (queueSimulation.customers.length > 0) {
+              const nextCustomer = queueSimulation.customers.shift();
+              nextCustomer.serviceStartTime = queueSimulation.currentTime;
+              queueSimulation.totalWaitTime +=
+                nextCustomer.serviceStartTime - nextCustomer.arrivalTime;
+
+              const serviceTime = exponentialRandom(serviceRate);
+              nextCustomer.departureTime =
+                queueSimulation.currentTime + serviceTime;
+              queueSimulation.nextDeparture = nextCustomer.departureTime;
+              queueSimulation.totalServiceTime += serviceTime;
+            } else {
+              queueSimulation.serverBusy = false;
+              queueSimulation.nextDeparture = Infinity;
+            }
+          }
+
+          // 更新数据
+          queueSimulation.timeData.push(queueSimulation.currentTime.toFixed(2));
+          queueSimulation.queueLengthData.push(
+            queueSimulation.customers.length
+          );
+          queueSimulation.serverStatusData.push(
+            queueSimulation.serverBusy ? 1 : 0
+          );
+
+          // 计算实时指标
+          const avgWait =
+            queueSimulation.totalCustomers > 0
+              ? queueSimulation.totalWaitTime / queueSimulation.totalCustomers
+              : 0;
+          const utilization =
+            queueSimulation.currentTime > 0
+              ? (queueSimulation.totalServiceTime /
+                  queueSimulation.currentTime) *
+                100
+              : 0;
+
+          queueSimulation.avgWaitData.push(avgWait);
+          queueSimulation.utilizationData.push(utilization);
+
+          // 更新图表
+          queueSimulation.chart.data.labels = queueSimulation.timeData;
+          queueSimulation.chart.data.datasets[0].data =
+            queueSimulation.queueLengthData;
+          queueSimulation.chart.data.datasets[1].data =
+            queueSimulation.serverStatusData;
+          queueSimulation.chart.update("none");
+
+          queueSimulation.metricsChart.data.labels = queueSimulation.timeData;
+          queueSimulation.metricsChart.data.datasets[0].data =
+            queueSimulation.avgWaitData;
+          queueSimulation.metricsChart.data.datasets[1].data =
+            queueSimulation.utilizationData;
+          queueSimulation.metricsChart.update("none");
+
+          // 更新显示
+          document.getElementById("queue-avg-length").textContent =
+            queueSimulation.customers.length.toFixed(2);
+          document.getElementById("queue-avg-wait").textContent =
+            avgWait.toFixed(2) + "分钟";
+          document.getElementById("queue-utilization").textContent =
+            utilization.toFixed(2) + "%";
+          document.getElementById("queue-served").textContent =
+            queueSimulation.totalCustomers - queueSimulation.customers.length;
+
+          queueSimulation.stepCount++;
+          const speed = parseInt(document.getElementById("queue-speed").value);
+          queueSimulation.animationId = setTimeout(simulateStep, speed);
+        };
+
+        simulateStep();
+      }
+
+      function pauseQueueAnimation() {
+        if (queueSimulation.isAnimating && !queueSimulation.isPaused) {
+          queueSimulation.isPaused = true;
+          if (queueSimulation.animationId) {
+            clearTimeout(queueSimulation.animationId);
+          }
+          document.getElementById("queue-pause-btn").innerHTML =
+            '继续 <i class="fa fa-play ml-2"></i>';
+        } else if (queueSimulation.isAnimating && queueSimulation.isPaused) {
+          animateQueueSimulation();
+        }
+      }
+
+      function resetQueueAnimation() {
+        queueSimulation.isAnimating = false;
+        queueSimulation.isPaused = false;
+        if (queueSimulation.animationId) {
+          clearTimeout(queueSimulation.animationId);
+        }
+        resetQueueSystem();
+
+        // 重置按钮状态
+        document.getElementById("queue-start-btn").style.display =
+          "inline-block";
+        document.getElementById("queue-pause-btn").style.display = "none";
+        document.getElementById("queue-pause-btn").innerHTML =
+          '暂停 <i class="fa fa-pause ml-2"></i>';
+      }
+
+      function drawPiCanvas() {
+        const ctx = piSimulation.ctx;
+        const canvas = piSimulation.canvas;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(centerX, centerY) - 20;
+
+        // 清空画布
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 绘制正方形
+        ctx.strokeStyle = "#666";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(
+          centerX - radius,
+          centerY - radius,
+          radius * 2,
+          radius * 2
+        );
+
+        // 绘制圆
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        // 绘制点
+        piSimulation.points.forEach((point) => {
+          const x = centerX + point.x * radius;
+          const y = centerY + point.y * radius;
+
+          ctx.fillStyle = point.inside ? "#00ff88" : "#ff4444";
+          ctx.beginPath();
+          ctx.arc(x, y, 2, 0, 2 * Math.PI);
+          ctx.fill();
+        });
+      }
+
+      function startPiSimulation() {
+        if (piSimulation.isRunning) return;
+
+        piSimulation.isRunning = true;
+        piSimulation.points = [];
+        piSimulation.insideCount = 0;
+        piSimulation.totalCount = 0;
+        piSimulation.convergenceData = [];
+
+        const totalPoints = parseInt(
+          document.getElementById("pi-points").value
+        );
+        const speed = parseInt(document.getElementById("pi-speed").value);
+
+        let currentPoint = 0;
+
+        const addPoint = () => {
+          if (currentPoint >= totalPoints || !piSimulation.isRunning) {
+            piSimulation.isRunning = false;
+            return;
+          }
+
+          // 生成随机点
+          const x = Math.random() * 2 - 1;
+          const y = Math.random() * 2 - 1;
+          const inside = x * x + y * y <= 1;
+
+          piSimulation.points.push({ x, y, inside });
+          piSimulation.totalCount++;
+          if (inside) piSimulation.insideCount++;
+
+          // 计算π估算值
+          const piEstimate =
+            (4 * piSimulation.insideCount) / piSimulation.totalCount;
+          const error = Math.abs(piEstimate - Math.PI);
+
+          // 更新显示
+          document.getElementById("pi-estimate").textContent =
+            piEstimate.toFixed(4);
+          document.getElementById("pi-error").textContent = error.toFixed(4);
+          document.getElementById("pi-inside").textContent =
+            piSimulation.insideCount;
+          document.getElementById("pi-total").textContent =
+            piSimulation.totalCount;
+
+          // 更新收敛图表
+          if (currentPoint % 100 === 0 || currentPoint < 100) {
+            piSimulation.convergenceChart.data.labels.push(
+              piSimulation.totalCount
+            );
+            piSimulation.convergenceChart.data.datasets[0].data.push(
+              piEstimate
+            );
+            piSimulation.convergenceChart.data.datasets[1].data.push(Math.PI);
+            piSimulation.convergenceChart.update("none");
+          }
+
+          // 重绘画布
+          drawPiCanvas();
+
+          currentPoint++;
+          setTimeout(addPoint, speed);
+        };
+
+        addPoint();
+      }
+
+      function resetPiSimulation() {
+        piSimulation.isRunning = false;
+        piSimulation.points = [];
+        piSimulation.insideCount = 0;
+        piSimulation.totalCount = 0;
+
+        // 重置显示
+        document.getElementById("pi-estimate").textContent = "0.0000";
+        document.getElementById("pi-error").textContent = "0.0000";
+        document.getElementById("pi-inside").textContent = "0";
+        document.getElementById("pi-total").textContent = "0";
+
+        // 重置图表
+        piSimulation.convergenceChart.data.labels = [];
+        piSimulation.convergenceChart.data.datasets[0].data = [];
+        piSimulation.convergenceChart.data.datasets[1].data = [];
+        piSimulation.convergenceChart.update();
+
+        // 重绘画布
+        drawPiCanvas();
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // 创建粒子背景
+        createParticles();
+
+        // 初始化随机变量相关图表
+        initDiscreteRvChart();
+        initContinuousRvChart();
+        initRvFeaturesChart();
+        initRvParamEvents();
+
+        // 初始化模拟
+        initPiSimulation();
+        initIntegralSimulation();
+        initOptionSimulation();
+        initQueueSimulation();
+
+        // 设置随机变量相关按钮事件
+        document
+          .getElementById("roll-dice-btn")
+          .addEventListener("click", rollTwoDice);
+        document
+          .getElementById("roll-dice-ten-btn")
+          .addEventListener("click", rollTenTimes);
+        document
+          .getElementById("generate-samples-btn")
+          .addEventListener("click", generateContinuousSamples);
+
+        // π值估算模拟事件
+        document
+          .getElementById("pi-start-btn")
+          .addEventListener("click", startPiSimulation);
+        document
+          .getElementById("pi-reset-btn")
+          .addEventListener("click", resetPiSimulation);
+
+        // 参数滑块事件
+        document
+          .getElementById("pi-points")
+          .addEventListener("input", function () {
+            document.getElementById("pi-points-value").textContent = this.value;
+          });
+        document
+          .getElementById("pi-speed")
+          .addEventListener("input", function () {
+            document.getElementById("pi-speed-value").textContent =
+              this.value + "ms";
+          });
+
+        // 初始化随机变量数字特征
+        updateRvFeatures();
+
+        // 连续分布类型选择
+        document
+          .getElementById("continuous-distribution")
+          .addEventListener("change", generateContinuousSamples);
+
+        // 积分计算模拟事件
+        document
+          .getElementById("integral-calculate-btn")
+          .addEventListener("click", calculateIntegral);
+        document
+          .getElementById("integral-animate-btn")
+          .addEventListener("click", animateIntegral);
+        document
+          .getElementById("integral-pause-btn")
+          .addEventListener("click", pauseIntegralAnimation);
+        document
+          .getElementById("integral-reset-btn")
+          .addEventListener("click", resetIntegralAnimation);
+        document
+          .getElementById("integral-function")
+          .addEventListener("change", updateIntegralChart);
+        document
+          .getElementById("integral-a")
+          .addEventListener("input", updateIntegralChart);
+        document
+          .getElementById("integral-b")
+          .addEventListener("input", updateIntegralChart);
+        document
+          .getElementById("integral-samples")
+          .addEventListener("input", function () {
+            document.getElementById("integral-samples-value").textContent =
+              this.value;
+          });
+        document
+          .getElementById("integral-speed")
+          .addEventListener("input", function () {
+            document.getElementById("integral-speed-value").textContent =
+              this.value + "ms";
+          });
+
+        // 期权定价模拟事件
+        document
+          .getElementById("option-simulate-btn")
+          .addEventListener("click", simulateOption);
+        document
+          .getElementById("option-animate-btn")
+          .addEventListener("click", animateOptionPaths);
+        document
+          .getElementById("option-pause-btn")
+          .addEventListener("click", pauseOptionAnimation);
+        document
+          .getElementById("option-reset-btn")
+          .addEventListener("click", resetOptionAnimation);
+        document
+          .getElementById("option-paths")
+          .addEventListener("input", function () {
+            document.getElementById("option-paths-value").textContent =
+              this.value;
+          });
+        document
+          .getElementById("option-speed")
+          .addEventListener("input", function () {
+            document.getElementById("option-speed-value").textContent =
+              this.value + "ms";
+          });
+
+        // 排队系统模拟事件
+        document
+          .getElementById("queue-start-btn")
+          .addEventListener("click", animateQueueSimulation);
+        document
+          .getElementById("queue-pause-btn")
+          .addEventListener("click", pauseQueueAnimation);
+        document
+          .getElementById("queue-reset-btn")
+          .addEventListener("click", resetQueueAnimation);
+
+        // 排队系统参数事件
+        document
+          .getElementById("queue-arrival-rate")
+          .addEventListener("input", function () {
+            document.getElementById("queue-arrival-rate-value").textContent =
+              this.value;
+          });
+        document
+          .getElementById("queue-service-rate")
+          .addEventListener("input", function () {
+            document.getElementById("queue-service-rate-value").textContent =
+              this.value;
+          });
+        document
+          .getElementById("queue-max-time")
+          .addEventListener("input", function () {
+            document.getElementById("queue-max-time-value").textContent =
+              this.value;
+          });
+        document
+          .getElementById("queue-speed")
+          .addEventListener("input", function () {
+            document.getElementById("queue-speed-value").textContent =
+              this.value + "ms";
+          });
+      });
+    </script>
+
+    <!-- 工具箱组件 -->
+    <script src="/static/js/toolbox.js"></script>
+  </body>
+</html>

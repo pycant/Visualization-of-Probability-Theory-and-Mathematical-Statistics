@@ -426,7 +426,41 @@
         background-color: #3742fa;
       }
 
+      .alarm-record {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 3px;
+        animation: record-bounce 0.5s ease-out;
+        font-size: 12px;
+      }
+
+      .alarm-record.rain {
+        background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+        color: white;
+      }
+
+      .alarm-record.no-rain {
+        background: linear-gradient(45deg, #fbbf24, #f59e0b);
+        color: white;
+      }
+
       @keyframes candy-bounce {
+        0% {
+          transform: scale(0) rotate(0deg);
+        }
+        50% {
+          transform: scale(1.2) rotate(180deg);
+        }
+        100% {
+          transform: scale(1) rotate(360deg);
+        }
+      }
+
+      @keyframes record-bounce {
         0% {
           transform: scale(0) rotate(0deg);
         }
@@ -459,11 +493,22 @@
 
       .true-value-line {
         position: absolute;
+        top: 0;
+        bottom: 0;
         width: 3px;
-        height: 100%;
         background: #ffd700;
         box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
         z-index: 10;
+        pointer-events: none;
+      }
+
+      #intervals-container {
+        position: relative;
+      }
+
+      #intervals-container .true-value-line {
+        position: absolute;
+        margin-left: -1.5px;
       }
 
       /* 理论推导步骤 */
@@ -720,16 +765,17 @@
             <h3
               class="text-xl font-future font-semibold mb-6 text-white flex items-center"
             >
-              <i class="fa fa-gift text-neon-orange mr-3"></i> 糖果盒实验
+              <i class="fa fa-cloud-rain text-neon-orange mr-3"></i>
+              湿度警报器实验
             </h3>
 
             <div class="candy-box mb-6 text-center">
-              <div class="text-white font-bold mb-4">神秘糖果盒</div>
+              <div class="text-white font-bold mb-4">智能湿度警报器</div>
               <div
                 id="candy-display"
                 class="min-h-[100px] flex flex-wrap justify-center items-center"
               >
-                <div class="text-gray-300">点击"抽取样本"开始实验</div>
+                <div class="text-gray-300">点击"记录样本"开始实验</div>
               </div>
             </div>
 
@@ -761,7 +807,7 @@
 
               <div class="text-center mb-4">
                 <div class="text-gray-300 mb-2">
-                  样本中红色糖果比例:
+                  报警后下雨比例:
                   <span
                     id="sample-proportion"
                     class="text-neon-orange font-bold"
@@ -783,7 +829,7 @@
                   id="sample-btn"
                   class="px-6 py-2 bg-neon-orange text-dark-bg font-bold rounded-md hover:bg-neon-orange/80 transition-all duration-300"
                 >
-                  抽取样本 <i class="fa fa-hand-paper ml-2"></i>
+                  记录样本 <i class="fa fa-clipboard ml-2"></i>
                 </button>
                 <button
                   id="reveal-truth-btn"
@@ -802,8 +848,9 @@
 
             <div class="text-sm text-gray-400">
               <p class="mb-2"><strong>实验说明:</strong></p>
-              <p>• 糖果盒中有红色和蓝色糖果，真实比例未知</p>
-              <p>• 通过抽样估计红色糖果的比例</p>
+              <p>• 湿度警报器在湿度达到阈值时发出警报</p>
+              <p>• 记录警报后一段时间内是否下雨（真实概率0.6）</p>
+              <p>• 通过抽样估计报警后下雨的概率</p>
               <p>• 观察置信区间如何"捕捉"真实值</p>
             </div>
           </div>
@@ -844,7 +891,9 @@
               </div>
             </div>
 
-            <div class="text-sm text-gray-400">
+            <div
+              class="text-sm text-gray-400 sticky bottom-0 bg-dark-bg/90 backdrop-blur-sm p-4 rounded-lg border border-gray-700/50"
+            >
               <p class="mb-2"><strong>图例:</strong></p>
               <div class="flex items-center mb-1">
                 <div class="w-4 h-4 bg-neon-green rounded mr-2"></div>
@@ -1615,17 +1664,27 @@
             </div>
 
             <!-- 预测结果分析区域 -->
-            <div id="prediction-feedback" class="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-600" style="display: none;">
+            <div
+              id="prediction-feedback"
+              class="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-600"
+              style="display: none"
+            >
               <div class="flex items-center justify-between mb-3">
                 <h3 class="text-lg font-bold text-neon-green flex items-center">
                   <i class="fa fa-chart-line mr-2"></i>
                   预测结果分析
                 </h3>
-                <button id="close-feedback" class="text-gray-400 hover:text-white transition-colors">
+                <button
+                  id="close-feedback"
+                  class="text-gray-400 hover:text-white transition-colors"
+                >
                   <i class="fa fa-times"></i>
                 </button>
               </div>
-              <div id="feedback-content" class="text-sm text-gray-300 space-y-2">
+              <div
+                id="feedback-content"
+                class="text-sm text-gray-300 space-y-2"
+              >
                 <!-- 动态内容将在这里显示 -->
               </div>
             </div>
@@ -1885,7 +1944,7 @@
     <script src="../static/js/toolbox.js"></script>
     <script>
       // 全局变量
-      let candyBoxTrueRatio = 0.6; // 真实的红色糖果比例
+      let rainAfterAlarmRatio = 0.6; // 真实的报警后下雨概率
       let currentSample = [];
       let allIntervals = [];
       let understandingScores = [0, 0, 0, 0, 0];
@@ -1965,7 +2024,7 @@
         }
       }
 
-      // 糖果盒实验
+      // 湿度警报器实验
       function sampleCandies() {
         const sampleSize = parseInt(
           document.getElementById("sample-size").value
@@ -1974,28 +2033,32 @@
           document.getElementById("confidence-level").value
         );
 
-        // 生成样本
+        // 生成样本（警报记录）
         currentSample = [];
         for (let i = 0; i < sampleSize; i++) {
           currentSample.push(
-            Math.random() < candyBoxTrueRatio ? "red" : "blue"
+            Math.random() < rainAfterAlarmRatio ? "rain" : "no-rain"
           );
         }
 
-        // 显示糖果
+        // 显示警报记录
         const candyDisplay = document.getElementById("candy-display");
         candyDisplay.innerHTML = "";
-        currentSample.forEach((color, index) => {
+        currentSample.forEach((result, index) => {
           setTimeout(() => {
-            const candy = document.createElement("div");
-            candy.className = `candy ${color}`;
-            candyDisplay.appendChild(candy);
+            const record = document.createElement("div");
+            record.className = `alarm-record ${result}`;
+            record.innerHTML =
+              result === "rain"
+                ? '<i class="fa fa-cloud-rain text-blue-400"></i>'
+                : '<i class="fa fa-sun text-yellow-400"></i>';
+            candyDisplay.appendChild(record);
           }, index * 50);
         });
 
         // 计算样本比例
-        const redCount = currentSample.filter((c) => c === "red").length;
-        const sampleProportion = redCount / sampleSize;
+        const rainCount = currentSample.filter((c) => c === "rain").length;
+        const sampleProportion = rainCount / sampleSize;
 
         // 计算置信区间
         const z =
@@ -2021,7 +2084,7 @@
 
       // 揭示真相
       function revealTruth() {
-        alert(`真实的红色糖果比例是: ${candyBoxTrueRatio.toFixed(3)}`);
+        alert(`真实的报警后下雨概率是: ${rainAfterAlarmRatio.toFixed(3)}`);
       }
 
       // 重复实验100次
@@ -2044,12 +2107,12 @@
 
         for (let exp = 0; exp < 100; exp++) {
           // 生成样本
-          let redCount = 0;
+          let rainCount = 0;
           for (let i = 0; i < sampleSize; i++) {
-            if (Math.random() < candyBoxTrueRatio) redCount++;
+            if (Math.random() < rainAfterAlarmRatio) rainCount++;
           }
 
-          const sampleProportion = redCount / sampleSize;
+          const sampleProportion = rainCount / sampleSize;
           const standardError = Math.sqrt(
             (sampleProportion * (1 - sampleProportion)) / sampleSize
           );
@@ -2058,7 +2121,8 @@
           const upperBound = Math.min(1, sampleProportion + marginError);
 
           const containsTrue =
-            lowerBound <= candyBoxTrueRatio && candyBoxTrueRatio <= upperBound;
+            lowerBound <= rainAfterAlarmRatio &&
+            rainAfterAlarmRatio <= upperBound;
           if (containsTrue) successCount++;
 
           allIntervals.push({
@@ -2083,12 +2147,6 @@
         const container = document.getElementById("intervals-container");
         container.innerHTML = "";
 
-        // 添加真实值线
-        const trueLine = document.createElement("div");
-        trueLine.className = "true-value-line";
-        trueLine.style.left = candyBoxTrueRatio * 100 + "%";
-        container.appendChild(trueLine);
-
         // 添加区间
         allIntervals.forEach((interval, index) => {
           const intervalDiv = document.createElement("div");
@@ -2105,7 +2163,47 @@
           container.appendChild(intervalDiv);
         });
 
-        container.style.height = allIntervals.length * 3 + 20 + "px";
+        // 设置容器高度 - 这是容器的可视高度
+        const containerVisibleHeight = 320; // 固定可视高度
+        container.style.height = containerVisibleHeight + "px";
+        console.log("容器可视高度设置为:", containerVisibleHeight + "px");
+        console.log("置信区间总数:", allIntervals.length);
+
+        // 添加真实值线
+        const trueLine = document.createElement("div");
+        trueLine.className = "true-value-line";
+        trueLine.style.left = rainAfterAlarmRatio * 100 + "%";
+        
+        // 等待DOM更新后获取实际的scrollHeight
+        setTimeout(() => {
+          const actualScrollHeight = container.scrollHeight;
+          console.log("容器实际scrollHeight:", actualScrollHeight + "px");
+          
+          // 使用实际的scrollHeight设置真实值线高度
+          trueLine.style.height = actualScrollHeight + "px";
+          console.log("真实值线高度更新为:", actualScrollHeight + "px");
+        }, 50);
+        
+        console.log("真实值线位置设置为:", rainAfterAlarmRatio * 100 + "%");
+        container.appendChild(trueLine);
+        
+        // 调试信息：检查容器和线条的实际尺寸
+        setTimeout(() => {
+          const containerRect = container.getBoundingClientRect();
+          const lineRect = trueLine.getBoundingClientRect();
+          console.log("容器实际尺寸:", {
+            width: containerRect.width,
+            height: containerRect.height,
+            scrollHeight: container.scrollHeight
+          });
+          console.log("真实值线实际尺寸:", {
+            width: lineRect.width,
+            height: lineRect.height,
+            top: lineRect.top,
+            left: lineRect.left
+          });
+          console.log("内容实际高度:", actualContentHeight + "px");
+        }, 100);
       }
 
       // 理解度评分
@@ -2715,21 +2813,24 @@
 
       // 在网页中显示反馈信息
       function displayFeedbackInPage(message) {
-        const feedbackDiv = document.getElementById('prediction-feedback');
-        const contentDiv = document.getElementById('feedback-content');
-        
+        const feedbackDiv = document.getElementById("prediction-feedback");
+        const contentDiv = document.getElementById("feedback-content");
+
         // 将markdown格式的消息转换为HTML
         let htmlContent = message
-          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // 粗体
-          .replace(/\n/g, '<br>') // 换行
-          .replace(/^([🎯📍📊📏✅❌💡].*?):/gm, '<div class="mb-2"><span class="text-neon-blue">$1:</span></div>') // 图标行
+          .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // 粗体
+          .replace(/\n/g, "<br>") // 换行
+          .replace(
+            /^([🎯📍📊📏✅❌💡].*?):/gm,
+            '<div class="mb-2"><span class="text-neon-blue">$1:</span></div>'
+          ) // 图标行
           .replace(/^• (.*?)$/gm, '<div class="ml-4 text-gray-400">• $1</div>'); // 列表项
-        
+
         contentDiv.innerHTML = htmlContent;
-        feedbackDiv.style.display = 'block';
-        
+        feedbackDiv.style.display = "block";
+
         // 滚动到反馈区域
-        feedbackDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        feedbackDiv.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
 
       // 绘制声纳地图
@@ -2766,21 +2867,24 @@
 
         // 坐标转换函数（固定显示范围）
         // 计算实际数据范围，然后映射到固定的canvas显示区域
-        let dataMinX = -3, dataMaxX = 3, dataMinY = -3, dataMaxY = 3;
-        
+        let dataMinX = -3,
+          dataMaxX = 3,
+          dataMinY = -3,
+          dataMaxY = 3;
+
         if (sonarData.length > 0) {
           // 计算实际数据范围
-          dataMinX = Math.min(...sonarData.map(p => p.x));
-          dataMaxX = Math.max(...sonarData.map(p => p.x));
-          dataMinY = Math.min(...sonarData.map(p => p.y));
-          dataMaxY = Math.max(...sonarData.map(p => p.y));
-          
+          dataMinX = Math.min(...sonarData.map((p) => p.x));
+          dataMaxX = Math.max(...sonarData.map((p) => p.x));
+          dataMinY = Math.min(...sonarData.map((p) => p.y));
+          dataMaxY = Math.max(...sonarData.map((p) => p.y));
+
           // 添加一些边距以确保数据点不会贴边
           const rangeX = dataMaxX - dataMinX || 1;
           const rangeY = dataMaxY - dataMinY || 1;
           const marginX = rangeX * 0.1;
           const marginY = rangeY * 0.1;
-          
+
           dataMinX -= marginX;
           dataMaxX += marginX;
           dataMinY -= marginY;
@@ -2792,7 +2896,8 @@
         const scaleY = (rect.height - 2 * padding) / (dataMaxY - dataMinY);
 
         const toCanvasX = (x) => (x - dataMinX) * scaleX + padding;
-        const toCanvasY = (y) => rect.height - ((y - dataMinY) * scaleY + padding);
+        const toCanvasY = (y) =>
+          rect.height - ((y - dataMinY) * scaleY + padding);
 
         // 调试输出坐标转换参数
         console.log("声纳地图坐标转换参数:", {
@@ -3012,8 +3117,6 @@
         ctx.restore();
       }
 
-
-
       // 更新我的世界提示
       function updateMinecraftTips() {
         const tipsElement = document.getElementById("minecraft-tips");
@@ -3054,11 +3157,11 @@
         document.getElementById("estimated-position").textContent =
           "(0.0, 0.0)";
         document.getElementById("search-area").textContent = "-- km²";
-        
+
         // 隐藏反馈信息区域
-        const feedbackDiv = document.getElementById('prediction-feedback');
+        const feedbackDiv = document.getElementById("prediction-feedback");
         if (feedbackDiv) {
-          feedbackDiv.style.display = 'none';
+          feedbackDiv.style.display = "none";
         }
 
         const canvas = document.getElementById("sonar-map");
@@ -4413,14 +4516,14 @@
         document
           .getElementById("reset-search-btn")
           .addEventListener("click", resetSearch);
-        
+
         // 关闭反馈信息按钮事件监听器
         document
           .getElementById("close-feedback")
-          .addEventListener("click", function() {
-            const feedbackDiv = document.getElementById('prediction-feedback');
+          .addEventListener("click", function () {
+            const feedbackDiv = document.getElementById("prediction-feedback");
             if (feedbackDiv) {
-              feedbackDiv.style.display = 'none';
+              feedbackDiv.style.display = "none";
             }
           });
 
@@ -4855,8 +4958,8 @@
           const mouseY = e.clientY - rect.top;
 
           // 更新坐标显示（基于固定范围-3到3）
-          const worldX = ((mouseX / rect.width) * 6) - 3;
-          const worldY = 3 - ((mouseY / rect.height) * 6);
+          const worldX = (mouseX / rect.width) * 6 - 3;
+          const worldY = 3 - (mouseY / rect.height) * 6;
           document.getElementById(
             "sonar-coordinate-display"
           ).textContent = `坐标: (${worldX.toFixed(1)}, ${worldY.toFixed(

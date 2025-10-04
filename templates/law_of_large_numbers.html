@@ -1,0 +1,2312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>大数定律探索 - 概率统计可视化</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.4.0/chartjs-plugin-annotation.min.js"></script>
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+
+    <!-- KaTeX for LaTeX rendering -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+      integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
+      crossorigin="anonymous"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"
+      integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+      integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      // 等待页面和所有脚本完全加载后再渲染数学公式
+      window.addEventListener("load", function () {
+        setTimeout(function () {
+          if (typeof renderMathInElement !== "undefined") {
+            renderMathInElement(document.body, {
+              delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\[", right: "\\]", display: true },
+                { left: "\\(", right: "\\)", display: false },
+              ],
+              throwOnError: false,
+              errorColor: "#cc0000",
+            });
+            console.log("KaTeX渲染完成");
+          } else {
+            console.error("KaTeX未加载");
+          }
+        }, 200);
+      });
+    </script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+      :root {
+        --dark-bg: #0f172a;
+        --dark-card: #1e293b;
+        --neon-blue: #00f3ff;
+        --neon-purple: #bf00ff;
+        --neon-green: #00ff66;
+        --neon-orange: #ff8c00;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: var(--dark-bg);
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      .font-future {
+        font-family: "Roboto", sans-serif;
+        letter-spacing: 0.05em;
+      }
+
+      .text-neon-blue {
+        color: var(--neon-blue);
+      }
+
+      .text-neon-purple {
+        color: var(--neon-purple);
+      }
+
+      .text-neon-green {
+        color: var(--neon-green);
+      }
+
+      .text-neon-orange {
+        color: var(--neon-orange);
+      }
+
+      .bg-neon-blue {
+        background-color: var(--neon-blue);
+      }
+
+      .bg-neon-purple {
+        background-color: var(--neon-purple);
+      }
+
+      .bg-neon-green {
+        background-color: var(--neon-green);
+      }
+
+      .bg-neon-orange {
+        background-color: var(--neon-orange);
+      }
+
+      .bg-dark-bg {
+        background-color: var(--dark-bg);
+      }
+
+      .bg-dark-card {
+        background-color: var(--dark-card);
+      }
+
+      .clip-path-slant {
+        clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+      }
+
+      .bg-grid {
+        background-image: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          );
+        background-size: 20px 20px;
+      }
+
+      /* 柏林噪声背景 */
+      .perlin-noise-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+        opacity: 0.3;
+        background: linear-gradient(45deg, #0f172a, #1e293b);
+        animation: perlinShift 20s ease-in-out infinite;
+      }
+
+      @keyframes perlinShift {
+        0%,
+        100% {
+          background: linear-gradient(45deg, #0f172a, #1e293b);
+        }
+        25% {
+          background: linear-gradient(135deg, #1e293b, #0f172a);
+        }
+        50% {
+          background: linear-gradient(225deg, #0f172a, #1e293b);
+        }
+        75% {
+          background: linear-gradient(315deg, #1e293b, #0f172a);
+        }
+      }
+
+      /* 粒子动画 */
+      #particles-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.5;
+        animation: float 15s infinite ease-in-out;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) translateX(0);
+        }
+        25% {
+          transform: translateY(-30px) translateX(15px);
+        }
+        50% {
+          transform: translateY(-15px) translateX(-15px);
+        }
+        75% {
+          transform: translateY(30px) translateX(15px);
+        }
+      }
+
+      /* 噪声硬币实验样式 */
+      .coin-container {
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        animation: coin-glow 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes coin-glow {
+        0% {
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        100% {
+          box-shadow: 0 10px 30px rgba(255, 107, 107, 0.5),
+            0 0 20px rgba(78, 205, 196, 0.3);
+        }
+      }
+
+      .coin-result {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin: 2px;
+        animation: coin-bounce 0.5s ease-out;
+      }
+
+      .coin-result.positive {
+        background-color: #00ff66;
+      }
+
+      .coin-result.negative {
+        background-color: #ff4757;
+      }
+
+      @keyframes coin-bounce {
+        0% {
+          transform: scale(0) rotate(0deg);
+        }
+        50% {
+          transform: scale(1.2) rotate(180deg);
+        }
+        100% {
+          transform: scale(1) rotate(360deg);
+        }
+      }
+
+      /* 理论步骤样式 */
+      .theory-step {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+      }
+
+      .theory-step:hover {
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+      }
+
+      .theory-step.locked {
+        position: relative;
+        opacity: 0.6;
+      }
+
+      .theory-step.locked .message-content {
+        pointer-events: none;
+      }
+
+      .theory-step.unlocked {
+        animation: unlock-glow 0.5s ease-in-out;
+      }
+
+      @keyframes unlock-glow {
+        0% {
+          box-shadow: 0 0 0 rgba(0, 243, 255, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(0, 243, 255, 0.8);
+        }
+        100% {
+          box-shadow: 0 0 0 rgba(0, 243, 255, 0.5);
+        }
+      }
+
+      .understanding-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .understanding-btn {
+        padding: 8px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: transparent;
+        color: white;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .understanding-btn:hover {
+        background: var(--neon-blue);
+        color: var(--dark-bg);
+      }
+
+      .understanding-btn.selected {
+        background: var(--neon-blue);
+        color: var(--dark-bg);
+        border-color: var(--neon-blue);
+      }
+
+      .ai-help-btn {
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .ai-help-btn:hover {
+        background: linear-gradient(45deg, #4f46e5, #7c3aed);
+        transform: translateY(-2px);
+      }
+
+      /* 思考动画样式 */
+      .thinking-animation {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .thinking-animation .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #00f3ff;
+        animation: thinking-pulse 1.4s ease-in-out infinite both;
+      }
+
+      .thinking-animation .dot:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+
+      .thinking-animation .dot:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+
+      .thinking-animation .dot:nth-child(3) {
+        animation-delay: 0s;
+      }
+
+      @keyframes thinking-pulse {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.5;
+        }
+        40% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+      }
+
+      /* Markdown内容样式 */
+      .message-content {
+        line-height: 1.6;
+      }
+
+      .message-content h1,
+      .message-content h2,
+      .message-content h3,
+      .message-content h4,
+      .message-content h5,
+      .message-content h6 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--neon-blue);
+      }
+
+      .message-content p {
+        margin-bottom: 1rem;
+      }
+
+      .message-content ul,
+      .message-content ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+      }
+
+      .message-content li {
+        margin-bottom: 0.25rem;
+      }
+
+      .message-content code {
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-family: "Courier New", monospace;
+        color: #00ff66;
+      }
+
+      .message-content pre {
+        background-color: rgba(30, 41, 59, 0.8);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1rem 0;
+      }
+
+      .message-content pre code {
+        background: none;
+        padding: 0;
+      }
+
+      .message-content blockquote {
+        border-left: 4px solid #00f3ff;
+        padding-left: 1rem;
+        margin: 1rem 0;
+        font-style: italic;
+        color: #cbd5e1;
+      }
+
+      .message-content .katex {
+        color: #e5e7eb !important;
+      }
+
+      .message-content .katex-display {
+        margin: 1rem 0;
+      }
+
+      /* 应用场景样式 */
+      .application-card {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .application-card:hover {
+        border-color: var(--neon-green);
+        box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+        transform: translateY(-5px);
+      }
+
+      /* 数据点动画效果 */
+      .data-point-enter {
+        animation: dataPointEnter 0.6s ease-out;
+      }
+
+      @keyframes dataPointEnter {
+        0% {
+          transform: scale(0) rotate(180deg);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.2) rotate(90deg);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 1;
+        }
+      }
+
+      /* 结果显示动画 */
+      .result-slide-in {
+        animation: resultSlideIn 0.8s ease-out;
+      }
+
+      @keyframes resultSlideIn {
+        0% {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* 按钮点击效果 */
+      .button-click-effect {
+        animation: buttonClickEffect 0.3s ease-out;
+      }
+
+      @keyframes buttonClickEffect {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(0.95);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* 脉冲效果 */
+      .pulse-effect {
+        animation: pulseEffect 2s ease-in-out infinite;
+      }
+
+      @keyframes pulseEffect {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 0.8;
+        }
+      }
+
+      /* 数据加载动画 */
+      .loading-dots {
+        display: inline-block;
+      }
+
+      .loading-dots::after {
+        content: "";
+        animation: loadingDots 1.5s steps(4, end) infinite;
+      }
+
+      @keyframes loadingDots {
+        0%,
+        20% {
+          content: "";
+        }
+        40% {
+          content: ".";
+        }
+        60% {
+          content: "..";
+        }
+        80%,
+        100% {
+          content: "...";
+        }
+      }
+
+      /* 成功提示动画 */
+      .success-flash {
+        animation: successFlash 0.6s ease-out;
+      }
+
+      @keyframes successFlash {
+        0% {
+          background-color: transparent;
+        }
+        50% {
+          background-color: rgba(0, 255, 102, 0.2);
+        }
+        100% {
+          background-color: transparent;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 柏林噪声背景 -->
+    <div class="perlin-noise-bg"></div>
+
+    <!-- 粒子背景 -->
+    <div id="particles-container"></div>
+    
+    <script>
+      // 为所有div元素添加点击事件
+      document.addEventListener('DOMContentLoaded', function() {
+        const allDivs = document.querySelectorAll('div');
+        allDivs.forEach(div => {
+          div.addEventListener('click', function(event) {
+            // 获取被点击的div的id或类名
+            const divId = this.id ? this.id : 'unknown-id';
+            const divClass = this.className ? this.className : 'no-class';
+            console.log(`点击了div - ID: ${divId}, Class: ${divClass}`);
+            
+            // 添加点击效果
+            this.classList.add('button-click-effect');
+            setTimeout(() => {
+              this.classList.remove('button-click-effect');
+            }, 300);
+            
+            // 阻止事件冒泡，避免触发父元素的点击事件
+            event.stopPropagation();
+          });
+        });
+      });
+    </script>
+
+    <!-- 导航栏 -->
+    <nav
+      class="bg-dark-bg/80 backdrop-blur-md py-4 sticky top-0 z-50 border-b border-gray-800"
+    >
+      <div class="container mx-auto px-4 flex justify-between items-center">
+        <a
+          href="index.html"
+          class="text-2xl font-future font-bold flex items-center"
+        >
+          <span class="text-neon-blue">概率统计</span
+          ><span class="ml-2">可视化</span>
+        </a>
+        <div class="flex space-x-6">
+          <a
+            href="index.html"
+            class="text-gray-300 hover:text-neon-blue transition-colors duration-300"
+            >首页</a
+          >
+          <a
+            href="random_variables.html"
+            class="text-gray-300 hover:text-neon-blue transition-colors duration-300"
+            >随机变量</a
+          >
+          <a
+            href="law_of_large_numbers.html"
+            class="text-neon-blue border-b-2 border-neon-blue pb-1"
+            >大数定律</a
+          >
+          <a
+            href="interval_estimation.html"
+            class="text-gray-300 hover:text-neon-blue transition-colors duration-300"
+            >区间估计</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <section
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50 clip-path-slant"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h1 class="text-[clamp(2rem,6vw,4rem)] font-future font-bold mb-4">
+            <span class="text-neon-green">大数定律</span>探索
+          </h1>
+          <p class="text-gray-400 max-w-2xl mx-auto text-lg">
+            随机性终结于平均 - 探索大量重复试验中随机现象的统计规律性
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 示例展示部分 -->
+    <section id="coin-experiment" class="py-20 relative">
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-future font-bold mb-4">
+            <span class="text-neon-orange">噪声硬币</span>实验
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            30秒肉眼实验，让你一眼看懂「样本越多，均值越稳」的大数定律核心思想
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- 硬币实验交互区 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-coins text-neon-orange mr-3"></i>
+              疯狂硬币实验
+            </h3>
+
+            <div class="coin-container mb-6 text-center">
+              <div class="text-white font-bold mb-4">噪声硬币机</div>
+              <div
+                id="coin-display"
+                class="min-h-[100px] flex flex-wrap justify-center items-center"
+              >
+                <div class="text-gray-300">点击"开始实验"开始抛硬币</div>
+              </div>
+            </div>
+
+            <div class="bg-dark-bg rounded-lg p-4 mb-6">
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label class="block text-gray-300 mb-2"
+                    >抛硬币次数 (n):</label
+                  >
+                  <input
+                    type="range"
+                    id="coin-trials"
+                    min="10"
+                    max="10000"
+                    step="10"
+                    value="100"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-orange"
+                  />
+                  <div class="text-center mt-2">
+                    <span
+                      id="coin-trials-value"
+                      class="text-neon-orange font-bold"
+                      >100</span
+                    >
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-gray-300 mb-2">噪声幅度:</label>
+                  <input
+                    type="range"
+                    id="noise-amplitude"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value="5"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                  />
+                  <div class="text-center mt-2">
+                    <span
+                      id="noise-amplitude-value"
+                      class="text-neon-purple font-bold"
+                      >5</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-center mb-4">
+                <div class="text-gray-300 mb-2">
+                  当前均值:
+                  <span id="current-mean" class="text-neon-green font-bold"
+                    >--</span
+                  >
+                </div>
+                <div class="text-gray-300 mb-4">
+                  理论期望:
+                  <span id="theoretical-mean" class="text-neon-blue font-bold"
+                    >0.0</span
+                  >
+                </div>
+              </div>
+
+              <div class="flex justify-center space-x-4">
+                <button
+                  id="start-experiment-btn"
+                  class="px-6 py-2 bg-neon-orange text-dark-bg font-bold rounded-md hover:bg-neon-orange/80 transition-all duration-300"
+                >
+                  开始实验 <i class="fa fa-play ml-2"></i>
+                </button>
+                <button
+                  id="reveal-truth-btn"
+                  class="px-6 py-2 bg-neon-blue text-white font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300"
+                >
+                  揭示真相 <i class="fa fa-eye ml-2"></i>
+                </button>
+                <button
+                  id="reset-experiment-btn"
+                  class="px-6 py-2 bg-gray-600 text-white font-bold rounded-md hover:bg-gray-500 transition-all duration-300"
+                >
+                  重置实验 <i class="fa fa-refresh ml-2"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="text-sm text-gray-400">
+              <p class="mb-2"><strong>实验说明:</strong></p>
+              <p>• 硬币正面 +1 分，反面 -1 分</p>
+              <p>• 每次抛硬币后，机器会随机添加 -8 ~ +8 的噪声</p>
+              <p>• 真实期望值为 0，但单次结果会被噪声严重干扰</p>
+              <p>• 观察随着 n 增大，均值如何逐渐趋向于 0</p>
+            </div>
+          </div>
+
+          <!-- 实时图表显示 -->
+          <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-chart-line text-neon-blue mr-3"></i>
+              收敛过程可视化
+            </h3>
+
+            <div class="mb-6">
+              <div class="text-center mb-4">
+                <div class="text-gray-300">
+                  实验进度:
+                  <span
+                    id="experiment-progress"
+                    class="text-neon-green font-bold"
+                    >0%</span
+                  >
+                </div>
+                <div class="text-gray-300">
+                  收敛程度:
+                  <span id="convergence-level" class="text-neon-blue font-bold"
+                    >--</span
+                  >
+                </div>
+              </div>
+
+              <div
+                id="convergence-chart-container"
+                class="relative bg-dark-bg rounded-lg p-4 min-h-[300px]"
+              >
+                <canvas
+                  id="convergence-chart"
+                  width="800"
+                  height="400"
+                ></canvas>
+              </div>
+            </div>
+
+            <div class="text-sm text-gray-400">
+              <p class="mb-2"><strong>图表说明:</strong></p>
+              <div class="flex items-center mb-1">
+                <div class="w-4 h-2 bg-neon-green rounded mr-2"></div>
+                <span>样本均值轨迹</span>
+              </div>
+              <div class="flex items-center mb-1">
+                <div class="w-4 h-2 bg-neon-blue rounded mr-2"></div>
+                <span>理论期望值 (0)</span>
+              </div>
+              <div class="flex items-center">
+                <div class="w-4 h-2 bg-gray-500 rounded mr-2"></div>
+                <span>置信区间</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 理论探索部分 -->
+    <section
+      id="theory-exploration"
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-future font-bold mb-4">
+            <span class="text-neon-blue">理论</span>探索
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            5步拆解大数定律——从波动到锁定的数学之旅
+          </p>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+          <!-- 渐进式学习提示 -->
+          <div
+            class="bg-neon-blue/10 border border-neon-blue/30 rounded-lg p-4 mb-8"
+          >
+            <div class="flex items-center mb-2">
+              <i class="fa fa-lightbulb text-neon-blue mr-2"></i>
+              <h3 class="text-lg font-semibold text-neon-blue">
+                渐进式学习模式
+              </h3>
+            </div>
+            <p class="text-gray-300 text-sm">
+              每完成一个步骤的理解度评分（≥3分），下一步骤将自动解锁。如果遇到困难，可以点击右侧工具箱中的AI助手寻求帮助。
+            </p>
+          </div>
+
+          <!-- 步骤1 -->
+          <div class="theory-step unlocked" data-step="1">
+            <h3
+              class="text-xl font-semibold mb-4 text-neon-blue flex items-center"
+            >
+              <span
+                class="bg-neon-blue text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                >1</span
+              >
+              起点——点估计 vs 均值不确定性
+              <span class="ml-auto text-sm">
+                <i class="fa fa-unlock text-neon-green"></i>
+              </span>
+            </h3>
+            <div class="message-content">
+              <p>
+                样本均值 $\bar{X}_n$
+                仍是随机变量；每次抽样都会跳动。我们需要理解这种不确定性的本质。
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-4">
+                <div class="text-center">
+                  $$\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i, \quad \text{SE} =
+                  \frac{\sigma}{\sqrt{n}}$$
+                </div>
+              </div>
+              <p>
+                <strong>直觉理解：</strong
+                >射1箭=单点估计；射10箭取平均=落点更集中但依旧会飘。 $\bar{X}_n$
+                就是「平均落点」，它仍会跳动，只是跳动范围越来越小。
+              </p>
+            </div>
+            <div class="understanding-section">
+              <div class="understanding-buttons">
+                <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                <button
+                  class="understanding-btn"
+                  data-level="1"
+                  title="完全不理解"
+                >
+                  1
+                </button>
+                <button
+                  class="understanding-btn"
+                  data-level="2"
+                  title="基本不理解"
+                >
+                  2
+                </button>
+                <button
+                  class="understanding-btn"
+                  data-level="3"
+                  title="部分理解"
+                >
+                  3
+                </button>
+                <button
+                  class="understanding-btn"
+                  data-level="4"
+                  title="基本理解"
+                >
+                  4
+                </button>
+                <button
+                  class="understanding-btn"
+                  data-level="5"
+                  title="完全理解"
+                >
+                  5
+                </button>
+              </div>
+              <div class="mt-3 flex items-center gap-4">
+                <button class="ai-help-btn" data-step="1">
+                  <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                </button>
+                <div class="next-step-hint hidden text-sm text-neon-green">
+                  <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤2 -->
+          <div class="theory-step locked" data-step="2">
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+            >
+              <span
+                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                >2</span
+              >
+              钥匙——中心极限定理 (CLT)
+              <span class="ml-auto text-sm">
+                <i class="fa fa-lock text-gray-500"></i>
+              </span>
+            </h3>
+            <div class="message-content opacity-50">
+              <p>
+                CLT：无论总体什么形状，只要 n 足够大，$\bar{X}_n$ 的分布 ≈
+                $N(\mu,\sigma^2/n)$。
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-4">
+                <div class="text-center">
+                  $$Z_n = \frac{\bar{X}_n - \mu}{\sigma/\sqrt{n}}
+                  \xrightarrow{d} N(0,1)$$
+                </div>
+              </div>
+              <p>
+                <strong>直觉理解：</strong
+                >把奇形怪状蛋糕平均切片，草莓数一定钟形。
+                把总体想成奇形怪状的蛋糕；每次切一小块取平均，小块的「平均草莓数」一定钟形——这就是
+                CLT。
+              </p>
+            </div>
+            <div class="understanding-section">
+              <div class="locked-message text-center py-4">
+                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                <p class="text-gray-500">
+                  请先完成上一步骤的理解度评分（≥3分）以解锁此内容
+                </p>
+              </div>
+              <div class="understanding-content hidden">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button
+                    class="understanding-btn"
+                    data-level="1"
+                    title="完全不理解"
+                  >
+                    1
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="2"
+                    title="基本不理解"
+                  >
+                    2
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="3"
+                    title="部分理解"
+                  >
+                    3
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="4"
+                    title="基本理解"
+                  >
+                    4
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="5"
+                    title="完全理解"
+                  >
+                    5
+                  </button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="2">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤3 -->
+          <div class="theory-step locked" data-step="3">
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+            >
+              <span
+                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                >3</span
+              >
+              速度——收敛速度 1/√n 肉眼可见
+              <span class="ml-auto text-sm">
+                <i class="fa fa-lock text-gray-500"></i>
+              </span>
+            </h3>
+            <div class="message-content opacity-50">
+              <p>
+                标准误 SE = σ/√n；误差 ∝ 1/√n。重对数律：波动上限 ∝ √(2σ² log
+                log n / n)。
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-4">
+                <div class="text-center">
+                  $$\text{SE}(\bar{X}_n) = \frac{\sigma}{\sqrt{n}}$$
+                </div>
+              </div>
+              <p>
+                <strong>直觉理解：</strong>想精度提高10倍？样本量要翻100倍！
+                就像擦玻璃：想看得更清楚，抹布面积得平方级加大。
+              </p>
+            </div>
+            <div class="understanding-section">
+              <div class="locked-message text-center py-4">
+                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                <p class="text-gray-500">
+                  请先完成上一步骤的理解度评分（≥3分）以解锁此内容
+                </p>
+              </div>
+              <div class="understanding-content hidden">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button
+                    class="understanding-btn"
+                    data-level="1"
+                    title="完全不理解"
+                  >
+                    1
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="2"
+                    title="基本不理解"
+                  >
+                    2
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="3"
+                    title="部分理解"
+                  >
+                    3
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="4"
+                    title="基本理解"
+                  >
+                    4
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="5"
+                    title="完全理解"
+                  >
+                    5
+                  </button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="3">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤4 -->
+          <div class="theory-step locked" data-step="4">
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+            >
+              <span
+                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                >4</span
+              >
+              区别——强大数 vs 弱大数
+              <span class="ml-auto text-sm">
+                <i class="fa fa-lock text-gray-500"></i>
+              </span>
+            </h3>
+            <div class="message-content opacity-50">
+              <p>
+                WLLN：$\bar{X}_n \xrightarrow{P} \mu$（依概率收敛）→
+                大多数轨迹末段很近； SLLN：$\bar{X}_n \xrightarrow{a.s.}
+                \mu$（几乎必然收敛）→ 所有轨迹永远黏住 μ，不再跑开。
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-4">
+                <div class="text-center">
+                  $$\text{WLLN: } \lim_{n \to \infty} P(|\bar{X}_n - \mu| >
+                  \epsilon) = 0$$ $$\text{SLLN: } P(\lim_{n \to \infty}
+                  \bar{X}_n = \mu) = 1$$
+                </div>
+              </div>
+              <p>
+                <strong>直觉理解：</strong>WLLN保证「大多数」轨迹末段很近；
+                SLLN保证「所有」轨迹末段永远不再逃离——就像给每条轨迹都上了「电子镣铐」。
+              </p>
+            </div>
+            <div class="understanding-section">
+              <div class="locked-message text-center py-4">
+                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                <p class="text-gray-500">
+                  请先完成上一步骤的理解度评分（≥3分）以解锁此内容
+                </p>
+              </div>
+              <div class="understanding-content hidden">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button
+                    class="understanding-btn"
+                    data-level="1"
+                    title="完全不理解"
+                  >
+                    1
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="2"
+                    title="基本不理解"
+                  >
+                    2
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="3"
+                    title="部分理解"
+                  >
+                    3
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="4"
+                    title="基本理解"
+                  >
+                    4
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="5"
+                    title="完全理解"
+                  >
+                    5
+                  </button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="4">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 步骤5 -->
+          <div class="theory-step locked" data-step="5">
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+            >
+              <span
+                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                >5</span
+              >
+              条件——成立条件与反例
+              <span class="ml-auto text-sm">
+                <i class="fa fa-lock text-gray-500"></i>
+              </span>
+            </h3>
+            <div class="message-content opacity-50">
+              <p>
+                只要 $E|X_1|<\infty$，SLLN 成立；方差无限也收敛。
+                反例：Cauchy(α=1) 期望无限 → $\bar{X}_n$ 持续乱跳，定律罢工。
+              </p>
+              <div class="bg-dark-bg rounded-lg p-4 my-4">
+                <div class="text-center">
+                  $$\text{成立条件: } E|X_1| < \infty$$ $$\text{反例:
+                  Cauchy分布无期望，大数定律失效}$$
+                </div>
+              </div>
+              <p class="text-neon-green font-bold">
+                <strong>直觉理解：</strong
+                >尾巴厚到无限，就像射箭手的箭可以飞到银河系，
+                平均永远落不下来；只要期望存在，胶水瞬间生效！
+              </p>
+            </div>
+            <div class="understanding-section">
+              <div class="locked-message text-center py-4">
+                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                <p class="text-gray-500">
+                  请先完成上一步骤的理解度评分（≥3分）以解锁此内容
+                </p>
+              </div>
+              <div class="understanding-content hidden">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button
+                    class="understanding-btn"
+                    data-level="1"
+                    title="完全不理解"
+                  >
+                    1
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="2"
+                    title="基本不理解"
+                  >
+                    2
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="3"
+                    title="部分理解"
+                  >
+                    3
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="4"
+                    title="基本理解"
+                  >
+                    4
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="5"
+                    title="完全理解"
+                  >
+                    5
+                  </button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="5">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>恭喜！所有步骤已完成
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 理解度图谱 -->
+          <div id="understanding-radar" class="understanding-radar hidden">
+            <div class="bg-dark-card rounded-xl p-6 border border-neon-green">
+              <h3
+                class="text-xl font-semibold mb-4 text-neon-green flex items-center"
+              >
+                <i class="fa fa-chart-radar text-neon-green mr-3"></i>
+                个人理解度图谱与学习分析
+              </h3>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 雷达图 -->
+                <div class="bg-dark-bg rounded-lg p-4">
+                  <h4 class="text-lg font-semibold mb-3 text-white">
+                    理解度雷达图
+                  </h4>
+                  <div class="h-64">
+                    <canvas id="understanding-chart"></canvas>
+                  </div>
+                </div>
+
+                <!-- 学习数据分析 -->
+                <div class="bg-dark-bg rounded-lg p-4">
+                  <h4 class="text-lg font-semibold mb-3 text-white">
+                    学习数据分析
+                  </h4>
+                  <div id="learning-stats" class="space-y-3">
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-300">平均理解度:</span>
+                      <span
+                        id="avg-understanding"
+                        class="text-neon-blue font-bold"
+                        >-</span
+                      >
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-300">最薄弱环节:</span>
+                      <span id="weakest-step" class="text-neon-orange font-bold"
+                        >-</span
+                      >
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-300">最强项:</span>
+                      <span
+                        id="strongest-step"
+                        class="text-neon-green font-bold"
+                        >-</span
+                      >
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-300">完成时间:</span>
+                      <span
+                        id="completion-time"
+                        class="text-neon-purple font-bold"
+                        >-</span
+                      >
+                    </div>
+                  </div>
+
+                  <!-- 学习建议 -->
+                  <div class="mt-4 p-3 bg-gray-800 rounded-lg">
+                    <h5 class="text-sm font-semibold text-neon-green mb-2">
+                      📚 个性化学习建议
+                    </h5>
+                    <div
+                      id="learning-suggestions"
+                      class="text-sm text-gray-300"
+                    >
+                      完成所有步骤后将显示个性化建议
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-sm text-gray-400 mt-4">
+                <p>
+                  <i class="fa fa-info-circle mr-1"></i>
+                  这个图谱记录了您的学习轨迹，帮助识别需要重点复习的内容。数据仅在本地存储，保护您的隐私。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 实践应用部分 -->
+    <section id="practical-applications" class="py-20 relative">
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-future font-bold mb-4">
+            <span class="text-neon-green">实践</span>应用
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            将大数定律理论应用到真实场景中，体验其强大的实用价值
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- 应用1：直播打赏异常检测 -->
+          <div class="application-card">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-video text-neon-orange mr-3"></i>
+              直播打赏异常检测
+            </h3>
+
+            <div class="mb-6">
+              <p class="text-gray-300 mb-4">
+                使用大数定律判断直播间的"超级火箭"是真土豪还是机器人刷的。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label class="block text-gray-300 mb-2"
+                      >采样窗口 (n):</label
+                    >
+                    <select
+                      id="streaming-window"
+                      class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                    >
+                      <option value="30">最近30条</option>
+                      <option value="100" selected>最近100条</option>
+                      <option value="500">最近500条</option>
+                      <option value="1000">最近1000条</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">检测阈值:</label>
+                    <select
+                      id="detection-threshold"
+                      class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                    >
+                      <option value="2">2σ (95%)</option>
+                      <option value="3" selected>3σ (99.7%)</option>
+                      <option value="4">4σ (99.99%)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="text-center mb-4">
+                  <div class="text-gray-300 mb-2">
+                    当前均值:
+                    <span id="streaming-mean" class="text-neon-orange font-bold"
+                      >--</span
+                    >
+                  </div>
+                  <div class="text-gray-300 mb-4">
+                    异常检测:
+                    <span id="anomaly-status" class="text-neon-blue font-bold"
+                      >正常</span
+                    >
+                  </div>
+                </div>
+
+                <div class="flex justify-center space-x-4">
+                  <button
+                    id="start-streaming-btn"
+                    class="px-6 py-2 bg-neon-orange text-dark-bg font-bold rounded-md hover:bg-neon-orange/80 transition-all duration-300"
+                  >
+                    开始监控 <i class="fa fa-play ml-2"></i>
+                  </button>
+                  <button
+                    id="simulate-anomaly-btn"
+                    class="px-6 py-2 bg-red-600 text-white font-bold rounded-md hover:bg-red-700 transition-all duration-300"
+                  >
+                    模拟异常 <i class="fa fa-exclamation-triangle ml-2"></i>
+                  </button>
+                  <button
+                    id="reset-streaming-btn"
+                    class="px-6 py-2 bg-gray-600 text-white font-bold rounded-md hover:bg-gray-500 transition-all duration-300"
+                  >
+                    重置 <i class="fa fa-refresh ml-2"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="h-64 bg-dark-bg rounded-lg p-4 relative overflow-hidden"
+            >
+              <canvas id="streaming-chart" width="800" height="200"></canvas>
+            </div>
+
+            <div class="mt-4 text-sm text-gray-400">
+              <p>
+                <strong>核心原理:</strong>
+                利用大数定律，正常打赏的均值会稳定在某个范围内。
+                当出现异常大额打赏时，如果是机器人行为，会显著偏离正常均值。
+              </p>
+            </div>
+          </div>
+
+          <!-- 应用2：网约车运力预测 -->
+          <div class="application-card">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-car text-neon-blue mr-3"></i>
+              网约车运力预测
+            </h3>
+
+            <div class="mb-6">
+              <p class="text-gray-300 mb-4">
+                使用强大数定律预测高峰期的真实需求均值，优化司机调度。
+              </p>
+
+              <div class="bg-dark-bg rounded-lg p-4 mb-4">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label class="block text-gray-300 mb-2">历史窗口:</label>
+                    <select
+                      id="taxi-history"
+                      class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                    >
+                      <option value="7">过去7天</option>
+                      <option value="14">过去14天</option>
+                      <option value="30" selected>过去30天</option>
+                      <option value="60">过去60天</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-2">时段:</label>
+                    <select
+                      id="time-period"
+                      class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700"
+                    >
+                      <option value="morning">早高峰 (7-9点)</option>
+                      <option value="evening" selected>晚高峰 (17-19点)</option>
+                      <option value="night">夜间 (22-24点)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="text-center mb-4">
+                  <div class="text-gray-300 mb-2">
+                    预测需求:
+                    <span id="predicted-demand" class="text-neon-blue font-bold"
+                      >--</span
+                    >
+                  </div>
+                  <div class="text-gray-300 mb-4">
+                    置信区间:
+                    <span
+                      id="demand-confidence"
+                      class="text-neon-green font-bold"
+                      >--</span
+                    >
+                  </div>
+                </div>
+
+                <div class="flex justify-center space-x-4">
+                  <button
+                    id="predict-demand-btn"
+                    class="px-6 py-2 bg-neon-blue text-white font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300"
+                  >
+                    生成预测 <i class="fa fa-chart-line ml-2"></i>
+                  </button>
+                  <button
+                    id="optimize-dispatch-btn"
+                    class="px-6 py-2 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-neon-green/80 transition-all duration-300"
+                  >
+                    优化调度 <i class="fa fa-cogs ml-2"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="h-64 bg-dark-bg rounded-lg p-4 relative overflow-hidden"
+            >
+              <canvas id="taxi-chart" width="800" height="200"></canvas>
+            </div>
+
+            <div class="mt-4 text-sm text-gray-400">
+              <p>
+                <strong>核心原理:</strong>
+                强大数定律保证历史需求数据的均值会收敛到真实需求。
+                样本量越大，预测越准确，调度决策越可靠。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 工具箱脚本 -->
+    <script src="../static/js/toolbox.js"></script>
+    <script>
+      // 全局变量
+      let coinExperimentData = [];
+      let convergenceChart = null;
+      let streamingChart = null;
+      let taxiChart = null;
+      let understandingScores = [0, 0, 0, 0, 0];
+      let isExperimentRunning = false;
+      let streamingData = [];
+      let taxiData = [];
+
+      // 初始化粒子背景
+      function initParticles() {
+        const container = document.getElementById("particles-container");
+        for (let i = 0; i < 50; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+          particle.style.left = Math.random() * 100 + "%";
+          particle.style.top = Math.random() * 100 + "%";
+          particle.style.width = Math.random() * 4 + 2 + "px";
+          particle.style.height = particle.style.width;
+          particle.style.backgroundColor = `hsl(${
+            Math.random() * 60 + 180
+          }, 70%, 60%)`;
+          particle.style.animationDelay = Math.random() * 15 + "s";
+          container.appendChild(particle);
+        }
+      }
+
+      // 噪声硬币实验
+      function startCoinExperiment() {
+        if (isExperimentRunning) return;
+
+        isExperimentRunning = true;
+        const trials = parseInt(document.getElementById("coin-trials").value);
+        const noiseAmplitude = parseFloat(
+          document.getElementById("noise-amplitude").value
+        );
+
+        coinExperimentData = [];
+        const coinDisplay = document.getElementById("coin-display");
+        coinDisplay.innerHTML = "";
+
+        let runningSum = 0;
+        let completedTrials = 0;
+
+        const startBtn = document.getElementById("start-experiment-btn");
+        startBtn.innerHTML =
+          '实验中... <i class="fa fa-spinner fa-spin ml-2"></i>';
+        startBtn.disabled = true;
+
+        const interval = setInterval(() => {
+          if (completedTrials >= trials) {
+            clearInterval(interval);
+            startBtn.innerHTML = '开始实验 <i class="fa fa-play ml-2"></i>';
+            startBtn.disabled = false;
+            isExperimentRunning = false;
+            return;
+          }
+
+          // 硬币结果：+1 或 -1
+          const coinResult = Math.random() < 0.5 ? 1 : -1;
+          // 添加噪声
+          const noise = (Math.random() - 0.5) * 2 * noiseAmplitude;
+          const noisyResult = coinResult + noise;
+
+          runningSum += noisyResult;
+          completedTrials++;
+
+          const currentMean = runningSum / completedTrials;
+          coinExperimentData.push({
+            trial: completedTrials,
+            result: noisyResult,
+            mean: currentMean,
+          });
+
+          // 显示硬币结果
+          const coinElement = document.createElement("div");
+          coinElement.className = `coin-result ${
+            coinResult > 0 ? "positive" : "negative"
+          }`;
+          coinDisplay.appendChild(coinElement);
+
+          // 更新显示
+          document.getElementById("current-mean").textContent =
+            currentMean.toFixed(3);
+          document.getElementById("experiment-progress").textContent =
+            Math.round((completedTrials / trials) * 100) + "%";
+
+          // 更新图表
+          updateConvergenceChart();
+        }, Math.max(10, 2000 / trials)); // 动态调整速度
+      }
+
+      // 更新收敛图表
+      function updateConvergenceChart() {
+        const canvas = document.getElementById("convergence-chart");
+        const ctx = canvas.getContext("2d");
+
+        if (!convergenceChart) {
+          convergenceChart = new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: [],
+              datasets: [
+                {
+                  label: "样本均值",
+                  data: [],
+                  borderColor: "#00ff66",
+                  backgroundColor: "rgba(0, 255, 102, 0.1)",
+                  borderWidth: 2,
+                  fill: false,
+                },
+                {
+                  label: "理论期望",
+                  data: [],
+                  borderColor: "#00f3ff",
+                  backgroundColor: "rgba(0, 243, 255, 0.1)",
+                  borderWidth: 2,
+                  borderDash: [5, 5],
+                  fill: false,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  labels: {
+                    color: "#ffffff",
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  ticks: { color: "#9ca3af" },
+                  grid: { color: "rgba(156, 163, 175, 0.3)" },
+                },
+                y: {
+                  ticks: { color: "#9ca3af" },
+                  grid: { color: "rgba(156, 163, 175, 0.3)" },
+                },
+              },
+            },
+          });
+        }
+
+        // 更新数据
+        const labels = coinExperimentData.map((d) => d.trial);
+        const means = coinExperimentData.map((d) => d.mean);
+        const theoretical = coinExperimentData.map(() => 0);
+
+        convergenceChart.data.labels = labels;
+        convergenceChart.data.datasets[0].data = means;
+        convergenceChart.data.datasets[1].data = theoretical;
+        convergenceChart.update("none");
+
+        // 计算收敛程度
+        if (coinExperimentData.length > 10) {
+          const recentMeans = means.slice(-10);
+          const variance =
+            recentMeans.reduce((sum, mean) => sum + Math.pow(mean, 2), 0) / 10;
+          const convergenceLevel = Math.max(0, 100 - variance * 100).toFixed(1);
+          document.getElementById("convergence-level").textContent =
+            convergenceLevel + "%";
+        }
+      }
+
+      // 揭示真相
+      function revealTruth() {
+        alert(
+          `真实的期望值是: 0\n\n噪声只是干扰，不会改变长期平均值。\n随着试验次数增加，样本均值会越来越接近0。\n\n这就是大数定律的威力！`
+        );
+      }
+
+      // 重置实验
+      function resetExperiment() {
+        coinExperimentData = [];
+        document.getElementById("coin-display").innerHTML =
+          '<div class="text-gray-300">点击"开始实验"开始抛硬币</div>';
+        document.getElementById("current-mean").textContent = "--";
+        document.getElementById("experiment-progress").textContent = "0%";
+        document.getElementById("convergence-level").textContent = "--";
+
+        if (convergenceChart) {
+          convergenceChart.destroy();
+          convergenceChart = null;
+        }
+      }
+
+      // 理解度评分
+      function setUnderstanding(step, level) {
+        understandingScores[step - 1] = level;
+
+        // 更新按钮状态
+        const buttons = document.querySelectorAll(
+          `[data-step="${step}"] .understanding-btn`
+        );
+        buttons.forEach((btn, index) => {
+          btn.classList.toggle("selected", index + 1 === level);
+        });
+
+        // 显示下一步提示
+        const currentStep = document.querySelector(`[data-step="${step}"]`);
+        const nextStepHint = currentStep.querySelector(".next-step-hint");
+        if (level >= 3 && nextStepHint) {
+          nextStepHint.classList.remove("hidden");
+        }
+
+        // 渐进式解锁下一步
+        if (level >= 3 && step < 5) {
+          unlockNextStep(step + 1);
+        }
+
+        // 检查是否所有步骤都已评分
+        if (understandingScores.every((score) => score > 0)) {
+          showUnderstandingRadar();
+        }
+      }
+
+      // 解锁下一步
+      function unlockNextStep(step) {
+        const nextStepElement = document.querySelector(`[data-step="${step}"]`);
+        if (nextStepElement && nextStepElement.classList.contains("locked")) {
+          // 移除锁定状态
+          nextStepElement.classList.remove("locked");
+          nextStepElement.classList.add("unlocked");
+
+          // 更新标题样式
+          const title = nextStepElement.querySelector("h3");
+          const stepNumber = nextStepElement.querySelector("h3 span");
+          const lockIcon = nextStepElement.querySelector(".fa-lock");
+
+          title.classList.remove("text-gray-500");
+          title.classList.add("text-neon-blue");
+          stepNumber.classList.remove("bg-gray-600", "text-gray-400");
+          stepNumber.classList.add("bg-neon-blue", "text-dark-bg");
+
+          if (lockIcon) {
+            lockIcon.parentElement.innerHTML =
+              '<i class="fa fa-unlock text-neon-green"></i>';
+          }
+
+          // 恢复内容透明度
+          const content = nextStepElement.querySelector(".message-content");
+          content.classList.remove("opacity-50");
+
+          // 显示理解度内容，隐藏锁定消息
+          const lockedMessage =
+            nextStepElement.querySelector(".locked-message");
+          const understandingContent = nextStepElement.querySelector(
+            ".understanding-content"
+          );
+
+          if (lockedMessage) lockedMessage.classList.add("hidden");
+          if (understandingContent)
+            understandingContent.classList.remove("hidden");
+        }
+      }
+
+      // AI帮助功能
+      function showAIHelp(step) {
+        const helpTexts = {
+          1: "点估计是用样本统计量来估计总体参数的方法。样本均值是总体均值的无偏估计量，但它仍然是一个随机变量，会在不同的抽样中发生变化。",
+          2: "中心极限定理告诉我们，当样本量足够大时，样本均值的分布会趋向于正态分布，无论原总体是什么分布。这为大数定律提供了理论基础。",
+          3: "收敛速度与样本量的平方根成反比。要想精度提高10倍，需要样本量增加100倍。这就是统计学中著名的'平方根定律'。",
+          4: "弱大数定律保证样本均值依概率收敛到总体均值，而强大数定律保证几乎必然收敛。强大数定律是更强的结果。",
+          5: "大数定律成立的关键条件是期望值存在且有限。对于期望不存在的分布（如标准柯西分布），大数定律不成立。",
+        };
+
+        alert(`AI助手提示：\n\n${helpTexts[step] || "暂无帮助信息"}`);
+      }
+
+      // 显示理解度图谱
+      function showUnderstandingRadar() {
+        const radarSection = document.getElementById("understanding-radar");
+        radarSection.classList.remove("hidden");
+
+        // 创建雷达图
+        const ctx = document
+          .getElementById("understanding-chart")
+          .getContext("2d");
+        new Chart(ctx, {
+          type: "radar",
+          data: {
+            labels: ["点估计", "CLT", "收敛速度", "强弱大数", "成立条件"],
+            datasets: [
+              {
+                label: "理解程度",
+                data: understandingScores,
+                backgroundColor: "rgba(0, 243, 255, 0.2)",
+                borderColor: "#00f3ff",
+                pointBackgroundColor: "#00f3ff",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: "#00f3ff",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: {
+                beginAtZero: true,
+                max: 5,
+                ticks: {
+                  color: "#9ca3af",
+                },
+                grid: {
+                  color: "rgba(156, 163, 175, 0.3)",
+                },
+                angleLines: {
+                  color: "rgba(156, 163, 175, 0.3)",
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: "#ffffff",
+                },
+              },
+            },
+          },
+        });
+
+        // 更新学习数据分析
+        updateLearningAnalysis();
+      }
+
+      // 更新学习数据分析
+      function updateLearningAnalysis() {
+        const stepNames = [
+          "点估计",
+          "中心极限定理",
+          "收敛速度",
+          "强弱大数定律",
+          "成立条件",
+        ];
+
+        // 计算平均理解度
+        const avgScore = (
+          understandingScores.reduce((a, b) => a + b, 0) /
+          understandingScores.length
+        ).toFixed(1);
+        document.getElementById("avg-understanding").textContent =
+          avgScore + "/5.0";
+
+        // 找出最薄弱和最强的环节
+        const minScore = Math.min(...understandingScores);
+        const maxScore = Math.max(...understandingScores);
+        const weakestIndex = understandingScores.indexOf(minScore);
+        const strongestIndex = understandingScores.indexOf(maxScore);
+
+        document.getElementById("weakest-step").textContent =
+          stepNames[weakestIndex] + ` (${minScore}/5)`;
+        document.getElementById("strongest-step").textContent =
+          stepNames[strongestIndex] + ` (${maxScore}/5)`;
+
+        // 计算完成时间（模拟）
+        const completionTime = new Date().toLocaleTimeString("zh-CN", {
+          hour12: false,
+        });
+        document.getElementById("completion-time").textContent = completionTime;
+
+        // 生成个性化学习建议
+        generateLearningSuggestions(avgScore, weakestIndex, minScore);
+      }
+
+      // 生成个性化学习建议
+      function generateLearningSuggestions(avgScore, weakestIndex, minScore) {
+        const stepNames = [
+          "点估计",
+          "中心极限定理",
+          "收敛速度",
+          "强弱大数定律",
+          "成立条件",
+        ];
+        const suggestions = [];
+
+        if (avgScore >= 4.0) {
+          suggestions.push("🎉 优秀！您已经很好地掌握了大数定律的核心概念。");
+          suggestions.push(
+            "💡 建议：可以尝试更深入的统计理论，如中心极限定理的证明、马尔可夫不等式等。"
+          );
+        } else if (avgScore >= 3.0) {
+          suggestions.push("👍 不错！您对大部分概念有了基本理解。");
+          suggestions.push(
+            `🔍 重点关注：${stepNames[weakestIndex]}部分需要加强理解。`
+          );
+        } else {
+          suggestions.push("📚 需要更多练习！建议重新学习基础概念。");
+          suggestions.push(
+            `⚠️ 优先复习：${stepNames[weakestIndex]}是当前的薄弱环节。`
+          );
+        }
+
+        if (minScore <= 2) {
+          const helpTexts = {
+            0: "建议复习概率论基础，特别是期望值和方差的概念。",
+            1: "建议复习正态分布和极限定理，这是理解CLT的关键。",
+            2: "建议复习数学分析中的收敛概念，理解不同收敛速度的含义。",
+            3: "建议复习测度论基础，理解不同收敛模式的区别。",
+            4: "建议复习实分析，特别是可积性条件和期望存在性。",
+          };
+          suggestions.push(`📖 具体建议：${helpTexts[weakestIndex]}`);
+        }
+
+        document.getElementById("learning-suggestions").innerHTML =
+          suggestions.join("<br>");
+      }
+
+      // 直播打赏监控
+      function startStreamingMonitor() {
+        streamingData = [];
+        const windowSize = parseInt(
+          document.getElementById("streaming-window").value
+        );
+        const threshold = parseFloat(
+          document.getElementById("detection-threshold").value
+        );
+
+        // 模拟正常打赏数据
+        for (let i = 0; i < windowSize; i++) {
+          const normalGift = Math.random() * 10 + 5; // 5-15元的正常打赏
+          streamingData.push(normalGift);
+        }
+
+        updateStreamingChart();
+        updateAnomalyDetection();
+      }
+
+      // 模拟异常打赏
+      function simulateAnomaly() {
+        if (streamingData.length === 0) {
+          startStreamingMonitor();
+        }
+
+        // 添加异常大额打赏
+        const anomalyGift = Math.random() * 1000 + 500; // 500-1500元的异常打赏
+        streamingData.push(anomalyGift);
+
+        // 保持窗口大小
+        const windowSize = parseInt(
+          document.getElementById("streaming-window").value
+        );
+        if (streamingData.length > windowSize) {
+          streamingData.shift();
+        }
+
+        updateStreamingChart();
+        updateAnomalyDetection();
+      }
+
+      // 更新异常检测
+      function updateAnomalyDetection() {
+        if (streamingData.length === 0) return;
+
+        const mean =
+          streamingData.reduce((a, b) => a + b, 0) / streamingData.length;
+        const variance =
+          streamingData.reduce((sum, x) => sum + Math.pow(x - mean, 2), 0) /
+          streamingData.length;
+        const std = Math.sqrt(variance);
+
+        const threshold = parseFloat(
+          document.getElementById("detection-threshold").value
+        );
+        const lastGift = streamingData[streamingData.length - 1];
+
+        const isAnomaly = Math.abs(lastGift - mean) > threshold * std;
+
+        document.getElementById("streaming-mean").textContent =
+          mean.toFixed(2) + "元";
+        document.getElementById("anomaly-status").textContent = isAnomaly
+          ? "异常检测到！"
+          : "正常";
+        document.getElementById("anomaly-status").className = isAnomaly
+          ? "text-red-400 font-bold"
+          : "text-neon-blue font-bold";
+      }
+
+      // 更新直播图表
+      function updateStreamingChart() {
+        const canvas = document.getElementById("streaming-chart");
+        const ctx = canvas.getContext("2d");
+
+        if (!streamingChart) {
+          streamingChart = new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: [],
+              datasets: [
+                {
+                  label: "打赏金额",
+                  data: [],
+                  borderColor: "#ff8c00",
+                  backgroundColor: "rgba(255, 140, 0, 0.1)",
+                  borderWidth: 2,
+                  fill: false,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  labels: {
+                    color: "#ffffff",
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  ticks: { color: "#9ca3af" },
+                  grid: { color: "rgba(156, 163, 175, 0.3)" },
+                },
+                y: {
+                  ticks: { color: "#9ca3af" },
+                  grid: { color: "rgba(156, 163, 175, 0.3)" },
+                },
+              },
+            },
+          });
+        }
+
+        const labels = streamingData.map((_, i) => i + 1);
+        streamingChart.data.labels = labels;
+        streamingChart.data.datasets[0].data = streamingData;
+        streamingChart.update("none");
+      }
+
+      // 网约车需求预测
+      function predictDemand() {
+        const historyDays = parseInt(
+          document.getElementById("taxi-history").value
+        );
+        const timePeriod = document.getElementById("time-period").value;
+
+        // 模拟历史需求数据
+        taxiData = [];
+        let baseDemand = 100;
+        if (timePeriod === "morning") baseDemand = 120;
+        else if (timePeriod === "evening") baseDemand = 150;
+        else if (timePeriod === "night") baseDemand = 80;
+
+        for (let i = 0; i < historyDays; i++) {
+          const demand = baseDemand + (Math.random() - 0.5) * 40; // 添加随机波动
+          taxiData.push(Math.max(0, demand));
+        }
+
+        const mean = taxiData.reduce((a, b) => a + b, 0) / taxiData.length;
+        const std = Math.sqrt(
+          taxiData.reduce((sum, x) => sum + Math.pow(x - mean, 2), 0) /
+            taxiData.length
+        );
+        const confidenceInterval = `${(
+          mean -
+          (1.96 * std) / Math.sqrt(historyDays)
+        ).toFixed(1)} - ${(
+          mean +
+          (1.96 * std) / Math.sqrt(historyDays)
+        ).toFixed(1)}`;
+
+        document.getElementById("predicted-demand").textContent =
+          mean.toFixed(1) + "单/小时";
+        document.getElementById("demand-confidence").textContent =
+          confidenceInterval + "单/小时";
+
+        updateTaxiChart();
+      }
+
+      // 更新网约车图表
+      function updateTaxiChart() {
+        const canvas = document.getElementById("taxi-chart");
+        const ctx = canvas.getContext("2d");
+
+        if (!taxiChart) {
+          taxiChart = new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: [],
+              datasets: [
+                {
+                  label: "历史需求",
+                  data: [],
+                  borderColor: "#00f3ff",
+                  backgroundColor: "rgba(0, 243, 255, 0.1)",
+                  borderWidth: 2,
+                  fill: false,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  labels: {
+                    color: "#ffffff",
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  ticks: { color: "#9ca3af" },
+                  grid: { color: "rgba(156, 163, 175, 0.3)" },
+                },
+                y: {
+                  ticks: { color: "#9ca3af" },
+                  grid: { color: "rgba(156, 163, 175, 0.3)" },
+                },
+              },
+            },
+          });
+        }
+
+        const labels = taxiData.map((_, i) => `第${i + 1}天`);
+        taxiChart.data.labels = labels;
+        taxiChart.data.datasets[0].data = taxiData;
+        taxiChart.update("none");
+      }
+
+      // 事件绑定
+      document.addEventListener("DOMContentLoaded", function () {
+        // 初始化
+        initParticles();
+
+        // 滑块事件
+        document
+          .getElementById("coin-trials")
+          .addEventListener("input", function () {
+            document.getElementById("coin-trials-value").textContent =
+              this.value;
+          });
+
+        document
+          .getElementById("noise-amplitude")
+          .addEventListener("input", function () {
+            document.getElementById("noise-amplitude-value").textContent =
+              this.value;
+          });
+
+        // 按钮事件
+        document
+          .getElementById("start-experiment-btn")
+          .addEventListener("click", startCoinExperiment);
+        document
+          .getElementById("reveal-truth-btn")
+          .addEventListener("click", revealTruth);
+        document
+          .getElementById("reset-experiment-btn")
+          .addEventListener("click", resetExperiment);
+
+        // 理解度按钮事件
+        document.querySelectorAll(".understanding-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const step = parseInt(this.closest("[data-step]").dataset.step);
+            const level = parseInt(this.dataset.level);
+            setUnderstanding(step, level);
+          });
+        });
+
+        // AI帮助按钮事件
+        document.querySelectorAll(".ai-help-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const step = parseInt(this.dataset.step);
+            showAIHelp(step);
+          });
+        });
+
+        // 应用场景按钮事件
+        document
+          .getElementById("start-streaming-btn")
+          .addEventListener("click", startStreamingMonitor);
+        document
+          .getElementById("simulate-anomaly-btn")
+          .addEventListener("click", simulateAnomaly);
+        document
+          .getElementById("reset-streaming-btn")
+          .addEventListener("click", function () {
+            streamingData = [];
+            document.getElementById("streaming-mean").textContent = "--";
+            document.getElementById("anomaly-status").textContent = "正常";
+            document.getElementById("anomaly-status").className =
+              "text-neon-blue font-bold";
+            if (streamingChart) {
+              streamingChart.destroy();
+              streamingChart = null;
+            }
+          });
+
+        document
+          .getElementById("predict-demand-btn")
+          .addEventListener("click", predictDemand);
+        document
+          .getElementById("optimize-dispatch-btn")
+          .addEventListener("click", function () {
+            alert(
+              "基于大数定律的预测结果，建议在该时段增加20%的运力投入，以满足预期需求。"
+            );
+          });
+
+        // 初始化工具箱
+        if (typeof ProbabilityToolbox !== "undefined") {
+          new ProbabilityToolbox();
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -84,6 +84,15 @@
     </script>
 
     <style type="text/tailwindcss">
+      :root {
+        --neon-blue: #00f3ff;
+        --neon-purple: #bf00ff;
+        --neon-green: #00ff66;
+        --neon-orange: #ff8c00;
+        --dark-bg: #050a1a;
+        --dark-card: #0f1730;
+      }
+      
       @layer utilities {
         .text-shadow-neon {
           text-shadow: 0 0 10px rgba(0, 243, 255, 0.7),
@@ -96,6 +105,148 @@
         .border-glow {
           box-shadow: 0 0 5px theme("colors.neon-blue"),
             0 0 10px theme("colors.neon-blue/30");
+        }
+        .theory-step {
+          background: rgba(30, 41, 59, 0.8);
+          border: 1px solid rgba(0, 243, 255, 0.3);
+          border-radius: 10px;
+          padding: 20px;
+          margin: 20px 0;
+          transition: all 0.3s ease;
+        }
+
+        .theory-step:hover {
+          border-color: var(--neon-blue);
+          box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        }
+
+        .theory-step.locked {
+          position: relative;
+        }
+
+        .theory-step.locked .message-content {
+          pointer-events: none;
+        }
+
+        .theory-step.unlocked {
+          animation: unlock-glow 0.5s ease-in-out;
+        }
+
+        @keyframes unlock-glow {
+          0% {
+            box-shadow: 0 0 0 rgba(0, 243, 255, 0.5);
+          }
+          50% {
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.8);
+          }
+          100% {
+            box-shadow: 0 0 0 rgba(0, 243, 255, 0.5);
+          }
+        }
+
+        .understanding-buttons {
+          display: flex;
+          gap: 10px;
+          margin-top: 15px;
+        }
+
+        .understanding-btn {
+          padding: 8px 16px;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          background: transparent;
+          color: white;
+          border-radius: 20px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .understanding-btn:hover {
+          background: var(--neon-blue);
+          color: var(--dark-bg);
+        }
+
+        .understanding-btn.selected {
+          background: var(--neon-blue);
+          color: var(--dark-bg);
+          border-color: var(--neon-blue);
+        }
+
+        .ai-help-btn {
+          background: linear-gradient(45deg, #6366f1, #8b5cf6);
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 8px;
+          font-size: 14px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .ai-help-btn:hover {
+          background: linear-gradient(45deg, #4f46e5, #7c3aed);
+          transform: translateY(-2px);
+        }
+
+        .understanding-radar {
+          background: rgba(30, 41, 59, 0.8);
+          border: 1px solid var(--neon-green);
+          border-radius: 15px;
+          padding: 20px;
+          margin-top: 20px;
+        }
+
+        .theory-section {
+          display: block;
+        }
+
+        .theory-section.hidden {
+          display: none;
+        }
+
+        .theory-nav-btn {
+          transition: all 0.3s ease;
+        }
+
+        .theory-nav-btn:hover {
+          transform: translateY(-2px);
+        }
+
+        .message-content {
+          line-height: 1.6;
+        }
+
+        .message-content h1,
+        .message-content h2,
+        .message-content h3,
+        .message-content h4,
+        .message-content h5,
+        .message-content h6 {
+          margin-top: 1.5rem;
+          margin-bottom: 0.5rem;
+          font-weight: 600;
+          color: var(--neon-blue);
+        }
+
+        .message-content p {
+          margin-bottom: 1rem;
+        }
+
+        .message-content ul,
+        .message-content ol {
+          margin-bottom: 1rem;
+          padding-left: 1.5rem;
+        }
+
+        .message-content li {
+          margin-bottom: 0.25rem;
+        }
+
+        .message-content .katex {
+          color: #e5e7eb !important;
+        }
+
+        .message-content .katex-display {
+          margin: 1rem 0;
         }
         .border-glow-purple {
           box-shadow: 0 0 5px theme("colors.neon-purple"),
@@ -810,16 +961,19 @@
             <div class="text-center mb-8">
               <div class="relative inline-block">
                 <!-- 瓶颈 -->
-                <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-6 h-8 bottle-neck rounded-t-sm z-20"></div>
-                
+                <div
+                  class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-6 h-8 bottle-neck rounded-t-sm z-20"
+                ></div>
+
                 <!-- 瓶口软木塞 -->
-                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 w-8 h-3 bottle-cork rounded-t-lg z-30"></div>
-                
+                <div
+                  class="absolute -top-8 left-1/2 transform -translate-x-1/2 w-8 h-3 bottle-cork rounded-t-lg z-30"
+                ></div>
+
                 <div
                   id="magic-bottle"
                   class="inline-block w-28 h-36 magic-bottle relative mx-auto opacity-50 transition-all duration-1000"
                 >
-
                   <!-- 魔法气泡 -->
                   <div
                     class="absolute top-12 left-4 w-3 h-3 magic-bubble rounded-full"
@@ -1477,8 +1631,1118 @@
       </div>
     </section>
 
+    <!-- 理论探索部分 -->
+    <section
+      id="theory-exploration"
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50"
+    >
+      <div class="absolute inset-0 bg-grid opacity-10"></div>
+      <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-future font-bold mb-4">
+            <span class="text-neon-blue">理论</span>探索
+          </h2>
+          <p class="text-gray-400 max-w-3xl mx-auto">
+            深入理解假设检验的数学原理：从错误类型到各种检验方法的推导
+          </p>
+        </div>
+
+        <!-- 理论导航 -->
+        <div class="flex flex-wrap justify-center gap-4 mb-12">
+          <button
+            onclick="showTheorySection('error-types')"
+            class="theory-nav-btn px-6 py-3 bg-neon-blue/20 text-neon-blue border border-neon-blue/50 rounded-lg hover:bg-neon-blue/30 transition-all duration-300 font-semibold"
+          >
+            <i class="fa fa-exclamation-triangle mr-2"></i>错误类型分析
+          </button>
+          <button
+            onclick="showTheorySection('z-test')"
+            class="theory-nav-btn px-6 py-3 bg-neon-green/20 text-neon-green border border-neon-green/50 rounded-lg hover:bg-neon-green/30 transition-all duration-300 font-semibold"
+          >
+            <i class="fa fa-calculator mr-2"></i>Z检验推导
+          </button>
+          <button
+            onclick="showTheorySection('t-test')"
+            class="theory-nav-btn px-6 py-3 bg-neon-orange/20 text-neon-orange border border-neon-orange/50 rounded-lg hover:bg-neon-orange/30 transition-all duration-300 font-semibold"
+          >
+            <i class="fa fa-line-chart mr-2"></i>t检验推导
+          </button>
+          <button
+            onclick="showTheorySection('chi-square')"
+            class="theory-nav-btn px-6 py-3 bg-neon-purple/20 text-neon-purple border border-neon-purple/50 rounded-lg hover:bg-neon-purple/30 transition-all duration-300 font-semibold"
+          >
+            <i class="fa fa-pie-chart mr-2"></i>卡方检验推导
+          </button>
+          <button
+            onclick="showTheorySection('power-analysis')"
+            class="theory-nav-btn px-6 py-3 bg-neon-pink/20 text-neon-pink border border-neon-pink/50 rounded-lg hover:bg-neon-pink/30 transition-all duration-300 font-semibold"
+          >
+            <i class="fa fa-bolt mr-2"></i>功效分析
+          </button>
+        </div>
+
+        <div class="max-w-6xl mx-auto">
+          <!-- 渐进式学习提示 -->
+          <div
+            class="bg-neon-blue/10 border border-neon-blue/30 rounded-lg p-4 mb-8"
+          >
+            <div class="flex items-center mb-2">
+              <i class="fa fa-lightbulb text-neon-blue mr-2"></i>
+              <h3 class="text-lg font-semibold text-neon-blue">
+                渐进式学习模式
+              </h3>
+            </div>
+            <p class="text-gray-300 text-sm">
+              每完成一个理论模块的理解度评分（≥3分），下一模块将自动解锁。如果遇到困难，可以点击AI助手寻求帮助。
+            </p>
+          </div>
+
+          <!-- 错误类型分析 -->
+          <div id="error-types-section" class="theory-section">
+            <div class="theory-step unlocked" data-step="1">
+              <h3
+                class="text-xl font-semibold mb-4 text-neon-blue flex items-center"
+              >
+                <span
+                  class="bg-neon-blue text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >1</span
+                >
+                第一类错误（Type I Error）- α错误
+                <span class="ml-auto text-sm">
+                  <i class="fa fa-unlock text-neon-green"></i>
+                </span>
+              </h3>
+              <div class="message-content">
+                <p>
+                  第一类错误是指<strong>原假设H₀为真时，却错误地拒绝了它</strong>。这就像法庭上"冤枉好人"的情况。
+                </p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$P(\text{拒绝}H_0 | H_0\text{为真}) = \alpha$$
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                  <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+                    <h4 class="text-red-400 font-semibold mb-2">🚨 实际例子</h4>
+                    <p class="text-gray-300 text-sm">
+                      • 药物实际无效，但检验结果显示有效<br>
+                      • 产品质量正常，但被判定为不合格<br>
+                      • 无罪的人被判有罪
+                    </p>
+                  </div>
+                  <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+                    <h4 class="text-blue-400 font-semibold mb-2">📊 控制方法</h4>
+                    <p class="text-gray-300 text-sm">
+                      • 设定显著性水平α（通常0.05）<br>
+                      • α越小，第一类错误概率越低<br>
+                      • 但会增加第二类错误的风险
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="understanding-section">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button
+                    class="understanding-btn"
+                    data-level="1"
+                    title="完全不理解"
+                  >
+                    1
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="2"
+                    title="基本不理解"
+                  >
+                    2
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="3"
+                    title="部分理解"
+                  >
+                    3
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="4"
+                    title="基本理解"
+                  >
+                    4
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="5"
+                    title="完全理解"
+                  >
+                    5
+                  </button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="1">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 第二类错误 -->
+            <div class="theory-step locked" data-step="2">
+              <h3
+                class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+              >
+                <span
+                  class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >2</span
+                >
+                第二类错误（Type II Error）- β错误
+                <span class="ml-auto text-sm">
+                  <i class="fa fa-lock text-gray-500"></i>
+                </span>
+              </h3>
+              <div class="message-content opacity-50">
+                <p>
+                  第二类错误是指<strong>原假设H₀为假时，却错误地接受了它</strong>。这就像法庭上"放过坏人"的情况。
+                </p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$P(\text{不拒绝}H_0 | H_0\text{为假}) = \beta$$
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                  <div class="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
+                    <h4 class="text-orange-400 font-semibold mb-2">⚠️ 实际例子</h4>
+                    <p class="text-gray-300 text-sm">
+                      • 药物实际有效，但检验结果显示无效<br>
+                      • 产品质量有问题，但被判定为合格<br>
+                      • 有罪的人被判无罪
+                    </p>
+                  </div>
+                  <div class="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+                    <h4 class="text-green-400 font-semibold mb-2">💪 检验功效</h4>
+                    <p class="text-gray-300 text-sm">
+                      • 功效 = 1 - β<br>
+                      • 正确拒绝假H₀的概率<br>
+                      • 功效越高，检验越敏感
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="understanding-section">
+                <div class="locked-message text-center py-4">
+                  <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                  <p class="text-gray-500">
+                    请先完成上一步骤的理解度评分（≥3分）以解锁此内容
+                  </p>
+                </div>
+                <div class="understanding-content hidden">
+                  <div class="understanding-buttons">
+                    <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                    <button
+                      class="understanding-btn"
+                      data-level="1"
+                      title="完全不理解"
+                    >
+                      1
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="2"
+                      title="基本不理解"
+                    >
+                      2
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="3"
+                      title="部分理解"
+                    >
+                      3
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="4"
+                      title="基本理解"
+                    >
+                      4
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="5"
+                      title="完全理解"
+                    >
+                      5
+                    </button>
+                  </div>
+                  <div class="mt-3 flex items-center gap-4">
+                    <button class="ai-help-btn" data-step="2">
+                      <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                    </button>
+                    <div class="next-step-hint hidden text-sm text-neon-green">
+                      <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 错误类型关系 -->
+            <div class="theory-step locked" data-step="3">
+              <h3
+                class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+              >
+                <span
+                  class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >3</span
+                >
+                两类错误的权衡关系
+                <span class="ml-auto text-sm">
+                  <i class="fa fa-lock text-gray-500"></i>
+                </span>
+              </h3>
+              <div class="message-content opacity-50">
+                <p>
+                  第一类错误和第二类错误之间存在<strong>权衡关系</strong>：降低一种错误往往会增加另一种错误的概率。
+                </p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$\alpha \downarrow \Rightarrow \beta \uparrow \quad \text{（在样本量固定时）}$$
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                  <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
+                    <h4 class="text-purple-400 font-semibold mb-2">⚖️ 权衡策略</h4>
+                    <p class="text-gray-300 text-sm">
+                      • 医学研究：更关注第一类错误<br>
+                      • 质量控制：更关注第二类错误<br>
+                      • 根据后果严重性选择策略
+                    </p>
+                  </div>
+                  <div class="bg-teal-900/20 border border-teal-500/30 rounded-lg p-4">
+                    <h4 class="text-teal-400 font-semibold mb-2">📈 改善方法</h4>
+                    <p class="text-gray-300 text-sm">
+                      • 增加样本量<br>
+                      • 改进实验设计<br>
+                      • 使用更精确的测量方法
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="understanding-section">
+                <div class="locked-message text-center py-4">
+                  <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                  <p class="text-gray-500">
+                    请先完成上一步骤的理解度评分（≥3分）以解锁此内容
+                  </p>
+                </div>
+                <div class="understanding-content hidden">
+                  <div class="understanding-buttons">
+                    <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                    <button
+                      class="understanding-btn"
+                      data-level="1"
+                      title="完全不理解"
+                    >
+                      1
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="2"
+                      title="基本不理解"
+                    >
+                      2
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="3"
+                      title="部分理解"
+                    >
+                      3
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="4"
+                      title="基本理解"
+                    >
+                      4
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="5"
+                      title="完全理解"
+                    >
+                      5
+                    </button>
+                  </div>
+                  <div class="mt-3 flex items-center gap-4">
+                    <button class="ai-help-btn" data-step="3">
+                      <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                    </button>
+                    <div class="next-step-hint hidden text-sm text-neon-green">
+                      <i class="fa fa-check-circle mr-1"></i>很好！错误类型分析完成
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Z检验推导 -->
+          <div id="z-test-section" class="theory-section hidden">
+            <div class="theory-step unlocked" data-step="4">
+              <h3
+                class="text-xl font-semibold mb-4 text-neon-green flex items-center"
+              >
+                <span
+                  class="bg-neon-green text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >1</span
+                >
+                Z检验的理论基础
+                <span class="ml-auto text-sm">
+                  <i class="fa fa-unlock text-neon-green"></i>
+                </span>
+              </h3>
+              <div class="message-content">
+                <p>
+                  Z检验基于<strong>中心极限定理</strong>：当样本量足够大时，样本均值的分布趋近于正态分布。
+                </p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$\bar{X} \sim N\left(\mu, \frac{\sigma^2}{n}\right)$$
+                  </div>
+                </div>
+                <p>
+                  标准化后得到Z统计量：
+                </p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$Z = \frac{\bar{X} - \mu_0}{\sigma/\sqrt{n}} \sim N(0,1)$$
+                  </div>
+                </div>
+                <div class="bg-green-900/20 border border-green-500/30 rounded-lg p-4 my-4">
+                  <h4 class="text-green-400 font-semibold mb-2">📋 适用条件</h4>
+                  <ul class="text-gray-300 text-sm space-y-1">
+                    <li>• 总体标准差σ已知</li>
+                    <li>• 样本量较大（n ≥ 30）或总体服从正态分布</li>
+                    <li>• 样本独立抽取</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="understanding-section">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button
+                    class="understanding-btn"
+                    data-level="1"
+                    title="完全不理解"
+                  >
+                    1
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="2"
+                    title="基本不理解"
+                  >
+                    2
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="3"
+                    title="部分理解"
+                  >
+                    3
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="4"
+                    title="基本理解"
+                  >
+                    4
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="5"
+                    title="完全理解"
+                  >
+                    5
+                  </button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="4">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Z检验步骤 -->
+            <div class="theory-step locked" data-step="5">
+              <h3
+                class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+              >
+                <span
+                  class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >2</span
+                >
+                Z检验的完整推导过程
+                <span class="ml-auto text-sm">
+                  <i class="fa fa-lock text-gray-500"></i>
+                </span>
+              </h3>
+              <div class="message-content opacity-50">
+                <p><strong>步骤1：建立假设</strong></p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$H_0: \mu = \mu_0 \quad \text{vs} \quad H_1: \mu \neq \mu_0$$
+                  </div>
+                </div>
+                <p><strong>步骤2：构造检验统计量</strong></p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$Z = \frac{\bar{X} - \mu_0}{\sigma/\sqrt{n}}$$
+                  </div>
+                </div>
+                <p><strong>步骤3：确定拒绝域</strong></p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$|Z| > Z_{\alpha/2} \text{ 时拒绝 } H_0$$
+                  </div>
+                </div>
+                <p><strong>步骤4：计算p值</strong></p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$p = 2P(Z > |z_{obs}|)$$
+                  </div>
+                </div>
+              </div>
+              <div class="understanding-section">
+                <div class="locked-message text-center py-4">
+                  <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                  <p class="text-gray-500">
+                    请先完成上一步骤的理解度评分（≥3分）以解锁此内容
+                  </p>
+                </div>
+                <div class="understanding-content hidden">
+                  <div class="understanding-buttons">
+                    <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                    <button
+                      class="understanding-btn"
+                      data-level="1"
+                      title="完全不理解"
+                    >
+                      1
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="2"
+                      title="基本不理解"
+                    >
+                      2
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="3"
+                      title="部分理解"
+                    >
+                      3
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="4"
+                      title="基本理解"
+                    >
+                      4
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="5"
+                      title="完全理解"
+                    >
+                      5
+                    </button>
+                  </div>
+                  <div class="mt-3 flex items-center gap-4">
+                    <button class="ai-help-btn" data-step="5">
+                      <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                    </button>
+                    <div class="next-step-hint hidden text-sm text-neon-green">
+                      <i class="fa fa-check-circle mr-1"></i>很好！Z检验推导完成
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- t检验推导 -->
+          <div id="t-test-section" class="theory-section hidden">
+            <div class="theory-step unlocked" data-step="6">
+              <h3
+                class="text-xl font-semibold mb-4 text-neon-orange flex items-center"
+              >
+                <span
+                  class="bg-neon-orange text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >1</span
+                >
+                t检验的产生背景
+                <span class="ml-auto text-sm">
+                  <i class="fa fa-unlock text-neon-green"></i>
+                </span>
+              </h3>
+              <div class="message-content">
+                <p>
+                  当总体标准差σ<strong>未知</strong>时，我们需要用样本标准差s来估计，这时Z统计量不再服从标准正态分布。
+                </p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$t = \frac{\bar{X} - \mu_0}{s/\sqrt{n}} \sim t(n-1)$$
+                  </div>
+                </div>
+                <p>
+                  这里的t统计量服从自由度为(n-1)的<strong>t分布</strong>。
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                  <div class="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
+                    <h4 class="text-orange-400 font-semibold mb-2">🔍 t分布特点</h4>
+                    <p class="text-gray-300 text-sm">
+                      • 对称分布，中心为0<br>
+                      • 比标准正态分布更"胖"<br>
+                      • 随自由度增加趋近标准正态分布
+                    </p>
+                  </div>
+                  <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+                    <h4 class="text-blue-400 font-semibold mb-2">📊 适用条件</h4>
+                    <p class="text-gray-300 text-sm">
+                      • 总体标准差σ未知<br>
+                      • 总体近似正态分布<br>
+                      • 样本独立抽取
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="understanding-section">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button
+                    class="understanding-btn"
+                    data-level="1"
+                    title="完全不理解"
+                  >
+                    1
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="2"
+                    title="基本不理解"
+                  >
+                    2
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="3"
+                    title="部分理解"
+                  >
+                    3
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="4"
+                    title="基本理解"
+                  >
+                    4
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="5"
+                    title="完全理解"
+                  >
+                    5
+                  </button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="6">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- t检验数学推导 -->
+            <div class="theory-step locked" data-step="7">
+              <h3
+                class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+              >
+                <span
+                  class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >2</span
+                >
+                t检验的数学推导
+                <span class="ml-auto text-sm">
+                  <i class="fa fa-lock text-gray-500"></i>
+                </span>
+              </h3>
+              <div class="message-content opacity-50">
+                <p><strong>推导过程：</strong></p>
+                <p>1. 样本均值的分布：</p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$\bar{X} \sim N\left(\mu, \frac{\sigma^2}{n}\right)$$
+                  </div>
+                </div>
+                <p>2. 标准化（但σ未知）：</p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$\frac{\bar{X} - \mu}{\sigma/\sqrt{n}} \sim N(0,1)$$
+                  </div>
+                </div>
+                <p>3. 用样本标准差s替代σ：</p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$t = \frac{\bar{X} - \mu_0}{s/\sqrt{n}} \sim t(n-1)$$
+                  </div>
+                </div>
+                <p>4. 关键定理：</p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$\frac{(n-1)s^2}{\sigma^2} \sim \chi^2(n-1)$$
+                  </div>
+                </div>
+              </div>
+              <div class="understanding-section">
+                <div class="locked-message text-center py-4">
+                  <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                  <p class="text-gray-500">
+                    请先完成上一步骤的理解度评分（≥3分）以解锁此内容
+                  </p>
+                </div>
+                <div class="understanding-content hidden">
+                  <div class="understanding-buttons">
+                    <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                    <button
+                      class="understanding-btn"
+                      data-level="1"
+                      title="完全不理解"
+                    >
+                      1
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="2"
+                      title="基本不理解"
+                    >
+                      2
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="3"
+                      title="部分理解"
+                    >
+                      3
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="4"
+                      title="基本理解"
+                    >
+                      4
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="5"
+                      title="完全理解"
+                    >
+                      5
+                    </button>
+                  </div>
+                  <div class="mt-3 flex items-center gap-4">
+                    <button class="ai-help-btn" data-step="7">
+                      <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                    </button>
+                    <div class="next-step-hint hidden text-sm text-neon-green">
+                      <i class="fa fa-check-circle mr-1"></i>很好！t检验推导完成
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 卡方检验推导 -->
+          <div id="chi-square-section" class="theory-section hidden">
+            <div class="theory-step unlocked" data-step="8">
+              <h3
+                class="text-xl font-semibold mb-4 text-neon-purple flex items-center"
+              >
+                <span
+                  class="bg-neon-purple text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >1</span
+                >
+                卡方检验的应用场景
+                <span class="ml-auto text-sm">
+                  <i class="fa fa-unlock text-neon-green"></i>
+                </span>
+              </h3>
+              <div class="message-content">
+                <p>
+                  卡方检验主要用于<strong>分类数据</strong>的分析，包括拟合优度检验和独立性检验。
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                  <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
+                    <h4 class="text-purple-400 font-semibold mb-2">🎯 拟合优度检验</h4>
+                    <p class="text-gray-300 text-sm">
+                      检验观察频数是否符合理论分布<br>
+                      例如：掷骰子是否公平
+                    </p>
+                    <div class="bg-dark-bg rounded-lg p-2 mt-2">
+                      <div class="text-center text-xs">
+                        $$H_0: p_1=p_2=...=p_k$$
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-pink-900/20 border border-pink-500/30 rounded-lg p-4">
+                    <h4 class="text-pink-400 font-semibold mb-2">🔗 独立性检验</h4>
+                    <p class="text-gray-300 text-sm">
+                      检验两个分类变量是否独立<br>
+                      例如：性别与专业选择是否独立
+                    </p>
+                    <div class="bg-dark-bg rounded-lg p-2 mt-2">
+                      <div class="text-center text-xs">
+                        $$H_0: \text{两变量独立}$$
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="understanding-section">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button
+                    class="understanding-btn"
+                    data-level="1"
+                    title="完全不理解"
+                  >
+                    1
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="2"
+                    title="基本不理解"
+                  >
+                    2
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="3"
+                    title="部分理解"
+                  >
+                    3
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="4"
+                    title="基本理解"
+                  >
+                    4
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="5"
+                    title="完全理解"
+                  >
+                    5
+                  </button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="8">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 卡方统计量推导 -->
+            <div class="theory-step locked" data-step="9">
+              <h3
+                class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
+              >
+                <span
+                  class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >2</span
+                >
+                卡方统计量的推导
+                <span class="ml-auto text-sm">
+                  <i class="fa fa-lock text-gray-500"></i>
+                </span>
+              </h3>
+              <div class="message-content opacity-50">
+                <p><strong>基本思想：</strong>比较观察频数与期望频数的差异</p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$\chi^2 = \sum_{i=1}^{k} \frac{(O_i - E_i)^2}{E_i}$$
+                  </div>
+                </div>
+                <p>其中：</p>
+                <ul class="text-gray-300 space-y-2 my-4">
+                  <li>• $O_i$：第i类的观察频数</li>
+                  <li>• $E_i$：第i类的期望频数</li>
+                  <li>• k：类别总数</li>
+                </ul>
+                <p><strong>理论基础：</strong></p>
+                <p>当样本量足够大时，卡方统计量近似服从卡方分布：</p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$\chi^2 \sim \chi^2(df)$$
+                  </div>
+                </div>
+                <p>自由度df的计算：</p>
+                <ul class="text-gray-300 space-y-2 my-4">
+                  <li>• 拟合优度检验：df = k - 1 - 估计参数个数</li>
+                  <li>• 独立性检验：df = (行数-1) × (列数-1)</li>
+                </ul>
+              </div>
+              <div class="understanding-section">
+                <div class="locked-message text-center py-4">
+                  <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
+                  <p class="text-gray-500">
+                    请先完成上一步骤的理解度评分（≥3分）以解锁此内容
+                  </p>
+                </div>
+                <div class="understanding-content hidden">
+                  <div class="understanding-buttons">
+                    <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                    <button
+                      class="understanding-btn"
+                      data-level="1"
+                      title="完全不理解"
+                    >
+                      1
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="2"
+                      title="基本不理解"
+                    >
+                      2
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="3"
+                      title="部分理解"
+                    >
+                      3
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="4"
+                      title="基本理解"
+                    >
+                      4
+                    </button>
+                    <button
+                      class="understanding-btn"
+                      data-level="5"
+                      title="完全理解"
+                    >
+                      5
+                    </button>
+                  </div>
+                  <div class="mt-3 flex items-center gap-4">
+                    <button class="ai-help-btn" data-step="9">
+                      <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                    </button>
+                    <div class="next-step-hint hidden text-sm text-neon-green">
+                      <i class="fa fa-check-circle mr-1"></i>很好！卡方检验推导完成
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 功效分析 -->
+          <div id="power-analysis-section" class="theory-section hidden">
+            <div class="theory-step unlocked" data-step="10">
+              <h3
+                class="text-xl font-semibold mb-4 text-neon-pink flex items-center"
+              >
+                <span
+                  class="bg-neon-pink text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
+                  >1</span
+                >
+                检验功效的定义与意义
+                <span class="ml-auto text-sm">
+                  <i class="fa fa-unlock text-neon-green"></i>
+                </span>
+              </h3>
+              <div class="message-content">
+                <p>
+                  检验功效（Power）是指<strong>当备择假设为真时，正确拒绝原假设的概率</strong>。
+                </p>
+                <div class="bg-dark-bg rounded-lg p-4 my-4">
+                  <div class="text-center">
+                    $$\text{功效} = P(\text{拒绝}H_0 | H_1\text{为真}) = 1 - \beta$$
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                  <div class="bg-pink-900/20 border border-pink-500/30 rounded-lg p-4">
+                    <h4 class="text-pink-400 font-semibold mb-2">💪 功效的意义</h4>
+                    <p class="text-gray-300 text-sm">
+                      • 功效越高，检验越敏感<br>
+                      • 能更好地发现真实的效应<br>
+                      • 减少第二类错误的概率
+                    </p>
+                  </div>
+                  <div class="bg-cyan-900/20 border border-cyan-500/30 rounded-lg p-4">
+                    <h4 class="text-cyan-400 font-semibold mb-2">📊 影响因素</h4>
+                    <p class="text-gray-300 text-sm">
+                      • 效应大小（效应越大，功效越高）<br>
+                      • 样本量（样本越大，功效越高）<br>
+                      • 显著性水平α（α越大，功效越高）
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="understanding-section">
+                <div class="understanding-buttons">
+                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
+                  <button
+                    class="understanding-btn"
+                    data-level="1"
+                    title="完全不理解"
+                  >
+                    1
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="2"
+                    title="基本不理解"
+                  >
+                    2
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="3"
+                    title="部分理解"
+                  >
+                    3
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="4"
+                    title="基本理解"
+                  >
+                    4
+                  </button>
+                  <button
+                    class="understanding-btn"
+                    data-level="5"
+                    title="完全理解"
+                  >
+                    5
+                  </button>
+                </div>
+                <div class="mt-3 flex items-center gap-4">
+                  <button class="ai-help-btn" data-step="10">
+                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
+                  </button>
+                  <div class="next-step-hint hidden text-sm text-neon-green">
+                    <i class="fa fa-check-circle mr-1"></i>很好！功效分析完成
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 理解度图谱 -->
+          <div id="understanding-radar" class="understanding-radar hidden">
+            <h3
+              class="text-xl font-semibold mb-4 text-neon-green flex items-center"
+            >
+              <i class="fa fa-chart-radar text-neon-green mr-3"></i>
+              个人理解度图谱与学习分析
+            </h3>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- 雷达图 -->
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 text-white">
+                  理解度雷达图
+                </h4>
+                <div class="h-64">
+                  <canvas id="theory-understanding-chart"></canvas>
+                </div>
+              </div>
+
+              <!-- 学习数据分析 -->
+              <div class="bg-dark-bg rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-3 text-white">
+                  学习数据分析
+                </h4>
+                <div id="theory-learning-stats" class="space-y-3">
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">平均理解度:</span>
+                    <span
+                      id="theory-avg-understanding"
+                      class="text-neon-blue font-bold"
+                      >-</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">最薄弱环节:</span>
+                    <span id="theory-weakest-step" class="text-neon-orange font-bold"
+                      >-</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">最强项:</span>
+                    <span id="theory-strongest-step" class="text-neon-green font-bold"
+                      >-</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-300">完成时间:</span>
+                    <span
+                      id="theory-completion-time"
+                      class="text-neon-purple font-bold"
+                      >-</span
+                    >
+                  </div>
+                </div>
+
+                <!-- 学习建议 -->
+                <div class="mt-4 p-3 bg-gray-800 rounded-lg">
+                  <h5 class="text-sm font-semibold text-neon-green mb-2">
+                    📚 个性化学习建议
+                  </h5>
+                  <div id="theory-learning-suggestions" class="text-sm text-gray-300">
+                    完成所有理论模块后将显示个性化建议
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- 实践应用部分 -->
-    <section id="practical-applications" class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/30">
+    <section
+      id="practical-applications"
+      class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/30"
+    >
       <div class="absolute inset-0 bg-grid opacity-15"></div>
       <div class="container mx-auto px-4 relative z-10">
         <div class="text-center mb-16">
@@ -1493,10 +2757,16 @@
         <!-- 应用示例导航 -->
         <div class="flex justify-center mb-12">
           <div class="bg-dark-card rounded-xl p-2 border border-gray-800">
-            <button id="hero-balance-tab" class="application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg">
+            <button
+              id="hero-balance-tab"
+              class="application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg"
+            >
               🗡️ 英雄平衡性检验
             </button>
-            <button id="magic-agriculture-tab" class="application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white">
+            <button
+              id="magic-agriculture-tab"
+              class="application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white"
+            >
               🌱 奇幻农业效果评估
             </button>
           </div>
@@ -1504,7 +2774,9 @@
 
         <!-- 英雄平衡性检验 -->
         <div id="hero-balance-content" class="application-content">
-          <div class="bg-dark-card rounded-xl border border-gray-800 overflow-hidden mb-8">
+          <div
+            class="bg-dark-card rounded-xl border border-gray-800 overflow-hidden mb-8"
+          >
             <div class="bg-neon-blue/10 p-6 border-b border-gray-800">
               <h3 class="text-2xl font-future font-bold text-neon-blue mb-2">
                 🗡️ 英雄平衡性检验
@@ -1513,12 +2785,14 @@
                 游戏设计师需要确保新英雄的胜率不会破坏游戏平衡
               </p>
             </div>
-            
+
             <div class="p-8">
               <!-- 问题背景 -->
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div>
-                  <h4 class="text-xl font-semibold text-white mb-4">📋 问题背景</h4>
+                  <h4 class="text-xl font-semibold text-white mb-4">
+                    📋 问题背景
+                  </h4>
                   <div class="bg-gray-800 rounded-lg p-6">
                     <p class="text-gray-300 mb-4">
                       游戏中推出了新英雄"暗影刺客"，设计目标是保持50%的胜率以维持游戏平衡。
@@ -1531,78 +2805,139 @@
                     </p>
                   </div>
                 </div>
-                
+
                 <div>
-                  <h4 class="text-xl font-semibold text-white mb-4">🎯 假设设定</h4>
+                  <h4 class="text-xl font-semibold text-white mb-4">
+                    🎯 假设设定
+                  </h4>
                   <div class="space-y-4">
-                    <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
-                      <h5 class="text-blue-400 font-semibold mb-2">原假设 H₀</h5>
-                      <p class="text-gray-300 text-sm">英雄胜率 = 50%（平衡状态）</p>
-                      <div class="katex-display text-sm mt-2">\(H_0: p = 0.5\)</div>
+                    <div
+                      class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4"
+                    >
+                      <h5 class="text-blue-400 font-semibold mb-2">
+                        原假设 H₀
+                      </h5>
+                      <p class="text-gray-300 text-sm">
+                        英雄胜率 = 50%（平衡状态）
+                      </p>
+                      <div class="katex-display text-sm mt-2">
+                        \(H_0: p = 0.5\)
+                      </div>
                     </div>
-                    <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
-                      <h5 class="text-purple-400 font-semibold mb-2">备择假设 H₁</h5>
-                      <p class="text-gray-300 text-sm">英雄胜率 ≠ 50%（不平衡）</p>
-                      <div class="katex-display text-sm mt-2">\(H_1: p \neq 0.5\)</div>
+                    <div
+                      class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4"
+                    >
+                      <h5 class="text-purple-400 font-semibold mb-2">
+                        备择假设 H₁
+                      </h5>
+                      <p class="text-gray-300 text-sm">
+                        英雄胜率 ≠ 50%（不平衡）
+                      </p>
+                      <div class="katex-display text-sm mt-2">
+                        \(H_1: p \neq 0.5\)
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <!-- 交互式计算器 -->
               <div class="bg-gray-800 rounded-xl p-6 mb-8">
                 <h4 class="text-xl font-semibold text-white mb-6 text-center">
                   🧮 交互式假设检验计算器
                 </h4>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                   <div>
                     <label class="block text-gray-300 mb-2">样本量 (n):</label>
-                    <input type="number" id="hero-sample-size" value="100" min="10" max="1000" 
-                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <input
+                      type="number"
+                      id="hero-sample-size"
+                      value="100"
+                      min="10"
+                      max="1000"
+                      class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                    />
                   </div>
                   <div>
-                    <label class="block text-gray-300 mb-2">胜利次数 (x):</label>
-                    <input type="number" id="hero-wins" value="58" min="0" max="1000"
-                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <label class="block text-gray-300 mb-2"
+                      >胜利次数 (x):</label
+                    >
+                    <input
+                      type="number"
+                      id="hero-wins"
+                      value="58"
+                      min="0"
+                      max="1000"
+                      class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                    />
                   </div>
                   <div>
-                    <label class="block text-gray-300 mb-2">显著性水平 (α):</label>
-                    <select id="hero-alpha" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <label class="block text-gray-300 mb-2"
+                      >显著性水平 (α):</label
+                    >
+                    <select
+                      id="hero-alpha"
+                      class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                    >
                       <option value="0.01">0.01</option>
                       <option value="0.05" selected>0.05</option>
                       <option value="0.10">0.10</option>
                     </select>
                   </div>
                 </div>
-                
-                <button id="calculate-hero-test" 
-                        class="w-full bg-neon-blue hover:bg-neon-blue/80 text-dark-bg font-semibold py-3 rounded-lg transition-colors mb-6">
+
+                <button
+                  id="calculate-hero-test"
+                  class="w-full bg-neon-blue hover:bg-neon-blue/80 text-dark-bg font-semibold py-3 rounded-lg transition-colors mb-6"
+                >
                   🔍 执行假设检验
                 </button>
-                
+
                 <!-- 结果显示 -->
                 <div id="hero-results" class="hidden">
                   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <div class="bg-gray-700 rounded-lg p-4 text-center">
                       <div class="text-sm text-gray-400">样本胜率</div>
-                      <div id="hero-sample-rate" class="text-lg font-bold text-neon-green">0.58</div>
+                      <div
+                        id="hero-sample-rate"
+                        class="text-lg font-bold text-neon-green"
+                      >
+                        0.58
+                      </div>
                     </div>
                     <div class="bg-gray-700 rounded-lg p-4 text-center">
                       <div class="text-sm text-gray-400">Z统计量</div>
-                      <div id="hero-z-stat" class="text-lg font-bold text-neon-blue">1.60</div>
+                      <div
+                        id="hero-z-stat"
+                        class="text-lg font-bold text-neon-blue"
+                      >
+                        1.60
+                      </div>
                     </div>
                     <div class="bg-gray-700 rounded-lg p-4 text-center">
                       <div class="text-sm text-gray-400">p值</div>
-                      <div id="hero-p-value" class="text-lg font-bold text-neon-orange">0.110</div>
+                      <div
+                        id="hero-p-value"
+                        class="text-lg font-bold text-neon-orange"
+                      >
+                        0.110
+                      </div>
                     </div>
                     <div class="bg-gray-700 rounded-lg p-4 text-center">
                       <div class="text-sm text-gray-400">检验结论</div>
-                      <div id="hero-conclusion" class="text-lg font-bold text-gray-400">不拒绝H₀</div>
+                      <div
+                        id="hero-conclusion"
+                        class="text-lg font-bold text-gray-400"
+                      >
+                        不拒绝H₀
+                      </div>
                     </div>
                   </div>
-                  
-                  <div class="bg-gradient-to-r from-neon-blue/10 to-neon-purple/10 border border-neon-blue/30 rounded-lg p-6">
+
+                  <div
+                    class="bg-gradient-to-r from-neon-blue/10 to-neon-purple/10 border border-neon-blue/30 rounded-lg p-6"
+                  >
                     <h5 class="text-white font-semibold mb-3">📊 结果解释</h5>
                     <div id="hero-interpretation" class="text-gray-300">
                       <!-- 动态生成解释内容 -->
@@ -1616,7 +2951,9 @@
 
         <!-- 奇幻农业效果评估 -->
         <div id="magic-agriculture-content" class="application-content hidden">
-          <div class="bg-dark-card rounded-xl border border-gray-800 overflow-hidden mb-8">
+          <div
+            class="bg-dark-card rounded-xl border border-gray-800 overflow-hidden mb-8"
+          >
             <div class="bg-neon-green/10 p-6 border-b border-gray-800">
               <h3 class="text-2xl font-future font-bold text-neon-green mb-2">
                 🌱 奇幻农业：神奇肥料效果评估
@@ -1625,12 +2962,14 @@
                 农业魔法师需要验证新研发的神奇肥料是否真的能提高作物产量
               </p>
             </div>
-            
+
             <div class="p-8">
               <!-- 问题背景 -->
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div>
-                  <h4 class="text-xl font-semibold text-white mb-4">🌾 实验背景</h4>
+                  <h4 class="text-xl font-semibold text-white mb-4">
+                    🌾 实验背景
+                  </h4>
                   <div class="bg-gray-800 rounded-lg p-6">
                     <p class="text-gray-300 mb-4">
                       魔法农场的普通小麦平均产量为每亩500公斤。
@@ -1643,83 +2982,154 @@
                     </p>
                   </div>
                 </div>
-                
+
                 <div>
-                  <h4 class="text-xl font-semibold text-white mb-4">🎯 假设设定</h4>
+                  <h4 class="text-xl font-semibold text-white mb-4">
+                    🎯 假设设定
+                  </h4>
                   <div class="space-y-4">
-                    <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
-                      <h5 class="text-blue-400 font-semibold mb-2">原假设 H₀</h5>
-                      <p class="text-gray-300 text-sm">肥料无效果，产量仍为500公斤</p>
-                      <div class="katex-display text-sm mt-2">\(H_0: \mu = 500\)</div>
+                    <div
+                      class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4"
+                    >
+                      <h5 class="text-blue-400 font-semibold mb-2">
+                        原假设 H₀
+                      </h5>
+                      <p class="text-gray-300 text-sm">
+                        肥料无效果，产量仍为500公斤
+                      </p>
+                      <div class="katex-display text-sm mt-2">
+                        \(H_0: \mu = 500\)
+                      </div>
                     </div>
-                    <div class="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
-                      <h5 class="text-green-400 font-semibold mb-2">备择假设 H₁</h5>
-                      <p class="text-gray-300 text-sm">肥料有效，产量大于500公斤</p>
-                      <div class="katex-display text-sm mt-2">\(H_1: \mu > 500\)</div>
+                    <div
+                      class="bg-green-900/20 border border-green-500/30 rounded-lg p-4"
+                    >
+                      <h5 class="text-green-400 font-semibold mb-2">
+                        备择假设 H₁
+                      </h5>
+                      <p class="text-gray-300 text-sm">
+                        肥料有效，产量大于500公斤
+                      </p>
+                      <div class="katex-display text-sm mt-2">
+                        \(H_1: \mu > 500\)
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <!-- 交互式计算器 -->
               <div class="bg-gray-800 rounded-xl p-6 mb-8">
                 <h4 class="text-xl font-semibold text-white mb-6 text-center">
                   🧪 农业实验假设检验
                 </h4>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                   <div>
                     <label class="block text-gray-300 mb-2">样本量 (n):</label>
-                    <input type="number" id="agri-sample-size" value="25" min="5" max="100" 
-                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <input
+                      type="number"
+                      id="agri-sample-size"
+                      value="25"
+                      min="5"
+                      max="100"
+                      class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                    />
                   </div>
                   <div>
-                    <label class="block text-gray-300 mb-2">样本均值 (x̄):</label>
-                    <input type="number" id="agri-sample-mean" value="520" min="400" max="600" step="0.1"
-                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <label class="block text-gray-300 mb-2"
+                      >样本均值 (x̄):</label
+                    >
+                    <input
+                      type="number"
+                      id="agri-sample-mean"
+                      value="520"
+                      min="400"
+                      max="600"
+                      step="0.1"
+                      class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                    />
                   </div>
                   <div>
-                    <label class="block text-gray-300 mb-2">样本标准差 (s):</label>
-                    <input type="number" id="agri-sample-std" value="30" min="1" max="100" step="0.1"
-                           class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <label class="block text-gray-300 mb-2"
+                      >样本标准差 (s):</label
+                    >
+                    <input
+                      type="number"
+                      id="agri-sample-std"
+                      value="30"
+                      min="1"
+                      max="100"
+                      step="0.1"
+                      class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                    />
                   </div>
                   <div>
-                    <label class="block text-gray-300 mb-2">显著性水平 (α):</label>
-                    <select id="agri-alpha" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white">
+                    <label class="block text-gray-300 mb-2"
+                      >显著性水平 (α):</label
+                    >
+                    <select
+                      id="agri-alpha"
+                      class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                    >
                       <option value="0.01">0.01</option>
                       <option value="0.05" selected>0.05</option>
                       <option value="0.10">0.10</option>
                     </select>
                   </div>
                 </div>
-                
-                <button id="calculate-agri-test" 
-                        class="w-full bg-neon-green hover:bg-neon-green/80 text-dark-bg font-semibold py-3 rounded-lg transition-colors mb-6">
+
+                <button
+                  id="calculate-agri-test"
+                  class="w-full bg-neon-green hover:bg-neon-green/80 text-dark-bg font-semibold py-3 rounded-lg transition-colors mb-6"
+                >
                   🌱 执行产量检验
                 </button>
-                
+
                 <!-- 结果显示 -->
                 <div id="agri-results" class="hidden">
                   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <div class="bg-gray-700 rounded-lg p-4 text-center">
                       <div class="text-sm text-gray-400">产量提升</div>
-                      <div id="agri-improvement" class="text-lg font-bold text-neon-green">+20kg</div>
+                      <div
+                        id="agri-improvement"
+                        class="text-lg font-bold text-neon-green"
+                      >
+                        +20kg
+                      </div>
                     </div>
                     <div class="bg-gray-700 rounded-lg p-4 text-center">
                       <div class="text-sm text-gray-400">t统计量</div>
-                      <div id="agri-t-stat" class="text-lg font-bold text-neon-blue">3.33</div>
+                      <div
+                        id="agri-t-stat"
+                        class="text-lg font-bold text-neon-blue"
+                      >
+                        3.33
+                      </div>
                     </div>
                     <div class="bg-gray-700 rounded-lg p-4 text-center">
                       <div class="text-sm text-gray-400">p值</div>
-                      <div id="agri-p-value" class="text-lg font-bold text-neon-orange">0.001</div>
+                      <div
+                        id="agri-p-value"
+                        class="text-lg font-bold text-neon-orange"
+                      >
+                        0.001
+                      </div>
                     </div>
                     <div class="bg-gray-700 rounded-lg p-4 text-center">
                       <div class="text-sm text-gray-400">检验结论</div>
-                      <div id="agri-conclusion" class="text-lg font-bold text-neon-green">拒绝H₀</div>
+                      <div
+                        id="agri-conclusion"
+                        class="text-lg font-bold text-neon-green"
+                      >
+                        拒绝H₀
+                      </div>
                     </div>
                   </div>
-                  
-                  <div class="bg-gradient-to-r from-neon-green/10 to-neon-blue/10 border border-neon-green/30 rounded-lg p-6">
+
+                  <div
+                    class="bg-gradient-to-r from-neon-green/10 to-neon-blue/10 border border-neon-green/30 rounded-lg p-6"
+                  >
                     <h5 class="text-white font-semibold mb-3">🌾 结果解释</h5>
                     <div id="agri-interpretation" class="text-gray-300">
                       <!-- 动态生成解释内容 -->
@@ -1734,10 +3144,15 @@
     </section>
 
     <!-- 课后问题部分 -->
-    <section id="exercises" class="py-20 bg-gradient-to-br from-dark-bg via-purple-900/20 to-dark-bg">
+    <section
+      id="exercises"
+      class="py-20 bg-gradient-to-br from-dark-bg via-purple-900/20 to-dark-bg"
+    >
       <div class="container mx-auto px-6">
         <div class="text-center mb-16">
-          <h2 class="text-4xl font-bold mb-6 bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">
+          <h2
+            class="text-4xl font-bold mb-6 bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent"
+          >
             📚 课后问题
           </h2>
           <p class="text-xl text-gray-300 max-w-3xl mx-auto">
@@ -1747,14 +3162,25 @@
 
         <!-- 难度级别选择 -->
         <div class="flex justify-center mb-12">
-          <div class="bg-dark-card/50 backdrop-blur-sm rounded-xl p-2 border border-neon-blue/20">
-            <button id="level1-tab" class="exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg">
+          <div
+            class="bg-dark-card/50 backdrop-blur-sm rounded-xl p-2 border border-neon-blue/20"
+          >
+            <button
+              id="level1-tab"
+              class="exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg"
+            >
               Level 1: 基础概念
             </button>
-            <button id="level2-tab" class="exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white">
+            <button
+              id="level2-tab"
+              class="exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white"
+            >
               Level 2: 计算解读
             </button>
-            <button id="level3-tab" class="exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white">
+            <button
+              id="level3-tab"
+              class="exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white"
+            >
               Level 3: 分析设计
             </button>
           </div>
@@ -1764,48 +3190,107 @@
         <div id="level1-content" class="exercise-content">
           <div class="grid md:grid-cols-2 gap-8">
             <!-- 题目1 -->
-            <div class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-blue/20">
+            <div
+              class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-blue/20"
+            >
               <h3 class="text-xl font-bold mb-4 text-neon-blue">🎯 选择题 1</h3>
               <p class="text-gray-300 mb-4">P值的正确定义是什么？</p>
               <div class="space-y-3">
-                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded">
-                  <input type="radio" name="q1" value="A" class="text-neon-blue">
+                <label
+                  class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded"
+                >
+                  <input
+                    type="radio"
+                    name="q1"
+                    value="A"
+                    class="text-neon-blue"
+                  />
                   <span class="text-gray-300">A. 原假设为真的概率</span>
                 </label>
-                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded">
-                  <input type="radio" name="q1" value="B" class="text-neon-blue">
-                  <span class="text-gray-300">B. 在原假设为真的条件下，观察到当前样本结果或更极端结果的概率</span>
+                <label
+                  class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded"
+                >
+                  <input
+                    type="radio"
+                    name="q1"
+                    value="B"
+                    class="text-neon-blue"
+                  />
+                  <span class="text-gray-300"
+                    >B.
+                    在原假设为真的条件下，观察到当前样本结果或更极端结果的概率</span
+                  >
                 </label>
-                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded">
-                  <input type="radio" name="q1" value="C" class="text-neon-blue">
+                <label
+                  class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded"
+                >
+                  <input
+                    type="radio"
+                    name="q1"
+                    value="C"
+                    class="text-neon-blue"
+                  />
                   <span class="text-gray-300">C. 备择假设为真的概率</span>
                 </label>
-                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded">
-                  <input type="radio" name="q1" value="D" class="text-neon-blue">
+                <label
+                  class="flex items-center space-x-3 cursor-pointer hover:bg-neon-blue/10 p-2 rounded"
+                >
+                  <input
+                    type="radio"
+                    name="q1"
+                    value="D"
+                    class="text-neon-blue"
+                  />
                   <span class="text-gray-300">D. 犯第一类错误的概率</span>
                 </label>
               </div>
-              <button onclick="checkAnswer('q1', 'B')" class="mt-4 bg-neon-blue text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-blue/80 transition-colors">
+              <button
+                onclick="checkAnswer('q1', 'B')"
+                class="mt-4 bg-neon-blue text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-blue/80 transition-colors"
+              >
                 检查答案
               </button>
               <div id="q1-result" class="mt-4 hidden"></div>
             </div>
 
             <!-- 题目2 -->
-            <div class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-purple/20">
-              <h3 class="text-xl font-bold mb-4 text-neon-purple">✅ 判断题 1</h3>
-              <p class="text-gray-300 mb-4">判断：显著性水平α是当H₀为假时拒绝它的概率。</p>
+            <div
+              class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-purple/20"
+            >
+              <h3 class="text-xl font-bold mb-4 text-neon-purple">
+                ✅ 判断题 1
+              </h3>
+              <p class="text-gray-300 mb-4">
+                判断：显著性水平α是当H₀为假时拒绝它的概率。
+              </p>
               <div class="space-y-3">
-                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-purple/10 p-2 rounded">
-                  <input type="radio" name="q2" value="true" class="text-neon-purple">
+                <label
+                  class="flex items-center space-x-3 cursor-pointer hover:bg-neon-purple/10 p-2 rounded"
+                >
+                  <input
+                    type="radio"
+                    name="q2"
+                    value="true"
+                    class="text-neon-purple"
+                  />
                   <span class="text-gray-300">正确</span>
                 </label>
-                <label class="flex items-center space-x-3 cursor-pointer hover:bg-neon-purple/10 p-2 rounded">
-                  <input type="radio" name="q2" value="false" class="text-neon-purple">
+                <label
+                  class="flex items-center space-x-3 cursor-pointer hover:bg-neon-purple/10 p-2 rounded"
+                >
+                  <input
+                    type="radio"
+                    name="q2"
+                    value="false"
+                    class="text-neon-purple"
+                  />
                   <span class="text-gray-300">错误</span>
                 </label>
               </div>
-              <button onclick="checkAnswer('q2', 'false')" class="mt-4 bg-neon-purple text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-purple/80 transition-colors">
+              <button
+                onclick="checkAnswer('q2', 'false')"
+                class="mt-4 bg-neon-purple text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-purple/80 transition-colors"
+              >
                 检查答案
               </button>
               <div id="q2-result" class="mt-4 hidden"></div>
@@ -1817,47 +3302,89 @@
         <div id="level2-content" class="exercise-content hidden">
           <div class="grid md:grid-cols-1 gap-8">
             <!-- 计算题 -->
-            <div class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-green/20">
+            <div
+              class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-green/20"
+            >
               <h3 class="text-xl font-bold mb-4 text-neon-green">🧮 计算题</h3>
               <div class="bg-dark-bg/50 p-4 rounded-lg mb-4">
-                <p class="text-gray-300 mb-2"><strong>场景：</strong>某魔法学院声称其新研发的"智慧药水"能显著提高学生的考试成绩。</p>
-                <p class="text-gray-300 mb-2"><strong>已知：</strong>历史数据显示学生平均成绩为75分，标准差为10分。</p>
-                <p class="text-gray-300 mb-2"><strong>实验：</strong>随机选择25名学生服用智慧药水后，平均成绩为78分。</p>
-                <p class="text-gray-300"><strong>问题：</strong>在α=0.05的显著性水平下，能否认为智慧药水有效？</p>
+                <p class="text-gray-300 mb-2">
+                  <strong>场景：</strong
+                  >某魔法学院声称其新研发的"智慧药水"能显著提高学生的考试成绩。
+                </p>
+                <p class="text-gray-300 mb-2">
+                  <strong>已知：</strong
+                  >历史数据显示学生平均成绩为75分，标准差为10分。
+                </p>
+                <p class="text-gray-300 mb-2">
+                  <strong>实验：</strong
+                  >随机选择25名学生服用智慧药水后，平均成绩为78分。
+                </p>
+                <p class="text-gray-300">
+                  <strong>问题：</strong
+                  >在α=0.05的显著性水平下，能否认为智慧药水有效？
+                </p>
               </div>
-              
+
               <div class="grid md:grid-cols-2 gap-6">
                 <div>
                   <h4 class="font-semibold mb-3 text-neon-green">计算步骤：</h4>
                   <div class="space-y-3">
                     <div>
-                      <label class="block text-sm text-gray-400 mb-1">1. 检验统计量 Z =</label>
-                      <input type="number" id="calc-z" step="0.01" class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white" placeholder="输入Z值">
+                      <label class="block text-sm text-gray-400 mb-1"
+                        >1. 检验统计量 Z =</label
+                      >
+                      <input
+                        type="number"
+                        id="calc-z"
+                        step="0.01"
+                        class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white"
+                        placeholder="输入Z值"
+                      />
                     </div>
                     <div>
-                      <label class="block text-sm text-gray-400 mb-1">2. P值 =</label>
-                      <input type="number" id="calc-p" step="0.001" class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white" placeholder="输入P值">
+                      <label class="block text-sm text-gray-400 mb-1"
+                        >2. P值 =</label
+                      >
+                      <input
+                        type="number"
+                        id="calc-p"
+                        step="0.001"
+                        class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white"
+                        placeholder="输入P值"
+                      />
                     </div>
                     <div>
-                      <label class="block text-sm text-gray-400 mb-1">3. 结论：</label>
-                      <select id="calc-conclusion" class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white">
+                      <label class="block text-sm text-gray-400 mb-1"
+                        >3. 结论：</label
+                      >
+                      <select
+                        id="calc-conclusion"
+                        class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white"
+                      >
                         <option value="">选择结论</option>
                         <option value="reject">拒绝H₀，智慧药水有效</option>
-                        <option value="not-reject">不拒绝H₀，智慧药水无效</option>
+                        <option value="not-reject">
+                          不拒绝H₀，智慧药水无效
+                        </option>
                       </select>
                     </div>
                   </div>
-                  <button onclick="checkCalculation()" class="mt-4 bg-neon-green text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-green/80 transition-colors">
+                  <button
+                    onclick="checkCalculation()"
+                    class="mt-4 bg-neon-green text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-green/80 transition-colors"
+                  >
                     检查计算
                   </button>
                 </div>
-                
+
                 <div>
                   <h4 class="font-semibold mb-3 text-neon-green">提示公式：</h4>
                   <div class="bg-dark-bg/50 p-4 rounded-lg text-sm">
                     <p class="text-gray-300 mb-2">H₀: μ = 75 vs H₁: μ > 75</p>
                     <p class="text-gray-300 mb-2">Z = (x̄ - μ₀) / (σ/√n)</p>
-                    <p class="text-gray-300 mb-2">其中：x̄ = 78, μ₀ = 75, σ = 10, n = 25</p>
+                    <p class="text-gray-300 mb-2">
+                      其中：x̄ = 78, μ₀ = 75, σ = 10, n = 25
+                    </p>
                     <p class="text-gray-300">单尾检验，α = 0.05</p>
                   </div>
                 </div>
@@ -1871,44 +3398,90 @@
         <div id="level3-content" class="exercise-content hidden">
           <div class="grid md:grid-cols-1 gap-8">
             <!-- 思考题1 -->
-            <div class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-orange/20">
-              <h3 class="text-xl font-bold mb-4 text-neon-orange">🤔 思考题 1</h3>
-              <p class="text-gray-300 mb-4">第一类错误和第二类错误的概率之间有什么关系？在实际应用中如何平衡这两种错误？</p>
-              <textarea id="thinking1" rows="4" class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white" placeholder="请输入你的思考..."></textarea>
-              <button onclick="showThinkingAnswer(1)" class="mt-4 bg-neon-orange text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-orange/80 transition-colors">
+            <div
+              class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-orange/20"
+            >
+              <h3 class="text-xl font-bold mb-4 text-neon-orange">
+                🤔 思考题 1
+              </h3>
+              <p class="text-gray-300 mb-4">
+                第一类错误和第二类错误的概率之间有什么关系？在实际应用中如何平衡这两种错误？
+              </p>
+              <textarea
+                id="thinking1"
+                rows="4"
+                class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white"
+                placeholder="请输入你的思考..."
+              ></textarea>
+              <button
+                onclick="showThinkingAnswer(1)"
+                class="mt-4 bg-neon-orange text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-orange/80 transition-colors"
+              >
                 查看参考答案
               </button>
-              <div id="thinking1-answer" class="mt-4 hidden bg-dark-bg/50 p-4 rounded-lg">
+              <div
+                id="thinking1-answer"
+                class="mt-4 hidden bg-dark-bg/50 p-4 rounded-lg"
+              >
                 <h4 class="font-semibold mb-2 text-neon-orange">参考答案：</h4>
-                <p class="text-gray-300 mb-2">• <strong>关系：</strong>在样本量固定的情况下，第一类错误概率α和第二类错误概率β通常呈反比关系</p>
-                <p class="text-gray-300 mb-2">• <strong>权衡：</strong>降低α会增加β，反之亦然</p>
+                <p class="text-gray-300 mb-2">
+                  •
+                  <strong>关系：</strong
+                  >在样本量固定的情况下，第一类错误概率α和第二类错误概率β通常呈反比关系
+                </p>
+                <p class="text-gray-300 mb-2">
+                  • <strong>权衡：</strong>降低α会增加β，反之亦然
+                </p>
                 <p class="text-gray-300 mb-2">• <strong>平衡策略：</strong></p>
-                <p class="text-gray-300 ml-4 mb-1">- 增加样本量可同时降低两种错误</p>
-                <p class="text-gray-300 ml-4 mb-1">- 根据实际后果选择合适的α水平</p>
+                <p class="text-gray-300 ml-4 mb-1">
+                  - 增加样本量可同时降低两种错误
+                </p>
+                <p class="text-gray-300 ml-4 mb-1">
+                  - 根据实际后果选择合适的α水平
+                </p>
                 <p class="text-gray-300 ml-4">- 考虑功效分析来优化检验设计</p>
               </div>
             </div>
 
             <!-- 思考题2 -->
-            <div class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-pink/20">
+            <div
+              class="bg-dark-card/30 backdrop-blur-sm rounded-xl p-6 border border-neon-pink/20"
+            >
               <h3 class="text-xl font-bold mb-4 text-neon-pink">🎨 设计题</h3>
-              <p class="text-gray-300 mb-4">设计一个实验来检验一种新的魔法咒语是否比传统咒语施法速度更快。请详细说明你的实验设计，包括假设设定、样本选择、数据收集和统计分析方法。</p>
-              <textarea id="design1" rows="6" class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white" placeholder="请详细描述你的实验设计..."></textarea>
-              <button onclick="showDesignAnswer(1)" class="mt-4 bg-neon-pink text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-pink/80 transition-colors">
+              <p class="text-gray-300 mb-4">
+                设计一个实验来检验一种新的魔法咒语是否比传统咒语施法速度更快。请详细说明你的实验设计，包括假设设定、样本选择、数据收集和统计分析方法。
+              </p>
+              <textarea
+                id="design1"
+                rows="6"
+                class="w-full bg-dark-bg border border-gray-600 rounded px-3 py-2 text-white"
+                placeholder="请详细描述你的实验设计..."
+              ></textarea>
+              <button
+                onclick="showDesignAnswer(1)"
+                class="mt-4 bg-neon-pink text-dark-bg px-4 py-2 rounded-lg font-semibold hover:bg-neon-pink/80 transition-colors"
+              >
                 查看设计要点
               </button>
-              <div id="design1-answer" class="mt-4 hidden bg-dark-bg/50 p-4 rounded-lg">
+              <div
+                id="design1-answer"
+                class="mt-4 hidden bg-dark-bg/50 p-4 rounded-lg"
+              >
                 <h4 class="font-semibold mb-2 text-neon-pink">设计要点：</h4>
                 <div class="space-y-3 text-gray-300">
                   <div>
                     <strong>1. 假设设定：</strong>
-                    <p class="ml-4">H₀: μ_new = μ_old (新咒语施法时间等于传统咒语)</p>
+                    <p class="ml-4">
+                      H₀: μ_new = μ_old (新咒语施法时间等于传统咒语)
+                    </p>
                     <p class="ml-4">H₁: μ_new < μ_old (新咒语施法时间更短)</p>
                   </div>
                   <div>
                     <strong>2. 实验设计：</strong>
                     <p class="ml-4">• 随机选择法师，分为两组或使用配对设计</p>
-                    <p class="ml-4">• 控制变量：法师技能水平、咒语复杂度、环境条件</p>
+                    <p class="ml-4">
+                      • 控制变量：法师技能水平、咒语复杂度、环境条件
+                    </p>
                     <p class="ml-4">• 盲法设计：避免主观偏差</p>
                   </div>
                   <div>
@@ -2280,48 +3853,70 @@
         }
 
         initializeElements() {
-          this.heroTab = document.getElementById('hero-balance-tab');
-          this.agriTab = document.getElementById('magic-agriculture-tab');
-          this.heroContent = document.getElementById('hero-balance-content');
-          this.agriContent = document.getElementById('magic-agriculture-content');
-          
+          this.heroTab = document.getElementById("hero-balance-tab");
+          this.agriTab = document.getElementById("magic-agriculture-tab");
+          this.heroContent = document.getElementById("hero-balance-content");
+          this.agriContent = document.getElementById(
+            "magic-agriculture-content"
+          );
+
           // 英雄平衡检验元素
-          this.heroSampleSize = document.getElementById('hero-sample-size');
-          this.heroWins = document.getElementById('hero-wins');
-          this.heroAlpha = document.getElementById('hero-alpha');
-          this.calculateHeroBtn = document.getElementById('calculate-hero-test');
-          this.heroResults = document.getElementById('hero-results');
-          
+          this.heroSampleSize = document.getElementById("hero-sample-size");
+          this.heroWins = document.getElementById("hero-wins");
+          this.heroAlpha = document.getElementById("hero-alpha");
+          this.calculateHeroBtn = document.getElementById(
+            "calculate-hero-test"
+          );
+          this.heroResults = document.getElementById("hero-results");
+
           // 农业检验元素
-          this.agriSampleSize = document.getElementById('agri-sample-size');
-          this.agriSampleMean = document.getElementById('agri-sample-mean');
-          this.agriSampleStd = document.getElementById('agri-sample-std');
-          this.agriAlpha = document.getElementById('agri-alpha');
-          this.calculateAgriBtn = document.getElementById('calculate-agri-test');
-          this.agriResults = document.getElementById('agri-results');
+          this.agriSampleSize = document.getElementById("agri-sample-size");
+          this.agriSampleMean = document.getElementById("agri-sample-mean");
+          this.agriSampleStd = document.getElementById("agri-sample-std");
+          this.agriAlpha = document.getElementById("agri-alpha");
+          this.calculateAgriBtn = document.getElementById(
+            "calculate-agri-test"
+          );
+          this.agriResults = document.getElementById("agri-results");
         }
 
         bindEvents() {
           // 标签切换
-          if (this.heroTab) this.heroTab.addEventListener('click', () => this.switchTab('hero'));
-          if (this.agriTab) this.agriTab.addEventListener('click', () => this.switchTab('agri'));
-          
+          if (this.heroTab)
+            this.heroTab.addEventListener("click", () =>
+              this.switchTab("hero")
+            );
+          if (this.agriTab)
+            this.agriTab.addEventListener("click", () =>
+              this.switchTab("agri")
+            );
+
           // 计算按钮
-          if (this.calculateHeroBtn) this.calculateHeroBtn.addEventListener('click', () => this.calculateHeroTest());
-          if (this.calculateAgriBtn) this.calculateAgriBtn.addEventListener('click', () => this.calculateAgriTest());
+          if (this.calculateHeroBtn)
+            this.calculateHeroBtn.addEventListener("click", () =>
+              this.calculateHeroTest()
+            );
+          if (this.calculateAgriBtn)
+            this.calculateAgriBtn.addEventListener("click", () =>
+              this.calculateAgriTest()
+            );
         }
 
         switchTab(tab) {
-          if (tab === 'hero') {
-            this.heroTab.className = 'application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg';
-            this.agriTab.className = 'application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white';
-            this.heroContent.classList.remove('hidden');
-            this.agriContent.classList.add('hidden');
+          if (tab === "hero") {
+            this.heroTab.className =
+              "application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg";
+            this.agriTab.className =
+              "application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white";
+            this.heroContent.classList.remove("hidden");
+            this.agriContent.classList.add("hidden");
           } else {
-            this.agriTab.className = 'application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-green text-dark-bg';
-            this.heroTab.className = 'application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white';
-            this.agriContent.classList.remove('hidden');
-            this.heroContent.classList.add('hidden');
+            this.agriTab.className =
+              "application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-green text-dark-bg";
+            this.heroTab.className =
+              "application-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white";
+            this.agriContent.classList.remove("hidden");
+            this.heroContent.classList.add("hidden");
           }
         }
 
@@ -2330,45 +3925,55 @@
           const x = parseInt(this.heroWins.value);
           const alpha = parseFloat(this.heroAlpha.value);
           const p0 = 0.5; // 原假设胜率
-          
+
           // 计算样本胜率
           const pHat = x / n;
-          
+
           // 计算Z统计量
-          const zStat = (pHat - p0) / Math.sqrt(p0 * (1 - p0) / n);
-          
+          const zStat = (pHat - p0) / Math.sqrt((p0 * (1 - p0)) / n);
+
           // 计算p值（双尾检验）
           const pValue = 2 * (1 - this.normalCDF(Math.abs(zStat)));
-          
+
           // 显示结果
-          document.getElementById('hero-sample-rate').textContent = pHat.toFixed(3);
-          document.getElementById('hero-z-stat').textContent = zStat.toFixed(3);
-          document.getElementById('hero-p-value').textContent = pValue.toFixed(4);
-          
-          const conclusion = document.getElementById('hero-conclusion');
-          const interpretation = document.getElementById('hero-interpretation');
-          
+          document.getElementById("hero-sample-rate").textContent =
+            pHat.toFixed(3);
+          document.getElementById("hero-z-stat").textContent = zStat.toFixed(3);
+          document.getElementById("hero-p-value").textContent =
+            pValue.toFixed(4);
+
+          const conclusion = document.getElementById("hero-conclusion");
+          const interpretation = document.getElementById("hero-interpretation");
+
           if (pValue < alpha) {
-            conclusion.textContent = '拒绝H₀';
-            conclusion.className = 'text-lg font-bold text-red-400';
+            conclusion.textContent = "拒绝H₀";
+            conclusion.className = "text-lg font-bold text-red-400";
             interpretation.innerHTML = `
               <p class="mb-3">🚨 <strong>检验结论：拒绝原假设</strong></p>
-              <p class="mb-2">• p值(${pValue.toFixed(4)}) < α(${alpha})，证据显著</p>
-              <p class="mb-2">• 暗影刺客的胜率(${(pHat*100).toFixed(1)}%)显著偏离50%的平衡目标</p>
+              <p class="mb-2">• p值(${pValue.toFixed(
+                4
+              )}) < α(${alpha})，证据显著</p>
+              <p class="mb-2">• 暗影刺客的胜率(${(pHat * 100).toFixed(
+                1
+              )}%)显著偏离50%的平衡目标</p>
               <p class="text-neon-orange">🎮 <strong>游戏建议：</strong>需要调整英雄技能或属性以恢复游戏平衡</p>
             `;
           } else {
-            conclusion.textContent = '不拒绝H₀';
-            conclusion.className = 'text-lg font-bold text-gray-400';
+            conclusion.textContent = "不拒绝H₀";
+            conclusion.className = "text-lg font-bold text-gray-400";
             interpretation.innerHTML = `
               <p class="mb-3">✅ <strong>检验结论：不拒绝原假设</strong></p>
-              <p class="mb-2">• p值(${pValue.toFixed(4)}) ≥ α(${alpha})，证据不足</p>
-              <p class="mb-2">• 暗影刺客的胜率(${(pHat*100).toFixed(1)}%)与50%的差异可能由随机波动造成</p>
+              <p class="mb-2">• p值(${pValue.toFixed(
+                4
+              )}) ≥ α(${alpha})，证据不足</p>
+              <p class="mb-2">• 暗影刺客的胜率(${(pHat * 100).toFixed(
+                1
+              )}%)与50%的差异可能由随机波动造成</p>
               <p class="text-neon-green">🎮 <strong>游戏建议：</strong>英雄平衡性良好，可以正式发布</p>
             `;
           }
-          
-          this.heroResults.classList.remove('hidden');
+
+          this.heroResults.classList.remove("hidden");
         }
 
         calculateAgriTest() {
@@ -2377,44 +3982,58 @@
           const s = parseFloat(this.agriSampleStd.value);
           const alpha = parseFloat(this.agriAlpha.value);
           const mu0 = 500; // 原假设产量
-          
+
           // 计算t统计量
           const tStat = (xBar - mu0) / (s / Math.sqrt(n));
-          
+
           // 计算p值（单尾检验，右尾）
           const pValue = 1 - this.tCDF(tStat, n - 1);
-          
+
           // 显示结果
-          document.getElementById('agri-improvement').textContent = `+${(xBar - mu0).toFixed(1)}kg`;
-          document.getElementById('agri-t-stat').textContent = tStat.toFixed(3);
-          document.getElementById('agri-p-value').textContent = pValue.toFixed(4);
-          
-          const conclusion = document.getElementById('agri-conclusion');
-          const interpretation = document.getElementById('agri-interpretation');
-          
+          document.getElementById("agri-improvement").textContent = `+${(
+            xBar - mu0
+          ).toFixed(1)}kg`;
+          document.getElementById("agri-t-stat").textContent = tStat.toFixed(3);
+          document.getElementById("agri-p-value").textContent =
+            pValue.toFixed(4);
+
+          const conclusion = document.getElementById("agri-conclusion");
+          const interpretation = document.getElementById("agri-interpretation");
+
           if (pValue < alpha) {
-            conclusion.textContent = '拒绝H₀';
-            conclusion.className = 'text-lg font-bold text-neon-green';
+            conclusion.textContent = "拒绝H₀";
+            conclusion.className = "text-lg font-bold text-neon-green";
             interpretation.innerHTML = `
               <p class="mb-3">🌟 <strong>检验结论：拒绝原假设</strong></p>
-              <p class="mb-2">• p值(${pValue.toFixed(4)}) < α(${alpha})，证据显著</p>
-              <p class="mb-2">• "生长之源"肥料显著提高了小麦产量，平均增产${(xBar - mu0).toFixed(1)}公斤/亩</p>
-              <p class="mb-2">• 提升幅度：${((xBar - mu0) / mu0 * 100).toFixed(1)}%</p>
+              <p class="mb-2">• p值(${pValue.toFixed(
+                4
+              )}) < α(${alpha})，证据显著</p>
+              <p class="mb-2">• "生长之源"肥料显著提高了小麦产量，平均增产${(
+                xBar - mu0
+              ).toFixed(1)}公斤/亩</p>
+              <p class="mb-2">• 提升幅度：${(
+                ((xBar - mu0) / mu0) *
+                100
+              ).toFixed(1)}%</p>
               <p class="text-neon-green">🌱 <strong>农业建议：</strong>可以大规模推广使用这种神奇肥料</p>
             `;
           } else {
-            conclusion.textContent = '不拒绝H₀';
-            conclusion.className = 'text-lg font-bold text-gray-400';
+            conclusion.textContent = "不拒绝H₀";
+            conclusion.className = "text-lg font-bold text-gray-400";
             interpretation.innerHTML = `
               <p class="mb-3">🤔 <strong>检验结论：不拒绝原假设</strong></p>
-              <p class="mb-2">• p值(${pValue.toFixed(4)}) ≥ α(${alpha})，证据不足</p>
-              <p class="mb-2">• 虽然观察到${(xBar - mu0).toFixed(1)}公斤的产量提升，但统计上不显著</p>
+              <p class="mb-2">• p值(${pValue.toFixed(
+                4
+              )}) ≥ α(${alpha})，证据不足</p>
+              <p class="mb-2">• 虽然观察到${(xBar - mu0).toFixed(
+                1
+              )}公斤的产量提升，但统计上不显著</p>
               <p class="mb-2">• 可能是随机波动或样本量不足导致</p>
               <p class="text-neon-orange">🌱 <strong>农业建议：</strong>需要更多试验数据或改进肥料配方</p>
             `;
           }
-          
-          this.agriResults.classList.remove('hidden');
+
+          this.agriResults.classList.remove("hidden");
         }
 
         // 标准正态分布累积分布函数近似
@@ -2424,19 +4043,23 @@
 
         // 误差函数近似
         erf(x) {
-          const a1 =  0.254829592;
+          const a1 = 0.254829592;
           const a2 = -0.284496736;
-          const a3 =  1.421413741;
+          const a3 = 1.421413741;
           const a4 = -1.453152027;
-          const a5 =  1.061405429;
-          const p  =  0.3275911;
-          
+          const a5 = 1.061405429;
+          const p = 0.3275911;
+
           const sign = x >= 0 ? 1 : -1;
           x = Math.abs(x);
-          
+
           const t = 1.0 / (1.0 + p * x);
-          const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
-          
+          const y =
+            1.0 -
+            ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) *
+              t *
+              Math.exp(-x * x);
+
           return sign * y;
         }
 
@@ -2445,10 +4068,10 @@
           if (df >= 30) {
             return this.normalCDF(t);
           }
-          
+
           // 简化的t分布近似
           const x = t / Math.sqrt(df);
-          const approx = this.normalCDF(x * (1 - 1/(4*df)));
+          const approx = this.normalCDF(x * (1 - 1 / (4 * df)));
           return approx;
         }
       }
@@ -2461,67 +4084,376 @@
         }
 
         initializeElements() {
-          this.level1Tab = document.getElementById('level1-tab');
-          this.level2Tab = document.getElementById('level2-tab');
-          this.level3Tab = document.getElementById('level3-tab');
-          this.level1Content = document.getElementById('level1-content');
-          this.level2Content = document.getElementById('level2-content');
-          this.level3Content = document.getElementById('level3-content');
+          this.level1Tab = document.getElementById("level1-tab");
+          this.level2Tab = document.getElementById("level2-tab");
+          this.level3Tab = document.getElementById("level3-tab");
+          this.level1Content = document.getElementById("level1-content");
+          this.level2Content = document.getElementById("level2-content");
+          this.level3Content = document.getElementById("level3-content");
         }
 
         bindEvents() {
-          if (this.level1Tab) this.level1Tab.addEventListener('click', () => this.switchLevel(1));
-          if (this.level2Tab) this.level2Tab.addEventListener('click', () => this.switchLevel(2));
-          if (this.level3Tab) this.level3Tab.addEventListener('click', () => this.switchLevel(3));
+          if (this.level1Tab)
+            this.level1Tab.addEventListener("click", () => this.switchLevel(1));
+          if (this.level2Tab)
+            this.level2Tab.addEventListener("click", () => this.switchLevel(2));
+          if (this.level3Tab)
+            this.level3Tab.addEventListener("click", () => this.switchLevel(3));
         }
 
         switchLevel(level) {
           // 重置所有标签样式
-          [this.level1Tab, this.level2Tab, this.level3Tab].forEach(tab => {
-            if (tab) tab.className = 'exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white';
+          [this.level1Tab, this.level2Tab, this.level3Tab].forEach((tab) => {
+            if (tab)
+              tab.className =
+                "exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 text-gray-400 hover:text-white";
           });
-          
+
           // 隐藏所有内容
-          [this.level1Content, this.level2Content, this.level3Content].forEach(content => {
-            if (content) content.classList.add('hidden');
-          });
-          
+          [this.level1Content, this.level2Content, this.level3Content].forEach(
+            (content) => {
+              if (content) content.classList.add("hidden");
+            }
+          );
+
           // 激活选中的级别
           if (level === 1) {
-            this.level1Tab.className = 'exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg';
-            this.level1Content.classList.remove('hidden');
+            this.level1Tab.className =
+              "exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-blue text-dark-bg";
+            this.level1Content.classList.remove("hidden");
           } else if (level === 2) {
-            this.level2Tab.className = 'exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-green text-dark-bg';
-            this.level2Content.classList.remove('hidden');
+            this.level2Tab.className =
+              "exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-green text-dark-bg";
+            this.level2Content.classList.remove("hidden");
           } else if (level === 3) {
-            this.level3Tab.className = 'exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-orange text-dark-bg';
-            this.level3Content.classList.remove('hidden');
+            this.level3Tab.className =
+              "exercise-level-tab px-6 py-3 rounded-lg font-semibold transition-all duration-300 bg-neon-orange text-dark-bg";
+            this.level3Content.classList.remove("hidden");
           }
+        }
+      }
+
+      // 理论探索功能
+      class TheoryExploration {
+        constructor() {
+          this.understandingScores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 10个理论步骤
+          this.currentSection = 'error-types';
+          this.initializeElements();
+          this.bindEvents();
+          this.initializeKaTeX();
+        }
+
+        initializeElements() {
+          this.theoryNavBtns = document.querySelectorAll('.theory-nav-btn');
+          this.theorySections = document.querySelectorAll('.theory-section');
+          this.understandingBtns = document.querySelectorAll('.understanding-btn');
+          this.aiHelpBtns = document.querySelectorAll('.ai-help-btn');
+        }
+
+        bindEvents() {
+          // 理论导航按钮事件
+          this.theoryNavBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const section = e.target.closest('button').getAttribute('onclick').match(/'([^']+)'/)[1];
+              this.showTheorySection(section);
+            });
+          });
+
+          // 理解度评分按钮事件
+          this.understandingBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const step = parseInt(e.target.closest('.theory-step').getAttribute('data-step'));
+              const level = parseInt(e.target.getAttribute('data-level'));
+              this.setUnderstanding(step, level);
+            });
+          });
+
+          // AI帮助按钮事件
+          this.aiHelpBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const step = parseInt(e.target.getAttribute('data-step'));
+              this.showAIHelp(step);
+            });
+          });
+        }
+
+        initializeKaTeX() {
+          // 渲染数学公式
+          if (typeof renderMathInElement !== 'undefined') {
+            renderMathInElement(document.body, {
+              delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\[", right: "\\]", display: true },
+                { left: "\\(", right: "\\)", display: false },
+              ],
+              throwOnError: false,
+              errorColor: "#cc0000",
+            });
+          }
+        }
+
+        showTheorySection(sectionId) {
+          // 隐藏所有理论部分
+          this.theorySections.forEach(section => {
+            section.classList.add('hidden');
+          });
+
+          // 显示选中的理论部分
+          const targetSection = document.getElementById(`${sectionId}-section`);
+          if (targetSection) {
+            targetSection.classList.remove('hidden');
+            this.currentSection = sectionId;
+          }
+
+          // 更新导航按钮状态
+          this.theoryNavBtns.forEach(btn => {
+            btn.classList.remove('bg-neon-blue/30', 'bg-neon-green/30', 'bg-neon-orange/30', 'bg-neon-purple/30', 'bg-neon-pink/30');
+            btn.classList.add('bg-gray-700/20');
+          });
+
+          const activeBtn = document.querySelector(`[onclick*="${sectionId}"]`);
+          if (activeBtn) {
+            activeBtn.classList.remove('bg-gray-700/20');
+            if (sectionId === 'error-types') activeBtn.classList.add('bg-neon-blue/30');
+            else if (sectionId === 'z-test') activeBtn.classList.add('bg-neon-green/30');
+            else if (sectionId === 't-test') activeBtn.classList.add('bg-neon-orange/30');
+            else if (sectionId === 'chi-square') activeBtn.classList.add('bg-neon-purple/30');
+            else if (sectionId === 'power-analysis') activeBtn.classList.add('bg-neon-pink/30');
+          }
+        }
+
+        setUnderstanding(step, level) {
+          this.understandingScores[step - 1] = level;
+
+          // 更新按钮状态
+          const stepElement = document.querySelector(`[data-step="${step}"]`);
+          const buttons = stepElement.querySelectorAll('.understanding-btn');
+          buttons.forEach((btn, index) => {
+            btn.classList.toggle('bg-neon-blue', index + 1 === level);
+            btn.classList.toggle('text-dark-bg', index + 1 === level);
+            btn.classList.toggle('bg-gray-700', index + 1 !== level);
+            btn.classList.toggle('text-white', index + 1 !== level);
+          });
+
+          // 显示下一步提示
+          const nextStepHint = stepElement.querySelector('.next-step-hint');
+          if (level >= 3 && nextStepHint) {
+            nextStepHint.classList.remove('hidden');
+          }
+
+          // 渐进式解锁下一步
+          if (level >= 3 && step < 10) {
+            this.unlockNextStep(step + 1);
+          }
+
+          // 检查是否所有步骤都已评分
+          if (this.understandingScores.every(score => score > 0)) {
+            this.showUnderstandingRadar();
+          }
+        }
+
+        unlockNextStep(step) {
+          const nextStepElement = document.querySelector(`[data-step="${step}"]`);
+          if (nextStepElement && nextStepElement.classList.contains('locked')) {
+            // 移除锁定状态
+            nextStepElement.classList.remove('locked');
+            nextStepElement.classList.add('unlocked');
+
+            // 更新标题样式
+            const title = nextStepElement.querySelector('h3');
+            const stepNumber = nextStepElement.querySelector('h3 span');
+            const lockIcon = nextStepElement.querySelector('.fa-lock');
+
+            title.classList.remove('text-gray-500');
+            title.classList.add('text-neon-blue');
+            stepNumber.classList.remove('bg-gray-600', 'text-gray-400');
+            stepNumber.classList.add('bg-neon-blue', 'text-dark-bg');
+
+            if (lockIcon) {
+              lockIcon.parentElement.innerHTML = '<i class="fa fa-unlock text-neon-green"></i>';
+            }
+
+            // 恢复内容透明度
+            const content = nextStepElement.querySelector('.message-content');
+            content.classList.remove('opacity-50');
+
+            // 显示理解度内容，隐藏锁定消息
+            const lockedMessage = nextStepElement.querySelector('.locked-message');
+            const understandingContent = nextStepElement.querySelector('.understanding-content');
+
+            if (lockedMessage) lockedMessage.classList.add('hidden');
+            if (understandingContent) understandingContent.classList.remove('hidden');
+
+            // 添加解锁动画
+            nextStepElement.classList.add('animate-pulse');
+            setTimeout(() => {
+              nextStepElement.classList.remove('animate-pulse');
+            }, 1000);
+          }
+        }
+
+        showAIHelp(step) {
+          const helpTexts = {
+            1: "第一类错误（α错误）是指原假设为真时错误地拒绝它。想象法庭冤枉好人的情况，我们通过设定显著性水平α来控制这种错误的概率。",
+            2: "第二类错误（β错误）是指原假设为假时错误地接受它。就像法庭放过坏人，检验功效(1-β)衡量我们正确发现真实效应的能力。",
+            3: "两类错误存在权衡关系：降低α会增加β。我们需要根据实际情况的严重性来平衡这两种错误，或者通过增加样本量来同时降低两种错误。",
+            4: "Z检验基于中心极限定理，当样本量足够大时，样本均值近似正态分布。这为我们构造标准化统计量提供了理论基础。",
+            5: "Z检验的关键是构造服从标准正态分布的统计量，然后通过查表或计算得到p值，最后与显著性水平比较做出决策。",
+            6: "t检验解决了总体标准差未知的问题。当用样本标准差替代总体标准差时，统计量不再服从正态分布，而是服从t分布。",
+            7: "t分布比正态分布更'胖'，反映了用样本标准差估计总体标准差带来的额外不确定性。随着自由度增加，t分布趋近于标准正态分布。",
+            8: "卡方检验主要用于分类数据分析，包括拟合优度检验和独立性检验。它比较观察频数与期望频数的差异。",
+            9: "卡方统计量的构造基于皮尔逊卡方统计量，通过标准化的平方差之和来衡量观察值与期望值的偏离程度。",
+            10: "检验功效是正确拒绝假原假设的概率，反映检验的敏感性。功效分析帮助我们设计更好的实验和选择合适的样本量。"
+          };
+
+          alert(`AI助手提示：\n\n${helpTexts[step] || "暂无帮助信息"}`);
+        }
+
+        showUnderstandingRadar() {
+          const radarSection = document.getElementById('understanding-radar');
+          radarSection.classList.remove('hidden');
+
+          // 创建雷达图
+          const ctx = document.getElementById('theory-understanding-chart').getContext('2d');
+          new Chart(ctx, {
+            type: 'radar',
+            data: {
+              labels: ['第一类错误', '第二类错误', '错误权衡', 'Z检验基础', 'Z检验推导', 't检验背景', 't检验推导', '卡方应用', '卡方推导', '功效分析'],
+              datasets: [{
+                label: '理解程度',
+                data: this.understandingScores,
+                backgroundColor: 'rgba(0, 243, 255, 0.2)',
+                borderColor: '#00f3ff',
+                pointBackgroundColor: '#00f3ff',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: '#00f3ff',
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                r: {
+                  beginAtZero: true,
+                  max: 5,
+                  ticks: {
+                    color: '#9ca3af',
+                  },
+                  grid: {
+                    color: 'rgba(156, 163, 175, 0.3)',
+                  },
+                  angleLines: {
+                    color: 'rgba(156, 163, 175, 0.3)',
+                  },
+                }
+              },
+              plugins: {
+                legend: {
+                  labels: {
+                    color: '#ffffff',
+                  }
+                }
+              }
+            }
+          });
+
+          // 更新学习数据分析
+          this.updateLearningAnalysis();
+        }
+
+        updateLearningAnalysis() {
+          const stepNames = ['第一类错误', '第二类错误', '错误权衡', 'Z检验基础', 'Z检验推导', 't检验背景', 't检验推导', '卡方应用', '卡方推导', '功效分析'];
+
+          // 计算平均理解度
+          const avgScore = (this.understandingScores.reduce((a, b) => a + b, 0) / this.understandingScores.length).toFixed(1);
+          document.getElementById('theory-avg-understanding').textContent = avgScore + '/5.0';
+
+          // 找出最薄弱和最强的环节
+          const minScore = Math.min(...this.understandingScores);
+          const maxScore = Math.max(...this.understandingScores);
+          const weakestIndex = this.understandingScores.indexOf(minScore);
+          const strongestIndex = this.understandingScores.indexOf(maxScore);
+
+          document.getElementById('theory-weakest-step').textContent = stepNames[weakestIndex] + ` (${minScore}/5)`;
+          document.getElementById('theory-strongest-step').textContent = stepNames[strongestIndex] + ` (${maxScore}/5)`;
+
+          // 计算完成时间（模拟）
+          const completionTime = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+          document.getElementById('theory-completion-time').textContent = completionTime;
+
+          // 生成个性化学习建议
+          this.generateLearningSuggestions(avgScore, weakestIndex, minScore);
+        }
+
+        generateLearningSuggestions(avgScore, weakestIndex, minScore) {
+          const stepNames = ['第一类错误', '第二类错误', '错误权衡', 'Z检验基础', 'Z检验推导', 't检验背景', 't检验推导', '卡方应用', '卡方推导', '功效分析'];
+          const suggestions = [];
+
+          if (avgScore >= 4.0) {
+            suggestions.push('🎉 优秀！您已经很好地掌握了假设检验的核心理论。');
+            suggestions.push('💡 建议：可以尝试更复杂的假设检验问题，如多重比较、非参数检验等。');
+          } else if (avgScore >= 3.0) {
+            suggestions.push('👍 不错！您对大部分理论有了基本理解。');
+            suggestions.push(`🔍 重点关注：${stepNames[weakestIndex]}部分需要加强理解。`);
+          } else {
+            suggestions.push('📚 需要更多练习！建议重新学习基础理论。');
+            suggestions.push(`⚠️ 优先复习：${stepNames[weakestIndex]}是当前的薄弱环节。`);
+          }
+
+          if (minScore <= 2) {
+            const helpTexts = {
+              0: '建议复习概率论基础，特别是条件概率的概念。',
+              1: '建议复习检验功效的定义，理解β错误与功效的关系。',
+              2: '建议复习样本量对检验的影响，理解如何平衡两类错误。',
+              3: '建议复习中心极限定理，这是Z检验的理论基础。',
+              4: '建议复习标准化过程，理解如何构造检验统计量。',
+              5: '建议复习t分布的性质，理解它与正态分布的区别。',
+              6: '建议复习自由度的概念，理解样本标准差的分布。',
+              7: '建议复习分类数据分析，理解频数与概率的关系。',
+              8: '建议复习卡方分布的性质，理解期望频数的计算。',
+              9: '建议复习功效分析的应用，理解样本量计算的原理。'
+            };
+            suggestions.push(`📖 具体建议：${helpTexts[weakestIndex]}`);
+          }
+
+          document.getElementById('theory-learning-suggestions').innerHTML = suggestions.join('<br>');
+        }
+      }
+
+      // 全局函数：显示理论部分
+      function showTheorySection(sectionId) {
+        if (window.theoryExploration) {
+          window.theoryExploration.showTheorySection(sectionId);
         }
       }
 
       // 全局函数：检查答案
       function checkAnswer(questionName, correctAnswer) {
-        const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+        const selectedOption = document.querySelector(
+          `input[name="${questionName}"]:checked`
+        );
         const resultDiv = document.getElementById(`${questionName}-result`);
-        
+
         if (!selectedOption) {
-          resultDiv.innerHTML = '<p class="text-yellow-400">⚠️ 请先选择一个答案</p>';
-          resultDiv.classList.remove('hidden');
+          resultDiv.innerHTML =
+            '<p class="text-yellow-400">⚠️ 请先选择一个答案</p>';
+          resultDiv.classList.remove("hidden");
           return;
         }
-        
+
         const isCorrect = selectedOption.value === correctAnswer;
-        
+
         if (isCorrect) {
-          if (questionName === 'q1') {
+          if (questionName === "q1") {
             resultDiv.innerHTML = `
               <div class="bg-green-900/30 border border-green-500/50 rounded-lg p-4">
                 <p class="text-green-400 font-semibold mb-2">✅ 正确！</p>
                 <p class="text-gray-300 text-sm">P值确实是在原假设为真的条件下，观察到当前样本结果或更极端结果的概率。这是假设检验的核心概念。</p>
               </div>
             `;
-          } else if (questionName === 'q2') {
+          } else if (questionName === "q2") {
             resultDiv.innerHTML = `
               <div class="bg-green-900/30 border border-green-500/50 rounded-lg p-4">
                 <p class="text-green-400 font-semibold mb-2">✅ 正确！</p>
@@ -2530,14 +4462,14 @@
             `;
           }
         } else {
-          if (questionName === 'q1') {
+          if (questionName === "q1") {
             resultDiv.innerHTML = `
               <div class="bg-red-900/30 border border-red-500/50 rounded-lg p-4">
                 <p class="text-red-400 font-semibold mb-2">❌ 不正确</p>
                 <p class="text-gray-300 text-sm">P值不是原假设为真的概率，而是在原假设为真的前提下，观察到当前或更极端结果的概率。请重新思考。</p>
               </div>
             `;
-          } else if (questionName === 'q2') {
+          } else if (questionName === "q2") {
             resultDiv.innerHTML = `
               <div class="bg-red-900/30 border border-red-500/50 rounded-lg p-4">
                 <p class="text-red-400 font-semibold mb-2">❌ 不正确</p>
@@ -2546,59 +4478,67 @@
             `;
           }
         }
-        
-        resultDiv.classList.remove('hidden');
+
+        resultDiv.classList.remove("hidden");
       }
 
       // 全局函数：检查计算题
       function checkCalculation() {
-        const zInput = document.getElementById('calc-z');
-        const pInput = document.getElementById('calc-p');
-        const conclusionSelect = document.getElementById('calc-conclusion');
-        const resultDiv = document.getElementById('calc-result');
-        
+        const zInput = document.getElementById("calc-z");
+        const pInput = document.getElementById("calc-p");
+        const conclusionSelect = document.getElementById("calc-conclusion");
+        const resultDiv = document.getElementById("calc-result");
+
         const zValue = parseFloat(zInput.value);
         const pValue = parseFloat(pInput.value);
         const conclusion = conclusionSelect.value;
-        
+
         // 正确答案
         const correctZ = 1.5; // (78-75)/(10/√25) = 3/2 = 1.5
         const correctP = 0.0668; // P(Z > 1.5) ≈ 0.0668
-        const correctConclusion = 'not-reject'; // p > 0.05
-        
+        const correctConclusion = "not-reject"; // p > 0.05
+
         let feedback = [];
         let allCorrect = true;
-        
+
         // 检查Z值
         if (Math.abs(zValue - correctZ) < 0.1) {
           feedback.push('<p class="text-green-400">✅ Z统计量计算正确</p>');
         } else {
-          feedback.push('<p class="text-red-400">❌ Z统计量不正确，正确答案是1.5</p>');
+          feedback.push(
+            '<p class="text-red-400">❌ Z统计量不正确，正确答案是1.5</p>'
+          );
           allCorrect = false;
         }
-        
+
         // 检查P值
         if (Math.abs(pValue - correctP) < 0.01) {
           feedback.push('<p class="text-green-400">✅ P值计算正确</p>');
         } else {
-          feedback.push('<p class="text-red-400">❌ P值不正确，正确答案约为0.067</p>');
+          feedback.push(
+            '<p class="text-red-400">❌ P值不正确，正确答案约为0.067</p>'
+          );
           allCorrect = false;
         }
-        
+
         // 检查结论
         if (conclusion === correctConclusion) {
           feedback.push('<p class="text-green-400">✅ 结论正确</p>');
         } else {
-          feedback.push('<p class="text-red-400">❌ 结论不正确，应该是不拒绝H₀</p>');
+          feedback.push(
+            '<p class="text-red-400">❌ 结论不正确，应该是不拒绝H₀</p>'
+          );
           allCorrect = false;
         }
-        
-        const borderColor = allCorrect ? 'border-green-500/50' : 'border-yellow-500/50';
-        const bgColor = allCorrect ? 'bg-green-900/30' : 'bg-yellow-900/30';
-        
+
+        const borderColor = allCorrect
+          ? "border-green-500/50"
+          : "border-yellow-500/50";
+        const bgColor = allCorrect ? "bg-green-900/30" : "bg-yellow-900/30";
+
         resultDiv.innerHTML = `
           <div class="${bgColor} border ${borderColor} rounded-lg p-4">
-            ${feedback.join('')}
+            ${feedback.join("")}
             <div class="mt-4 pt-4 border-t border-gray-600">
               <p class="text-gray-300 font-semibold mb-2">解题步骤：</p>
               <p class="text-gray-300 text-sm mb-1">1. Z = (78-75)/(10/√25) = 3/2 = 1.5</p>
@@ -2607,20 +4547,24 @@
             </div>
           </div>
         `;
-        
-        resultDiv.classList.remove('hidden');
+
+        resultDiv.classList.remove("hidden");
       }
 
       // 全局函数：显示思考题答案
       function showThinkingAnswer(questionNum) {
-        const answerDiv = document.getElementById(`thinking${questionNum}-answer`);
-        answerDiv.classList.toggle('hidden');
+        const answerDiv = document.getElementById(
+          `thinking${questionNum}-answer`
+        );
+        answerDiv.classList.toggle("hidden");
       }
 
       // 全局函数：显示设计题答案
       function showDesignAnswer(questionNum) {
-        const answerDiv = document.getElementById(`design${questionNum}-answer`);
-        answerDiv.classList.toggle('hidden');
+        const answerDiv = document.getElementById(
+          `design${questionNum}-answer`
+        );
+        answerDiv.classList.toggle("hidden");
       }
 
       // 侦探教室交互
@@ -2768,6 +4712,7 @@
         new DetectiveClassroom();
         new PracticalApplications();
         new ExerciseManager();
+        window.theoryExploration = new TheoryExploration(); // 添加理论探索功能
 
         // 平滑滚动
         document.querySelectorAll('a[href^="#"]').forEach((anchor) => {

@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>概率分布理论知识探索 - 多页翻转卡片</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root {
+        --dark-bg: #0f172a;
+        --dark-card: #1e293b;
+        --neon-blue: #00f3ff;
+        --neon-purple: #bf00ff;
+        --neon-green: #00ff66;
+        --neon-orange: #ff6600;
+      }
+
+      body {
+        background-color: var(--dark-bg);
+        color: #fff;
+        font-family: "Roboto", sans-serif;
+      }
+
+      /* 多页翻转卡片样式 */
+      .multi-page-card {
+        perspective: 1500px;
+        height: 500px;
+        margin-bottom: 2rem;
+      }
+
+      .card-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .card-page {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(
+          135deg,
+          rgba(30, 41, 59, 0.95),
+          rgba(15, 23, 42, 0.95)
+        );
+        border: 1px solid rgba(0, 243, 255, 0.3);
+      }
+
+      /* 3D翻转效果 */
+      .card-flip-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .card-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(
+          135deg,
+          rgba(30, 41, 59, 0.95),
+          rgba(15, 23, 42, 0.95)
+        );
+        border: 1px solid rgba(0, 243, 255, 0.3);
+      }
+
+      .card-face.front {
+        transform: rotateY(0deg);
+      }
+
+      .card-face.back {
+        transform: rotateY(180deg);
+      }
+
+      .card-flip-container.flipped {
+        transform: rotateY(180deg);
+      }
+
+      .card-flip-container.flipped-reverse {
+        transform: rotateY(-180deg);
+      }
+
+      /* 导航系统 */
+      .card-navigation {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 1.5rem;
+        gap: 0.5rem;
+      }
+
+      .nav-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .nav-dot.active {
+        background-color: #00f3ff;
+        transform: scale(1.2);
+      }
+
+      .nav-arrow {
+        background: rgba(0, 243, 255, 0.2);
+        border: 1px solid rgba(0, 243, 255, 0.5);
+        color: #00f3ff;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .nav-arrow:hover {
+        background: rgba(0, 243, 255, 0.4);
+        transform: scale(1.1);
+      }
+
+      .nav-arrow.disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .nav-arrow.disabled:hover {
+        background: rgba(0, 243, 255, 0.2);
+        transform: none;
+      }
+
+      .page-indicator {
+        color: #00f3ff;
+        font-weight: bold;
+        margin: 0 1rem;
+      }
+
+      /* 数学公式样式 */
+      .math-formula {
+        background: rgba(0, 243, 255, 0.1);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        text-align: center;
+      }
+
+      /* 内容标签 */
+      .content-tag {
+        display: inline-block;
+        background: rgba(0, 243, 255, 0.2);
+        color: #00f3ff;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+      }
+
+      /* 响应式调整 */
+      @media (max-width: 768px) {
+        .multi-page-card {
+          height: 600px;
+        }
+
+        .card-page {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="p-4 md:p-8">
+    <div class="container mx-auto max-w-4xl">
+      <h1 class="text-3xl md:text-4xl font-bold text-center mb-2 text-white">
+        概率分布理论知识深入探索
+      </h1>
+      <p class="text-center text-gray-400 mb-8">
+        通过多页翻转卡片深入了解各种概率分布
+      </p>
+
+      <!-- 正态分布多页翻转卡片 -->
+      <div
+        class="multi-page-card"
+        id="normal-theory-card"
+        data-current-page="1"
+        data-total-pages="4"
+      >
+        <div class="card-container">
+          <!-- 所有页面内容 -->
+          <div class="card-page" data-page="1">
+            <div class="content-tag">基本介绍</div>
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 rounded-lg bg-neon-blue/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-bell text-neon-blue text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-white">正态分布理论</h3>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-2">
+                  数学定义
+                </h4>
+                <p class="text-gray-300 mb-4">
+                  正态分布（Normal
+                  Distribution），又称高斯分布，是最重要的连续概率分布。它在自然界和社会现象中广泛存在，是中心极限定理的基础。
+                </p>
+                <div class="math-formula">
+                  $$f(x) = \frac{1}{\sqrt{2\pi\sigma^2}}
+                  e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
+                </div>
+                <p class="text-sm text-gray-400 mt-2">
+                  其中 μ 是均值，σ² 是方差
+                </p>
+              </div>
+
+              <div class="mt-6">
+                <h4 class="text-lg font-semibold text-neon-blue mb-2">
+                  重要特性
+                </h4>
+                <ul class="text-gray-300 space-y-2">
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-neon-blue mt-1 mr-2"></i>
+                    <span
+                      ><strong>对称性：</strong>关于均值 μ
+                      对称，均值、中位数、众数相等</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-neon-blue mt-1 mr-2"></i>
+                    <span
+                      ><strong>68-95-99.7规则：</strong
+                      >约68%数据在1σ内，95%在2σ内，99.7%在3σ内</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <i class="fas fa-check text-neon-blue mt-1 mr-2"></i>
+                    <span
+                      ><strong>无限可分性：</strong
+                      >独立正态变量的线性组合仍服从正态分布</span
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-page" data-page="2">
+            <div class="content-tag">函数推导</div>
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 rounded-lg bg-neon-blue/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-calculator text-neon-blue text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-white">正态分布函数推导</h3>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-2">
+                  推导过程
+                </h4>
+                <p class="text-gray-300 mb-4">
+                  正态分布的概率密度函数可以通过中心极限定理推导得出。当独立同分布的随机变量数量足够多时，其均值的分布趋近于正态分布。
+                </p>
+
+                <div class="math-formula">
+                  $$\text{设 } X_1, X_2, ..., X_n \text{ 独立同分布，均值为 }
+                  \mu \text{，方差为 } \sigma^2$$
+                </div>
+
+                <div class="math-formula">
+                  $$\text{根据中心极限定理： } Z_n = \frac{\overline{X} -
+                  \mu}{\sigma/\sqrt{n}} \xrightarrow{d} N(0,1)$$
+                </div>
+
+                <p class="text-gray-300 mt-4">
+                  高斯最初通过误差分析推导出正态分布，他发现测量误差的分布符合这一特定形式。正态分布是唯一满足特定正则条件的分布。
+                </p>
+              </div>
+
+              <div class="mt-4">
+                <h4 class="text-lg font-semibold text-neon-blue mb-2">
+                  标准化过程
+                </h4>
+                <p class="text-gray-300">
+                  任何正态分布都可以通过标准化转换为标准正态分布：
+                </p>
+                <div class="math-formula">
+                  $$Z = \frac{X - \mu}{\sigma} \sim N(0,1)$$
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-page" data-page="3">
+            <div class="content-tag">性质推导</div>
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 rounded-lg bg-neon-blue/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-cogs text-neon-blue text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-white">正态分布性质推导</h3>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-2">
+                  性质证明
+                </h4>
+                <p class="text-gray-300 mb-4">
+                  正态分布具有许多重要性质，如对称性、可加性等。下面是一些关键性质的推导：
+                </p>
+
+                <div class="math-formula">
+                  $$\text{概率密度函数积分为1: } \int_{-\infty}^{\infty} f(x)dx
+                  = 1$$
+                </div>
+                <p class="text-gray-300 mb-4 text-sm">
+                  证明：通过变量代换和极坐标积分可证。
+                </p>
+
+                <div class="math-formula">
+                  $$\text{期望值: } E[X] = \mu, \quad \text{方差: } Var[X] =
+                  \sigma^2$$
+                </div>
+                <p class="text-gray-300 mb-4 text-sm">
+                  证明：通过期望和方差的定义，结合正态分布的对称性可证。
+                </p>
+
+                <div class="math-formula">
+                  $$\text{矩生成函数: } M_X(t) = e^{\mu t + \frac{1}{2}\sigma^2
+                  t^2}$$
+                </div>
+                <p class="text-gray-300 text-sm">
+                  这是正态分布的矩生成函数，可用于推导高阶矩。
+                </p>
+              </div>
+
+              <div class="mt-4">
+                <h4 class="text-lg font-semibold text-neon-blue mb-2">
+                  可加性证明
+                </h4>
+                <p class="text-gray-300">
+                  两个独立正态随机变量之和仍服从正态分布：
+                </p>
+                <div class="math-formula">
+                  $$X \sim N(\mu_1, \sigma_1^2), Y \sim N(\mu_2, \sigma_2^2)
+                  \Rightarrow X+Y \sim N(\mu_1+\mu_2, \sigma_1^2+\sigma_2^2)$$
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-page" data-page="4">
+            <div class="content-tag">应用与实例</div>
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 rounded-lg bg-neon-blue/20 flex items-center justify-center mr-4"
+              >
+                <i class="fa fa-chart-line text-neon-blue text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-white">正态分布应用与实例</h3>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <h4 class="text-lg font-semibold text-neon-blue mb-2">
+                  应用领域
+                </h4>
+                <p class="text-gray-300 mb-4">
+                  正态分布在各个领域都有广泛应用，是统计学和概率论中最重要的分布之一。
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div class="bg-gray-800/50 p-4 rounded-lg">
+                    <h5 class="font-semibold text-neon-blue mb-2">自然科学</h5>
+                    <ul class="text-gray-300 text-sm space-y-1">
+                      <li>• 身高、体重等生物特征</li>
+                      <li>• 测量误差分析</li>
+                      <li>• 分子运动速度</li>
+                    </ul>
+                  </div>
+
+                  <div class="bg-gray-800/50 p-4 rounded-lg">
+                    <h5 class="font-semibold text-neon-blue mb-2">社会科学</h5>
+                    <ul class="text-gray-300 text-sm space-y-1">
+                      <li>• 考试成绩分布</li>
+                      <li>• 心理测试结果</li>
+                      <li>• 经济学指标</li>
+                    </ul>
+                  </div>
+
+                  <div class="bg-gray-800/50 p-4 rounded-lg">
+                    <h5 class="font-semibold text-neon-blue mb-2">工程技术</h5>
+                    <ul class="text-gray-300 text-sm space-y-1">
+                      <li>• 质量控制</li>
+                      <li>• 信号处理</li>
+                      <li>• 可靠性分析</li>
+                    </ul>
+                  </div>
+
+                  <div class="bg-gray-800/50 p-4 rounded-lg">
+                    <h5 class="font-semibold text-neon-blue mb-2">金融领域</h5>
+                    <ul class="text-gray-300 text-sm space-y-1">
+                      <li>• 资产收益率</li>
+                      <li>• 风险建模</li>
+                      <li>• 期权定价</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <h4 class="text-lg font-semibold text-neon-blue mb-2">
+                  实际案例
+                </h4>
+                <p class="text-gray-300">
+                  在质量控制中，正态分布用于确定产品规格界限。例如，如果某零件长度服从正态分布，且已知其均值和标准差，可以确定合格产品的范围。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 导航系统 -->
+        <div class="card-navigation">
+          <div
+            class="nav-arrow prev-arrow disabled"
+            data-card="normal-theory-card"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </div>
+
+          <div class="flex gap-2 mx-4">
+            <div
+              class="nav-dot active"
+              data-card="normal-theory-card"
+              data-page="1"
+            ></div>
+            <div
+              class="nav-dot"
+              data-card="normal-theory-card"
+              data-page="2"
+            ></div>
+            <div
+              class="nav-dot"
+              data-card="normal-theory-card"
+              data-page="3"
+            ></div>
+            <div
+              class="nav-dot"
+              data-card="normal-theory-card"
+              data-page="4"
+            ></div>
+          </div>
+
+          <div class="nav-arrow next-arrow" data-card="normal-theory-card">
+            <i class="fas fa-chevron-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-12 text-gray-400">
+        <p>使用导航箭头或点击圆点在不同页面间切换</p>
+      </div>
+    </div>
+
+    <script>
+      // 多页翻转卡片功能
+      document.addEventListener("DOMContentLoaded", function () {
+        // 初始化所有卡片
+        document.querySelectorAll(".multi-page-card").forEach((card) => {
+          const cardId = card.id;
+          initializeCard(cardId);
+        });
+
+        // 为所有导航箭头添加事件监听
+        document.querySelectorAll(".nav-arrow").forEach((arrow) => {
+          arrow.addEventListener("click", function () {
+            if (this.classList.contains("disabled")) return;
+
+            const cardId = this.getAttribute("data-card");
+            const card = document.getElementById(cardId);
+            const currentPage = parseInt(
+              card.getAttribute("data-current-page")
+            );
+            const totalPages = parseInt(card.getAttribute("data-total-pages"));
+
+            if (this.classList.contains("prev-arrow")) {
+              // 上一页
+              if (currentPage > 1) {
+                navigateToPage(cardId, currentPage - 1);
+              }
+            } else if (this.classList.contains("next-arrow")) {
+              // 下一页
+              if (currentPage < totalPages) {
+                navigateToPage(cardId, currentPage + 1);
+              }
+            }
+          });
+        });
+
+        // 为所有导航点添加事件监听
+        document.querySelectorAll(".nav-dot").forEach((dot) => {
+          dot.addEventListener("click", function () {
+            const cardId = this.getAttribute("data-card");
+            const targetPage = parseInt(this.getAttribute("data-page"));
+            const currentPage = parseInt(
+              document.getElementById(cardId).getAttribute("data-current-page")
+            );
+
+            if (targetPage !== currentPage) {
+              navigateToPage(cardId, targetPage);
+            }
+          });
+        });
+
+        // 初始化卡片
+        function initializeCard(cardId) {
+          const card = document.getElementById(cardId);
+          const container = card.querySelector(".card-container");
+          const pages = card.querySelectorAll(".card-page");
+
+          // 设置初始页面
+          card.setAttribute("data-current-page", "1");
+
+          // 隐藏所有页面
+          pages.forEach((page) => {
+            page.style.display = "none";
+          });
+
+          // 显示第一页
+          card.querySelector('.card-page[data-page="1"]').style.display =
+            "block";
+
+          // 更新导航状态
+          updateNavigation(cardId);
+        }
+
+        // 导航到指定页面
+        function navigateToPage(cardId, targetPage) {
+          const card = document.getElementById(cardId);
+          const container = card.querySelector(".card-container");
+          const pages = card.querySelectorAll(".card-page");
+          const currentPage = parseInt(card.getAttribute("data-current-page"));
+
+          // 如果目标页面与当前页面相同，不执行任何操作
+          if (targetPage === currentPage) return;
+
+          // 确定翻转方向（前进或后退）
+          const isForward = targetPage > currentPage;
+
+          // 创建翻转容器
+          const flipContainer = document.createElement('div');
+          flipContainer.className = 'card-flip-container';
+          
+          // 创建正面（当前页面）
+          const frontFace = document.createElement('div');
+          frontFace.className = 'card-face front';
+          const currentPageElement = card.querySelector(`.card-page[data-page="${currentPage}"]`);
+          frontFace.innerHTML = currentPageElement.innerHTML;
+          
+          // 创建背面（目标页面）
+          const backFace = document.createElement('div');
+          backFace.className = 'card-face back';
+          const targetPageElement = card.querySelector(`.card-page[data-page="${targetPage}"]`);
+          backFace.innerHTML = targetPageElement.innerHTML;
+          
+          // 组装翻转容器
+          flipContainer.appendChild(frontFace);
+          flipContainer.appendChild(backFace);
+          
+          // 隐藏所有原始页面
+          pages.forEach(page => {
+            page.style.display = 'none';
+          });
+          
+          // 清空容器并添加翻转容器
+          container.innerHTML = '';
+          container.appendChild(flipContainer);
+          
+          // 强制重排
+          flipContainer.offsetHeight;
+          
+          // 开始翻转动画，根据方向选择旋转方向
+          setTimeout(() => {
+            if (isForward) {
+              flipContainer.classList.add('flipped'); // 正向旋转（向右翻）
+            } else {
+              flipContainer.classList.add('flipped-reverse'); // 反向旋转（向左翻）
+            }
+          }, 50);
+          
+          // 动画结束后清理
+          flipContainer.addEventListener('transitionend', function onTransitionEnd() {
+            flipContainer.removeEventListener('transitionend', onTransitionEnd);
+            
+            // 清空容器
+            container.innerHTML = '';
+            
+            // 恢复原始页面结构
+            pages.forEach(page => {
+              container.appendChild(page);
+            });
+            
+            // 显示目标页面
+            pages.forEach(page => {
+              page.style.display = 'none';
+            });
+            targetPageElement.style.display = 'block';
+            
+            // 更新当前页面
+            card.setAttribute("data-current-page", targetPage);
+            
+            // 更新导航状态
+            updateNavigation(cardId);
+          }, { once: true });
+        }
+
+        // 更新导航状态
+        function updateNavigation(cardId) {
+          const card = document.getElementById(cardId);
+          const currentPage = parseInt(card.getAttribute("data-current-page"));
+          const totalPages = parseInt(card.getAttribute("data-total-pages"));
+
+          // 更新导航点状态
+          const dots = card.querySelectorAll(".nav-dot");
+          dots.forEach((dot) => {
+            if (parseInt(dot.getAttribute("data-page")) === currentPage) {
+              dot.classList.add("active");
+            } else {
+              dot.classList.remove("active");
+            }
+          });
+
+          // 更新箭头状态
+          const prevArrow = card.querySelector(".prev-arrow");
+          const nextArrow = card.querySelector(".next-arrow");
+
+          if (currentPage === 1) {
+            prevArrow.classList.add("disabled");
+          } else {
+            prevArrow.classList.remove("disabled");
+          }
+
+          if (currentPage === totalPages) {
+            nextArrow.classList.add("disabled");
+          } else {
+            nextArrow.classList.remove("disabled");
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
