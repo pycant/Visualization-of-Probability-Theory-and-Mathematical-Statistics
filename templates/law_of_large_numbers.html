@@ -567,6 +567,210 @@
           background-color: transparent;
         }
       }
+
+      /* 新增：test.html中的理论探索样式 */
+      .theory-card {
+        background: rgba(30, 41, 59, 0.9);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 12px;
+        padding: 24px;
+        margin: 24px 0;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .theory-card:hover {
+        border-color: var(--neon-blue);
+        box-shadow: 0 15px 35px rgba(0, 243, 255, 0.2);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-right: 16px;
+        color: var(--dark-bg);
+      }
+
+      .card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: white;
+        margin: 0;
+        flex: 1;
+      }
+
+      .section {
+        margin-bottom: 24px;
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--neon-green);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+      }
+
+      .section-title i {
+        margin-right: 8px;
+      }
+
+      .derivation-step {
+        margin-bottom: 16px;
+        padding: 12px;
+        border-left: 3px solid var(--neon-purple);
+        background: rgba(191, 0, 255, 0.05);
+        border-radius: 0 8px 8px 0;
+        display: none;
+      }
+
+      .property-step {
+        margin-bottom: 16px;
+        padding: 12px;
+        border-left: 3px solid var(--neon-green);
+        background: rgba(0, 255, 102, 0.05);
+        border-radius: 0 8px 8px 0;
+        display: none;
+      }
+
+      .derivation-step.active,
+      .property-step.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .rating-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+
+      .rating-label {
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+        color: var(--neon-orange);
+      }
+
+      .rating-buttons {
+        display: flex;
+        gap: 12px;
+      }
+
+      .rating-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+      }
+
+      .rating-btn:hover {
+        background: rgba(0, 243, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      .rating-btn.selected {
+        background: var(--neon-orange);
+        color: var(--dark-bg);
+        border-color: var(--neon-orange);
+        transform: scale(1.1);
+      }
+
+      .formula {
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 6px;
+        margin: 12px 0;
+        overflow-x: auto;
+      }
+
+      .proof-step {
+        margin: 8px 0;
+        padding-left: 16px;
+        border-left: 2px solid var(--neon-orange);
+      }
+
+      .property-item {
+        margin: 12px 0;
+        padding: 12px;
+        background: rgba(0, 255, 102, 0.05);
+        border-radius: 6px;
+        border-left: 3px solid var(--neon-green);
+      }
+
+      .chart-container {
+        margin-top: 30px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        height: 400px;
+        position: relative;
+      }
+
+      .chart-container canvas {
+        max-height: 300px !important;
+        height: 300px !important;
+      }
+
+      .completion-message {
+        text-align: center;
+        padding: 20px;
+        background: rgba(0, 255, 102, 0.1);
+        border-radius: 8px;
+        margin-top: 20px;
+        border: 1px solid var(--neon-green);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(0, 255, 102, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(0, 255, 102, 0);
+        }
+      }
     </style>
   </head>
   <body>
@@ -575,24 +779,24 @@
 
     <!-- 粒子背景 -->
     <div id="particles-container"></div>
-    
+
     <script>
       // 为所有div元素添加点击事件
-      document.addEventListener('DOMContentLoaded', function() {
-        const allDivs = document.querySelectorAll('div');
-        allDivs.forEach(div => {
-          div.addEventListener('click', function(event) {
+      document.addEventListener("DOMContentLoaded", function () {
+        const allDivs = document.querySelectorAll("div");
+        allDivs.forEach((div) => {
+          div.addEventListener("click", function (event) {
             // 获取被点击的div的id或类名
-            const divId = this.id ? this.id : 'unknown-id';
-            const divClass = this.className ? this.className : 'no-class';
+            const divId = this.id ? this.id : "unknown-id";
+            const divClass = this.className ? this.className : "no-class";
             console.log(`点击了div - ID: ${divId}, Class: ${divClass}`);
-            
+
             // 添加点击效果
-            this.classList.add('button-click-effect');
+            this.classList.add("button-click-effect");
             setTimeout(() => {
-              this.classList.remove('button-click-effect');
+              this.classList.remove("button-click-effect");
             }, 300);
-            
+
             // 阻止事件冒泡，避免触发父元素的点击事件
             event.stopPropagation();
           });
@@ -845,546 +1049,1122 @@
       <div class="container mx-auto px-4 relative z-10">
         <div class="text-center mb-12">
           <h2 class="text-3xl font-future font-bold mb-4">
-            <span class="text-neon-blue">理论</span>探索
+            <span class="text-neon-blue">理论</span>探索改进版
           </h2>
           <p class="text-gray-400 max-w-3xl mx-auto">
-            5步拆解大数定律——从波动到锁定的数学之旅
+            渐进式学习 · 理论推导 · 理解度追踪
           </p>
         </div>
 
         <div class="max-w-4xl mx-auto">
-          <!-- 渐进式学习提示 -->
-          <div
-            class="bg-neon-blue/10 border border-neon-blue/30 rounded-lg p-4 mb-8"
-          >
-            <div class="flex items-center mb-2">
-              <i class="fa fa-lightbulb text-neon-blue mr-2"></i>
-              <h3 class="text-lg font-semibold text-neon-blue">
-                渐进式学习模式
+          <!-- 第一张卡片：大数定律的数学表述 -->
+          <div class="theory-card" data-step="1" data-card="1">
+            <div class="card-header">
+              <div class="step-number">1</div>
+              <h2 class="card-title">大数定律的数学表述</h2>
+              <span class="ml-auto text-sm text-neon-green">
+                <i class="fa fa-unlock"></i> 已解锁
+              </span>
+            </div>
+
+            <!-- 理论介绍部分 -->
+            <div class="section">
+              <h3 class="section-title">
+                <i class="fas fa-info-circle"></i> 理论介绍
               </h3>
+              <p>
+                大数定律是概率论与数理统计的基本定理之一，描述了随机试验次数趋于无穷时，样本均值收敛于期望值的规律。
+              </p>
+              <div class="formula">
+                $$ \bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i \to \mu \quad \text{当}
+                \quad n \to \infty $$
+              </div>
+              <p>
+                大数定律分为<strong>弱大数定律</strong>和<strong>强大数定律</strong>，区别在于收敛方式的不同。
+              </p>
             </div>
-            <p class="text-gray-300 text-sm">
-              每完成一个步骤的理解度评分（≥3分），下一步骤将自动解锁。如果遇到困难，可以点击右侧工具箱中的AI助手寻求帮助。
-            </p>
-          </div>
 
-          <!-- 步骤1 -->
-          <div class="theory-step unlocked" data-step="1">
-            <h3
-              class="text-xl font-semibold mb-4 text-neon-blue flex items-center"
-            >
-              <span
-                class="bg-neon-blue text-dark-bg rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
-                >1</span
-              >
-              起点——点估计 vs 均值不确定性
-              <span class="ml-auto text-sm">
-                <i class="fa fa-unlock text-neon-green"></i>
-              </span>
-            </h3>
-            <div class="message-content">
-              <p>
-                样本均值 $\bar{X}_n$
-                仍是随机变量；每次抽样都会跳动。我们需要理解这种不确定性的本质。
-              </p>
-              <div class="bg-dark-bg rounded-lg p-4 my-4">
-                <div class="text-center">
-                  $$\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i, \quad \text{SE} =
-                  \frac{\sigma}{\sqrt{n}}$$
-                </div>
-              </div>
-              <p>
-                <strong>直觉理解：</strong
-                >射1箭=单点估计；射10箭取平均=落点更集中但依旧会飘。 $\bar{X}_n$
-                就是「平均落点」，它仍会跳动，只是跳动范围越来越小。
-              </p>
-            </div>
-            <div class="understanding-section">
-              <div class="understanding-buttons">
-                <span class="text-sm text-gray-400 mr-4">理解程度：</span>
-                <button
-                  class="understanding-btn"
-                  data-level="1"
-                  title="完全不理解"
-                >
-                  1
-                </button>
-                <button
-                  class="understanding-btn"
-                  data-level="2"
-                  title="基本不理解"
-                >
-                  2
-                </button>
-                <button
-                  class="understanding-btn"
-                  data-level="3"
-                  title="部分理解"
-                >
-                  3
-                </button>
-                <button
-                  class="understanding-btn"
-                  data-level="4"
-                  title="基本理解"
-                >
-                  4
-                </button>
-                <button
-                  class="understanding-btn"
-                  data-level="5"
-                  title="完全理解"
-                >
-                  5
-                </button>
-              </div>
-              <div class="mt-3 flex items-center gap-4">
-                <button class="ai-help-btn" data-step="1">
-                  <i class="fa fa-robot mr-2"></i>需要AI帮助？
-                </button>
-                <div class="next-step-hint hidden text-sm text-neon-green">
-                  <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 步骤2 -->
-          <div class="theory-step locked" data-step="2">
-            <h3
-              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
-            >
-              <span
-                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
-                >2</span
-              >
-              钥匙——中心极限定理 (CLT)
-              <span class="ml-auto text-sm">
-                <i class="fa fa-lock text-gray-500"></i>
-              </span>
-            </h3>
-            <div class="message-content opacity-50">
-              <p>
-                CLT：无论总体什么形状，只要 n 足够大，$\bar{X}_n$ 的分布 ≈
-                $N(\mu,\sigma^2/n)$。
-              </p>
-              <div class="bg-dark-bg rounded-lg p-4 my-4">
-                <div class="text-center">
-                  $$Z_n = \frac{\bar{X}_n - \mu}{\sigma/\sqrt{n}}
-                  \xrightarrow{d} N(0,1)$$
-                </div>
-              </div>
-              <p>
-                <strong>直觉理解：</strong
-                >把奇形怪状蛋糕平均切片，草莓数一定钟形。
-                把总体想成奇形怪状的蛋糕；每次切一小块取平均，小块的「平均草莓数」一定钟形——这就是
-                CLT。
-              </p>
-            </div>
-            <div class="understanding-section">
-              <div class="locked-message text-center py-4">
-                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
-                <p class="text-gray-500">
-                  请先完成上一步骤的理解度评分（≥3分）以解锁此内容
-                </p>
-              </div>
-              <div class="understanding-content hidden">
-                <div class="understanding-buttons">
-                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
-                  <button
-                    class="understanding-btn"
-                    data-level="1"
-                    title="完全不理解"
-                  >
-                    1
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="2"
-                    title="基本不理解"
-                  >
-                    2
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="3"
-                    title="部分理解"
-                  >
-                    3
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="4"
-                    title="基本理解"
-                  >
-                    4
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="5"
-                    title="完全理解"
-                  >
-                    5
-                  </button>
-                </div>
-                <div class="mt-3 flex items-center gap-4">
-                  <button class="ai-help-btn" data-step="2">
-                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
-                  </button>
-                  <div class="next-step-hint hidden text-sm text-neon-green">
-                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 步骤3 -->
-          <div class="theory-step locked" data-step="3">
-            <h3
-              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
-            >
-              <span
-                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
-                >3</span
-              >
-              速度——收敛速度 1/√n 肉眼可见
-              <span class="ml-auto text-sm">
-                <i class="fa fa-lock text-gray-500"></i>
-              </span>
-            </h3>
-            <div class="message-content opacity-50">
-              <p>
-                标准误 SE = σ/√n；误差 ∝ 1/√n。重对数律：波动上限 ∝ √(2σ² log
-                log n / n)。
-              </p>
-              <div class="bg-dark-bg rounded-lg p-4 my-4">
-                <div class="text-center">
-                  $$\text{SE}(\bar{X}_n) = \frac{\sigma}{\sqrt{n}}$$
-                </div>
-              </div>
-              <p>
-                <strong>直觉理解：</strong>想精度提高10倍？样本量要翻100倍！
-                就像擦玻璃：想看得更清楚，抹布面积得平方级加大。
-              </p>
-            </div>
-            <div class="understanding-section">
-              <div class="locked-message text-center py-4">
-                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
-                <p class="text-gray-500">
-                  请先完成上一步骤的理解度评分（≥3分）以解锁此内容
-                </p>
-              </div>
-              <div class="understanding-content hidden">
-                <div class="understanding-buttons">
-                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
-                  <button
-                    class="understanding-btn"
-                    data-level="1"
-                    title="完全不理解"
-                  >
-                    1
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="2"
-                    title="基本不理解"
-                  >
-                    2
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="3"
-                    title="部分理解"
-                  >
-                    3
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="4"
-                    title="基本理解"
-                  >
-                    4
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="5"
-                    title="完全理解"
-                  >
-                    5
-                  </button>
-                </div>
-                <div class="mt-3 flex items-center gap-4">
-                  <button class="ai-help-btn" data-step="3">
-                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
-                  </button>
-                  <div class="next-step-hint hidden text-sm text-neon-green">
-                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 步骤4 -->
-          <div class="theory-step locked" data-step="4">
-            <h3
-              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
-            >
-              <span
-                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
-                >4</span
-              >
-              区别——强大数 vs 弱大数
-              <span class="ml-auto text-sm">
-                <i class="fa fa-lock text-gray-500"></i>
-              </span>
-            </h3>
-            <div class="message-content opacity-50">
-              <p>
-                WLLN：$\bar{X}_n \xrightarrow{P} \mu$（依概率收敛）→
-                大多数轨迹末段很近； SLLN：$\bar{X}_n \xrightarrow{a.s.}
-                \mu$（几乎必然收敛）→ 所有轨迹永远黏住 μ，不再跑开。
-              </p>
-              <div class="bg-dark-bg rounded-lg p-4 my-4">
-                <div class="text-center">
-                  $$\text{WLLN: } \lim_{n \to \infty} P(|\bar{X}_n - \mu| >
-                  \epsilon) = 0$$ $$\text{SLLN: } P(\lim_{n \to \infty}
-                  \bar{X}_n = \mu) = 1$$
-                </div>
-              </div>
-              <p>
-                <strong>直觉理解：</strong>WLLN保证「大多数」轨迹末段很近；
-                SLLN保证「所有」轨迹末段永远不再逃离——就像给每条轨迹都上了「电子镣铐」。
-              </p>
-            </div>
-            <div class="understanding-section">
-              <div class="locked-message text-center py-4">
-                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
-                <p class="text-gray-500">
-                  请先完成上一步骤的理解度评分（≥3分）以解锁此内容
-                </p>
-              </div>
-              <div class="understanding-content hidden">
-                <div class="understanding-buttons">
-                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
-                  <button
-                    class="understanding-btn"
-                    data-level="1"
-                    title="完全不理解"
-                  >
-                    1
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="2"
-                    title="基本不理解"
-                  >
-                    2
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="3"
-                    title="部分理解"
-                  >
-                    3
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="4"
-                    title="基本理解"
-                  >
-                    4
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="5"
-                    title="完全理解"
-                  >
-                    5
-                  </button>
-                </div>
-                <div class="mt-3 flex items-center gap-4">
-                  <button class="ai-help-btn" data-step="4">
-                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
-                  </button>
-                  <div class="next-step-hint hidden text-sm text-neon-green">
-                    <i class="fa fa-check-circle mr-1"></i>很好！下一步已解锁
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 步骤5 -->
-          <div class="theory-step locked" data-step="5">
-            <h3
-              class="text-xl font-semibold mb-4 text-gray-500 flex items-center"
-            >
-              <span
-                class="bg-gray-600 text-gray-400 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm font-bold"
-                >5</span
-              >
-              条件——成立条件与反例
-              <span class="ml-auto text-sm">
-                <i class="fa fa-lock text-gray-500"></i>
-              </span>
-            </h3>
-            <div class="message-content opacity-50">
-              <p>
-                只要 $E|X_1|<\infty$，SLLN 成立；方差无限也收敛。
-                反例：Cauchy(α=1) 期望无限 → $\bar{X}_n$ 持续乱跳，定律罢工。
-              </p>
-              <div class="bg-dark-bg rounded-lg p-4 my-4">
-                <div class="text-center">
-                  $$\text{成立条件: } E|X_1| < \infty$$ $$\text{反例:
-                  Cauchy分布无期望，大数定律失效}$$
-                </div>
-              </div>
-              <p class="text-neon-green font-bold">
-                <strong>直觉理解：</strong
-                >尾巴厚到无限，就像射箭手的箭可以飞到银河系，
-                平均永远落不下来；只要期望存在，胶水瞬间生效！
-              </p>
-            </div>
-            <div class="understanding-section">
-              <div class="locked-message text-center py-4">
-                <i class="fa fa-lock text-gray-500 text-2xl mb-2"></i>
-                <p class="text-gray-500">
-                  请先完成上一步骤的理解度评分（≥3分）以解锁此内容
-                </p>
-              </div>
-              <div class="understanding-content hidden">
-                <div class="understanding-buttons">
-                  <span class="text-sm text-gray-400 mr-4">理解程度：</span>
-                  <button
-                    class="understanding-btn"
-                    data-level="1"
-                    title="完全不理解"
-                  >
-                    1
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="2"
-                    title="基本不理解"
-                  >
-                    2
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="3"
-                    title="部分理解"
-                  >
-                    3
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="4"
-                    title="基本理解"
-                  >
-                    4
-                  </button>
-                  <button
-                    class="understanding-btn"
-                    data-level="5"
-                    title="完全理解"
-                  >
-                    5
-                  </button>
-                </div>
-                <div class="mt-3 flex items-center gap-4">
-                  <button class="ai-help-btn" data-step="5">
-                    <i class="fa fa-robot mr-2"></i>需要AI帮助？
-                  </button>
-                  <div class="next-step-hint hidden text-sm text-neon-green">
-                    <i class="fa fa-check-circle mr-1"></i>恭喜！所有步骤已完成
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 理解度图谱 -->
-          <div id="understanding-radar" class="understanding-radar hidden">
-            <div class="bg-dark-card rounded-xl p-6 border border-neon-green">
-              <h3
-                class="text-xl font-semibold mb-4 text-neon-green flex items-center"
-              >
-                <i class="fa fa-chart-radar text-neon-green mr-3"></i>
-                个人理解度图谱与学习分析
+            <!-- 理论推导部分 -->
+            <div class="section">
+              <h3 class="section-title">
+                <i class="fas fa-calculator"></i> 理论推导
               </h3>
+              <p>从切比雪夫不等式出发，推导弱大数定律：</p>
 
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- 雷达图 -->
-                <div class="bg-dark-bg rounded-lg p-4">
-                  <h4 class="text-lg font-semibold mb-3 text-white">
-                    理解度雷达图
-                  </h4>
-                  <div class="h-64">
-                    <canvas id="understanding-chart"></canvas>
+              <div class="derivation-step active" data-step-index="0">
+                <div class="proof-step">
+                  <strong>步骤 1:</strong> 切比雪夫不等式
+                  <div class="formula">
+                    $$ P(|X - \mu| \geq k\sigma) \leq \frac{1}{k^2} $$
                   </div>
+                  <p>切比雪夫不等式给出了随机变量偏离其期望值的概率上界。</p>
                 </div>
 
-                <!-- 学习数据分析 -->
-                <div class="bg-dark-bg rounded-lg p-4">
-                  <h4 class="text-lg font-semibold mb-3 text-white">
-                    学习数据分析
-                  </h4>
-                  <div id="learning-stats" class="space-y-3">
-                    <div class="flex justify-between items-center">
-                      <span class="text-gray-300">平均理解度:</span>
-                      <span
-                        id="avg-understanding"
-                        class="text-neon-blue font-bold"
-                        >-</span
-                      >
-                    </div>
-                    <div class="flex justify-between items-center">
-                      <span class="text-gray-300">最薄弱环节:</span>
-                      <span id="weakest-step" class="text-neon-orange font-bold"
-                        >-</span
-                      >
-                    </div>
-                    <div class="flex justify-between items-center">
-                      <span class="text-gray-300">最强项:</span>
-                      <span
-                        id="strongest-step"
-                        class="text-neon-green font-bold"
-                        >-</span
-                      >
-                    </div>
-                    <div class="flex justify-between items-center">
-                      <span class="text-gray-300">完成时间:</span>
-                      <span
-                        id="completion-time"
-                        class="text-neon-purple font-bold"
-                        >-</span
-                      >
-                    </div>
-                  </div>
-
-                  <!-- 学习建议 -->
-                  <div class="mt-4 p-3 bg-gray-800 rounded-lg">
-                    <h5 class="text-sm font-semibold text-neon-green mb-2">
-                      📚 个性化学习建议
-                    </h5>
-                    <div
-                      id="learning-suggestions"
-                      class="text-sm text-gray-300"
-                    >
-                      完成所有步骤后将显示个性化建议
-                    </div>
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对这一步骤的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
                   </div>
                 </div>
               </div>
 
-              <div class="text-sm text-gray-400 mt-4">
-                <p>
-                  <i class="fa fa-info-circle mr-1"></i>
-                  这个图谱记录了您的学习轨迹，帮助识别需要重点复习的内容。数据仅在本地存储，保护您的隐私。
-                </p>
+              <div class="derivation-step" data-step-index="1">
+                <div class="proof-step">
+                  <strong>步骤 2:</strong> 样本均值的期望和方差
+                  <div class="formula">
+                    $$ E[\bar{X}_n] = \mu, \quad \text{Var}(\bar{X}_n) =
+                    \frac{\sigma^2}{n} $$
+                  </div>
+                  <p>样本均值的期望等于总体均值，方差等于总体方差除以样本量。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对这一步骤的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
               </div>
+
+              <div class="derivation-step" data-step-index="2">
+                <div class="proof-step">
+                  <strong>步骤 3:</strong> 应用切比雪夫不等式
+                  <div class="formula">
+                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq
+                    \frac{\text{Var}(\bar{X}_n)}{\epsilon^2} =
+                    \frac{\sigma^2}{n\epsilon^2} $$
+                  </div>
+                  <p>
+                    将切比雪夫不等式应用于样本均值，得到样本均值偏离总体均值的概率上界。
+                  </p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对这一步骤的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="3">
+                <div class="proof-step">
+                  <strong>步骤 4:</strong> 取极限得到弱大数定律
+                  <div class="formula">
+                    $$ \lim_{n\to\infty} P(|\bar{X}_n - \mu| \geq \epsilon) = 0 $$
+                  </div>
+                  <p>
+                    当样本量趋于无穷时，样本均值偏离总体均值的概率趋于零，这就是弱大数定律。
+                  </p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对这一步骤的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 重要性质部分 -->
+            <div class="section">
+              <h3 class="section-title"><i class="fas fa-star"></i> 重要性质</h3>
+              <p>大数定律的几个重要性质及其数学表达：</p>
+
+              <div class="property-step" data-step-index="4">
+                <div class="property-item">
+                  <strong>收敛速度:</strong> 大数定律的收敛速度为 $O(1/n)$
+                  <div class="formula">
+                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq
+                    \frac{\sigma^2}{n\epsilon^2} $$
+                  </div>
+                  <p>收敛速度与样本量成反比，样本量越大，收敛越快。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对这一性质的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="5">
+                <div class="property-item">
+                  <strong>样本量要求:</strong> 要达到精度 $\epsilon$ 和置信水平
+                  $1-\alpha$ 所需的样本量
+                  <div class="formula">
+                    $$ n \geq \frac{\sigma^2 z_{\alpha/2}^2}{\epsilon^2} $$
+                  </div>
+                  <p>
+                    样本量与精度要求成平方反比关系，精度提高一倍需要样本量增加四倍。
+                  </p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对这一性质的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="6">
+                <div class="property-item">
+                  <strong>方差未知:</strong> 当总体方差未知时，可使用样本方差 $S^2$
+                  作为估计
+                  <div class="formula">
+                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq
+                    \frac{S^2}{n\epsilon^2} $$
+                  </div>
+                  <p>在实际应用中，总体方差通常未知，可以使用样本方差进行估计。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对这一性质的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 理解度图表 -->
+            <div class="chart-container">
+              <h3 class="section-title">
+                <i class="fas fa-chart-line"></i> 理解度追踪
+              </h3>
+              <canvas id="understanding-chart-1" width="400" height="200"></canvas>
+            </div>
+
+            <div class="completion-message hidden" id="completion-message-1">
+              <h3 class="text-xl font-bold mb-2">恭喜！</h3>
+              <p>您已完成"大数定律的数学表述"的学习！</p>
+              <p class="mt-2">您的理解度图表已生成，可以查看学习进展。</p>
+            </div>
+          </div>
+
+          <!-- 第二张卡片：中心极限定理的桥梁作用 -->
+          <div class="theory-card" data-step="2" data-card="2">
+            <div class="card-header">
+              <div class="step-number">2</div>
+              <h2 class="card-title">中心极限定理的桥梁作用</h2>
+              <span class="ml-auto text-sm text-neon-green">
+                <i class="fa fa-unlock"></i> 已解锁
+              </span>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title">
+                <i class="fas fa-info-circle"></i> 理论介绍
+              </h3>
+              <p>
+                中心极限定理(CLT)是连接大数定律与统计推断的重要桥梁，它指出无论总体分布如何，样本均值的标准化形式在样本量足够大时近似服从标准正态分布。
+              </p>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title">
+                <i class="fas fa-calculator"></i> 理论推导
+              </h3>
+              
+              <div class="derivation-step active" data-step-index="0">
+                <div class="proof-step">
+                  <strong>特征函数方法:</strong> CLT的经典证明
+                  <div class="formula">
+                    $$ \phi_{\bar{X}_n}(t) = \phi_X\left(\frac{t}{\sqrt{n}}\right)^n $$
+                  </div>
+                  <p>设 X₁, X₂, ..., Xₙ 独立同分布，E[Xᵢ] = μ, Var(Xᵢ) = σ²。标准化样本均值的特征函数为：</p>
+                  <div class="formula">
+                    $$ \phi_{\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma}}(t) = \left[\phi_{\frac{X-\mu}{\sigma}}\left(\frac{t}{\sqrt{n}}\right)\right]^n $$
+                  </div>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对特征函数方法的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="1">
+                <div class="proof-step">
+                  <strong>泰勒展开:</strong> 特征函数的局部行为
+                  <div class="formula">
+                    $$ \phi_{\frac{X-\mu}{\sigma}}(t) = 1 - \frac{t^2}{2} + o(t^2) \quad \text{当 } t \to 0 $$
+                  </div>
+                  <p>利用标准化随机变量的特征函数在原点附近的泰勒展开：</p>
+                  <div class="formula">
+                    $$ \left[1 - \frac{t^2}{2n} + o\left(\frac{t^2}{n}\right)\right]^n \to e^{-t^2/2} \quad \text{当 } n \to \infty $$
+                  </div>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对泰勒展开应用的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="2">
+                <div class="proof-step">
+                  <strong>收敛结果:</strong> 分布收敛到标准正态
+                  <div class="formula">
+                    $$ \frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \xrightarrow{d} N(0,1) $$
+                  </div>
+                  <p>由于 e^(-t²/2) 是标准正态分布的特征函数，根据连续性定理，我们得到分布收敛。</p>
+                  <div class="formula">
+                    $$ P\left(\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \leq z\right) \to \Phi(z) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^z e^{-t^2/2}dt $$
+                  </div>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对收敛结果的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title"><i class="fas fa-star"></i> 重要性质</h3>
+              
+              <div class="property-step" data-step-index="3">
+                <div class="property-item">
+                  <strong>普适性:</strong> 与原分布无关的收敛性
+                  <div class="formula">
+                    $$ \text{无论 } X \sim F \text{ 为何分布，只要 } E[X] = \mu, \text{Var}(X) = \sigma^2 < \infty $$
+                    $$ \frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \xrightarrow{d} N(0,1) $$
+                  </div>
+                  <p>这是CLT最重要的性质：收敛结果不依赖于原始分布的具体形式，只要满足有限方差条件。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对普适性的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="4">
+                <div class="property-item">
+                  <strong>收敛速度:</strong> Berry-Esseen定理
+                  <div class="formula">
+                    $$ \left|P\left(\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \leq z\right) - \Phi(z)\right| \leq \frac{C\rho}{\sigma^3\sqrt{n}} $$
+                  </div>
+                  <p>其中 ρ = E[|X - μ|³] 是三阶绝对矩，C ≈ 0.4748。这给出了CLT收敛的定量速度界。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对收敛速度的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="5">
+                <div class="property-item">
+                  <strong>统计推断基础:</strong> 置信区间与假设检验
+                  <div class="formula">
+                    $$ P\left(\mu - z_{\alpha/2}\frac{\sigma}{\sqrt{n}} \leq \bar{X}_n \leq \mu + z_{\alpha/2}\frac{\sigma}{\sqrt{n}}\right) \approx 1-\alpha $$
+                  </div>
+                  <p>CLT为构造置信区间和进行假设检验提供了理论基础，使得我们可以对总体参数进行统计推断。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对统计推断应用的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="6">
+                <div class="property-item">
+                  <strong>实际应用示例:</strong> 质量控制与民调
+                  <div class="formula">
+                    $$ \text{样本量计算: } n \geq \left(\frac{z_{\alpha/2}\sigma}{E}\right)^2 $$
+                  </div>
+                  <p>在质量控制中，利用CLT确定检测批次质量所需的样本量；在民调中，计算达到指定误差范围所需的调查人数。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对实际应用的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <h3 class="section-title">
+                <i class="fas fa-chart-line"></i> 理解度追踪
+              </h3>
+              <canvas id="understanding-chart-2" width="400" height="200"></canvas>
+            </div>
+          </div>
+
+          <!-- 第三张卡片：弱大数定律与强大数定律 -->
+          <div class="theory-card" data-step="3" data-card="3">
+            <div class="card-header">
+              <div class="step-number">3</div>
+              <h2 class="card-title">弱大数定律与强大数定律</h2>
+              <span class="ml-auto text-sm text-neon-green">
+                <i class="fa fa-unlock"></i> 已解锁
+              </span>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title">
+                <i class="fas fa-info-circle"></i> 理论介绍
+              </h3>
+              <p>
+                大数定律有两种形式：弱大数定律（依概率收敛）和强大数定律（几乎必然收敛）。理解这两种收敛性的区别对于深入掌握大数定律至关重要。
+              </p>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title">
+                <i class="fas fa-calculator"></i> 理论推导
+              </h3>
+              
+              <div class="derivation-step active" data-step-index="0">
+                <div class="proof-step">
+                  <strong>弱大数定律（Weak Law）:</strong> 依概率收敛
+                  <div class="formula">
+                    $$ \bar{X}_n \xrightarrow{P} \mu \quad \text{即} \quad \lim_{n\to\infty} P(|\bar{X}_n - \mu| > \epsilon) = 0 $$
+                  </div>
+                  <p>对于任意 ε > 0，样本均值偏离总体均值超过 ε 的概率趋于零。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对这一概念的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="1">
+                <div class="proof-step">
+                  <strong>强大数定律（Strong Law）:</strong> 几乎必然收敛
+                  <div class="formula">
+                    $$ \bar{X}_n \xrightarrow{a.s.} \mu \quad \text{即} \quad P\left(\lim_{n\to\infty} \bar{X}_n = \mu\right) = 1 $$
+                  </div>
+                  <p>样本均值以概率1收敛到总体均值，这是比弱收敛更强的条件。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对这一概念的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="2">
+                <div class="proof-step">
+                  <strong>收敛性关系:</strong> 强收敛蕴含弱收敛
+                  <div class="formula">
+                    $$ \bar{X}_n \xrightarrow{a.s.} \mu \Rightarrow \bar{X}_n \xrightarrow{P} \mu $$
+                  </div>
+                  <p>几乎必然收敛是比依概率收敛更强的条件，强大数定律的成立意味着弱大数定律也成立。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对这一关系的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="3">
+                <div class="proof-step">
+                  <strong>Kolmogorov强大数定律:</strong> 经典证明思路
+                  <div class="formula">
+                    $$ \text{设 } S_n = \sum_{i=1}^n X_i, \quad \text{则} \quad \sum_{n=1}^{\infty} \frac{\text{Var}(X_n)}{n^2} < \infty $$
+                  </div>
+                  <p>通过Borel-Cantelli引理，证明 $\{|\bar{X}_n - \mu| > \epsilon \text{ i.o.}\}$ 的概率为0。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对Kolmogorov定理的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="4">
+                <div class="proof-step">
+                  <strong>弱大数定律的证明:</strong> 切比雪夫不等式方法
+                  <div class="formula">
+                    $$ P(|\bar{X}_n - \mu| > \epsilon) \leq \frac{\text{Var}(\bar{X}_n)}{\epsilon^2} = \frac{\sigma^2}{n\epsilon^2} \to 0 $$
+                  </div>
+                  <p>当 $n \to \infty$ 时，右边趋于0，证明了依概率收敛。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对切比雪夫方法的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title"><i class="fas fa-star"></i> 重要性质</h3>
+              
+              <div class="property-step" data-step-index="5">
+                <div class="property-item">
+                  <strong>条件差异:</strong> 强大数定律需要更严格的条件
+                  <div class="formula">
+                    $$ \text{弱大数定律: } E[X_i] = \mu, \text{Var}(X_i) < \infty $$
+                    $$ \text{强大数定律: } E[|X_i|] < \infty \text{ (Kolmogorov条件)} $$
+                  </div>
+                  <p>强大数定律通常需要更严格的矩条件或独立性假设。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对条件差异的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="6">
+                <div class="property-item">
+                  <strong>实际意义:</strong> 收敛性的实际解释
+                  <div class="formula">
+                    $$ \text{弱收敛: 大概率接近} \quad \text{强收敛: 路径收敛} $$
+                  </div>
+                  <p>弱收敛关注概率，强收敛关注样本路径的行为。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对实际意义的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="7">
+                <div class="property-item">
+                  <strong>经典实例:</strong> 抛硬币实验
+                  <div class="formula">
+                    $$ X_i = \begin{cases} 1 & \text{正面} \\ 0 & \text{反面} \end{cases}, \quad \mu = 0.5 $$
+                  </div>
+                  <p>弱大数定律：频率趋近于0.5的概率趋于1<br>
+                     强大数定律：几乎所有的样本路径都收敛到0.5</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对抛硬币实例的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="8">
+                <div class="property-item">
+                  <strong>反例分析:</strong> 强收敛不成立的情况
+                  <div class="formula">
+                    $$ X_n = \begin{cases} n & \text{概率 } 1/n \\ 0 & \text{概率 } 1-1/n \end{cases} $$
+                  </div>
+                  <p>此时 $E[X_n] = 1$，弱大数定律成立，但 $E[|X_n|] = \infty$，强大数定律不适用。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对反例的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <h3 class="section-title">
+                <i class="fas fa-chart-line"></i> 理解度追踪
+              </h3>
+              <canvas id="understanding-chart-3" width="400" height="200"></canvas>
+            </div>
+          </div>
+
+          <!-- 第四张卡片：收敛速度与误差分析 -->
+          <div class="theory-card" data-step="4" data-card="4">
+            <div class="card-header">
+              <div class="step-number">4</div>
+              <h2 class="card-title">收敛速度与误差分析</h2>
+              <span class="ml-auto text-sm text-neon-green">
+                <i class="fa fa-unlock"></i> 已解锁
+              </span>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title">
+                <i class="fas fa-info-circle"></i> 理论介绍
+              </h3>
+              <p>
+                理解大数定律的收敛速度对于实际应用至关重要。通过误差界的分析，我们可以确定需要多少样本才能达到期望的精度。
+              </p>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title">
+                <i class="fas fa-calculator"></i> 误差界分析
+              </h3>
+              
+              <div class="derivation-step active" data-step-index="0">
+                <div class="proof-step">
+                  <strong>切比雪夫界:</strong> 基本误差界
+                  <div class="formula">
+                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq \frac{\sigma^2}{n\epsilon^2} $$
+                  </div>
+                  <p>这给出了 O(1/n) 的收敛速度，但通常不是最紧的界。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对切比雪夫界的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="1">
+                <div class="proof-step">
+                  <strong>Hoeffding界:</strong> 更紧的误差界
+                  <div class="formula">
+                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq 2\exp\left(-\frac{2n\epsilon^2}{(b-a)^2}\right) $$
+                  </div>
+                  <p>对于有界随机变量 X ∈ [a,b]，Hoeffding不等式给出指数衰减的误差界。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对Hoeffding界的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="2">
+                <div class="proof-step">
+                  <strong>样本量计算:</strong> 达到指定精度所需样本量
+                  <div class="formula">
+                    $$ n \geq \frac{(b-a)^2 \ln(2/\delta)}{2\epsilon^2} $$
+                  </div>
+                  <p>要以概率至少 1-δ 保证误差不超过 ε，需要的最小样本量。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对样本量计算的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="3">
+                <div class="proof-step">
+                  <strong>Bernstein不等式:</strong> 次高斯随机变量的界
+                  <div class="formula">
+                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq 2\exp\left(-\frac{n\epsilon^2}{2(\sigma^2 + \epsilon R/3)}\right) $$
+                  </div>
+                  <p>对于有界随机变量，Bernstein不等式在小偏差时比Hoeffding界更紧。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对Bernstein不等式的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="4">
+                <div class="proof-step">
+                  <strong>Bennett不等式:</strong> 最优的指数界
+                  <div class="formula">
+                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq 2\exp\left(-\frac{n\sigma^2}{R^2}h\left(\frac{\epsilon R}{\sigma^2}\right)\right) $$
+                  </div>
+                  <p>其中 $h(x) = (1+x)\ln(1+x) - x$，这是已知的最紧的指数界。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对Bennett不等式的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title"><i class="fas fa-star"></i> 实际应用</h3>
+              
+              <div class="property-step" data-step-index="5">
+                <div class="property-item">
+                  <strong>A/B测试:</strong> 确定实验样本量
+                  <div class="formula">
+                    $$ n \geq \frac{4\sigma^2 z_{\alpha/2}^2}{\delta^2} $$
+                  </div>
+                  <p>在A/B测试中，使用大数定律确定检测效应量 δ 所需的样本量。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对A/B测试应用的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="6">
+                <div class="property-item">
+                  <strong>蒙特卡洛方法:</strong> 数值积分的误差控制
+                  <div class="formula">
+                    $$ \text{误差} \approx \frac{\sigma}{\sqrt{n}} \quad \text{其中} \quad \sigma^2 = \text{Var}(f(X)) $$
+                  </div>
+                  <p>蒙特卡洛积分的误差以 1/√n 的速度收敛到零。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对蒙特卡洛应用的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="7">
+                <div class="property-item">
+                  <strong>实际计算示例:</strong> 投票调查的样本量设计
+                  <div class="formula">
+                    $$ n = \frac{z_{\alpha/2}^2 p(1-p)}{\epsilon^2} \approx \frac{1.96^2 \times 0.25}{\epsilon^2} = \frac{0.96}{\epsilon^2} $$
+                  </div>
+                  <p>例：要以95%置信度估计支持率，误差不超过3%，需要样本量 n ≥ 1067。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对投票调查示例的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="8">
+                <div class="property-item">
+                  <strong>金融风险管理:</strong> VaR估计的收敛速度
+                  <div class="formula">
+                    $$ \text{VaR}_\alpha = F^{-1}(\alpha), \quad \text{估计误差} \sim O\left(\frac{1}{\sqrt{n}}\right) $$
+                  </div>
+                  <p>使用历史模拟法估计VaR时，估计精度随样本量的平方根增长。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对VaR估计的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <h3 class="section-title">
+                <i class="fas fa-chart-line"></i> 理解度追踪
+              </h3>
+              <canvas id="understanding-chart-4" width="400" height="200"></canvas>
+            </div>
+          </div>
+
+          <!-- 第五张卡片：大数定律的推广与变形 -->
+          <div class="theory-card" data-step="5" data-card="5">
+            <div class="card-header">
+              <div class="step-number">5</div>
+              <h2 class="card-title">大数定律的推广与变形</h2>
+              <span class="ml-auto text-sm text-neon-green">
+                <i class="fa fa-unlock"></i> 已解锁
+              </span>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title">
+                <i class="fas fa-info-circle"></i> 理论介绍
+              </h3>
+              <p>
+                大数定律有多种推广形式，包括多元大数定律、函数的大数定律、以及在相依序列中的应用。这些推广极大地扩展了大数定律的应用范围。
+              </p>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title">
+                <i class="fas fa-calculator"></i> 推广形式
+              </h3>
+              
+              <div class="derivation-step active" data-step-index="0">
+                <div class="proof-step">
+                  <strong>多元大数定律:</strong> 向量值随机变量
+                  <div class="formula">
+                    $$ \bar{\mathbf{X}}_n = \frac{1}{n}\sum_{i=1}^n \mathbf{X}_i \xrightarrow{P} \boldsymbol{\mu} $$
+                  </div>
+                  <p>对于 d 维随机向量，各分量同时收敛到对应的期望值。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对多元大数定律的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="1">
+                <div class="proof-step">
+                  <strong>函数的大数定律:</strong> 连续映射定理
+                  <div class="formula">
+                    $$ g(\bar{X}_n) \xrightarrow{P} g(\mu) \quad \text{当 } g \text{ 在 } \mu \text{ 处连续} $$
+                  </div>
+                  <p>如果 g 是连续函数，则样本均值的函数收敛到期望值的函数。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对函数大数定律的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="2">
+                <div class="proof-step">
+                  <strong>相依序列:</strong> 马尔可夫链的遍历定理
+                  <div class="formula">
+                    $$ \frac{1}{n}\sum_{i=1}^n f(X_i) \xrightarrow{a.s.} \pi(f) = \sum_x f(x)\pi(x) $$
+                  </div>
+                  <p>对于遍历马尔可夫链，时间平均收敛到空间平均（平稳分布下的期望）。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对相依序列的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="3">
+                <div class="proof-step">
+                  <strong>鞅大数定律:</strong> 鞅收敛定理
+                  <div class="formula">
+                    $$ \frac{M_n}{n} \xrightarrow{a.s.} 0 \quad \text{当} \quad \sum_{n=1}^{\infty} \frac{E[|X_n|^2]}{n^2} < \infty $$
+                  </div>
+                  <p>对于鞅序列 $M_n$，在适当条件下，标准化的鞅收敛到0。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对鞅大数定律的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="derivation-step" data-step-index="4">
+                <div class="proof-step">
+                  <strong>随机场的大数定律:</strong> 空间平均
+                  <div class="formula">
+                    $$ \frac{1}{|A_n|} \sum_{i \in A_n} X_i \xrightarrow{P} E[X_0] $$
+                  </div>
+                  <p>对于平稳随机场，空间平均收敛到期望值，其中 $A_n$ 是增长的区域。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对随机场的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h3 class="section-title"><i class="fas fa-star"></i> 现代应用</h3>
+              
+              <div class="property-step" data-step-index="5">
+                <div class="property-item">
+                  <strong>机器学习:</strong> 经验风险最小化
+                  <div class="formula">
+                    $$ \hat{R}_n(f) = \frac{1}{n}\sum_{i=1}^n \ell(f(x_i), y_i) \xrightarrow{P} R(f) = E[\ell(f(X), Y)] $$
+                  </div>
+                  <p>训练误差收敛到期望风险，这是机器学习理论的基础。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对机器学习应用的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="6">
+                <div class="property-item">
+                  <strong>时间序列:</strong> 样本自协方差函数
+                  <div class="formula">
+                    $$ \hat{\gamma}(h) = \frac{1}{n}\sum_{t=1}^{n-h} (X_t - \bar{X})(X_{t+h} - \bar{X}) \xrightarrow{P} \gamma(h) $$
+                  </div>
+                  <p>样本自协方差函数收敛到理论自协方差函数。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对时间序列应用的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="7">
+                <div class="property-item">
+                  <strong>网络科学:</strong> 图的谱性质
+                  <div class="formula">
+                    $$ \frac{1}{n} \text{tr}(A^k) \xrightarrow{P} \int \lambda^k d\mu(\lambda) $$
+                  </div>
+                  <p>大型随机图的谱密度收敛到确定性极限，用于分析网络结构。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对网络科学应用的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="8">
+                <div class="property-item">
+                  <strong>量子物理:</strong> 量子测量的大数定律
+                  <div class="formula">
+                    $$ \frac{1}{n}\sum_{i=1}^n M_i \xrightarrow{P} \langle \psi | M | \psi \rangle $$
+                  </div>
+                  <p>重复量子测量的平均值收敛到量子期望值，体现了量子力学的统计性质。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对量子物理应用的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="property-step" data-step-index="9">
+                <div class="property-item">
+                  <strong>生物信息学:</strong> 基因表达数据分析
+                  <div class="formula">
+                    $$ \bar{X}_{gene} = \frac{1}{n}\sum_{i=1}^n X_{i,gene} \xrightarrow{P} \mu_{gene} $$
+                  </div>
+                  <p>大样本基因表达数据的均值收敛到真实表达水平，用于差异表达分析。</p>
+                </div>
+
+                <div class="rating-section">
+                  <div class="rating-label">请评价您对生物信息学应用的理解程度：</div>
+                  <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">1</button>
+                    <button class="rating-btn" data-rating="2">2</button>
+                    <button class="rating-btn" data-rating="3">3</button>
+                    <button class="rating-btn" data-rating="4">4</button>
+                    <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <h3 class="section-title">
+                <i class="fas fa-chart-line"></i> 理解度追踪
+              </h3>
+              <canvas id="understanding-chart-5" width="400" height="200"></canvas>
             </div>
           </div>
         </div>
@@ -1899,6 +2679,7 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            aspectRatio: 2,
             scales: {
               r: {
                 beginAtZero: true,
@@ -2222,10 +3003,456 @@
         taxiChart.update("none");
       }
 
+      // 新的理论探索功能
+      let currentStep = 0;
+// 全局变量
+      let stepRatings = {};
+      let stepRatings3 = {};
+      let stepRatings4 = {};
+      let stepRatings5 = {};
+      let understandingChart1 = null;
+      let understandingChart3 = null;
+      let understandingChart4 = null;
+      let understandingChart5 = null;
+
+      // 初始化评分系统
+      function initRatingSystem() {
+        // 初始化所有图表
+        initUnderstandingChart();
+        initUnderstandingChart3();
+        initUnderstandingChart4();
+        initUnderstandingChart5();
+        
+        // 为每个评分按钮添加事件监听器
+        document.querySelectorAll('.rating-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            const stepIndex = parseInt(this.closest('[data-step-index]').dataset.stepIndex);
+            const cardNumber = this.closest('[data-card]') ? parseInt(this.closest('[data-card]').dataset.card) : 1;
+            
+            // 根据卡片编号更新对应的评分
+            switch(cardNumber) {
+              case 1:
+                stepRatings[stepIndex] = rating;
+                break;
+              case 3:
+                stepRatings3[stepIndex] = rating;
+                break;
+              case 4:
+                stepRatings4[stepIndex] = rating;
+                break;
+              case 5:
+                stepRatings5[stepIndex] = rating;
+                break;
+            }
+            
+            // 更新按钮样式
+            updateButtonState(this);
+            
+            // 检查是否可以解锁下一步
+            checkStepProgression(stepIndex, cardNumber);
+            
+            // 更新对应图表
+            updateChartData(cardNumber);
+          });
+        });
+      }
+
+      // 初始化理解度图表
+      function initUnderstandingChart() {
+        const canvas = document.getElementById('understanding-chart-1');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        understandingChart1 = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['推导1', '推导2', '推导3', '推导4', '性质1', '性质2', '性质3'],
+            datasets: [{
+              label: '理解度评分',
+              data: [0, 0, 0, 0, 0, 0, 0],
+              borderColor: '#ff8c00',
+              backgroundColor: 'rgba(255, 140, 0, 0.1)',
+              borderWidth: 3,
+              pointBackgroundColor: '#ff8c00',
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+              pointRadius: 6,
+              tension: 0.3,
+              fill: true,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 2,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 5,
+                ticks: {
+                  stepSize: 1,
+                  color: '#9ca3af',
+                },
+                grid: {
+                  color: 'rgba(156, 163, 175, 0.3)',
+                },
+              },
+              x: {
+                ticks: {
+                  color: '#9ca3af',
+                },
+                grid: {
+                  color: 'rgba(156, 163, 175, 0.3)',
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff',
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // 初始化第三张卡片的理解度图表
+      function initUnderstandingChart3() {
+        const canvas = document.getElementById('understanding-chart-3');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        understandingChart3 = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['弱大数定律', '强大数定律', '区别分析', '收敛性质', '应用条件', '实例分析'],
+            datasets: [{
+              label: '理解度评分',
+              data: [0, 0, 0, 0, 0, 0],
+              borderColor: '#ff8c00',
+              backgroundColor: 'rgba(255, 140, 0, 0.1)',
+              borderWidth: 3,
+              pointBackgroundColor: '#ff8c00',
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+              pointRadius: 6,
+              tension: 0.3,
+              fill: true,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 2,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 5,
+                ticks: {
+                  stepSize: 1,
+                  color: '#9ca3af',
+                },
+                grid: {
+                  color: 'rgba(156, 163, 175, 0.3)',
+                },
+              },
+              x: {
+                ticks: {
+                  color: '#9ca3af',
+                },
+                grid: {
+                  color: 'rgba(156, 163, 175, 0.3)',
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff',
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // 初始化第四张卡片的理解度图表
+      function initUnderstandingChart4() {
+        const canvas = document.getElementById('understanding-chart-4');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        understandingChart4 = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['收敛速度', '误差界限', '样本量估计', '置信区间', '实际应用', '优化策略'],
+            datasets: [{
+              label: '理解度评分',
+              data: [0, 0, 0, 0, 0, 0],
+              borderColor: '#ff8c00',
+              backgroundColor: 'rgba(255, 140, 0, 0.1)',
+              borderWidth: 3,
+              pointBackgroundColor: '#ff8c00',
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+              pointRadius: 6,
+              tension: 0.3,
+              fill: true,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 2,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 5,
+                ticks: {
+                  stepSize: 1,
+                  color: '#9ca3af',
+                },
+                grid: {
+                  color: 'rgba(156, 163, 175, 0.3)',
+                },
+              },
+              x: {
+                ticks: {
+                  color: '#9ca3af',
+                },
+                grid: {
+                  color: 'rgba(156, 163, 175, 0.3)',
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff',
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // 初始化第五张卡片的理解度图表
+      function initUnderstandingChart5() {
+        const canvas = document.getElementById('understanding-chart-5');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        understandingChart5 = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['多元推广', '马尔可夫链', '鞅论应用', '现代发展', '实际案例', '前沿研究'],
+            datasets: [{
+              label: '理解度评分',
+              data: [0, 0, 0, 0, 0, 0],
+              borderColor: '#ff8c00',
+              backgroundColor: 'rgba(255, 140, 0, 0.1)',
+              borderWidth: 3,
+              pointBackgroundColor: '#ff8c00',
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+              pointRadius: 6,
+              tension: 0.3,
+              fill: true,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 2,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 5,
+                ticks: {
+                  stepSize: 1,
+                  color: '#9ca3af',
+                },
+                grid: {
+                  color: 'rgba(156, 163, 175, 0.3)',
+                },
+              },
+              x: {
+                ticks: {
+                  color: '#9ca3af',
+                },
+                grid: {
+                  color: 'rgba(156, 163, 175, 0.3)',
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff',
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // 更新按钮状态
+      function updateButtonState(selectedButton) {
+        const buttons = selectedButton.parentElement.querySelectorAll('.rating-btn');
+        buttons.forEach(btn => {
+          btn.classList.remove('selected');
+        });
+        selectedButton.classList.add('selected');
+      }
+
+      // 更新图表数据
+      function updateChartData(cardNumber = 1) {
+        switch(cardNumber) {
+          case 1:
+            if (!understandingChart1) return;
+            const data1 = [0, 0, 0, 0, 0, 0, 0];
+            for (let i = 0; i < 7; i++) {
+              data1[i] = stepRatings[i] || 0;
+            }
+            understandingChart1.data.datasets[0].data = data1;
+            understandingChart1.update();
+            break;
+            
+          case 3:
+            if (!understandingChart3) return;
+            const data3 = [0, 0, 0, 0, 0, 0];
+            for (let i = 0; i < 6; i++) {
+              data3[i] = stepRatings3[i] || 0;
+            }
+            understandingChart3.data.datasets[0].data = data3;
+            understandingChart3.update();
+            break;
+            
+          case 4:
+            if (!understandingChart4) return;
+            const data4 = [0, 0, 0, 0, 0, 0];
+            for (let i = 0; i < 6; i++) {
+              data4[i] = stepRatings4[i] || 0;
+            }
+            understandingChart4.data.datasets[0].data = data4;
+            understandingChart4.update();
+            break;
+            
+          case 5:
+            if (!understandingChart5) return;
+            const data5 = [0, 0, 0, 0, 0, 0];
+            for (let i = 0; i < 6; i++) {
+              data5[i] = stepRatings5[i] || 0;
+            }
+            understandingChart5.data.datasets[0].data = data5;
+            understandingChart5.update();
+            break;
+        }
+      }
+
+      // 检查步骤进度
+      function checkStepProgression(stepIndex, cardNumber = 1) {
+        let rating, currentRatings, totalSteps, completionMessageId, nextCardStep;
+        
+        switch(cardNumber) {
+          case 1:
+            rating = stepRatings[stepIndex];
+            currentRatings = stepRatings;
+            totalSteps = 7;
+            completionMessageId = 'completion-message-1';
+            nextCardStep = 2;
+            break;
+          case 3:
+            rating = stepRatings3[stepIndex];
+            currentRatings = stepRatings3;
+            totalSteps = 6;
+            completionMessageId = 'completion-message-3';
+            nextCardStep = 4;
+            break;
+          case 4:
+            rating = stepRatings4[stepIndex];
+            currentRatings = stepRatings4;
+            totalSteps = 6;
+            completionMessageId = 'completion-message-4';
+            nextCardStep = 5;
+            break;
+          case 5:
+            rating = stepRatings5[stepIndex];
+            currentRatings = stepRatings5;
+            totalSteps = 6;
+            completionMessageId = 'completion-message-5';
+            nextCardStep = null;
+            break;
+        }
+        
+        if (rating >= 3) {
+          // 解锁下一步
+          unlockStep(stepIndex + 1, cardNumber);
+        }
+        
+        // 检查是否所有步骤都完成
+        if (Object.keys(currentRatings).length === totalSteps && Object.values(currentRatings).every(r => r >= 3)) {
+          showCompletionMessage(completionMessageId, nextCardStep);
+        }
+      }
+
+      // 解锁步骤
+      function unlockStep(stepIndex, cardNumber = 1) {
+        const nextStep = document.querySelector(`[data-card="${cardNumber}"] [data-step-index="${stepIndex}"]`);
+        if (nextStep) {
+          nextStep.classList.add('active');
+          nextStep.style.opacity = '1';
+          
+          // 添加解锁动画
+          nextStep.style.animation = 'fadeIn 0.5s ease-in-out';
+        }
+      }
+
+      // 显示完成消息
+      function showCompletionMessage(completionMessageId, nextCardStep = null) {
+        const completionMessage = document.getElementById(completionMessageId);
+        if (completionMessage) {
+          completionMessage.classList.remove('hidden');
+          completionMessage.style.animation = 'pulse 1s ease-in-out';
+        }
+        
+        // 解锁下一张卡片
+        if (nextCardStep) {
+          const nextCard = document.querySelector(`[data-step="${nextCardStep}"]`);
+          if (nextCard) {
+            const lockIcon = nextCard.querySelector('.fa-lock');
+            const unlockText = nextCard.querySelector('.ml-auto span');
+            
+            if (lockIcon) {
+              lockIcon.classList.remove('fa-lock');
+              lockIcon.classList.add('fa-unlock');
+            }
+            
+            if (unlockText) {
+              unlockText.innerHTML = '<i class="fa fa-unlock"></i> 已解锁';
+              unlockText.classList.remove('text-gray-500');
+              unlockText.classList.add('text-neon-green');
+            }
+            
+            // 移除透明度
+            nextCard.querySelectorAll('.opacity-50').forEach(el => {
+              el.classList.remove('opacity-50');
+            });
+          }
+        }
+      }
+
       // 事件绑定
       document.addEventListener("DOMContentLoaded", function () {
         // 初始化
         initParticles();
+        initRatingSystem();
 
         // 滑块事件
         document
