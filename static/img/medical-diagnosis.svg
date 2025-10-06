@@ -1,0 +1,229 @@
+<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#e2e8f0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#cbd5e1;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#dc2626;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="screenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f2937;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#374151;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="600" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Medical monitor -->
+  <g transform="translate(50, 50)">
+    <rect x="0" y="0" width="200" height="120" fill="url(#screenGradient)" rx="10"/>
+    <rect x="10" y="10" width="180" height="80" fill="#000000" rx="5"/>
+    
+    <!-- ECG waveform -->
+    <g transform="translate(20, 30)">
+      <path d="M0 40 L20 40 L25 20 L30 60 L35 10 L40 50 L45 40 L160 40" 
+            stroke="#10b981" stroke-width="2" fill="none" filter="url(#glow)"/>
+      
+      <!-- Heart rate -->
+      <text x="10" y="15" fill="#10b981" font-size="12" font-weight="bold">心率: 72 BPM</text>
+      <text x="10" y="65" fill="#3b82f6" font-size="10">血压: 120/80 mmHg</text>
+    </g>
+    
+    <!-- Control buttons -->
+    <circle cx="170" cy="105" r="8" fill="#ef4444"/>
+    <circle cx="190" cy="105" r="8" fill="#10b981"/>
+    <circle cx="210" cy="105" r="8" fill="#3b82f6"/>
+  </g>
+  
+  <!-- Statistical analysis -->
+  <g transform="translate(280, 50)">
+    <rect x="0" y="0" width="250" height="120" fill="rgba(255,255,255,0.8)" rx="10" stroke="#cbd5e1" stroke-width="1"/>
+    
+    <text x="125" y="20" text-anchor="middle" fill="#1f2937" font-size="14" font-weight="bold">诊断统计分析</text>
+    
+    <!-- ROC Curve -->
+    <g transform="translate(20, 30)">
+      <text x="0" y="0" fill="#1f2937" font-size="10" font-weight="bold">ROC 曲线</text>
+      
+      <!-- Axes -->
+      <line x1="0" y1="60" x2="60" y2="60" stroke="#6b7280" stroke-width="1"/>
+      <line x1="0" y1="60" x2="0" y2="0" stroke="#6b7280" stroke-width="1"/>
+      
+      <!-- ROC curve -->
+      <path d="M0 60 Q10 50 20 40 Q30 25 40 15 Q50 8 60 0" 
+            stroke="#3b82f6" stroke-width="2" fill="none"/>
+      
+      <!-- Diagonal reference line -->
+      <line x1="0" y1="60" x2="60" y2="0" stroke="#ef4444" stroke-width="1" stroke-dasharray="3,3"/>
+      
+      <!-- AUC area -->
+      <path d="M0 60 Q10 50 20 40 Q30 25 40 15 Q50 8 60 0 L60 60 Z" 
+            fill="#3b82f6" opacity="0.2"/>
+      
+      <text x="30" y="75" text-anchor="middle" fill="#3b82f6" font-size="8">AUC = 0.89</text>
+      
+      <!-- Labels -->
+      <text x="30" y="85" text-anchor="middle" fill="#6b7280" font-size="7">假阳性率</text>
+      <text x="-5" y="30" text-anchor="middle" fill="#6b7280" font-size="7" transform="rotate(-90, -5, 30)">真阳性率</text>
+    </g>
+    
+    <!-- Confusion Matrix -->
+    <g transform="translate(120, 30)">
+      <text x="0" y="0" fill="#1f2937" font-size="10" font-weight="bold">混淆矩阵</text>
+      
+      <rect x="0" y="10" width="25" height="25" fill="#10b981" opacity="0.8"/>
+      <rect x="25" y="10" width="25" height="25" fill="#ef4444" opacity="0.6"/>
+      <rect x="0" y="35" width="25" height="25" fill="#ef4444" opacity="0.6"/>
+      <rect x="25" y="35" width="25" height="25" fill="#10b981" opacity="0.8"/>
+      
+      <!-- Values -->
+      <text x="12.5" y="27" text-anchor="middle" fill="#f8fafc" font-size="10" font-weight="bold">85</text>
+      <text x="37.5" y="27" text-anchor="middle" fill="#f8fafc" font-size="10" font-weight="bold">8</text>
+      <text x="12.5" y="52" text-anchor="middle" fill="#f8fafc" font-size="10" font-weight="bold">12</text>
+      <text x="37.5" y="52" text-anchor="middle" fill="#f8fafc" font-size="10" font-weight="bold">95</text>
+      
+      <!-- Labels -->
+      <text x="25" y="75" text-anchor="middle" fill="#6b7280" font-size="7">预测</text>
+      <text x="-10" y="35" text-anchor="middle" fill="#6b7280" font-size="7" transform="rotate(-90, -10, 35)">实际</text>
+    </g>
+  </g>
+  
+  <!-- Patient data visualization -->
+  <g transform="translate(50, 200)">
+    <rect x="0" y="0" width="480" height="150" fill="rgba(255,255,255,0.9)" rx="10" stroke="#cbd5e1" stroke-width="1"/>
+    
+    <text x="240" y="20" text-anchor="middle" fill="#1f2937" font-size="14" font-weight="bold">患者数据分析</text>
+    
+    <!-- Age distribution -->
+    <g transform="translate(20, 40)">
+      <text x="0" y="0" fill="#1f2937" font-size="12" font-weight="bold">年龄分布</text>
+      
+      <!-- Histogram bars -->
+      <rect x="0" y="10" width="15" height="20" fill="#3b82f6" opacity="0.7"/>
+      <rect x="20" y="10" width="15" height="35" fill="#3b82f6" opacity="0.7"/>
+      <rect x="40" y="10" width="15" height="50" fill="#3b82f6" opacity="0.7"/>
+      <rect x="60" y="10" width="15" height="40" fill="#3b82f6" opacity="0.7"/>
+      <rect x="80" y="10" width="15" height="25" fill="#3b82f6" opacity="0.7"/>
+      <rect x="100" y="10" width="15" height="15" fill="#3b82f6" opacity="0.7"/>
+      
+      <!-- Age labels -->
+      <text x="7.5" y="80" text-anchor="middle" fill="#6b7280" font-size="8">20-30</text>
+      <text x="27.5" y="80" text-anchor="middle" fill="#6b7280" font-size="8">30-40</text>
+      <text x="47.5" y="80" text-anchor="middle" fill="#6b7280" font-size="8">40-50</text>
+      <text x="67.5" y="80" text-anchor="middle" fill="#6b7280" font-size="8">50-60</text>
+      <text x="87.5" y="80" text-anchor="middle" fill="#6b7280" font-size="8">60-70</text>
+      <text x="107.5" y="80" text-anchor="middle" fill="#6b7280" font-size="8">70+</text>
+      
+      <text x="57.5" y="95" text-anchor="middle" fill="#6b7280" font-size="10">年龄组</text>
+    </g>
+    
+    <!-- Risk factors -->
+    <g transform="translate(180, 40)">
+      <text x="0" y="0" fill="#1f2937" font-size="12" font-weight="bold">风险因素</text>
+      
+      <!-- Risk factor bars -->
+      <rect x="0" y="15" width="80" height="8" fill="#ef4444" opacity="0.7"/>
+      <rect x="0" y="28" width="65" height="8" fill="#f59e0b" opacity="0.7"/>
+      <rect x="0" y="41" width="50" height="8" fill="#10b981" opacity="0.7"/>
+      <rect x="0" y="54" width="35" height="8" fill="#3b82f6" opacity="0.7"/>
+      
+      <!-- Labels -->
+      <text x="85" y="22" fill="#1f2937" font-size="9">高血压 (45%)</text>
+      <text x="70" y="35" fill="#1f2937" font-size="9">糖尿病 (32%)</text>
+      <text x="55" y="48" fill="#1f2937" font-size="9">吸烟 (28%)</text>
+      <text x="40" y="61" fill="#1f2937" font-size="9">肥胖 (21%)</text>
+    </g>
+    
+    <!-- Treatment outcomes -->
+    <g transform="translate(350, 40)">
+      <text x="0" y="0" fill="#1f2937" font-size="12" font-weight="bold">治疗效果</text>
+      
+      <!-- Pie chart -->
+      <g transform="translate(50, 40)">
+        <!-- Excellent -->
+        <path d="M0 -30 A30 30 0 0 1 21.21 -21.21 L0 0 Z" fill="#10b981" opacity="0.8"/>
+        <text x="12" y="-18" fill="#f8fafc" font-size="8">优秀</text>
+        
+        <!-- Good -->
+        <path d="M21.21 -21.21 A30 30 0 0 1 21.21 21.21 L0 0 Z" fill="#3b82f6" opacity="0.8"/>
+        <text x="18" y="0" fill="#f8fafc" font-size="8">良好</text>
+        
+        <!-- Fair -->
+        <path d="M21.21 21.21 A30 30 0 0 1 -21.21 21.21 L0 0 Z" fill="#f59e0b" opacity="0.8"/>
+        <text x="-12" y="18" fill="#f8fafc" font-size="8">一般</text>
+        
+        <!-- Poor -->
+        <path d="M-21.21 21.21 A30 30 0 0 1 0 -30 L0 0 Z" fill="#ef4444" opacity="0.8"/>
+        <text x="-18" y="0" fill="#f8fafc" font-size="8">差</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Bayesian diagnosis -->
+  <g transform="translate(50, 370)">
+    <rect x="0" y="0" width="300" height="25" fill="rgba(59,130,246,0.1)" rx="5"/>
+    
+    <text x="10" y="15" fill="#1f2937" font-size="11" font-weight="bold">贝叶斯诊断:</text>
+    <text x="100" y="15" fill="#3b82f6" font-size="10">P(疾病|症状) = P(症状|疾病) × P(疾病) / P(症状)</text>
+  </g>
+  
+  <!-- Confidence intervals -->
+  <g transform="translate(370, 370)">
+    <rect x="0" y="0" width="180" height="25" fill="rgba(16,185,129,0.1)" rx="5"/>
+    
+    <text x="10" y="15" fill="#1f2937" font-size="11" font-weight="bold">置信区间:</text>
+    <text x="80" y="15" fill="#10b981" font-size="10">95% CI: [0.82, 0.94]</text>
+  </g>
+  
+  <!-- Medical icons -->
+  <g opacity="0.7">
+    <!-- Stethoscope -->
+    <g transform="translate(560, 80)">
+      <circle cx="0" cy="0" r="8" fill="none" stroke="#6b7280" stroke-width="2"/>
+      <path d="M-6 -6 Q-10 -15 -5 -20 Q0 -25 5 -20 Q10 -15 6 -6" 
+            stroke="#6b7280" stroke-width="2" fill="none"/>
+      <line x1="0" y1="-8" x2="0" y2="-15" stroke="#6b7280" stroke-width="2"/>
+    </g>
+    
+    <!-- Heart -->
+    <g transform="translate(560, 120)">
+      <path d="M0 5 C0 0, -5 -5, -10 0 C-15 -5, -20 0, -15 5 C-10 10, 0 20, 0 20 C0 20, 10 10, 15 5 C20 0, 15 -5, 10 0 C5 -5, 0 0, 0 5 Z" 
+            fill="url(#heartGradient)" transform="scale(0.5)"/>
+    </g>
+    
+    <!-- DNA -->
+    <g transform="translate(560, 160)">
+      <path d="M-8 -10 Q0 -5 8 -10 M-8 -5 Q0 0 8 -5 M-8 0 Q0 5 8 0 M-8 5 Q0 10 8 5" 
+            stroke="#8b5cf6" stroke-width="2" fill="none"/>
+      <circle cx="-8" cy="-10" r="1" fill="#8b5cf6"/>
+      <circle cx="8" cy="-10" r="1" fill="#8b5cf6"/>
+      <circle cx="-8" cy="5" r="1" fill="#8b5cf6"/>
+      <circle cx="8" cy="5" r="1" fill="#8b5cf6"/>
+    </g>
+  </g>
+  
+  <!-- Probability indicators -->
+  <g transform="translate(560, 200)">
+    <text x="0" y="0" fill="#1f2937" font-size="10" font-weight="bold">诊断概率</text>
+    
+    <rect x="0" y="10" width="30" height="6" fill="#ef4444" opacity="0.8"/>
+    <text x="35" y="18" fill="#1f2937" font-size="8">高风险: 15%</text>
+    
+    <rect x="0" y="25" width="20" height="6" fill="#f59e0b" opacity="0.8"/>
+    <text x="25" y="33" fill="#1f2937" font-size="8">中风险: 25%</text>
+    
+    <rect x="0" y="40" width="40" height="6" fill="#10b981" opacity="0.8"/>
+    <text x="45" y="48" fill="#1f2937" font-size="8">低风险: 60%</text>
+  </g>
+</svg>

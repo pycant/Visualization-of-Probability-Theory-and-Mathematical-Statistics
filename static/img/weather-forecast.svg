@@ -1,0 +1,117 @@
+<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cloudGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:0.8" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="600" height="400" fill="url(#skyGradient)"/>
+  
+  <!-- Clouds -->
+  <g opacity="0.8">
+    <ellipse cx="120" cy="80" rx="40" ry="25" fill="url(#cloudGradient)"/>
+    <ellipse cx="100" cy="85" rx="35" ry="20" fill="url(#cloudGradient)"/>
+    <ellipse cx="140" cy="85" rx="30" ry="18" fill="url(#cloudGradient)"/>
+    
+    <ellipse cx="450" cy="60" rx="50" ry="30" fill="url(#cloudGradient)"/>
+    <ellipse cx="420" cy="65" rx="40" ry="25" fill="url(#cloudGradient)"/>
+    <ellipse cx="480" cy="65" rx="35" ry="20" fill="url(#cloudGradient)"/>
+  </g>
+  
+  <!-- Rain drops -->
+  <g opacity="0.6">
+    <path d="M150 120 L145 140 Q145 145 150 145 Q155 145 155 140 L150 120 Z" fill="#3b82f6"/>
+    <path d="M170 130 L165 150 Q165 155 170 155 Q175 155 175 150 L170 130 Z" fill="#3b82f6"/>
+    <path d="M190 125 L185 145 Q185 150 190 150 Q195 150 195 145 L190 125 Z" fill="#3b82f6"/>
+    <path d="M210 135 L205 155 Q205 160 210 160 Q215 160 215 155 L210 135 Z" fill="#3b82f6"/>
+  </g>
+  
+  <!-- Sun (partially hidden) -->
+  <g opacity="0.7">
+    <circle cx="500" cy="100" r="35" fill="#fbbf24" filter="url(#glow)"/>
+    <g stroke="#fbbf24" stroke-width="3" opacity="0.8">
+      <line x1="500" y1="40" x2="500" y2="55"/>
+      <line x1="540" y1="65" x2="530" y2="70"/>
+      <line x1="560" y1="100" x2="545" y2="100"/>
+      <line x1="540" y1="135" x2="530" y2="130"/>
+      <line x1="500" y1="160" x2="500" y2="145"/>
+      <line x1="460" y1="135" x2="470" y2="130"/>
+      <line x1="440" y1="100" x2="455" y2="100"/>
+      <line x1="460" y1="65" x2="470" y2="70"/>
+    </g>
+  </g>
+  
+  <!-- Weather station/building -->
+  <g>
+    <rect x="50" y="250" width="80" height="120" fill="#374151" rx="5"/>
+    <rect x="60" y="260" width="15" height="20" fill="#60a5fa" opacity="0.8"/>
+    <rect x="80" y="260" width="15" height="20" fill="#60a5fa" opacity="0.8"/>
+    <rect x="100" y="260" width="15" height="20" fill="#60a5fa" opacity="0.8"/>
+    <rect x="60" y="290" width="15" height="20" fill="#60a5fa" opacity="0.8"/>
+    <rect x="100" y="290" width="15" height="20" fill="#60a5fa" opacity="0.8"/>
+    
+    <!-- Antenna -->
+    <line x1="90" y1="250" x2="90" y2="220" stroke="#e5e7eb" stroke-width="2"/>
+    <circle cx="90" cy="220" r="3" fill="#ef4444"/>
+  </g>
+  
+  <!-- Probability visualization -->
+  <g transform="translate(300, 250)">
+    <!-- Chart background -->
+    <rect x="0" y="0" width="250" height="120" fill="rgba(0,0,0,0.3)" rx="10"/>
+    
+    <!-- Chart title -->
+    <text x="125" y="20" text-anchor="middle" fill="#f8fafc" font-family="Arial" font-size="14" font-weight="bold">降水概率预测</text>
+    
+    <!-- Bars representing probability -->
+    <g transform="translate(20, 35)">
+      <!-- Day labels -->
+      <text x="25" y="90" text-anchor="middle" fill="#e5e7eb" font-size="10">今天</text>
+      <text x="75" y="90" text-anchor="middle" fill="#e5e7eb" font-size="10">明天</text>
+      <text x="125" y="90" text-anchor="middle" fill="#e5e7eb" font-size="10">后天</text>
+      <text x="175" y="90" text-anchor="middle" fill="#e5e7eb" font-size="10">第4天</text>
+      
+      <!-- Probability bars -->
+      <rect x="15" y="20" width="20" height="50" fill="#3b82f6" opacity="0.8"/>
+      <rect x="65" y="35" width="20" height="35" fill="#60a5fa" opacity="0.8"/>
+      <rect x="115" y="45" width="20" height="25" fill="#93c5fd" opacity="0.8"/>
+      <rect x="165" y="50" width="20" height="20" fill="#dbeafe" opacity="0.8"/>
+      
+      <!-- Percentage labels -->
+      <text x="25" y="15" text-anchor="middle" fill="#f8fafc" font-size="10">80%</text>
+      <text x="75" y="30" text-anchor="middle" fill="#f8fafc" font-size="10">60%</text>
+      <text x="125" y="40" text-anchor="middle" fill="#f8fafc" font-size="10">40%</text>
+      <text x="175" y="45" text-anchor="middle" fill="#f8fafc" font-size="10">30%</text>
+    </g>
+  </g>
+  
+  <!-- Temperature curve -->
+  <g transform="translate(50, 320)">
+    <path d="M0 30 Q50 20 100 25 Q150 30 200 20 Q250 15 300 25" 
+          stroke="#fbbf24" stroke-width="3" fill="none" opacity="0.8"/>
+    <circle cx="0" cy="30" r="3" fill="#fbbf24"/>
+    <circle cx="100" cy="25" r="3" fill="#fbbf24"/>
+    <circle cx="200" cy="20" r="3" fill="#fbbf24"/>
+    <circle cx="300" cy="25" r="3" fill="#fbbf24"/>
+    
+    <!-- Temperature labels -->
+    <text x="0" y="50" text-anchor="middle" fill="#f8fafc" font-size="10">18°C</text>
+    <text x="100" y="45" text-anchor="middle" fill="#f8fafc" font-size="10">22°C</text>
+    <text x="200" y="40" text-anchor="middle" fill="#f8fafc" font-size="10">25°C</text>
+    <text x="300" y="45" text-anchor="middle" fill="#f8fafc" font-size="10">21°C</text>
+  </g>
+</svg>

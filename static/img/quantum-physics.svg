@@ -1,0 +1,185 @@
+<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="atomGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#059669;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#047857;stop-opacity:0.4" />
+    </radialGradient>
+    <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.8" />
+    </linearGradient>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0c0a1e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1e1b3a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d1b69;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="smallGlow">
+      <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="600" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Atom structure -->
+  <g transform="translate(150, 200)">
+    <!-- Nucleus -->
+    <circle cx="0" cy="0" r="8" fill="#ef4444" filter="url(#glow)"/>
+    
+    <!-- Electron orbits -->
+    <ellipse cx="0" cy="0" rx="40" ry="15" stroke="#10b981" stroke-width="2" fill="none" opacity="0.6"/>
+    <ellipse cx="0" cy="0" rx="60" ry="25" stroke="#10b981" stroke-width="2" fill="none" opacity="0.6"/>
+    <ellipse cx="0" cy="0" rx="80" ry="35" stroke="#10b981" stroke-width="2" fill="none" opacity="0.6"/>
+    
+    <!-- Electrons -->
+    <circle cx="40" cy="0" r="3" fill="#3b82f6" filter="url(#smallGlow)"/>
+    <circle cx="-30" cy="20" r="3" fill="#3b82f6" filter="url(#smallGlow)"/>
+    <circle cx="50" cy="-30" r="3" fill="#3b82f6" filter="url(#smallGlow)"/>
+    <circle cx="-60" cy="15" r="3" fill="#3b82f6" filter="url(#smallGlow)"/>
+    <circle cx="70" cy="25" r="3" fill="#3b82f6" filter="url(#smallGlow)"/>
+  </g>
+  
+  <!-- Wave function visualization -->
+  <g transform="translate(50, 80)">
+    <text x="0" y="0" fill="#f8fafc" font-size="14" font-weight="bold">波函数 Ψ(x,t)</text>
+    
+    <!-- Wave -->
+    <path d="M0 30 Q25 10 50 30 Q75 50 100 30 Q125 10 150 30 Q175 50 200 30 Q225 10 250 30 Q275 50 300 30" 
+          stroke="url(#waveGradient)" stroke-width="3" fill="none" filter="url(#glow)"/>
+    
+    <!-- Probability density |Ψ|² -->
+    <g transform="translate(0, 60)">
+      <text x="0" y="0" fill="#f8fafc" font-size="12">概率密度 |Ψ|²</text>
+      <path d="M0 20 Q25 5 50 20 Q75 35 100 20 Q125 5 150 20 Q175 35 200 20 Q225 5 250 20 Q275 35 300 20" 
+            stroke="#fbbf24" stroke-width="2" fill="none"/>
+      
+      <!-- Probability bars -->
+      <rect x="20" y="20" width="4" height="15" fill="#fbbf24" opacity="0.6"/>
+      <rect x="70" y="20" width="4" height="25" fill="#fbbf24" opacity="0.6"/>
+      <rect x="120" y="20" width="4" height="15" fill="#fbbf24" opacity="0.6"/>
+      <rect x="170" y="20" width="4" height="25" fill="#fbbf24" opacity="0.6"/>
+      <rect x="220" y="20" width="4" height="15" fill="#fbbf24" opacity="0.6"/>
+      <rect x="270" y="20" width="4" height="25" fill="#fbbf24" opacity="0.6"/>
+    </g>
+  </g>
+  
+  <!-- Quantum equations -->
+  <g transform="translate(380, 80)">
+    <rect x="0" y="0" width="200" height="120" fill="rgba(0,0,0,0.4)" rx="10"/>
+    
+    <text x="10" y="20" fill="#f8fafc" font-size="12" font-weight="bold">薛定谔方程:</text>
+    <text x="10" y="35" fill="#e2e8f0" font-size="11">iℏ ∂Ψ/∂t = ĤΨ</text>
+    
+    <text x="10" y="55" fill="#f8fafc" font-size="12" font-weight="bold">不确定性原理:</text>
+    <text x="10" y="70" fill="#e2e8f0" font-size="11">Δx · Δp ≥ ℏ/2</text>
+    
+    <text x="10" y="90" fill="#f8fafc" font-size="12" font-weight="bold">概率归一化:</text>
+    <text x="10" y="105" fill="#e2e8f0" font-size="11">∫|Ψ|² dx = 1</text>
+  </g>
+  
+  <!-- Quantum states visualization -->
+  <g transform="translate(400, 220)">
+    <text x="0" y="0" fill="#f8fafc" font-size="12" font-weight="bold">量子态叠加</text>
+    
+    <!-- Superposition states -->
+    <g transform="translate(0, 20)">
+      <!-- State |0⟩ -->
+      <circle cx="20" cy="20" r="8" fill="#3b82f6" opacity="0.7"/>
+      <text x="20" y="25" text-anchor="middle" fill="#f8fafc" font-size="8">|0⟩</text>
+      
+      <!-- Plus sign -->
+      <text x="40" y="25" text-anchor="middle" fill="#f8fafc" font-size="12">+</text>
+      
+      <!-- State |1⟩ -->
+      <circle cx="60" cy="20" r="8" fill="#ef4444" opacity="0.7"/>
+      <text x="60" y="25" text-anchor="middle" fill="#f8fafc" font-size="8">|1⟩</text>
+      
+      <!-- Equals -->
+      <text x="80" y="25" text-anchor="middle" fill="#f8fafc" font-size="12">=</text>
+      
+      <!-- Superposition state -->
+      <circle cx="110" cy="20" r="8" fill="#8b5cf6" opacity="0.7"/>
+      <text x="110" y="25" text-anchor="middle" fill="#f8fafc" font-size="8">|Ψ⟩</text>
+    </g>
+    
+    <!-- Measurement probabilities -->
+    <g transform="translate(0, 60)">
+      <text x="0" y="0" fill="#f8fafc" font-size="10">测量概率:</text>
+      <rect x="0" y="10" width="60" height="8" fill="#3b82f6" opacity="0.6"/>
+      <rect x="65" y="10" width="40" height="8" fill="#ef4444" opacity="0.6"/>
+      <text x="30" y="25" text-anchor="middle" fill="#f8fafc" font-size="8">60%</text>
+      <text x="85" y="25" text-anchor="middle" fill="#f8fafc" font-size="8">40%</text>
+    </g>
+  </g>
+  
+  <!-- Quantum tunneling -->
+  <g transform="translate(50, 280)">
+    <text x="0" y="0" fill="#f8fafc" font-size="12" font-weight="bold">量子隧穿效应</text>
+    
+    <!-- Potential barrier -->
+    <rect x="100" y="20" width="30" height="40" fill="#ef4444" opacity="0.6"/>
+    <text x="115" y="45" text-anchor="middle" fill="#f8fafc" font-size="8">势垒</text>
+    
+    <!-- Particle wave before barrier -->
+    <path d="M20 40 Q40 30 60 40 Q80 50 100 40" stroke="#3b82f6" stroke-width="2" fill="none"/>
+    
+    <!-- Particle wave after barrier -->
+    <path d="M130 40 Q150 35 170 40 Q190 45 210 40" stroke="#3b82f6" stroke-width="2" fill="none" opacity="0.6"/>
+    
+    <!-- Probability arrows -->
+    <g stroke="#10b981" stroke-width="2" fill="#10b981">
+      <defs>
+        <marker id="quantumArrow" markerWidth="8" markerHeight="6" 
+                refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#10b981"/>
+        </marker>
+      </defs>
+      <line x1="80" y1="25" x2="110" y2="25" marker-end="url(#quantumArrow)"/>
+      <line x1="120" y1="25" x2="150" y2="25" marker-end="url(#quantumArrow)"/>
+    </g>
+    
+    <text x="95" y="15" text-anchor="middle" fill="#10b981" font-size="8">P = 0.3</text>
+    <text x="135" y="15" text-anchor="middle" fill="#10b981" font-size="8">P = 0.1</text>
+  </g>
+  
+  <!-- Quantum entanglement -->
+  <g transform="translate(350, 300)">
+    <text x="0" y="0" fill="#f8fafc" font-size="12" font-weight="bold">量子纠缠</text>
+    
+    <!-- Entangled particles -->
+    <circle cx="30" cy="30" r="6" fill="#8b5cf6" filter="url(#smallGlow)"/>
+    <circle cx="120" cy="30" r="6" fill="#8b5cf6" filter="url(#smallGlow)"/>
+    
+    <!-- Entanglement connection -->
+    <path d="M36 30 Q75 15 114 30" stroke="#8b5cf6" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+    <path d="M36 30 Q75 45 114 30" stroke="#8b5cf6" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+    
+    <!-- Spin indicators -->
+    <text x="30" y="50" text-anchor="middle" fill="#f8fafc" font-size="8">↑</text>
+    <text x="120" y="50" text-anchor="middle" fill="#f8fafc" font-size="8">↓</text>
+    
+    <text x="75" y="60" text-anchor="middle" fill="#e2e8f0" font-size="8">瞬时关联</text>
+  </g>
+  
+  <!-- Particles -->
+  <g opacity="0.8">
+    <circle cx="500" cy="100" r="2" fill="#fbbf24" filter="url(#smallGlow)"/>
+    <circle cx="520" cy="120" r="2" fill="#3b82f6" filter="url(#smallGlow)"/>
+    <circle cx="480" cy="140" r="2" fill="#ef4444" filter="url(#smallGlow)"/>
+    <circle cx="540" cy="160" r="2" fill="#10b981" filter="url(#smallGlow)"/>
+    <circle cx="460" cy="180" r="2" fill="#8b5cf6" filter="url(#smallGlow)"/>
+  </g>
+</svg>
