@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <radialGradient id="galaxyIcon" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#1e293b;stop-opacity:0.3" />
+    </radialGradient>
+    <filter id="iconGlow">
+      <feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Galaxy spiral -->
+  <circle cx="12" cy="12" r="8" fill="url(#galaxyIcon)" opacity="0.6"/>
+  
+  <!-- Spiral arms -->
+  <path d="M12 4 Q16 8 12 12 Q8 16 12 20" stroke="#a855f7" stroke-width="1.5" fill="none" opacity="0.8"/>
+  <path d="M20 12 Q16 8 12 12 Q8 16 4 12" stroke="#3b82f6" stroke-width="1.5" fill="none" opacity="0.8"/>
+  
+  <!-- Central bright core -->
+  <circle cx="12" cy="12" r="2" fill="#fbbf24" filter="url(#iconGlow)"/>
+  
+  <!-- Stars around -->
+  <circle cx="6" cy="6" r="0.8" fill="#fbbf24" opacity="0.9"/>
+  <circle cx="18" cy="6" r="0.6" fill="#f8fafc" opacity="0.8"/>
+  <circle cx="6" cy="18" r="0.6" fill="#3b82f6" opacity="0.9"/>
+  <circle cx="18" cy="18" r="0.8" fill="#a855f7" opacity="0.8"/>
+  
+  <!-- Distant stars -->
+  <circle cx="3" cy="12" r="0.4" fill="#f8fafc" opacity="0.6"/>
+  <circle cx="21" cy="12" r="0.4" fill="#fbbf24" opacity="0.7"/>
+  <circle cx="12" cy="3" r="0.4" fill="#3b82f6" opacity="0.6"/>
+  <circle cx="12" cy="21" r="0.4" fill="#a855f7" opacity="0.7"/>
+</svg>
