@@ -331,6 +331,44 @@
         transform: translateY(-2px);
       }
 
+      /* AI求助功能样式 */
+      .ai-help-section {
+        transition: all 0.3s ease;
+      }
+
+      .ai-help-section.hidden {
+        display: none;
+      }
+
+      .ai-help-chevron {
+        transition: transform 0.3s ease;
+      }
+
+      .ai-help-chevron.rotated {
+        transform: rotate(180deg);
+      }
+
+      .ai-help-send {
+        min-width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .ai-help-send:hover {
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+      }
+
+      .border-glow {
+        box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+      }
+
+      .ai-help-response {
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
       /* 思考动画样式 */
       .thinking-animation {
         display: flex;
@@ -1109,6 +1147,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="0">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1130,6 +1199,37 @@
                     <button class="rating-btn" data-rating="3">3</button>
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="1">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1155,6 +1255,37 @@
                     <button class="rating-btn" data-rating="3">3</button>
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="0">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1207,6 +1338,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="1">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1253,6 +1415,37 @@
                     <button class="rating-btn" data-rating="3">3</button>
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="2">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1318,6 +1511,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="3">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1366,6 +1590,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="4">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1413,6 +1668,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="5">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1454,6 +1740,37 @@
                     <button class="rating-btn" data-rating="3">3</button>
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="6">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1509,6 +1826,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="7">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1551,6 +1899,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="8">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1592,6 +1971,37 @@
                     <button class="rating-btn" data-rating="3">3</button>
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="9">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1640,6 +2050,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="10">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1682,6 +2123,37 @@
                     <button class="rating-btn" data-rating="3">3</button>
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="11">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1737,6 +2209,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="12">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1779,6 +2282,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="13">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1820,6 +2354,37 @@
                     <button class="rating-btn" data-rating="3">3</button>
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="14">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1867,6 +2432,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="15">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1908,6 +2504,37 @@
                     <button class="rating-btn" data-rating="3">3</button>
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="16">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1963,6 +2590,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="17">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -2005,6 +2663,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="18">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -2046,6 +2735,37 @@
                     <button class="rating-btn" data-rating="3">3</button>
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="19">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2093,6 +2813,37 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="20">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -2134,6 +2885,37 @@
                     <button class="rating-btn" data-rating="3">3</button>
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
+                  </div>
+                  
+                  <!-- AI求助功能区域 -->
+                  <div class="ai-help-section hidden mt-4" data-step="21">
+                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                            <i class="fa fa-robot text-neon-blue"></i>
+                          </div>
+                          <div>
+                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
+                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                          </div>
+                        </div>
+                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                      </div>
+                    </div>
+                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                      <div class="mb-4">
+                        <div class="flex space-x-2">
+                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
+                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                            <i class="fa fa-paper-plane"></i>
+                          </button>
+                        </div>
+                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                          <div class="text-sm text-gray-300"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2375,7 +3157,7 @@
     </section>
 
     <!-- 工具箱脚本 -->
-    <script src="../static/js/toolbox.js"></script>
+    <script src="/static/js/toolbox.js"></script>
     <script>
       // 全局变量
       let coinExperimentData = [];
@@ -3007,10 +3789,12 @@
       let currentStep = 0;
 // 全局变量
       let stepRatings = {};
+      let stepRatings2 = {};
       let stepRatings3 = {};
       let stepRatings4 = {};
       let stepRatings5 = {};
       let understandingChart1 = null;
+      let understandingChart2 = null;
       let understandingChart3 = null;
       let understandingChart4 = null;
       let understandingChart5 = null;
@@ -3019,6 +3803,7 @@
       function initRatingSystem() {
         // 初始化所有图表
         initUnderstandingChart();
+        initUnderstandingChart2();
         initUnderstandingChart3();
         initUnderstandingChart4();
         initUnderstandingChart5();
@@ -3035,6 +3820,9 @@
               case 1:
                 stepRatings[stepIndex] = rating;
                 break;
+              case 2:
+                stepRatings2[stepIndex] = rating;
+                break;
               case 3:
                 stepRatings3[stepIndex] = rating;
                 break;
@@ -3049,6 +3837,9 @@
             // 更新按钮样式
             updateButtonState(this);
             
+            // 检查是否需要显示AI求助功能
+            handleAIHelpDisplay(rating, this);
+            
             // 检查是否可以解锁下一步
             checkStepProgression(stepIndex, cardNumber);
             
@@ -3056,6 +3847,109 @@
             updateChartData(cardNumber);
           });
         });
+      }
+
+      // 处理AI求助功能的显示
+      function handleAIHelpDisplay(rating, buttonElement) {
+        const ratingSection = buttonElement.closest('.rating-section');
+        const aiHelpSection = ratingSection.querySelector('.ai-help-section');
+        
+        if (rating < 3 && aiHelpSection) {
+          // 评分小于3分时，显示AI求助功能
+          aiHelpSection.classList.remove('hidden');
+          
+          // 添加展开动画
+          setTimeout(() => {
+            aiHelpSection.style.animation = 'fadeIn 0.5s ease-in-out';
+          }, 100);
+        } else if (rating >= 3 && aiHelpSection) {
+          // 评分大于等于3分时，隐藏AI求助功能
+          aiHelpSection.classList.add('hidden');
+        }
+      }
+
+      // 初始化AI求助功能事件
+      function initAIHelpEvents() {
+        // AI求助区域的展开/收起功能
+        document.querySelectorAll('.ai-help-section .tool-header').forEach(header => {
+          header.addEventListener('click', function() {
+            const content = this.nextElementSibling;
+            const chevron = this.querySelector('.ai-help-chevron');
+            
+            if (content.classList.contains('hidden')) {
+              content.classList.remove('hidden');
+              chevron.classList.add('rotated');
+            } else {
+              content.classList.add('hidden');
+              chevron.classList.remove('rotated');
+            }
+          });
+        });
+
+        // AI求助发送按钮事件
+        document.querySelectorAll('.ai-help-send').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const helpSection = this.closest('.ai-help-section');
+            const input = helpSection.querySelector('.ai-help-input');
+            const responseDiv = helpSection.querySelector('.ai-help-response');
+            const responseContent = responseDiv.querySelector('div');
+            const stepIndex = helpSection.dataset.step;
+            
+            const question = input.value.trim();
+            if (!question) {
+              alert('请输入您的问题');
+              return;
+            }
+            
+            // 显示加载状态
+            responseDiv.classList.remove('hidden');
+            responseContent.innerHTML = '<div class="thinking-animation"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> AI正在思考...';
+            
+            // 模拟AI回复（这里可以接入真实的AI API）
+            setTimeout(() => {
+              const aiResponse = generateAIResponse(question, stepIndex);
+              responseContent.innerHTML = aiResponse;
+              input.value = ''; // 清空输入框
+            }, 2000);
+          });
+        });
+
+        // AI求助输入框回车事件
+        document.querySelectorAll('.ai-help-input').forEach(input => {
+          input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              const sendBtn = this.nextElementSibling;
+              sendBtn.click();
+            }
+          });
+        });
+      }
+
+      // 生成AI回复内容
+      function generateAIResponse(question, stepIndex) {
+        const stepHelp = {
+          0: {
+            keywords: ['切比雪夫', '不等式', '概率', '期望', '方差'],
+            response: '切比雪夫不等式是概率论中的重要定理，它给出了随机变量偏离其期望值的概率上界。具体来说，对于任意随机变量X，有P(|X - E[X]| ≥ kσ) ≤ 1/k²，其中σ是标准差，k > 1。这个不等式告诉我们，随机变量的值越偏离期望值，出现的概率就越小。'
+          },
+          1: {
+            keywords: ['样本均值', '期望', '方差', '样本量'],
+            response: '样本均值是样本中所有观测值的平均数。重要的是，样本均值的期望等于总体均值，即E[X̄] = μ。而样本均值的方差等于总体方差除以样本量，即Var(X̄) = σ²/n。这意味着随着样本量n的增加，样本均值的方差会减小，样本均值会更加接近总体均值。'
+          }
+        };
+
+        const currentStep = stepHelp[stepIndex] || stepHelp[0];
+        
+        // 简单的关键词匹配
+        const hasKeyword = currentStep.keywords.some(keyword => 
+          question.toLowerCase().includes(keyword.toLowerCase())
+        );
+
+        if (hasKeyword) {
+          return currentStep.response;
+        } else {
+          return `关于您的问题"${question}"，我建议您重新阅读这一步骤的内容。如果您对具体概念有疑问，可以尝试用更具体的术语提问，比如：${currentStep.keywords.join('、')}等。`;
+        }
       }
 
       // 初始化理解度图表
@@ -3068,7 +3962,68 @@
         understandingChart1 = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: ['推导1', '推导2', '推导3', '推导4', '性质1', '性质2', '性质3'],
+            labels: ['切比雪夫不等式', '样本均值性质', '应用不等式', '取极限', '收敛速度', '样本量要求', '方差未知'],
+            datasets: [{
+              label: '理解度评分',
+              data: [0, 0, 0, 0, 0, 0, 0],
+              borderColor: '#ff8c00',
+              backgroundColor: 'rgba(255, 140, 0, 0.1)',
+              borderWidth: 3,
+              pointBackgroundColor: '#ff8c00',
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+              pointRadius: 6,
+              tension: 0.3,
+              fill: true,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 2,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 5,
+                ticks: {
+                  stepSize: 1,
+                  color: '#9ca3af',
+                },
+                grid: {
+                  color: 'rgba(156, 163, 175, 0.3)',
+                },
+              },
+              x: {
+                ticks: {
+                  color: '#9ca3af',
+                },
+                grid: {
+                  color: 'rgba(156, 163, 175, 0.3)',
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff',
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // 初始化第二张卡片的理解度图表
+      function initUnderstandingChart2() {
+        const canvas = document.getElementById('understanding-chart-2');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        understandingChart2 = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['特征函数方法', '泰勒展开', '收敛结果', '普适性', '收敛速度', '统计推断基础', '实际应用示例'],
             datasets: [{
               label: '理解度评分',
               data: [0, 0, 0, 0, 0, 0, 0],
@@ -3129,10 +4084,10 @@
         understandingChart3 = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: ['弱大数定律', '强大数定律', '区别分析', '收敛性质', '应用条件', '实例分析'],
+            labels: ['弱大数定律', '强大数定律', '收敛性关系', 'Kolmogorov定理', '切比雪夫方法', '条件差异', '实际意义', '经典实例', '反例分析'],
             datasets: [{
               label: '理解度评分',
-              data: [0, 0, 0, 0, 0, 0],
+              data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
               borderColor: '#ff8c00',
               backgroundColor: 'rgba(255, 140, 0, 0.1)',
               borderWidth: 3,
@@ -3190,10 +4145,10 @@
         understandingChart4 = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: ['收敛速度', '误差界限', '样本量估计', '置信区间', '实际应用', '优化策略'],
+            labels: ['切比雪夫界', 'Hoeffding界', '样本量计算', 'Bernstein不等式', 'Bennett不等式', 'A/B测试', '蒙特卡洛方法', '投票调查示例', 'VaR估计'],
             datasets: [{
               label: '理解度评分',
-              data: [0, 0, 0, 0, 0, 0],
+              data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
               borderColor: '#ff8c00',
               backgroundColor: 'rgba(255, 140, 0, 0.1)',
               borderWidth: 3,
@@ -3251,10 +4206,10 @@
         understandingChart5 = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: ['多元推广', '马尔可夫链', '鞅论应用', '现代发展', '实际案例', '前沿研究'],
+            labels: ['多元推广', '函数大数定律', '马尔可夫链', '鞅论应用', '随机场', '机器学习', '时间序列', '网络科学', '量子物理', '生物信息学'],
             datasets: [{
               label: '理解度评分',
-              data: [0, 0, 0, 0, 0, 0],
+              data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
               borderColor: '#ff8c00',
               backgroundColor: 'rgba(255, 140, 0, 0.1)',
               borderWidth: 3,
@@ -3316,7 +4271,7 @@
         switch(cardNumber) {
           case 1:
             if (!understandingChart1) return;
-            const data1 = [0, 0, 0, 0, 0, 0, 0];
+            const data1 = [0, 0, 0, 0, 0, 0, 0]; // 7个步骤
             for (let i = 0; i < 7; i++) {
               data1[i] = stepRatings[i] || 0;
             }
@@ -3324,10 +4279,20 @@
             understandingChart1.update();
             break;
             
+          case 2:
+            if (!understandingChart2) return;
+            const data2 = [0, 0, 0, 0, 0, 0, 0]; // 7个步骤
+            for (let i = 0; i < 7; i++) {
+              data2[i] = stepRatings2[i] || 0;
+            }
+            understandingChart2.data.datasets[0].data = data2;
+            understandingChart2.update();
+            break;
+            
           case 3:
             if (!understandingChart3) return;
-            const data3 = [0, 0, 0, 0, 0, 0];
-            for (let i = 0; i < 6; i++) {
+            const data3 = [0, 0, 0, 0, 0, 0, 0, 0, 0]; // 9个步骤
+            for (let i = 0; i < 9; i++) {
               data3[i] = stepRatings3[i] || 0;
             }
             understandingChart3.data.datasets[0].data = data3;
@@ -3336,8 +4301,8 @@
             
           case 4:
             if (!understandingChart4) return;
-            const data4 = [0, 0, 0, 0, 0, 0];
-            for (let i = 0; i < 6; i++) {
+            const data4 = [0, 0, 0, 0, 0, 0, 0, 0, 0]; // 9个步骤
+            for (let i = 0; i < 9; i++) {
               data4[i] = stepRatings4[i] || 0;
             }
             understandingChart4.data.datasets[0].data = data4;
@@ -3346,8 +4311,8 @@
             
           case 5:
             if (!understandingChart5) return;
-            const data5 = [0, 0, 0, 0, 0, 0];
-            for (let i = 0; i < 6; i++) {
+            const data5 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 10个步骤
+            for (let i = 0; i < 10; i++) {
               data5[i] = stepRatings5[i] || 0;
             }
             understandingChart5.data.datasets[0].data = data5;
@@ -3367,6 +4332,13 @@
             totalSteps = 7;
             completionMessageId = 'completion-message-1';
             nextCardStep = 2;
+            break;
+          case 2:
+            rating = stepRatings2[stepIndex];
+            currentRatings = stepRatings2;
+            totalSteps = 7;
+            completionMessageId = 'completion-message-2';
+            nextCardStep = 3;
             break;
           case 3:
             rating = stepRatings3[stepIndex];
@@ -3391,13 +4363,13 @@
             break;
         }
         
-        if (rating >= 3) {
-          // 解锁下一步
+        if (rating >= 1) {
+          // 解锁下一步（任何评分都可以解锁）
           unlockStep(stepIndex + 1, cardNumber);
         }
         
         // 检查是否所有步骤都完成
-        if (Object.keys(currentRatings).length === totalSteps && Object.values(currentRatings).every(r => r >= 3)) {
+        if (Object.keys(currentRatings).length === totalSteps && Object.values(currentRatings).every(r => r >= 1)) {
           showCompletionMessage(completionMessageId, nextCardStep);
         }
       }
@@ -3497,6 +4469,9 @@
           });
         });
 
+        // AI求助功能事件监听器
+        initAIHelpEvents();
+
         // 应用场景按钮事件
         document
           .getElementById("start-streaming-btn")
@@ -3529,10 +4504,7 @@
             );
           });
 
-        // 初始化工具箱
-        if (typeof ProbabilityToolbox !== "undefined") {
-          new ProbabilityToolbox();
-        }
+        // 工具箱已在toolbox.js中自动初始化
       });
     </script>
   </body>
