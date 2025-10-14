@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图标Div示例</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="static/libs/fontawesome/font-awesome.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#0a0a0a',
+                        'dark-card': '#1a1a1a',
+                        'neon-blue': '#00d4ff',
+                        'neon-purple': '#bf00ff',
+                        'neon-green': '#00ff88',
+                        'neon-pink': '#ff0080',
+                        'neon-orange': '#ff8800'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark-bg text-white p-8">
+    <h1 class="text-3xl font-bold mb-8 text-center">图标Div示例</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        
+        <!-- 您要求的紫色图标div -->
+        <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group">
+            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors">
+                <i class="fas fa-chart-line text-neon-purple text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-white">数据分析</h3>
+            <p class="text-gray-400">使用统计方法分析数据，发现隐藏的模式和趋势。</p>
+        </div>
+
+        <!-- 蓝色变体 -->
+        <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group">
+            <div class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors">
+                <i class="fas fa-calculator text-neon-blue text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-white">概率计算</h3>
+            <p class="text-gray-400">精确计算各种概率事件的发生可能性。</p>
+        </div>
+
+        <!-- 绿色变体 -->
+        <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group">
+            <div class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors">
+                <i class="fas fa-brain text-neon-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-white">机器学习</h3>
+            <p class="text-gray-400">应用概率统计原理构建智能预测模型。</p>
+        </div>
+
+        <!-- 橙色变体 -->
+        <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange transition-all duration-300 transform hover:-translate-y-2 group">
+            <div class="w-14 h-14 rounded-lg bg-neon-orange/10 flex items-center justify-center mb-6 group-hover:bg-neon-orange/20 transition-colors">
+                <i class="fas fa-flask text-neon-orange text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-white">实验设计</h3>
+            <p class="text-gray-400">设计科学实验，验证统计假设。</p>
+        </div>
+
+        <!-- 粉色变体 -->
+        <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-pink transition-all duration-300 transform hover:-translate-y-2 group">
+            <div class="w-14 h-14 rounded-lg bg-neon-pink/10 flex items-center justify-center mb-6 group-hover:bg-neon-pink/20 transition-colors">
+                <i class="fas fa-chart-pie text-neon-pink text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-white">数据可视化</h3>
+            <p class="text-gray-400">将复杂数据转化为直观的图表和图形。</p>
+        </div>
+
+        <!-- 自定义图标示例 -->
+        <div class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group">
+            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors">
+                <i class="fas fa-infinity text-neon-purple text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-white">无限可能</h3>
+            <p class="text-gray-400">探索概率统计的无限应用场景。</p>
+        </div>
+
+    </div>
+
+    <div class="mt-12 text-center">
+        <h2 class="text-2xl font-bold mb-4">可用的Font Awesome图标示例：</h2>
+        <div class="flex flex-wrap justify-center gap-4">
+            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center group-hover:bg-neon-purple/20 transition-colors">
+                <i class="fas fa-chart-bar text-neon-purple text-2xl"></i>
+            </div>
+            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center group-hover:bg-neon-purple/20 transition-colors">
+                <i class="fas fa-chart-line text-neon-purple text-2xl"></i>
+            </div>
+            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center group-hover:bg-neon-purple/20 transition-colors">
+                <i class="fas fa-chart-pie text-neon-purple text-2xl"></i>
+            </div>
+            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center group-hover:bg-neon-purple/20 transition-colors">
+                <i class="fas fa-calculator text-neon-purple text-2xl"></i>
+            </div>
+            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center group-hover:bg-neon-purple/20 transition-colors">
+                <i class="fas fa-brain text-neon-purple text-2xl"></i>
+            </div>
+            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center group-hover:bg-neon-purple/20 transition-colors">
+                <i class="fas fa-flask text-neon-purple text-2xl"></i>
+            </div>
+            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center group-hover:bg-neon-purple/20 transition-colors">
+                <i class="fas fa-infinity text-neon-purple text-2xl"></i>
+            </div>
+            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center group-hover:bg-neon-purple/20 transition-colors">
+                <i class="fas fa-random text-neon-purple text-2xl"></i>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

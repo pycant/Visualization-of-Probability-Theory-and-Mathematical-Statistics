@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -6,7 +6,7 @@
     <title>概率维度 | Probability Dimensions</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      href="../static/libs/fontawesome/font-awesome.min.css"
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
@@ -14,13 +14,10 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
 
     <!-- Markdown和LaTeX渲染库 -->
-    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script src="../static/libs/marked/marked.min.js"></script>
+    <script src="../static/libs/katex/js/katex.min.js"></script>
+    <link rel="stylesheet" href="../static/libs/katex/css/katex.min.css" />
+    <script src="../static/libs/katex/js/auto-render.min.js"></script>
 
     <!-- 配置Tailwind自定义颜色和字体 -->
     <script>
@@ -83,11 +80,51 @@
           background-size: 20px 20px;
         }
         .clip-path-slant {
-          clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+          /* 移除裁剪路径以避免内容被切除 */
+          /* clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%); */
         }
         .glass-effect {
           backdrop-filter: blur(10px);
           background-color: rgba(15, 23, 48, 0.6);
+        }
+
+        /* 社交媒体图标动画效果 */
+        .social-icon {
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .social-icon::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+          transition: left 0.5s;
+        }
+        
+        .social-icon:hover::before {
+          left: 100%;
+        }
+        
+        .social-icon:hover img {
+          transform: scale(1.1);
+          filter: brightness(1.2);
+        }
+        
+        @keyframes pulse-glow {
+          0%, 100% {
+            box-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
+          }
+          50% {
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.6), 0 0 30px rgba(0, 243, 255, 0.4);
+          }
+        }
+        
+        .social-icon:hover {
+          animation: pulse-glow 2s infinite;
         }
 
         /* Markdown内容样式 */
@@ -435,7 +472,8 @@
             <div
               class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors"
             >
-              <i class="fa fa-area-chart text-neon-purple text-2xl"></i>
+              <i class="fa fa-area-chart text-neon-purple text-xl mr-1"></i>
+              <i class="fa fa-infinity text-neon-purple text-xl"></i>
             </div>
             <h3 class="text-xl font-future font-semibold mb-3 text-white">
               概率分布
@@ -527,8 +565,6 @@
               </a>
             </div>
           </div>
-
-
 
           <!-- 概念卡片7 -->
           <div
@@ -1277,28 +1313,40 @@
             </p>
             <div class="flex space-x-4">
               <a
-                href="#"
-                class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-neon-blue hover:text-dark-bg transition-colors"
+                href="https://www.douyin.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-500 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
+                title="抖音 - 记录美好生活"
               >
-                <i class="fa fa-twitter"></i>
+                <img src="../static/img/tiktok.svg" alt="抖音" class="w-5 h-5 transition-transform duration-300" />
               </a>
               <a
-                href="#"
-                class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-neon-blue hover:text-dark-bg transition-colors"
+                href="https://www.bilibili.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-pink-400 hover:to-pink-600 hover:text-white transition-all duration-300 transform hover:scale-110 hover:-rotate-12"
+                title="哔哩哔哩 - 你感兴趣的视频都在B站"
               >
-                <i class="fa fa-facebook"></i>
+                <img src="../static/img/bilibili.svg" alt="哔哩哔哩" class="w-5 h-5 transition-transform duration-300" />
               </a>
               <a
-                href="#"
-                class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-neon-blue hover:text-dark-bg transition-colors"
+                href="https://weixin.qq.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-green-400 hover:to-green-600 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
+                title="微信 - 是一个生活方式"
               >
-                <i class="fa fa-instagram"></i>
+                <img src="../static/img/wechat.svg" alt="微信" class="w-5 h-5 transition-transform duration-300" />
               </a>
               <a
-                href="#"
-                class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-neon-blue hover:text-dark-bg transition-colors"
+                href="https://weibo.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-orange-400 hover:to-red-500 hover:text-white transition-all duration-300 transform hover:scale-110 hover:-rotate-12"
+                title="微博 - 随时随地发现新鲜事"
               >
-                <i class="fa fa-github"></i>
+                <img src="../static/img/weibo.svg" alt="微博" class="w-5 h-5 transition-transform duration-300" />
               </a>
             </div>
           </div>
@@ -1376,13 +1424,13 @@
             <ul class="space-y-3">
               <li class="flex items-start">
                 <i class="fa fa-envelope text-neon-blue mt-1 mr-3"></i>
-                <span class="text-gray-400"
-                  >WangHouxiong9558@outlook.com</span
-                >
+                <span class="text-gray-400">WangHouxiong9558@outlook.com</span>
               </li>
               <li class="flex items-start">
                 <i class="fa fa-map-marker text-neon-blue mt-1 mr-3"></i>
-                <span class="text-gray-400">江西省南昌市高新技术开发区天祥大道289号</span>
+                <span class="text-gray-400"
+                  >江西省南昌市高新技术开发区天祥大道289号</span
+                >
               </li>
               <li class="flex items-start">
                 <i class="fa fa-phone text-neon-blue mt-1 mr-3"></i>

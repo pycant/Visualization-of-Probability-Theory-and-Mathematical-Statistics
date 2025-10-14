@@ -21,3 +21,6 @@ def chi_square():
 
 if __name__ == '__main__':
     app.run(debug=True)
+@app.route('/icon-example')
+def icon_example():
+    return send_from_directory('.', 'icon_div_example.html')
