@@ -93,36 +93,43 @@
           position: relative;
           overflow: hidden;
         }
-        
+
         .social-icon::before {
-          content: '';
+          content: "";
           position: absolute;
           top: 0;
           left: -100%;
           width: 100%;
           height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+          );
           transition: left 0.5s;
         }
-        
+
         .social-icon:hover::before {
           left: 100%;
         }
-        
+
         .social-icon:hover img {
           transform: scale(1.1);
           filter: brightness(1.2);
         }
-        
+
         @keyframes pulse-glow {
-          0%, 100% {
+          0%,
+          100% {
             box-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
           }
           50% {
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.6), 0 0 30px rgba(0, 243, 255, 0.4);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.6),
+              0 0 30px rgba(0, 243, 255, 0.4);
           }
         }
-        
+
         .social-icon:hover {
           animation: pulse-glow 2s infinite;
         }
@@ -394,7 +401,7 @@
         <h1
           class="text-[clamp(2.5rem,8vw,5rem)] font-future font-bold leading-tight mb-6 animate-glow"
         >
-          <span class="block text-white">概率与</span>
+          <span class="block text-white">概率论与</span>
           <span class="text-neon-blue">数理统计</span>
         </h1>
         <p
@@ -1218,7 +1225,11 @@
               <div
                 class="w-12 h-12 rounded-full bg-neon-purple/20 flex items-center justify-center mb-4"
               >
-                <img src="../static/img/cosmology-icon.svg" alt="宇宙学图标" class="w-6 h-6" />
+                <img
+                  src="../static/img/cosmology-icon.svg"
+                  alt="宇宙学图标"
+                  class="w-6 h-6"
+                />
               </div>
               <h3 class="text-xl font-future font-semibold mb-2 text-white">
                 宇宙学
@@ -1319,7 +1330,11 @@
                 class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-500 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
                 title="抖音 - 记录美好生活"
               >
-                <img src="../static/img/tiktok.svg" alt="抖音" class="w-5 h-5 transition-transform duration-300" />
+                <img
+                  src="../static/img/tiktok.svg"
+                  alt="抖音"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
               </a>
               <a
                 href="https://www.bilibili.com/"
@@ -1328,7 +1343,11 @@
                 class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-pink-400 hover:to-pink-600 hover:text-white transition-all duration-300 transform hover:scale-110 hover:-rotate-12"
                 title="哔哩哔哩 - 你感兴趣的视频都在B站"
               >
-                <img src="../static/img/bilibili.svg" alt="哔哩哔哩" class="w-5 h-5 transition-transform duration-300" />
+                <img
+                  src="../static/img/bilibili.svg"
+                  alt="哔哩哔哩"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
               </a>
               <a
                 href="https://weixin.qq.com/"
@@ -1337,7 +1356,11 @@
                 class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-green-400 hover:to-green-600 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
                 title="微信 - 是一个生活方式"
               >
-                <img src="../static/img/wechat.svg" alt="微信" class="w-5 h-5 transition-transform duration-300" />
+                <img
+                  src="../static/img/wechat.svg"
+                  alt="微信"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
               </a>
               <a
                 href="https://weibo.com/"
@@ -1346,7 +1369,11 @@
                 class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-orange-400 hover:to-red-500 hover:text-white transition-all duration-300 transform hover:scale-110 hover:-rotate-12"
                 title="微博 - 随时随地发现新鲜事"
               >
-                <img src="../static/img/weibo.svg" alt="微博" class="w-5 h-5 transition-transform duration-300" />
+                <img
+                  src="../static/img/weibo.svg"
+                  alt="微博"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
               </a>
             </div>
           </div>

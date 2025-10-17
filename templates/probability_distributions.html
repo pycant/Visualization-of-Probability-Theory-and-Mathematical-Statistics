@@ -424,6 +424,8 @@
         padding: 1rem;
         margin: 1rem 0;
         text-align: center;
+        overflow-x: auto;
+        white-space: nowrap;
       }
 
       .math-formula .MathJax {
@@ -451,7 +453,6 @@
         height: 100%;
         backface-visibility: hidden;
         border-radius: 0.75rem;
-        margin:0.5rem;
         padding: 2rem;
         overflow-y: auto;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -544,7 +545,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: 1.5rem;
+        margin-top: 0.8rem;
         margin-bottom: 1.5rem;
         gap: 0.5rem;
       }
@@ -2074,10 +2075,43 @@
                     >
                       CDF
                     </button>
+                    <button
+                      onclick="toggleVideo()"
+                      id="video-btn"
+                      class="px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-neon-purple transition-all duration-300"
+                    >
+                      <i class="fa fa-play mr-2"></i>视频介绍
+                    </button>
                   </div>
                 </div>
-                <div class="h-96">
+                <div class="h-96 relative">
                   <canvas id="distribution-chart"></canvas>
+                  <!-- 视频播放容器 -->
+                  <div id="video-container" class="absolute inset-0 rounded-lg hidden" style="background: linear-gradient(45deg, rgba(139, 69, 19, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(139, 69, 19, 0.1) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(139, 69, 19, 0.1) 75%), linear-gradient(-45deg, transparent 75%, rgba(139, 69, 19, 0.1) 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;">
+                    <div class="w-full h-full flex items-center justify-center">
+                      <div id="video-content" class="w-full h-full">
+                        <!-- 视频播放器将在这里动态插入 -->
+                      </div>
+                    </div>
+                    <!-- 小窗播放控制 -->
+                    <div class="absolute top-4 right-4 flex space-x-2">
+                      <button
+                        onclick="toggleVideoSize()"
+                        id="video-size-btn"
+                        class="px-3 py-1 bg-neon-purple/80 text-white rounded-md hover:bg-neon-purple transition-all duration-300"
+                        title="切换播放窗口大小"
+                      >
+                        <i class="fa fa-expand"></i>
+                      </button>
+                      <button
+                        onclick="closeVideo()"
+                        class="px-3 py-1 bg-red-500/80 text-white rounded-md hover:bg-red-500 transition-all duration-300"
+                        title="关闭视频"
+                      >
+                        <i class="fa fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -5486,6 +5520,9 @@
           "px-4 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300";
         document.getElementById("cdf-btn").className =
           "px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-neon-blue transition-all duration-300";
+        document.getElementById("video-btn").className =
+          "px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-neon-purple transition-all duration-300";
+        hideVideo();
         updateChart();
       }
 
@@ -5495,7 +5532,222 @@
           "px-4 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300";
         document.getElementById("pdf-btn").className =
           "px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-neon-blue transition-all duration-300";
+        document.getElementById("video-btn").className =
+          "px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-neon-purple transition-all duration-300";
+        hideVideo();
         updateChart();
+      }
+
+      // 视频播放相关变量
+      let isVideoMode = false;
+      let isVideoMinimized = false;
+      let currentVideoElement = null;
+
+      // 视频路径配置
+      const videoConfig = {
+        "均匀分布": "../static/videos/均匀分布.mov",
+        "t分布": "../static/videos/t分布.mp4",
+        "正态分布": "../static/videos/正态分布.mp4",
+        "二项分布": null,
+        "泊松分布": "../static/videos/泊松分布.mp4",
+        "指数分布": "../static/videos/指数分布.mp4",
+        "伽马分布": null,
+        "贝塔分布": null,
+        "卡方分布": "../static/videos/卡方分布.mp4",
+        "F分布": null,
+        "逆伽马分布": null
+      };
+
+      // 切换视频模式
+      function toggleVideo() {
+        const currentDistribution = document.getElementById("chart-title").textContent;
+        const videoPath = videoConfig[currentDistribution];
+        
+        if (!videoPath) {
+          showNoVideoMessage();
+          return;
+        }
+
+        isVideoMode = !isVideoMode;
+        
+        if (isVideoMode) {
+          showVideo(videoPath, currentDistribution);
+          // 更新按钮样式
+          document.getElementById("video-btn").className =
+            "px-4 py-2 bg-neon-purple text-white font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300";
+          document.getElementById("pdf-btn").className =
+            "px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-neon-blue transition-all duration-300";
+          document.getElementById("cdf-btn").className =
+            "px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-neon-blue transition-all duration-300";
+        } else {
+          hideVideo();
+          // 恢复PDF按钮状态
+          togglePDF();
+        }
+      }
+
+      // 显示视频
+      function showVideo(videoPath, distributionName) {
+        const chartCanvas = document.getElementById("distribution-chart");
+        const videoContainer = document.getElementById("video-container");
+        const videoContent = document.getElementById("video-content");
+        
+        // 隐藏图表
+        chartCanvas.style.display = "none";
+        
+        // 创建视频元素
+        const video = document.createElement("video");
+        video.src = videoPath;
+        video.controls = true;
+        video.autoplay = false;
+        video.className = "w-full h-full object-contain rounded-lg";
+        video.style.maxHeight = "100%";
+        video.style.backgroundColor = "transparent";
+        video.style.mixBlendMode = "normal";
+        // 确保支持Alpha通道
+        video.setAttribute('webkit-playsinline', 'true');
+        video.setAttribute('playsinline', 'true');
+        
+        // 清空并添加视频
+        videoContent.innerHTML = "";
+        videoContent.appendChild(video);
+        
+        // 显示视频容器
+        videoContainer.classList.remove("hidden");
+        
+        currentVideoElement = video;
+        
+        // 添加视频事件监听
+        video.addEventListener('loadedmetadata', function() {
+          console.log(`视频加载完成: ${distributionName}`);
+        });
+        
+        video.addEventListener('error', function() {
+          showVideoError(distributionName);
+        });
+      }
+
+      // 隐藏视频
+      function hideVideo() {
+        const chartCanvas = document.getElementById("distribution-chart");
+        const videoContainer = document.getElementById("video-container");
+        const videoContent = document.getElementById("video-content");
+        
+        // 停止视频播放
+        if (currentVideoElement) {
+          currentVideoElement.pause();
+          currentVideoElement = null;
+        }
+        
+        // 清空视频内容
+        videoContent.innerHTML = "";
+        
+        // 隐藏视频容器
+        videoContainer.classList.add("hidden");
+        
+        // 显示图表
+        chartCanvas.style.display = "block";
+        
+        isVideoMode = false;
+        isVideoMinimized = false;
+      }
+
+      // 关闭视频
+      function closeVideo() {
+        hideVideo();
+        // 恢复PDF按钮状态
+        togglePDF();
+      }
+
+      // 切换视频窗口大小
+      function toggleVideoSize() {
+        const videoContainer = document.getElementById("video-container");
+        const videoSizeBtn = document.getElementById("video-size-btn");
+        
+        if (!isVideoMinimized) {
+          // 最小化视频
+          videoContainer.style.width = "300px";
+          videoContainer.style.height = "200px";
+          videoContainer.style.top = "20px";
+          videoContainer.style.right = "20px";
+          videoContainer.style.left = "auto";
+          videoContainer.style.bottom = "auto";
+          videoContainer.classList.add("z-50");
+          videoSizeBtn.innerHTML = '<i class="fa fa-compress"></i>';
+          isVideoMinimized = true;
+          
+          // 显示图表
+          document.getElementById("distribution-chart").style.display = "block";
+        } else {
+          // 恢复全尺寸
+          videoContainer.style.width = "";
+          videoContainer.style.height = "";
+          videoContainer.style.top = "";
+          videoContainer.style.right = "";
+          videoContainer.style.left = "";
+          videoContainer.style.bottom = "";
+          videoContainer.classList.remove("z-50");
+          videoSizeBtn.innerHTML = '<i class="fa fa-expand"></i>';
+          isVideoMinimized = false;
+          
+          // 隐藏图表
+          document.getElementById("distribution-chart").style.display = "none";
+        }
+      }
+
+      // 显示无视频消息
+      function showNoVideoMessage() {
+        const currentDistribution = document.getElementById("chart-title").textContent;
+        const videoContent = document.getElementById("video-content");
+        const videoContainer = document.getElementById("video-container");
+        const chartCanvas = document.getElementById("distribution-chart");
+        
+        // 隐藏图表
+        chartCanvas.style.display = "none";
+        
+        // 显示无视频消息
+        videoContent.innerHTML = `
+          <div class="flex flex-col items-center justify-center h-full text-center">
+            <i class="fa fa-video-slash text-6xl text-gray-500 mb-4"></i>
+            <h3 class="text-xl font-semibold text-white mb-2">暂无介绍视频</h3>
+            <p class="text-gray-400">${currentDistribution}的介绍视频正在制作中...</p>
+            <button 
+              onclick="closeVideo()" 
+              class="mt-4 px-4 py-2 bg-neon-blue text-white rounded-md hover:bg-neon-blue/80 transition-all duration-300"
+            >
+              返回图表
+            </button>
+          </div>
+        `;
+        
+        // 显示视频容器
+        videoContainer.classList.remove("hidden");
+        
+        // 3秒后自动关闭
+        setTimeout(() => {
+          if (!currentVideoElement) {
+            closeVideo();
+          }
+        }, 3000);
+      }
+
+      // 显示视频错误消息
+      function showVideoError(distributionName) {
+        const videoContent = document.getElementById("video-content");
+        
+        videoContent.innerHTML = `
+          <div class="flex flex-col items-center justify-center h-full text-center">
+            <i class="fa fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
+            <h3 class="text-xl font-semibold text-white mb-2">视频加载失败</h3>
+            <p class="text-gray-400">无法加载${distributionName}的介绍视频</p>
+            <button 
+              onclick="closeVideo()" 
+              class="mt-4 px-4 py-2 bg-neon-blue text-white rounded-md hover:bg-neon-blue/80 transition-all duration-300"
+            >
+              返回图表
+            </button>
+          </div>
+        `;
       }
 
       // 显示特定分布（从概览卡片调用）
