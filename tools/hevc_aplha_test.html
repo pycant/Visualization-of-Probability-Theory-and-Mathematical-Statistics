@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEVC带Alpha通道视频测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(45deg, #ffcccc, #ccffcc, #ccccff);
+            background-size: 400% 400%;
+            animation: gradient 10s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .video-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        video {
+            max-width: 100%;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: #000;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .info-panel {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .browser-support {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .browser-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .supported { border-left-color: #4CAF50; }
+        .unsupported { border-left-color: #f44336; }
+        .partial { border-left-color: #ff9800; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HEVC带Alpha通道视频测试页面</h1>
+        
+        <div class="info-panel">
+            <p>此页面用于测试带有Alpha透明通道的HEVC编码.mov视频在不同浏览器中的播放兼容性。</p>
+            <p><strong>测试原理：</strong>背景使用动态渐变色彩，如果视频的Alpha通道正常显示，您将能够透过视频看到背景图案。</p>
+        </div>
+
+        <div class="controls">
+            <button onclick="playAll()">播放所有视频</button>
+            <button onclick="pauseAll()">暂停所有视频</button>
+            <button onclick="toggleBackground()">切换背景</button>
+        </div>
+
+        <div class="video-container">
+            <div>
+                <h3>HEVC with Alpha (.mov)</h3>
+                <video id="hevcVideo" autoplay loop muted playsinline 
+                    onloadeddata="checkVideoSupport('hevcVideo', 'HEVC')">
+                    <source src="D:\project\数字人任务\课程介绍视频\16.mov" type='video/mp4; codecs="hvc1"'>
+                    您的浏览器不支持HEVC格式视频。
+                </video>
+                <div id="hevcStatus">检测中...</div>
+            </div>
+            
+            <div>
+                <h3>VP9 with Alpha (.webm) - 备用格式</h3>
+                <video id="vp9Video" autoplay loop muted playsinline
+                    onloadeddata="checkVideoSupport('vp9Video', 'VP9')">
+                    <source src="path/to/your/video.webm" type="video/webm">
+                    您的浏览器不支持VP9格式视频。
+                </video>
+                <div id="vp9Status">检测中...</div>
+            </div>
+        </div>
+
+        <div class="browser-support">
+            <div class="browser-card supported">
+                <h4>Safari (macOS 11+ / iOS 13+)</h4>
+                <p>✅ 完整支持HEVC with Alpha</p>
+                <p>推荐使用最新版本以获得最佳效果</p>
+            </div>
+            <div class="browser-card partial">
+                <h4>Chrome/Edge (最新版本)</h4>
+                <p>⚠️ 不支持HEVC with Alpha</p>
+                <p>✅ 支持VP9 with Alpha作为替代方案</p>
+            </div>
+            <div class="browser-card unsupported">
+                <h4>Firefox</h4>
+                <p>❌ 不支持HEVC with Alpha</p>
+                <p>✅ 支持VP9 with Alpha作为替代方案</p>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3>检测结果</h3>
+            <div id="detectionResults">
+                <p>正在检测浏览器兼容性...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 视频控制函数
+        function playAll() {
+            document.getElementById('hevcVideo').play();
+            document.getElementById('vp9Video').play();
+        }
+        
+        function pauseAll() {
+            document.getElementById('hevcVideo').pause();
+            document.getElementById('vp9Video').pause();
+        }
+        
+        function toggleBackground() {
+            document.body.classList.toggle('static-bg');
+        }
+        
+        // 视频支持检测
+        function checkVideoSupport(videoId, format) {
+            const video = document.getElementById(videoId);
+            const statusElement = document.getElementById(format.toLowerCase() + 'Status');
+            
+            video.addEventListener('loadeddata', function() {
+                statusElement.innerHTML = `✅ ${format}格式视频加载成功`;
+                statusElement.style.color = 'green';
+            });
+            
+            video.addEventListener('error', function() {
+                statusElement.innerHTML = `❌ ${format}格式视频加载失败`;
+                statusElement.style.color = 'red';
+            });
+        }
+        
+        // 浏览器兼容性检测
+        function detectBrowserSupport() {
+            const results = document.getElementById('detectionResults');
+            const video = document.createElement('video');
+            
+            let supportInfo = '<ul>';
+            
+            // 检测HEVC支持
+            const hevcSupported = video.canPlayType('video/mp4; codecs="hvc1"');
+            supportInfo += `<li>HEVC with Alpha支持: ${hevcSupported || 'no'}</li>`;
+            
+            // 检测VP9支持
+            const vp9Supported = video.canPlayType('video/webm; codecs="vp9"');
+            supportInfo += `<li>VP9 with Alpha支持: ${vp9Supported || 'no'}</li>`;
+            
+            // 用户代理信息
+            supportInfo += `<li>浏览器: ${navigator.userAgent}</li>`;
+            supportInfo += '</ul>';
+            
+            results.innerHTML = supportInfo;
+        }
+        
+        // 页面加载完成后执行检测
+        window.addEventListener('load', function() {
+            detectBrowserSupport();
+            // 设置背景切换
+            document.body.classList.add('static-bg');
+        });
+    </script>
+</body>
+</html>
