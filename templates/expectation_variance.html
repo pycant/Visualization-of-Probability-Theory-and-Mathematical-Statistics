@@ -6,7 +6,7 @@
     <title>期望与方差 | 概率维度</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="../static/libs/fontawesome/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
@@ -1231,44 +1231,205 @@
     </section>
 
     <!-- 页脚 -->
+    <!-- 页脚 -->
     <footer class="bg-dark-card py-12 border-t border-gray-800">
       <div class="container mx-auto px-4">
-        <div class="text-center">
-          <div class="flex items-center justify-center space-x-2 mb-4">
-            <div
-              class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-green to-neon-blue flex items-center justify-center"
-            >
-              <i class="fa fa-calculator text-white text-sm"></i>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <div class="flex items-center space-x-2 mb-6">
+              <div
+                class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center"
+              >
+                <i class="fa fa-calculator text-white text-xl"></i>
+              </div>
+              <h2 class="text-xl font-future font-bold text-white">
+                <span class="text-neon-blue">概率</span
+                ><span class="text-white">维度</span>
+              </h2>
             </div>
-            <h3 class="text-lg font-future font-bold text-white">
-              <span class="text-neon-green">期望</span
-              ><span class="text-white">与</span
-              ><span class="text-neon-blue">方差</span>
-            </h3>
+            <p class="text-gray-400 mb-6">
+              探索概率与数理统计的奇妙世界，揭示数据背后的规律。
+            </p>
+            <div class="flex space-x-4">
+              <a
+                href="https://www.douyin.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-500 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
+                title="抖音 - 记录美好生活"
+              >
+                <img
+                  src="../static/img/tiktok.svg"
+                  alt="抖音"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+              <a
+                href="https://www.bilibili.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-pink-400 hover:to-pink-600 hover:text-white transition-all duration-300 transform hover:scale-110 hover:-rotate-12"
+                title="哔哩哔哩 - 你感兴趣的视频都在B站"
+              >
+                <img
+                  src="../static/img/bilibili.svg"
+                  alt="哔哩哔哩"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+              <a
+                href="https://weixin.qq.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-green-400 hover:to-green-600 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
+                title="微信 - 是一个生活方式"
+              >
+                <img
+                  src="../static/img/wechat.svg"
+                  alt="微信"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+              <a
+                href="https://weibo.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-orange-400 hover:to-red-500 hover:text-white transition-all duration-300 transform hover:scale-110 hover:-rotate-12"
+                title="微博 - 随时随地发现新鲜事"
+              >
+                <img
+                  src="../static/img/weibo.svg"
+                  alt="微博"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+            </div>
           </div>
-          <p class="text-gray-400 mb-6">
-            探索随机变量的数字特征，理解数据的本质规律
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">快速链接</h3>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="index.html#concepts"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >核心概念</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#simulations"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >概率模拟</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#visualizations"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >数据可视化</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#applications"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >应用场景</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">学习资源</h3>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >教程与指南</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >在线课程</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >书籍推荐</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >研究论文</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">联系我们</h3>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <i class="fa fa-envelope text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400">WangHouxiong9558@outlook.com</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-map-marker text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400"
+                  >江西省南昌市高新技术开发区天祥大道289号</span
+                >
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-phone text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400">+86 173 5709 8869</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div
+          class="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"
+        >
+          <p class="text-gray-500 text-sm mb-4 md:mb-0">
+            © 2025 概率维度. 保留所有权利.
           </p>
-          <div class="flex justify-center space-x-6">
-            <a
-              href="index.html"
-              class="text-gray-400 hover:text-neon-green transition-colors"
+          <div class="flex space-x-6">
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >隐私政策</a
             >
-              <i class="fa fa-home mr-2"></i>首页
-            </a>
-            <a
-              href="probability_distributions.html"
-              class="text-gray-400 hover:text-neon-blue transition-colors"
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >服务条款</a
             >
-              <i class="fa fa-area-chart mr-2"></i>概率分布
-            </a>
-            <a
-              href="random_variables.html"
-              class="text-gray-400 hover:text-neon-purple transition-colors"
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >Cookie政策</a
             >
-              <i class="fa fa-random mr-2"></i>随机变量
-            </a>
           </div>
+        </div>
+        
+        <!-- 备案信息 -->
+        <div class="pt-4 text-center">
+          <p class="text-gray-500 text-sm">
+            <a 
+              href="http://beian.miit.gov.cn/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="text-gray-500 hover:text-gray-300 transition-colors underline cursor-pointer inline-block py-1 px-2"
+              style="z-index: 999; position: relative;"
+            >
+              赣ICP备2025074925号
+            </a>
+          </p>
+          <p class="text-gray-600 text-xs mt-1">
+            审核通过日期：2025-10-27
+          </p>
         </div>
       </div>
     </footer>

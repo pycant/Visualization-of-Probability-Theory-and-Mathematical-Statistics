@@ -6,27 +6,19 @@
     <title>大数定律探索 - 概率统计可视化</title>
     <link
       rel="stylesheet"
-      href="../static/libs/fontawesome/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../static/libs/chart/chart.umd.min.js"></script>
     <script src="../static/libs/chart/chartjs-plugin-annotation.min.js"></script>
+    <script src="../static/js/url-click-handler.js"></script>
     <!-- Marked.js for Markdown rendering -->
     <script src="../static/libs/marked/marked.min.js"></script>
 
     <!-- KaTeX for LaTeX rendering -->
-    <link
-      rel="stylesheet"
-      href="../static/libs/katex/css/katex.min.css"
-    />
-    <script
-      defer
-      src="../static/libs/katex/js/katex.min.js"
-    ></script>
-    <script
-      defer
-      src="../static/libs/katex/js/auto-render.min.js"
-    ></script>
+    <link rel="stylesheet" href="../static/libs/katex/css/katex.min.css" />
+    <script defer src="../static/libs/katex/js/katex.min.js"></script>
+    <script defer src="../static/libs/katex/js/auto-render.min.js"></script>
     <script>
       // 等待页面和所有脚本完全加载后再渲染数学公式
       window.addEventListener("load", function () {
@@ -628,7 +620,11 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+        background: linear-gradient(
+          45deg,
+          var(--neon-blue),
+          var(--neon-purple)
+        );
         display: flex;
         align-items: center;
         justify-content: center;
@@ -833,6 +829,12 @@
             event.stopPropagation();
           });
         });
+        
+        // 初始化URL点击处理
+        if (typeof URLClickHandler !== 'undefined') {
+          const clickHandler = new URLClickHandler();
+          clickHandler.init();
+        }
       });
     </script>
 
@@ -1108,8 +1110,8 @@
                 大数定律是概率论与数理统计的基本定理之一，描述了随机试验次数趋于无穷时，样本均值收敛于期望值的规律。
               </p>
               <div class="formula">
-                $$ \bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i \to \mu \quad \text{当}
-                \quad n \to \infty $$
+                $$ \bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i \to \mu \quad
+                \text{当} \quad n \to \infty $$
               </div>
               <p>
                 大数定律分为<strong>弱大数定律</strong>和<strong>强大数定律</strong>，区别在于收敛方式的不同。
@@ -1141,32 +1143,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="0">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -1182,7 +1205,9 @@
                     $$ E[\bar{X}_n] = \mu, \quad \text{Var}(\bar{X}_n) =
                     \frac{\sigma^2}{n} $$
                   </div>
-                  <p>样本均值的期望等于总体均值，方差等于总体方差除以样本量。</p>
+                  <p>
+                    样本均值的期望等于总体均值，方差等于总体方差除以样本量。
+                  </p>
                 </div>
 
                 <div class="rating-section">
@@ -1194,32 +1219,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="1">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -1250,32 +1296,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="0">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -1288,7 +1355,8 @@
                 <div class="proof-step">
                   <strong>步骤 4:</strong> 取极限得到弱大数定律
                   <div class="formula">
-                    $$ \lim_{n\to\infty} P(|\bar{X}_n - \mu| \geq \epsilon) = 0 $$
+                    $$ \lim_{n\to\infty} P(|\bar{X}_n - \mu| \geq \epsilon) = 0
+                    $$
                   </div>
                   <p>
                     当样本量趋于无穷时，样本均值偏离总体均值的概率趋于零，这就是弱大数定律。
@@ -1310,7 +1378,9 @@
 
             <!-- 重要性质部分 -->
             <div class="section">
-              <h3 class="section-title"><i class="fas fa-star"></i> 重要性质</h3>
+              <h3 class="section-title">
+                <i class="fas fa-star"></i> 重要性质
+              </h3>
               <p>大数定律的几个重要性质及其数学表达：</p>
 
               <div class="property-step" data-step-index="4">
@@ -1332,32 +1402,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="1">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -1392,13 +1483,15 @@
 
               <div class="property-step" data-step-index="6">
                 <div class="property-item">
-                  <strong>方差未知:</strong> 当总体方差未知时，可使用样本方差 $S^2$
-                  作为估计
+                  <strong>方差未知:</strong> 当总体方差未知时，可使用样本方差
+                  $S^2$ 作为估计
                   <div class="formula">
                     $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq
                     \frac{S^2}{n\epsilon^2} $$
                   </div>
-                  <p>在实际应用中，总体方差通常未知，可以使用样本方差进行估计。</p>
+                  <p>
+                    在实际应用中，总体方差通常未知，可以使用样本方差进行估计。
+                  </p>
                 </div>
 
                 <div class="rating-section">
@@ -1410,32 +1503,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="2">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -1450,7 +1564,11 @@
               <h3 class="section-title">
                 <i class="fas fa-chart-line"></i> 理解度追踪
               </h3>
-              <canvas id="understanding-chart-1" width="400" height="200"></canvas>
+              <canvas
+                id="understanding-chart-1"
+                width="400"
+                height="200"
+              ></canvas>
             </div>
 
             <div class="completion-message hidden" id="completion-message-1">
@@ -1483,21 +1601,29 @@
               <h3 class="section-title">
                 <i class="fas fa-calculator"></i> 理论推导
               </h3>
-              
+
               <div class="derivation-step active" data-step-index="0">
                 <div class="proof-step">
                   <strong>特征函数方法:</strong> CLT的经典证明
                   <div class="formula">
-                    $$ \phi_{\bar{X}_n}(t) = \phi_X\left(\frac{t}{\sqrt{n}}\right)^n $$
+                    $$ \phi_{\bar{X}_n}(t) =
+                    \phi_X\left(\frac{t}{\sqrt{n}}\right)^n $$
                   </div>
-                  <p>设 X₁, X₂, ..., Xₙ 独立同分布，E[Xᵢ] = μ, Var(Xᵢ) = σ²。标准化样本均值的特征函数为：</p>
+                  <p>
+                    设 X₁, X₂, ..., Xₙ 独立同分布，E[Xᵢ] = μ, Var(Xᵢ) =
+                    σ²。标准化样本均值的特征函数为：
+                  </p>
                   <div class="formula">
-                    $$ \phi_{\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma}}(t) = \left[\phi_{\frac{X-\mu}{\sigma}}\left(\frac{t}{\sqrt{n}}\right)\right]^n $$
+                    $$ \phi_{\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma}}(t) =
+                    \left[\phi_{\frac{X-\mu}{\sigma}}\left(\frac{t}{\sqrt{n}}\right)\right]^n
+                    $$
                   </div>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对特征函数方法的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对特征函数方法的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -1505,32 +1631,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="3">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -1543,16 +1690,21 @@
                 <div class="proof-step">
                   <strong>泰勒展开:</strong> 特征函数的局部行为
                   <div class="formula">
-                    $$ \phi_{\frac{X-\mu}{\sigma}}(t) = 1 - \frac{t^2}{2} + o(t^2) \quad \text{当 } t \to 0 $$
+                    $$ \phi_{\frac{X-\mu}{\sigma}}(t) = 1 - \frac{t^2}{2} +
+                    o(t^2) \quad \text{当 } t \to 0 $$
                   </div>
                   <p>利用标准化随机变量的特征函数在原点附近的泰勒展开：</p>
                   <div class="formula">
-                    $$ \left[1 - \frac{t^2}{2n} + o\left(\frac{t^2}{n}\right)\right]^n \to e^{-t^2/2} \quad \text{当 } n \to \infty $$
+                    $$ \left[1 - \frac{t^2}{2n} +
+                    o\left(\frac{t^2}{n}\right)\right]^n \to e^{-t^2/2} \quad
+                    \text{当 } n \to \infty $$
                   </div>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对泰勒展开应用的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对泰勒展开应用的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -1567,11 +1719,17 @@
                 <div class="proof-step">
                   <strong>收敛结果:</strong> 分布收敛到标准正态
                   <div class="formula">
-                    $$ \frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \xrightarrow{d} N(0,1) $$
+                    $$ \frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \xrightarrow{d}
+                    N(0,1) $$
                   </div>
-                  <p>由于 e^(-t²/2) 是标准正态分布的特征函数，根据连续性定理，我们得到分布收敛。</p>
+                  <p>
+                    由于 e^(-t²/2)
+                    是标准正态分布的特征函数，根据连续性定理，我们得到分布收敛。
+                  </p>
                   <div class="formula">
-                    $$ P\left(\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \leq z\right) \to \Phi(z) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^z e^{-t^2/2}dt $$
+                    $$ P\left(\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \leq
+                    z\right) \to \Phi(z) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^z
+                    e^{-t^2/2}dt $$
                   </div>
                 </div>
 
@@ -1584,32 +1742,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="4">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -1620,16 +1799,22 @@
             </div>
 
             <div class="section">
-              <h3 class="section-title"><i class="fas fa-star"></i> 重要性质</h3>
-              
+              <h3 class="section-title">
+                <i class="fas fa-star"></i> 重要性质
+              </h3>
+
               <div class="property-step" data-step-index="3">
                 <div class="property-item">
                   <strong>普适性:</strong> 与原分布无关的收敛性
                   <div class="formula">
-                    $$ \text{无论 } X \sim F \text{ 为何分布，只要 } E[X] = \mu, \text{Var}(X) = \sigma^2 < \infty $$
-                    $$ \frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \xrightarrow{d} N(0,1) $$
+                    $$ \text{无论 } X \sim F \text{ 为何分布，只要 } E[X] = \mu,
+                    \text{Var}(X) = \sigma^2 < \infty $$ $$
+                    \frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \xrightarrow{d}
+                    N(0,1) $$
                   </div>
-                  <p>这是CLT最重要的性质：收敛结果不依赖于原始分布的具体形式，只要满足有限方差条件。</p>
+                  <p>
+                    这是CLT最重要的性质：收敛结果不依赖于原始分布的具体形式，只要满足有限方差条件。
+                  </p>
                 </div>
 
                 <div class="rating-section">
@@ -1648,9 +1833,14 @@
                 <div class="property-item">
                   <strong>收敛速度:</strong> Berry-Esseen定理
                   <div class="formula">
-                    $$ \left|P\left(\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \leq z\right) - \Phi(z)\right| \leq \frac{C\rho}{\sigma^3\sqrt{n}} $$
+                    $$ \left|P\left(\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma}
+                    \leq z\right) - \Phi(z)\right| \leq
+                    \frac{C\rho}{\sigma^3\sqrt{n}} $$
                   </div>
-                  <p>其中 ρ = E[|X - μ|³] 是三阶绝对矩，C ≈ 0.4748。这给出了CLT收敛的定量速度界。</p>
+                  <p>
+                    其中 ρ = E[|X - μ|³] 是三阶绝对矩，C ≈
+                    0.4748。这给出了CLT收敛的定量速度界。
+                  </p>
                 </div>
 
                 <div class="rating-section">
@@ -1662,32 +1852,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="5">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -1700,13 +1911,20 @@
                 <div class="property-item">
                   <strong>统计推断基础:</strong> 置信区间与假设检验
                   <div class="formula">
-                    $$ P\left(\mu - z_{\alpha/2}\frac{\sigma}{\sqrt{n}} \leq \bar{X}_n \leq \mu + z_{\alpha/2}\frac{\sigma}{\sqrt{n}}\right) \approx 1-\alpha $$
+                    $$ P\left(\mu - z_{\alpha/2}\frac{\sigma}{\sqrt{n}} \leq
+                    \bar{X}_n \leq \mu +
+                    z_{\alpha/2}\frac{\sigma}{\sqrt{n}}\right) \approx 1-\alpha
+                    $$
                   </div>
-                  <p>CLT为构造置信区间和进行假设检验提供了理论基础，使得我们可以对总体参数进行统计推断。</p>
+                  <p>
+                    CLT为构造置信区间和进行假设检验提供了理论基础，使得我们可以对总体参数进行统计推断。
+                  </p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对统计推断应用的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对统计推断应用的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -1721,9 +1939,12 @@
                 <div class="property-item">
                   <strong>实际应用示例:</strong> 质量控制与民调
                   <div class="formula">
-                    $$ \text{样本量计算: } n \geq \left(\frac{z_{\alpha/2}\sigma}{E}\right)^2 $$
+                    $$ \text{样本量计算: } n \geq
+                    \left(\frac{z_{\alpha/2}\sigma}{E}\right)^2 $$
                   </div>
-                  <p>在质量控制中，利用CLT确定检测批次质量所需的样本量；在民调中，计算达到指定误差范围所需的调查人数。</p>
+                  <p>
+                    在质量控制中，利用CLT确定检测批次质量所需的样本量；在民调中，计算达到指定误差范围所需的调查人数。
+                  </p>
                 </div>
 
                 <div class="rating-section">
@@ -1735,32 +1956,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="6">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -1774,7 +2016,11 @@
               <h3 class="section-title">
                 <i class="fas fa-chart-line"></i> 理解度追踪
               </h3>
-              <canvas id="understanding-chart-2" width="400" height="200"></canvas>
+              <canvas
+                id="understanding-chart-2"
+                width="400"
+                height="200"
+              ></canvas>
             </div>
           </div>
 
@@ -1801,14 +2047,17 @@
               <h3 class="section-title">
                 <i class="fas fa-calculator"></i> 理论推导
               </h3>
-              
+
               <div class="derivation-step active" data-step-index="0">
                 <div class="proof-step">
                   <strong>弱大数定律（Weak Law）:</strong> 依概率收敛
                   <div class="formula">
-                    $$ \bar{X}_n \xrightarrow{P} \mu \quad \text{即} \quad \lim_{n\to\infty} P(|\bar{X}_n - \mu| > \epsilon) = 0 $$
+                    $$ \bar{X}_n \xrightarrow{P} \mu \quad \text{即} \quad
+                    \lim_{n\to\infty} P(|\bar{X}_n - \mu| > \epsilon) = 0 $$
                   </div>
-                  <p>对于任意 ε > 0，样本均值偏离总体均值超过 ε 的概率趋于零。</p>
+                  <p>
+                    对于任意 ε > 0，样本均值偏离总体均值超过 ε 的概率趋于零。
+                  </p>
                 </div>
 
                 <div class="rating-section">
@@ -1820,32 +2069,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="7">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -1858,7 +2128,8 @@
                 <div class="proof-step">
                   <strong>强大数定律（Strong Law）:</strong> 几乎必然收敛
                   <div class="formula">
-                    $$ \bar{X}_n \xrightarrow{a.s.} \mu \quad \text{即} \quad P\left(\lim_{n\to\infty} \bar{X}_n = \mu\right) = 1 $$
+                    $$ \bar{X}_n \xrightarrow{a.s.} \mu \quad \text{即} \quad
+                    P\left(\lim_{n\to\infty} \bar{X}_n = \mu\right) = 1 $$
                   </div>
                   <p>样本均值以概率1收敛到总体均值，这是比弱收敛更强的条件。</p>
                 </div>
@@ -1879,9 +2150,12 @@
                 <div class="proof-step">
                   <strong>收敛性关系:</strong> 强收敛蕴含弱收敛
                   <div class="formula">
-                    $$ \bar{X}_n \xrightarrow{a.s.} \mu \Rightarrow \bar{X}_n \xrightarrow{P} \mu $$
+                    $$ \bar{X}_n \xrightarrow{a.s.} \mu \Rightarrow \bar{X}_n
+                    \xrightarrow{P} \mu $$
                   </div>
-                  <p>几乎必然收敛是比依概率收敛更强的条件，强大数定律的成立意味着弱大数定律也成立。</p>
+                  <p>
+                    几乎必然收敛是比依概率收敛更强的条件，强大数定律的成立意味着弱大数定律也成立。
+                  </p>
                 </div>
 
                 <div class="rating-section">
@@ -1893,32 +2167,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="8">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -1931,13 +2226,19 @@
                 <div class="proof-step">
                   <strong>Kolmogorov强大数定律:</strong> 经典证明思路
                   <div class="formula">
-                    $$ \text{设 } S_n = \sum_{i=1}^n X_i, \quad \text{则} \quad \sum_{n=1}^{\infty} \frac{\text{Var}(X_n)}{n^2} < \infty $$
+                    $$ \text{设 } S_n = \sum_{i=1}^n X_i, \quad \text{则} \quad
+                    \sum_{n=1}^{\infty} \frac{\text{Var}(X_n)}{n^2} < \infty $$
                   </div>
-                  <p>通过Borel-Cantelli引理，证明 $\{|\bar{X}_n - \mu| > \epsilon \text{ i.o.}\}$ 的概率为0。</p>
+                  <p>
+                    通过Borel-Cantelli引理，证明 $\{|\bar{X}_n - \mu| > \epsilon
+                    \text{ i.o.}\}$ 的概率为0。
+                  </p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对Kolmogorov定理的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对Kolmogorov定理的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -1952,13 +2253,17 @@
                 <div class="proof-step">
                   <strong>弱大数定律的证明:</strong> 切比雪夫不等式方法
                   <div class="formula">
-                    $$ P(|\bar{X}_n - \mu| > \epsilon) \leq \frac{\text{Var}(\bar{X}_n)}{\epsilon^2} = \frac{\sigma^2}{n\epsilon^2} \to 0 $$
+                    $$ P(|\bar{X}_n - \mu| > \epsilon) \leq
+                    \frac{\text{Var}(\bar{X}_n)}{\epsilon^2} =
+                    \frac{\sigma^2}{n\epsilon^2} \to 0 $$
                   </div>
                   <p>当 $n \to \infty$ 时，右边趋于0，证明了依概率收敛。</p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对切比雪夫方法的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对切比雪夫方法的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -1966,32 +2271,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="9">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2002,14 +2328,17 @@
             </div>
 
             <div class="section">
-              <h3 class="section-title"><i class="fas fa-star"></i> 重要性质</h3>
-              
+              <h3 class="section-title">
+                <i class="fas fa-star"></i> 重要性质
+              </h3>
+
               <div class="property-step" data-step-index="5">
                 <div class="property-item">
                   <strong>条件差异:</strong> 强大数定律需要更严格的条件
                   <div class="formula">
-                    $$ \text{弱大数定律: } E[X_i] = \mu, \text{Var}(X_i) < \infty $$
-                    $$ \text{强大数定律: } E[|X_i|] < \infty \text{ (Kolmogorov条件)} $$
+                    $$ \text{弱大数定律: } E[X_i] = \mu, \text{Var}(X_i) <
+                    \infty $$ $$ \text{强大数定律: } E[|X_i|] < \infty \text{
+                    (Kolmogorov条件)} $$
                   </div>
                   <p>强大数定律通常需要更严格的矩条件或独立性假设。</p>
                 </div>
@@ -2030,7 +2359,8 @@
                 <div class="property-item">
                   <strong>实际意义:</strong> 收敛性的实际解释
                   <div class="formula">
-                    $$ \text{弱收敛: 大概率接近} \quad \text{强收敛: 路径收敛} $$
+                    $$ \text{弱收敛: 大概率接近} \quad \text{强收敛: 路径收敛}
+                    $$
                   </div>
                   <p>弱收敛关注概率，强收敛关注样本路径的行为。</p>
                 </div>
@@ -2044,32 +2374,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="10">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2082,14 +2433,19 @@
                 <div class="property-item">
                   <strong>经典实例:</strong> 抛硬币实验
                   <div class="formula">
-                    $$ X_i = \begin{cases} 1 & \text{正面} \\ 0 & \text{反面} \end{cases}, \quad \mu = 0.5 $$
+                    $$ X_i = \begin{cases} 1 & \text{正面} \\ 0 & \text{反面}
+                    \end{cases}, \quad \mu = 0.5 $$
                   </div>
-                  <p>弱大数定律：频率趋近于0.5的概率趋于1<br>
-                     强大数定律：几乎所有的样本路径都收敛到0.5</p>
+                  <p>
+                    弱大数定律：频率趋近于0.5的概率趋于1<br />
+                    强大数定律：几乎所有的样本路径都收敛到0.5
+                  </p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对抛硬币实例的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对抛硬币实例的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2104,9 +2460,13 @@
                 <div class="property-item">
                   <strong>反例分析:</strong> 强收敛不成立的情况
                   <div class="formula">
-                    $$ X_n = \begin{cases} n & \text{概率 } 1/n \\ 0 & \text{概率 } 1-1/n \end{cases} $$
+                    $$ X_n = \begin{cases} n & \text{概率 } 1/n \\ 0 &
+                    \text{概率 } 1-1/n \end{cases} $$
                   </div>
-                  <p>此时 $E[X_n] = 1$，弱大数定律成立，但 $E[|X_n|] = \infty$，强大数定律不适用。</p>
+                  <p>
+                    此时 $E[X_n] = 1$，弱大数定律成立，但 $E[|X_n|] =
+                    \infty$，强大数定律不适用。
+                  </p>
                 </div>
 
                 <div class="rating-section">
@@ -2118,32 +2478,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="11">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2157,7 +2538,11 @@
               <h3 class="section-title">
                 <i class="fas fa-chart-line"></i> 理解度追踪
               </h3>
-              <canvas id="understanding-chart-3" width="400" height="200"></canvas>
+              <canvas
+                id="understanding-chart-3"
+                width="400"
+                height="200"
+              ></canvas>
             </div>
           </div>
 
@@ -2184,18 +2569,21 @@
               <h3 class="section-title">
                 <i class="fas fa-calculator"></i> 误差界分析
               </h3>
-              
+
               <div class="derivation-step active" data-step-index="0">
                 <div class="proof-step">
                   <strong>切比雪夫界:</strong> 基本误差界
                   <div class="formula">
-                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq \frac{\sigma^2}{n\epsilon^2} $$
+                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq
+                    \frac{\sigma^2}{n\epsilon^2} $$
                   </div>
                   <p>这给出了 O(1/n) 的收敛速度，但通常不是最紧的界。</p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对切比雪夫界的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对切比雪夫界的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2203,32 +2591,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="12">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2241,13 +2650,19 @@
                 <div class="proof-step">
                   <strong>Hoeffding界:</strong> 更紧的误差界
                   <div class="formula">
-                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq 2\exp\left(-\frac{2n\epsilon^2}{(b-a)^2}\right) $$
+                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq
+                    2\exp\left(-\frac{2n\epsilon^2}{(b-a)^2}\right) $$
                   </div>
-                  <p>对于有界随机变量 X ∈ [a,b]，Hoeffding不等式给出指数衰减的误差界。</p>
+                  <p>
+                    对于有界随机变量 X ∈
+                    [a,b]，Hoeffding不等式给出指数衰减的误差界。
+                  </p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对Hoeffding界的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对Hoeffding界的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2268,7 +2683,9 @@
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对样本量计算的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对样本量计算的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2276,32 +2693,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="13">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2314,13 +2752,19 @@
                 <div class="proof-step">
                   <strong>Bernstein不等式:</strong> 次高斯随机变量的界
                   <div class="formula">
-                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq 2\exp\left(-\frac{n\epsilon^2}{2(\sigma^2 + \epsilon R/3)}\right) $$
+                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq
+                    2\exp\left(-\frac{n\epsilon^2}{2(\sigma^2 + \epsilon
+                    R/3)}\right) $$
                   </div>
-                  <p>对于有界随机变量，Bernstein不等式在小偏差时比Hoeffding界更紧。</p>
+                  <p>
+                    对于有界随机变量，Bernstein不等式在小偏差时比Hoeffding界更紧。
+                  </p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对Bernstein不等式的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对Bernstein不等式的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2335,13 +2779,19 @@
                 <div class="proof-step">
                   <strong>Bennett不等式:</strong> 最优的指数界
                   <div class="formula">
-                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq 2\exp\left(-\frac{n\sigma^2}{R^2}h\left(\frac{\epsilon R}{\sigma^2}\right)\right) $$
+                    $$ P(|\bar{X}_n - \mu| \geq \epsilon) \leq
+                    2\exp\left(-\frac{n\sigma^2}{R^2}h\left(\frac{\epsilon
+                    R}{\sigma^2}\right)\right) $$
                   </div>
-                  <p>其中 $h(x) = (1+x)\ln(1+x) - x$，这是已知的最紧的指数界。</p>
+                  <p>
+                    其中 $h(x) = (1+x)\ln(1+x) - x$，这是已知的最紧的指数界。
+                  </p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对Bennett不等式的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对Bennett不等式的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2349,32 +2799,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="14">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2385,19 +2856,25 @@
             </div>
 
             <div class="section">
-              <h3 class="section-title"><i class="fas fa-star"></i> 实际应用</h3>
-              
+              <h3 class="section-title">
+                <i class="fas fa-star"></i> 实际应用
+              </h3>
+
               <div class="property-step" data-step-index="5">
                 <div class="property-item">
                   <strong>A/B测试:</strong> 确定实验样本量
                   <div class="formula">
                     $$ n \geq \frac{4\sigma^2 z_{\alpha/2}^2}{\delta^2} $$
                   </div>
-                  <p>在A/B测试中，使用大数定律确定检测效应量 δ 所需的样本量。</p>
+                  <p>
+                    在A/B测试中，使用大数定律确定检测效应量 δ 所需的样本量。
+                  </p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对A/B测试应用的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对A/B测试应用的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2412,13 +2889,16 @@
                 <div class="property-item">
                   <strong>蒙特卡洛方法:</strong> 数值积分的误差控制
                   <div class="formula">
-                    $$ \text{误差} \approx \frac{\sigma}{\sqrt{n}} \quad \text{其中} \quad \sigma^2 = \text{Var}(f(X)) $$
+                    $$ \text{误差} \approx \frac{\sigma}{\sqrt{n}} \quad
+                    \text{其中} \quad \sigma^2 = \text{Var}(f(X)) $$
                   </div>
                   <p>蒙特卡洛积分的误差以 1/√n 的速度收敛到零。</p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对蒙特卡洛应用的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对蒙特卡洛应用的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2426,32 +2906,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="15">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2464,13 +2965,20 @@
                 <div class="property-item">
                   <strong>实际计算示例:</strong> 投票调查的样本量设计
                   <div class="formula">
-                    $$ n = \frac{z_{\alpha/2}^2 p(1-p)}{\epsilon^2} \approx \frac{1.96^2 \times 0.25}{\epsilon^2} = \frac{0.96}{\epsilon^2} $$
+                    $$ n = \frac{z_{\alpha/2}^2 p(1-p)}{\epsilon^2} \approx
+                    \frac{1.96^2 \times 0.25}{\epsilon^2} =
+                    \frac{0.96}{\epsilon^2} $$
                   </div>
-                  <p>例：要以95%置信度估计支持率，误差不超过3%，需要样本量 n ≥ 1067。</p>
+                  <p>
+                    例：要以95%置信度估计支持率，误差不超过3%，需要样本量 n ≥
+                    1067。
+                  </p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对投票调查示例的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对投票调查示例的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2485,7 +2993,8 @@
                 <div class="property-item">
                   <strong>金融风险管理:</strong> VaR估计的收敛速度
                   <div class="formula">
-                    $$ \text{VaR}_\alpha = F^{-1}(\alpha), \quad \text{估计误差} \sim O\left(\frac{1}{\sqrt{n}}\right) $$
+                    $$ \text{VaR}_\alpha = F^{-1}(\alpha), \quad \text{估计误差}
+                    \sim O\left(\frac{1}{\sqrt{n}}\right) $$
                   </div>
                   <p>使用历史模拟法估计VaR时，估计精度随样本量的平方根增长。</p>
                 </div>
@@ -2499,32 +3008,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="16">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2538,7 +3068,11 @@
               <h3 class="section-title">
                 <i class="fas fa-chart-line"></i> 理解度追踪
               </h3>
-              <canvas id="understanding-chart-4" width="400" height="200"></canvas>
+              <canvas
+                id="understanding-chart-4"
+                width="400"
+                height="200"
+              ></canvas>
             </div>
           </div>
 
@@ -2565,18 +3099,21 @@
               <h3 class="section-title">
                 <i class="fas fa-calculator"></i> 推广形式
               </h3>
-              
+
               <div class="derivation-step active" data-step-index="0">
                 <div class="proof-step">
                   <strong>多元大数定律:</strong> 向量值随机变量
                   <div class="formula">
-                    $$ \bar{\mathbf{X}}_n = \frac{1}{n}\sum_{i=1}^n \mathbf{X}_i \xrightarrow{P} \boldsymbol{\mu} $$
+                    $$ \bar{\mathbf{X}}_n = \frac{1}{n}\sum_{i=1}^n \mathbf{X}_i
+                    \xrightarrow{P} \boldsymbol{\mu} $$
                   </div>
                   <p>对于 d 维随机向量，各分量同时收敛到对应的期望值。</p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对多元大数定律的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对多元大数定律的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2584,32 +3121,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="17">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2622,13 +3180,16 @@
                 <div class="proof-step">
                   <strong>函数的大数定律:</strong> 连续映射定理
                   <div class="formula">
-                    $$ g(\bar{X}_n) \xrightarrow{P} g(\mu) \quad \text{当 } g \text{ 在 } \mu \text{ 处连续} $$
+                    $$ g(\bar{X}_n) \xrightarrow{P} g(\mu) \quad \text{当 } g
+                    \text{ 在 } \mu \text{ 处连续} $$
                   </div>
                   <p>如果 g 是连续函数，则样本均值的函数收敛到期望值的函数。</p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对函数大数定律的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对函数大数定律的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2643,9 +3204,12 @@
                 <div class="proof-step">
                   <strong>相依序列:</strong> 马尔可夫链的遍历定理
                   <div class="formula">
-                    $$ \frac{1}{n}\sum_{i=1}^n f(X_i) \xrightarrow{a.s.} \pi(f) = \sum_x f(x)\pi(x) $$
+                    $$ \frac{1}{n}\sum_{i=1}^n f(X_i) \xrightarrow{a.s.} \pi(f)
+                    = \sum_x f(x)\pi(x) $$
                   </div>
-                  <p>对于遍历马尔可夫链，时间平均收敛到空间平均（平稳分布下的期望）。</p>
+                  <p>
+                    对于遍历马尔可夫链，时间平均收敛到空间平均（平稳分布下的期望）。
+                  </p>
                 </div>
 
                 <div class="rating-section">
@@ -2657,32 +3221,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="18">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2695,13 +3280,16 @@
                 <div class="proof-step">
                   <strong>鞅大数定律:</strong> 鞅收敛定理
                   <div class="formula">
-                    $$ \frac{M_n}{n} \xrightarrow{a.s.} 0 \quad \text{当} \quad \sum_{n=1}^{\infty} \frac{E[|X_n|^2]}{n^2} < \infty $$
+                    $$ \frac{M_n}{n} \xrightarrow{a.s.} 0 \quad \text{当} \quad
+                    \sum_{n=1}^{\infty} \frac{E[|X_n|^2]}{n^2} < \infty $$
                   </div>
                   <p>对于鞅序列 $M_n$，在适当条件下，标准化的鞅收敛到0。</p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对鞅大数定律的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对鞅大数定律的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2716,9 +3304,13 @@
                 <div class="proof-step">
                   <strong>随机场的大数定律:</strong> 空间平均
                   <div class="formula">
-                    $$ \frac{1}{|A_n|} \sum_{i \in A_n} X_i \xrightarrow{P} E[X_0] $$
+                    $$ \frac{1}{|A_n|} \sum_{i \in A_n} X_i \xrightarrow{P}
+                    E[X_0] $$
                   </div>
-                  <p>对于平稳随机场，空间平均收敛到期望值，其中 $A_n$ 是增长的区域。</p>
+                  <p>
+                    对于平稳随机场，空间平均收敛到期望值，其中 $A_n$
+                    是增长的区域。
+                  </p>
                 </div>
 
                 <div class="rating-section">
@@ -2730,32 +3322,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="19">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2766,19 +3379,24 @@
             </div>
 
             <div class="section">
-              <h3 class="section-title"><i class="fas fa-star"></i> 现代应用</h3>
-              
+              <h3 class="section-title">
+                <i class="fas fa-star"></i> 现代应用
+              </h3>
+
               <div class="property-step" data-step-index="5">
                 <div class="property-item">
                   <strong>机器学习:</strong> 经验风险最小化
                   <div class="formula">
-                    $$ \hat{R}_n(f) = \frac{1}{n}\sum_{i=1}^n \ell(f(x_i), y_i) \xrightarrow{P} R(f) = E[\ell(f(X), Y)] $$
+                    $$ \hat{R}_n(f) = \frac{1}{n}\sum_{i=1}^n \ell(f(x_i), y_i)
+                    \xrightarrow{P} R(f) = E[\ell(f(X), Y)] $$
                   </div>
                   <p>训练误差收敛到期望风险，这是机器学习理论的基础。</p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对机器学习应用的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对机器学习应用的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2793,13 +3411,16 @@
                 <div class="property-item">
                   <strong>时间序列:</strong> 样本自协方差函数
                   <div class="formula">
-                    $$ \hat{\gamma}(h) = \frac{1}{n}\sum_{t=1}^{n-h} (X_t - \bar{X})(X_{t+h} - \bar{X}) \xrightarrow{P} \gamma(h) $$
+                    $$ \hat{\gamma}(h) = \frac{1}{n}\sum_{t=1}^{n-h} (X_t -
+                    \bar{X})(X_{t+h} - \bar{X}) \xrightarrow{P} \gamma(h) $$
                   </div>
                   <p>样本自协方差函数收敛到理论自协方差函数。</p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对时间序列应用的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对时间序列应用的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2807,32 +3428,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="20">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2845,13 +3487,16 @@
                 <div class="property-item">
                   <strong>网络科学:</strong> 图的谱性质
                   <div class="formula">
-                    $$ \frac{1}{n} \text{tr}(A^k) \xrightarrow{P} \int \lambda^k d\mu(\lambda) $$
+                    $$ \frac{1}{n} \text{tr}(A^k) \xrightarrow{P} \int \lambda^k
+                    d\mu(\lambda) $$
                   </div>
                   <p>大型随机图的谱密度收敛到确定性极限，用于分析网络结构。</p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对网络科学应用的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对网络科学应用的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2866,13 +3511,18 @@
                 <div class="property-item">
                   <strong>量子物理:</strong> 量子测量的大数定律
                   <div class="formula">
-                    $$ \frac{1}{n}\sum_{i=1}^n M_i \xrightarrow{P} \langle \psi | M | \psi \rangle $$
+                    $$ \frac{1}{n}\sum_{i=1}^n M_i \xrightarrow{P} \langle \psi
+                    | M | \psi \rangle $$
                   </div>
-                  <p>重复量子测量的平均值收敛到量子期望值，体现了量子力学的统计性质。</p>
+                  <p>
+                    重复量子测量的平均值收敛到量子期望值，体现了量子力学的统计性质。
+                  </p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对量子物理应用的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对量子物理应用的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2880,32 +3530,53 @@
                     <button class="rating-btn" data-rating="4">4</button>
                     <button class="rating-btn" data-rating="5">5</button>
                   </div>
-                  
+
                   <!-- AI求助功能区域 -->
                   <div class="ai-help-section hidden mt-4" data-step="21">
-                    <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer">
+                    <div
+                      class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer"
+                    >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                          <div class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center">
+                          <div
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center"
+                          >
                             <i class="fa fa-robot text-neon-blue"></i>
                           </div>
                           <div>
-                            <h4 class="font-semibold text-white text-sm">AI智能助手</h4>
-                            <p class="text-xs text-gray-400">获取这一步骤的帮助</p>
+                            <h4 class="font-semibold text-white text-sm">
+                              AI智能助手
+                            </h4>
+                            <p class="text-xs text-gray-400">
+                              获取这一步骤的帮助
+                            </p>
                           </div>
                         </div>
-                        <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"></i>
+                        <i
+                          class="fa fa-chevron-down text-gray-400 transition-transform duration-300 ai-help-chevron"
+                        ></i>
                       </div>
                     </div>
-                    <div class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700">
+                    <div
+                      class="ai-help-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                    >
                       <div class="mb-4">
                         <div class="flex space-x-2">
-                          <input type="text" class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none" placeholder="请输入您关于这一步骤的问题...">
-                          <button class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow" title="发送问题">
+                          <input
+                            type="text"
+                            class="ai-help-input flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-neon-blue focus:outline-none"
+                            placeholder="请输入您关于这一步骤的问题..."
+                          />
+                          <button
+                            class="ai-help-send bg-neon-blue hover:bg-neon-purple text-dark-bg font-bold p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 border-glow"
+                            title="发送问题"
+                          >
                             <i class="fa fa-paper-plane"></i>
                           </button>
                         </div>
-                        <div class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden">
+                        <div
+                          class="ai-help-response mt-3 p-3 bg-gray-800 rounded-lg border border-gray-600 hidden"
+                        >
                           <div class="text-sm text-gray-300"></div>
                         </div>
                       </div>
@@ -2918,13 +3589,18 @@
                 <div class="property-item">
                   <strong>生物信息学:</strong> 基因表达数据分析
                   <div class="formula">
-                    $$ \bar{X}_{gene} = \frac{1}{n}\sum_{i=1}^n X_{i,gene} \xrightarrow{P} \mu_{gene} $$
+                    $$ \bar{X}_{gene} = \frac{1}{n}\sum_{i=1}^n X_{i,gene}
+                    \xrightarrow{P} \mu_{gene} $$
                   </div>
-                  <p>大样本基因表达数据的均值收敛到真实表达水平，用于差异表达分析。</p>
+                  <p>
+                    大样本基因表达数据的均值收敛到真实表达水平，用于差异表达分析。
+                  </p>
                 </div>
 
                 <div class="rating-section">
-                  <div class="rating-label">请评价您对生物信息学应用的理解程度：</div>
+                  <div class="rating-label">
+                    请评价您对生物信息学应用的理解程度：
+                  </div>
                   <div class="rating-buttons">
                     <button class="rating-btn" data-rating="1">1</button>
                     <button class="rating-btn" data-rating="2">2</button>
@@ -2940,7 +3616,11 @@
               <h3 class="section-title">
                 <i class="fas fa-chart-line"></i> 理解度追踪
               </h3>
-              <canvas id="understanding-chart-5" width="400" height="200"></canvas>
+              <canvas
+                id="understanding-chart-5"
+                width="400"
+                height="200"
+              ></canvas>
             </div>
           </div>
         </div>
@@ -3781,7 +4461,7 @@
 
       // 新的理论探索功能
       let currentStep = 0;
-// 全局变量
+      // 全局变量
       let stepRatings = {};
       let stepRatings2 = {};
       let stepRatings3 = {};
@@ -3801,16 +4481,20 @@
         initUnderstandingChart3();
         initUnderstandingChart4();
         initUnderstandingChart5();
-        
+
         // 为每个评分按钮添加事件监听器
-        document.querySelectorAll('.rating-btn').forEach(btn => {
-          btn.addEventListener('click', function() {
+        document.querySelectorAll(".rating-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
             const rating = parseInt(this.dataset.rating);
-            const stepIndex = parseInt(this.closest('[data-step-index]').dataset.stepIndex);
-            const cardNumber = this.closest('[data-card]') ? parseInt(this.closest('[data-card]').dataset.card) : 1;
-            
+            const stepIndex = parseInt(
+              this.closest("[data-step-index]").dataset.stepIndex
+            );
+            const cardNumber = this.closest("[data-card]")
+              ? parseInt(this.closest("[data-card]").dataset.card)
+              : 1;
+
             // 根据卡片编号更新对应的评分
-            switch(cardNumber) {
+            switch (cardNumber) {
               case 1:
                 stepRatings[stepIndex] = rating;
                 break;
@@ -3827,16 +4511,16 @@
                 stepRatings5[stepIndex] = rating;
                 break;
             }
-            
+
             // 更新按钮样式
             updateButtonState(this);
-            
+
             // 检查是否需要显示AI求助功能
             handleAIHelpDisplay(rating, this);
-            
+
             // 检查是否可以解锁下一步
             checkStepProgression(stepIndex, cardNumber);
-            
+
             // 更新对应图表
             updateChartData(cardNumber);
           });
@@ -3845,73 +4529,76 @@
 
       // 处理AI求助功能的显示
       function handleAIHelpDisplay(rating, buttonElement) {
-        const ratingSection = buttonElement.closest('.rating-section');
-        const aiHelpSection = ratingSection.querySelector('.ai-help-section');
-        
+        const ratingSection = buttonElement.closest(".rating-section");
+        const aiHelpSection = ratingSection.querySelector(".ai-help-section");
+
         if (rating < 3 && aiHelpSection) {
           // 评分小于3分时，显示AI求助功能
-          aiHelpSection.classList.remove('hidden');
-          
+          aiHelpSection.classList.remove("hidden");
+
           // 添加展开动画
           setTimeout(() => {
-            aiHelpSection.style.animation = 'fadeIn 0.5s ease-in-out';
+            aiHelpSection.style.animation = "fadeIn 0.5s ease-in-out";
           }, 100);
         } else if (rating >= 3 && aiHelpSection) {
           // 评分大于等于3分时，隐藏AI求助功能
-          aiHelpSection.classList.add('hidden');
+          aiHelpSection.classList.add("hidden");
         }
       }
 
       // 初始化AI求助功能事件
       function initAIHelpEvents() {
         // AI求助区域的展开/收起功能
-        document.querySelectorAll('.ai-help-section .tool-header').forEach(header => {
-          header.addEventListener('click', function() {
-            const content = this.nextElementSibling;
-            const chevron = this.querySelector('.ai-help-chevron');
-            
-            if (content.classList.contains('hidden')) {
-              content.classList.remove('hidden');
-              chevron.classList.add('rotated');
-            } else {
-              content.classList.add('hidden');
-              chevron.classList.remove('rotated');
-            }
+        document
+          .querySelectorAll(".ai-help-section .tool-header")
+          .forEach((header) => {
+            header.addEventListener("click", function () {
+              const content = this.nextElementSibling;
+              const chevron = this.querySelector(".ai-help-chevron");
+
+              if (content.classList.contains("hidden")) {
+                content.classList.remove("hidden");
+                chevron.classList.add("rotated");
+              } else {
+                content.classList.add("hidden");
+                chevron.classList.remove("rotated");
+              }
+            });
           });
-        });
 
         // AI求助发送按钮事件
-        document.querySelectorAll('.ai-help-send').forEach(btn => {
-          btn.addEventListener('click', function() {
-            const helpSection = this.closest('.ai-help-section');
-            const input = helpSection.querySelector('.ai-help-input');
-            const responseDiv = helpSection.querySelector('.ai-help-response');
-            const responseContent = responseDiv.querySelector('div');
+        document.querySelectorAll(".ai-help-send").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const helpSection = this.closest(".ai-help-section");
+            const input = helpSection.querySelector(".ai-help-input");
+            const responseDiv = helpSection.querySelector(".ai-help-response");
+            const responseContent = responseDiv.querySelector("div");
             const stepIndex = helpSection.dataset.step;
-            
+
             const question = input.value.trim();
             if (!question) {
-              alert('请输入您的问题');
+              alert("请输入您的问题");
               return;
             }
-            
+
             // 显示加载状态
-            responseDiv.classList.remove('hidden');
-            responseContent.innerHTML = '<div class="thinking-animation"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> AI正在思考...';
-            
+            responseDiv.classList.remove("hidden");
+            responseContent.innerHTML =
+              '<div class="thinking-animation"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> AI正在思考...';
+
             // 模拟AI回复（这里可以接入真实的AI API）
             setTimeout(() => {
               const aiResponse = generateAIResponse(question, stepIndex);
               responseContent.innerHTML = aiResponse;
-              input.value = ''; // 清空输入框
+              input.value = ""; // 清空输入框
             }, 2000);
           });
         });
 
         // AI求助输入框回车事件
-        document.querySelectorAll('.ai-help-input').forEach(input => {
-          input.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
+        document.querySelectorAll(".ai-help-input").forEach((input) => {
+          input.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
               const sendBtn = this.nextElementSibling;
               sendBtn.click();
             }
@@ -3923,53 +4610,67 @@
       function generateAIResponse(question, stepIndex) {
         const stepHelp = {
           0: {
-            keywords: ['切比雪夫', '不等式', '概率', '期望', '方差'],
-            response: '切比雪夫不等式是概率论中的重要定理，它给出了随机变量偏离其期望值的概率上界。具体来说，对于任意随机变量X，有P(|X - E[X]| ≥ kσ) ≤ 1/k²，其中σ是标准差，k > 1。这个不等式告诉我们，随机变量的值越偏离期望值，出现的概率就越小。'
+            keywords: ["切比雪夫", "不等式", "概率", "期望", "方差"],
+            response:
+              "切比雪夫不等式是概率论中的重要定理，它给出了随机变量偏离其期望值的概率上界。具体来说，对于任意随机变量X，有P(|X - E[X]| ≥ kσ) ≤ 1/k²，其中σ是标准差，k > 1。这个不等式告诉我们，随机变量的值越偏离期望值，出现的概率就越小。",
           },
           1: {
-            keywords: ['样本均值', '期望', '方差', '样本量'],
-            response: '样本均值是样本中所有观测值的平均数。重要的是，样本均值的期望等于总体均值，即E[X̄] = μ。而样本均值的方差等于总体方差除以样本量，即Var(X̄) = σ²/n。这意味着随着样本量n的增加，样本均值的方差会减小，样本均值会更加接近总体均值。'
-          }
+            keywords: ["样本均值", "期望", "方差", "样本量"],
+            response:
+              "样本均值是样本中所有观测值的平均数。重要的是，样本均值的期望等于总体均值，即E[X̄] = μ。而样本均值的方差等于总体方差除以样本量，即Var(X̄) = σ²/n。这意味着随着样本量n的增加，样本均值的方差会减小，样本均值会更加接近总体均值。",
+          },
         };
 
         const currentStep = stepHelp[stepIndex] || stepHelp[0];
-        
+
         // 简单的关键词匹配
-        const hasKeyword = currentStep.keywords.some(keyword => 
+        const hasKeyword = currentStep.keywords.some((keyword) =>
           question.toLowerCase().includes(keyword.toLowerCase())
         );
 
         if (hasKeyword) {
           return currentStep.response;
         } else {
-          return `关于您的问题"${question}"，我建议您重新阅读这一步骤的内容。如果您对具体概念有疑问，可以尝试用更具体的术语提问，比如：${currentStep.keywords.join('、')}等。`;
+          return `关于您的问题"${question}"，我建议您重新阅读这一步骤的内容。如果您对具体概念有疑问，可以尝试用更具体的术语提问，比如：${currentStep.keywords.join(
+            "、"
+          )}等。`;
         }
       }
 
       // 初始化理解度图表
       function initUnderstandingChart() {
-        const canvas = document.getElementById('understanding-chart-1');
+        const canvas = document.getElementById("understanding-chart-1");
         if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        
+
+        const ctx = canvas.getContext("2d");
+
         understandingChart1 = new Chart(ctx, {
-          type: 'line',
+          type: "line",
           data: {
-            labels: ['切比雪夫不等式', '样本均值性质', '应用不等式', '取极限', '收敛速度', '样本量要求', '方差未知'],
-            datasets: [{
-              label: '理解度评分',
-              data: [0, 0, 0, 0, 0, 0, 0],
-              borderColor: '#ff8c00',
-              backgroundColor: 'rgba(255, 140, 0, 0.1)',
-              borderWidth: 3,
-              pointBackgroundColor: '#ff8c00',
-              pointBorderColor: '#fff',
-              pointBorderWidth: 2,
-              pointRadius: 6,
-              tension: 0.3,
-              fill: true,
-            }]
+            labels: [
+              "切比雪夫不等式",
+              "样本均值性质",
+              "应用不等式",
+              "取极限",
+              "收敛速度",
+              "样本量要求",
+              "方差未知",
+            ],
+            datasets: [
+              {
+                label: "理解度评分",
+                data: [0, 0, 0, 0, 0, 0, 0],
+                borderColor: "#ff8c00",
+                backgroundColor: "rgba(255, 140, 0, 0.1)",
+                borderWidth: 3,
+                pointBackgroundColor: "#ff8c00",
+                pointBorderColor: "#fff",
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                tension: 0.3,
+                fill: true,
+              },
+            ],
           },
           options: {
             responsive: true,
@@ -3981,56 +4682,66 @@
                 max: 5,
                 ticks: {
                   stepSize: 1,
-                  color: '#9ca3af',
+                  color: "#9ca3af",
                 },
                 grid: {
-                  color: 'rgba(156, 163, 175, 0.3)',
+                  color: "rgba(156, 163, 175, 0.3)",
                 },
               },
               x: {
                 ticks: {
-                  color: '#9ca3af',
+                  color: "#9ca3af",
                 },
                 grid: {
-                  color: 'rgba(156, 163, 175, 0.3)',
+                  color: "rgba(156, 163, 175, 0.3)",
                 },
               },
             },
             plugins: {
               legend: {
                 labels: {
-                  color: '#ffffff',
-                }
-              }
-            }
-          }
+                  color: "#ffffff",
+                },
+              },
+            },
+          },
         });
       }
 
       // 初始化第二张卡片的理解度图表
       function initUnderstandingChart2() {
-        const canvas = document.getElementById('understanding-chart-2');
+        const canvas = document.getElementById("understanding-chart-2");
         if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        
+
+        const ctx = canvas.getContext("2d");
+
         understandingChart2 = new Chart(ctx, {
-          type: 'line',
+          type: "line",
           data: {
-            labels: ['特征函数方法', '泰勒展开', '收敛结果', '普适性', '收敛速度', '统计推断基础', '实际应用示例'],
-            datasets: [{
-              label: '理解度评分',
-              data: [0, 0, 0, 0, 0, 0, 0],
-              borderColor: '#ff8c00',
-              backgroundColor: 'rgba(255, 140, 0, 0.1)',
-              borderWidth: 3,
-              pointBackgroundColor: '#ff8c00',
-              pointBorderColor: '#fff',
-              pointBorderWidth: 2,
-              pointRadius: 6,
-              tension: 0.3,
-              fill: true,
-            }]
+            labels: [
+              "特征函数方法",
+              "泰勒展开",
+              "收敛结果",
+              "普适性",
+              "收敛速度",
+              "统计推断基础",
+              "实际应用示例",
+            ],
+            datasets: [
+              {
+                label: "理解度评分",
+                data: [0, 0, 0, 0, 0, 0, 0],
+                borderColor: "#ff8c00",
+                backgroundColor: "rgba(255, 140, 0, 0.1)",
+                borderWidth: 3,
+                pointBackgroundColor: "#ff8c00",
+                pointBorderColor: "#fff",
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                tension: 0.3,
+                fill: true,
+              },
+            ],
           },
           options: {
             responsive: true,
@@ -4042,56 +4753,68 @@
                 max: 5,
                 ticks: {
                   stepSize: 1,
-                  color: '#9ca3af',
+                  color: "#9ca3af",
                 },
                 grid: {
-                  color: 'rgba(156, 163, 175, 0.3)',
+                  color: "rgba(156, 163, 175, 0.3)",
                 },
               },
               x: {
                 ticks: {
-                  color: '#9ca3af',
+                  color: "#9ca3af",
                 },
                 grid: {
-                  color: 'rgba(156, 163, 175, 0.3)',
+                  color: "rgba(156, 163, 175, 0.3)",
                 },
               },
             },
             plugins: {
               legend: {
                 labels: {
-                  color: '#ffffff',
-                }
-              }
-            }
-          }
+                  color: "#ffffff",
+                },
+              },
+            },
+          },
         });
       }
 
       // 初始化第三张卡片的理解度图表
       function initUnderstandingChart3() {
-        const canvas = document.getElementById('understanding-chart-3');
+        const canvas = document.getElementById("understanding-chart-3");
         if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        
+
+        const ctx = canvas.getContext("2d");
+
         understandingChart3 = new Chart(ctx, {
-          type: 'line',
+          type: "line",
           data: {
-            labels: ['弱大数定律', '强大数定律', '收敛性关系', 'Kolmogorov定理', '切比雪夫方法', '条件差异', '实际意义', '经典实例', '反例分析'],
-            datasets: [{
-              label: '理解度评分',
-              data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-              borderColor: '#ff8c00',
-              backgroundColor: 'rgba(255, 140, 0, 0.1)',
-              borderWidth: 3,
-              pointBackgroundColor: '#ff8c00',
-              pointBorderColor: '#fff',
-              pointBorderWidth: 2,
-              pointRadius: 6,
-              tension: 0.3,
-              fill: true,
-            }]
+            labels: [
+              "弱大数定律",
+              "强大数定律",
+              "收敛性关系",
+              "Kolmogorov定理",
+              "切比雪夫方法",
+              "条件差异",
+              "实际意义",
+              "经典实例",
+              "反例分析",
+            ],
+            datasets: [
+              {
+                label: "理解度评分",
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                borderColor: "#ff8c00",
+                backgroundColor: "rgba(255, 140, 0, 0.1)",
+                borderWidth: 3,
+                pointBackgroundColor: "#ff8c00",
+                pointBorderColor: "#fff",
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                tension: 0.3,
+                fill: true,
+              },
+            ],
           },
           options: {
             responsive: true,
@@ -4103,56 +4826,68 @@
                 max: 5,
                 ticks: {
                   stepSize: 1,
-                  color: '#9ca3af',
+                  color: "#9ca3af",
                 },
                 grid: {
-                  color: 'rgba(156, 163, 175, 0.3)',
+                  color: "rgba(156, 163, 175, 0.3)",
                 },
               },
               x: {
                 ticks: {
-                  color: '#9ca3af',
+                  color: "#9ca3af",
                 },
                 grid: {
-                  color: 'rgba(156, 163, 175, 0.3)',
+                  color: "rgba(156, 163, 175, 0.3)",
                 },
               },
             },
             plugins: {
               legend: {
                 labels: {
-                  color: '#ffffff',
-                }
-              }
-            }
-          }
+                  color: "#ffffff",
+                },
+              },
+            },
+          },
         });
       }
 
       // 初始化第四张卡片的理解度图表
       function initUnderstandingChart4() {
-        const canvas = document.getElementById('understanding-chart-4');
+        const canvas = document.getElementById("understanding-chart-4");
         if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        
+
+        const ctx = canvas.getContext("2d");
+
         understandingChart4 = new Chart(ctx, {
-          type: 'line',
+          type: "line",
           data: {
-            labels: ['切比雪夫界', 'Hoeffding界', '样本量计算', 'Bernstein不等式', 'Bennett不等式', 'A/B测试', '蒙特卡洛方法', '投票调查示例', 'VaR估计'],
-            datasets: [{
-              label: '理解度评分',
-              data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-              borderColor: '#ff8c00',
-              backgroundColor: 'rgba(255, 140, 0, 0.1)',
-              borderWidth: 3,
-              pointBackgroundColor: '#ff8c00',
-              pointBorderColor: '#fff',
-              pointBorderWidth: 2,
-              pointRadius: 6,
-              tension: 0.3,
-              fill: true,
-            }]
+            labels: [
+              "切比雪夫界",
+              "Hoeffding界",
+              "样本量计算",
+              "Bernstein不等式",
+              "Bennett不等式",
+              "A/B测试",
+              "蒙特卡洛方法",
+              "投票调查示例",
+              "VaR估计",
+            ],
+            datasets: [
+              {
+                label: "理解度评分",
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                borderColor: "#ff8c00",
+                backgroundColor: "rgba(255, 140, 0, 0.1)",
+                borderWidth: 3,
+                pointBackgroundColor: "#ff8c00",
+                pointBorderColor: "#fff",
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                tension: 0.3,
+                fill: true,
+              },
+            ],
           },
           options: {
             responsive: true,
@@ -4164,56 +4899,69 @@
                 max: 5,
                 ticks: {
                   stepSize: 1,
-                  color: '#9ca3af',
+                  color: "#9ca3af",
                 },
                 grid: {
-                  color: 'rgba(156, 163, 175, 0.3)',
+                  color: "rgba(156, 163, 175, 0.3)",
                 },
               },
               x: {
                 ticks: {
-                  color: '#9ca3af',
+                  color: "#9ca3af",
                 },
                 grid: {
-                  color: 'rgba(156, 163, 175, 0.3)',
+                  color: "rgba(156, 163, 175, 0.3)",
                 },
               },
             },
             plugins: {
               legend: {
                 labels: {
-                  color: '#ffffff',
-                }
-              }
-            }
-          }
+                  color: "#ffffff",
+                },
+              },
+            },
+          },
         });
       }
 
       // 初始化第五张卡片的理解度图表
       function initUnderstandingChart5() {
-        const canvas = document.getElementById('understanding-chart-5');
+        const canvas = document.getElementById("understanding-chart-5");
         if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        
+
+        const ctx = canvas.getContext("2d");
+
         understandingChart5 = new Chart(ctx, {
-          type: 'line',
+          type: "line",
           data: {
-            labels: ['多元推广', '函数大数定律', '马尔可夫链', '鞅论应用', '随机场', '机器学习', '时间序列', '网络科学', '量子物理', '生物信息学'],
-            datasets: [{
-              label: '理解度评分',
-              data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-              borderColor: '#ff8c00',
-              backgroundColor: 'rgba(255, 140, 0, 0.1)',
-              borderWidth: 3,
-              pointBackgroundColor: '#ff8c00',
-              pointBorderColor: '#fff',
-              pointBorderWidth: 2,
-              pointRadius: 6,
-              tension: 0.3,
-              fill: true,
-            }]
+            labels: [
+              "多元推广",
+              "函数大数定律",
+              "马尔可夫链",
+              "鞅论应用",
+              "随机场",
+              "机器学习",
+              "时间序列",
+              "网络科学",
+              "量子物理",
+              "生物信息学",
+            ],
+            datasets: [
+              {
+                label: "理解度评分",
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                borderColor: "#ff8c00",
+                backgroundColor: "rgba(255, 140, 0, 0.1)",
+                borderWidth: 3,
+                pointBackgroundColor: "#ff8c00",
+                pointBorderColor: "#fff",
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                tension: 0.3,
+                fill: true,
+              },
+            ],
           },
           options: {
             responsive: true,
@@ -4225,44 +4973,45 @@
                 max: 5,
                 ticks: {
                   stepSize: 1,
-                  color: '#9ca3af',
+                  color: "#9ca3af",
                 },
                 grid: {
-                  color: 'rgba(156, 163, 175, 0.3)',
+                  color: "rgba(156, 163, 175, 0.3)",
                 },
               },
               x: {
                 ticks: {
-                  color: '#9ca3af',
+                  color: "#9ca3af",
                 },
                 grid: {
-                  color: 'rgba(156, 163, 175, 0.3)',
+                  color: "rgba(156, 163, 175, 0.3)",
                 },
               },
             },
             plugins: {
               legend: {
                 labels: {
-                  color: '#ffffff',
-                }
-              }
-            }
-          }
+                  color: "#ffffff",
+                },
+              },
+            },
+          },
         });
       }
 
       // 更新按钮状态
       function updateButtonState(selectedButton) {
-        const buttons = selectedButton.parentElement.querySelectorAll('.rating-btn');
-        buttons.forEach(btn => {
-          btn.classList.remove('selected');
+        const buttons =
+          selectedButton.parentElement.querySelectorAll(".rating-btn");
+        buttons.forEach((btn) => {
+          btn.classList.remove("selected");
         });
-        selectedButton.classList.add('selected');
+        selectedButton.classList.add("selected");
       }
 
       // 更新图表数据
       function updateChartData(cardNumber = 1) {
-        switch(cardNumber) {
+        switch (cardNumber) {
           case 1:
             if (!understandingChart1) return;
             const data1 = [0, 0, 0, 0, 0, 0, 0]; // 7个步骤
@@ -4272,7 +5021,7 @@
             understandingChart1.data.datasets[0].data = data1;
             understandingChart1.update();
             break;
-            
+
           case 2:
             if (!understandingChart2) return;
             const data2 = [0, 0, 0, 0, 0, 0, 0]; // 7个步骤
@@ -4282,7 +5031,7 @@
             understandingChart2.data.datasets[0].data = data2;
             understandingChart2.update();
             break;
-            
+
           case 3:
             if (!understandingChart3) return;
             const data3 = [0, 0, 0, 0, 0, 0, 0, 0, 0]; // 9个步骤
@@ -4292,7 +5041,7 @@
             understandingChart3.data.datasets[0].data = data3;
             understandingChart3.update();
             break;
-            
+
           case 4:
             if (!understandingChart4) return;
             const data4 = [0, 0, 0, 0, 0, 0, 0, 0, 0]; // 9个步骤
@@ -4302,7 +5051,7 @@
             understandingChart4.data.datasets[0].data = data4;
             understandingChart4.update();
             break;
-            
+
           case 5:
             if (!understandingChart5) return;
             const data5 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 10个步骤
@@ -4317,66 +5066,75 @@
 
       // 检查步骤进度
       function checkStepProgression(stepIndex, cardNumber = 1) {
-        let rating, currentRatings, totalSteps, completionMessageId, nextCardStep;
-        
-        switch(cardNumber) {
+        let rating,
+          currentRatings,
+          totalSteps,
+          completionMessageId,
+          nextCardStep;
+
+        switch (cardNumber) {
           case 1:
             rating = stepRatings[stepIndex];
             currentRatings = stepRatings;
             totalSteps = 7;
-            completionMessageId = 'completion-message-1';
+            completionMessageId = "completion-message-1";
             nextCardStep = 2;
             break;
           case 2:
             rating = stepRatings2[stepIndex];
             currentRatings = stepRatings2;
             totalSteps = 7;
-            completionMessageId = 'completion-message-2';
+            completionMessageId = "completion-message-2";
             nextCardStep = 3;
             break;
           case 3:
             rating = stepRatings3[stepIndex];
             currentRatings = stepRatings3;
             totalSteps = 6;
-            completionMessageId = 'completion-message-3';
+            completionMessageId = "completion-message-3";
             nextCardStep = 4;
             break;
           case 4:
             rating = stepRatings4[stepIndex];
             currentRatings = stepRatings4;
             totalSteps = 6;
-            completionMessageId = 'completion-message-4';
+            completionMessageId = "completion-message-4";
             nextCardStep = 5;
             break;
           case 5:
             rating = stepRatings5[stepIndex];
             currentRatings = stepRatings5;
             totalSteps = 6;
-            completionMessageId = 'completion-message-5';
+            completionMessageId = "completion-message-5";
             nextCardStep = null;
             break;
         }
-        
+
         if (rating >= 1) {
           // 解锁下一步（任何评分都可以解锁）
           unlockStep(stepIndex + 1, cardNumber);
         }
-        
+
         // 检查是否所有步骤都完成
-        if (Object.keys(currentRatings).length === totalSteps && Object.values(currentRatings).every(r => r >= 1)) {
+        if (
+          Object.keys(currentRatings).length === totalSteps &&
+          Object.values(currentRatings).every((r) => r >= 1)
+        ) {
           showCompletionMessage(completionMessageId, nextCardStep);
         }
       }
 
       // 解锁步骤
       function unlockStep(stepIndex, cardNumber = 1) {
-        const nextStep = document.querySelector(`[data-card="${cardNumber}"] [data-step-index="${stepIndex}"]`);
+        const nextStep = document.querySelector(
+          `[data-card="${cardNumber}"] [data-step-index="${stepIndex}"]`
+        );
         if (nextStep) {
-          nextStep.classList.add('active');
-          nextStep.style.opacity = '1';
-          
+          nextStep.classList.add("active");
+          nextStep.style.opacity = "1";
+
           // 添加解锁动画
-          nextStep.style.animation = 'fadeIn 0.5s ease-in-out';
+          nextStep.style.animation = "fadeIn 0.5s ease-in-out";
         }
       }
 
@@ -4384,31 +5142,33 @@
       function showCompletionMessage(completionMessageId, nextCardStep = null) {
         const completionMessage = document.getElementById(completionMessageId);
         if (completionMessage) {
-          completionMessage.classList.remove('hidden');
-          completionMessage.style.animation = 'pulse 1s ease-in-out';
+          completionMessage.classList.remove("hidden");
+          completionMessage.style.animation = "pulse 1s ease-in-out";
         }
-        
+
         // 解锁下一张卡片
         if (nextCardStep) {
-          const nextCard = document.querySelector(`[data-step="${nextCardStep}"]`);
+          const nextCard = document.querySelector(
+            `[data-step="${nextCardStep}"]`
+          );
           if (nextCard) {
-            const lockIcon = nextCard.querySelector('.fa-lock');
-            const unlockText = nextCard.querySelector('.ml-auto span');
-            
+            const lockIcon = nextCard.querySelector(".fa-lock");
+            const unlockText = nextCard.querySelector(".ml-auto span");
+
             if (lockIcon) {
-              lockIcon.classList.remove('fa-lock');
-              lockIcon.classList.add('fa-unlock');
+              lockIcon.classList.remove("fa-lock");
+              lockIcon.classList.add("fa-unlock");
             }
-            
+
             if (unlockText) {
               unlockText.innerHTML = '<i class="fa fa-unlock"></i> 已解锁';
-              unlockText.classList.remove('text-gray-500');
-              unlockText.classList.add('text-neon-green');
+              unlockText.classList.remove("text-gray-500");
+              unlockText.classList.add("text-neon-green");
             }
-            
+
             // 移除透明度
-            nextCard.querySelectorAll('.opacity-50').forEach(el => {
-              el.classList.remove('opacity-50');
+            nextCard.querySelectorAll(".opacity-50").forEach((el) => {
+              el.classList.remove("opacity-50");
             });
           }
         }
@@ -4501,7 +5261,208 @@
         // 工具箱已在toolbox.js中自动初始化
       });
     </script>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark-card py-12 border-t border-gray-800">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <div class="flex items-center space-x-2 mb-6">
+              <div
+                class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center"
+              >
+                <i class="fa fa-calculator text-white text-xl"></i>
+              </div>
+              <h2 class="text-xl font-future font-bold text-white">
+                <span class="text-neon-blue">概率</span
+                ><span class="text-white">维度</span>
+              </h2>
+            </div>
+            <p class="text-gray-400 mb-6">
+              探索概率与数理统计的奇妙世界，揭示数据背后的规律。
+            </p>
+            <div class="flex space-x-4">
+              <a
+                href="https://www.douyin.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-500 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
+                title="抖音 - 记录美好生活"
+              >
+                <img
+                  src="../static/img/tiktok.svg"
+                  alt="抖音"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+              <a
+                href="https://www.bilibili.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-pink-400 hover:to-pink-600 hover:text-white transition-all duration-300 transform hover:scale-110 hover:-rotate-12"
+                title="哔哩哔哩 - 你感兴趣的视频都在B站"
+              >
+                <img
+                  src="../static/img/bilibili.svg"
+                  alt="哔哩哔哩"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+              <a
+                href="https://weixin.qq.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-green-400 hover:to-green-600 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
+                title="微信 - 是一个生活方式"
+              >
+                <img
+                  src="../static/img/wechat.svg"
+                  alt="微信"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+              <a
+                href="https://weibo.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-orange-400 hover:to-red-500 hover:text-white transition-all duration-300 transform hover:scale-110 hover:-rotate-12"
+                title="微博 - 随时随地发现新鲜事"
+              >
+                <img
+                  src="../static/img/weibo.svg"
+                  alt="微博"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">快速链接</h3>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="index.html#concepts"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >核心概念</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#simulations"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >概率模拟</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#visualizations"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >数据可视化</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#applications"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >应用场景</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">学习资源</h3>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >教程与指南</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >在线课程</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >书籍推荐</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >研究论文</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">联系我们</h3>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <i class="fa fa-envelope text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400">WangHouxiong9558@outlook.com</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-map-marker text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400"
+                  >江西省南昌市高新技术开发区天祥大道289号</span
+                >
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-phone text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400">+86 173 5709 8869</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div
+          class="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"
+        >
+          <p class="text-gray-500 text-sm mb-4 md:mb-0">
+            © 2025 概率维度. 保留所有权利.
+          </p>
+          <div class="flex space-x-6">
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >隐私政策</a
+            >
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >服务条款</a
+            >
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >Cookie政策</a
+            >
+          </div>
+        </div>
+        
+        <!-- 备案信息 -->
+        <div class="pt-4 text-center">
+          <p class="text-gray-500 text-sm">
+            <a 
+              href="http://beian.miit.gov.cn/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="text-gray-500 hover:text-gray-300 transition-colors underline cursor-pointer inline-block py-1 px-2"
+              style="z-index: 999; position: relative;"
+            >
+              赣ICP备2025074925号
+            </a>
+          </p>
+          <p class="text-gray-600 text-xs mt-1">
+            审核通过日期：2025-10-27
+          </p>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
-
-

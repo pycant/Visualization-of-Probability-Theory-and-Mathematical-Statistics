@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -6,7 +6,7 @@
     <title>假设检验 | 概率维度</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="../static/libs/fontawesome/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
@@ -17,10 +17,7 @@
     <!-- Markdown和LaTeX渲染库 -->
     <script src="../static/libs/marked/marked.min.js"></script>
     <script src="../static/libs/katex/js/katex.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="../static/libs/katex/css/katex.min.css"
-    />
+    <link rel="stylesheet" href="../static/libs/katex/css/katex.min.css" />
     <script src="../static/libs/katex/js/auto-render.min.js"></script>
 
     <!-- 配置Tailwind自定义颜色和字体 -->
@@ -92,7 +89,7 @@
         --dark-bg: #050a1a;
         --dark-card: #0f1730;
       }
-      
+
       @layer utilities {
         .text-shadow-neon {
           text-shadow: 0 0 10px rgba(0, 243, 255, 0.7),
@@ -1722,19 +1719,25 @@
                   </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                  <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+                  <div
+                    class="bg-red-900/20 border border-red-500/30 rounded-lg p-4"
+                  >
                     <h4 class="text-red-400 font-semibold mb-2">🚨 实际例子</h4>
                     <p class="text-gray-300 text-sm">
-                      • 药物实际无效，但检验结果显示有效<br>
-                      • 产品质量正常，但被判定为不合格<br>
+                      • 药物实际无效，但检验结果显示有效<br />
+                      • 产品质量正常，但被判定为不合格<br />
                       • 无罪的人被判有罪
                     </p>
                   </div>
-                  <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
-                    <h4 class="text-blue-400 font-semibold mb-2">📊 控制方法</h4>
+                  <div
+                    class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4"
+                  >
+                    <h4 class="text-blue-400 font-semibold mb-2">
+                      📊 控制方法
+                    </h4>
                     <p class="text-gray-300 text-sm">
-                      • 设定显著性水平α（通常0.05）<br>
-                      • α越小，第一类错误概率越低<br>
+                      • 设定显著性水平α（通常0.05）<br />
+                      • α越小，第一类错误概率越低<br />
                       • 但会增加第二类错误的风险
                     </p>
                   </div>
@@ -1814,19 +1817,27 @@
                   </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                  <div class="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
-                    <h4 class="text-orange-400 font-semibold mb-2">⚠️ 实际例子</h4>
+                  <div
+                    class="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4"
+                  >
+                    <h4 class="text-orange-400 font-semibold mb-2">
+                      ⚠️ 实际例子
+                    </h4>
                     <p class="text-gray-300 text-sm">
-                      • 药物实际有效，但检验结果显示无效<br>
-                      • 产品质量有问题，但被判定为合格<br>
+                      • 药物实际有效，但检验结果显示无效<br />
+                      • 产品质量有问题，但被判定为合格<br />
                       • 有罪的人被判无罪
                     </p>
                   </div>
-                  <div class="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
-                    <h4 class="text-green-400 font-semibold mb-2">💪 检验功效</h4>
+                  <div
+                    class="bg-green-900/20 border border-green-500/30 rounded-lg p-4"
+                  >
+                    <h4 class="text-green-400 font-semibold mb-2">
+                      💪 检验功效
+                    </h4>
                     <p class="text-gray-300 text-sm">
-                      • 功效 = 1 - β<br>
-                      • 正确拒绝假H₀的概率<br>
+                      • 功效 = 1 - β<br />
+                      • 正确拒绝假H₀的概率<br />
                       • 功效越高，检验越敏感
                     </p>
                   </div>
@@ -1910,23 +1921,32 @@
                 </p>
                 <div class="bg-dark-bg rounded-lg p-4 my-4">
                   <div class="text-center">
-                    $$\alpha \downarrow \Rightarrow \beta \uparrow \quad \text{（在样本量固定时）}$$
+                    $$\alpha \downarrow \Rightarrow \beta \uparrow \quad
+                    \text{（在样本量固定时）}$$
                   </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                  <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
-                    <h4 class="text-purple-400 font-semibold mb-2">⚖️ 权衡策略</h4>
+                  <div
+                    class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4"
+                  >
+                    <h4 class="text-purple-400 font-semibold mb-2">
+                      ⚖️ 权衡策略
+                    </h4>
                     <p class="text-gray-300 text-sm">
-                      • 医学研究：更关注第一类错误<br>
-                      • 质量控制：更关注第二类错误<br>
+                      • 医学研究：更关注第一类错误<br />
+                      • 质量控制：更关注第二类错误<br />
                       • 根据后果严重性选择策略
                     </p>
                   </div>
-                  <div class="bg-teal-900/20 border border-teal-500/30 rounded-lg p-4">
-                    <h4 class="text-teal-400 font-semibold mb-2">📈 改善方法</h4>
+                  <div
+                    class="bg-teal-900/20 border border-teal-500/30 rounded-lg p-4"
+                  >
+                    <h4 class="text-teal-400 font-semibold mb-2">
+                      📈 改善方法
+                    </h4>
                     <p class="text-gray-300 text-sm">
-                      • 增加样本量<br>
-                      • 改进实验设计<br>
+                      • 增加样本量<br />
+                      • 改进实验设计<br />
                       • 使用更精确的测量方法
                     </p>
                   </div>
@@ -1983,7 +2003,8 @@
                       <i class="fa fa-robot mr-2"></i>需要AI帮助？
                     </button>
                     <div class="next-step-hint hidden text-sm text-neon-green">
-                      <i class="fa fa-check-circle mr-1"></i>很好！错误类型分析完成
+                      <i class="fa fa-check-circle mr-1"></i
+                      >很好！错误类型分析完成
                     </div>
                   </div>
                 </div>
@@ -2015,15 +2036,15 @@
                     $$\bar{X} \sim N\left(\mu, \frac{\sigma^2}{n}\right)$$
                   </div>
                 </div>
-                <p>
-                  标准化后得到Z统计量：
-                </p>
+                <p>标准化后得到Z统计量：</p>
                 <div class="bg-dark-bg rounded-lg p-4 my-4">
                   <div class="text-center">
                     $$Z = \frac{\bar{X} - \mu_0}{\sigma/\sqrt{n}} \sim N(0,1)$$
                   </div>
                 </div>
-                <div class="bg-green-900/20 border border-green-500/30 rounded-lg p-4 my-4">
+                <div
+                  class="bg-green-900/20 border border-green-500/30 rounded-lg p-4 my-4"
+                >
                   <h4 class="text-green-400 font-semibold mb-2">📋 适用条件</h4>
                   <ul class="text-gray-300 text-sm space-y-1">
                     <li>• 总体标准差σ已知</li>
@@ -2100,7 +2121,8 @@
                 <p><strong>步骤1：建立假设</strong></p>
                 <div class="bg-dark-bg rounded-lg p-4 my-4">
                   <div class="text-center">
-                    $$H_0: \mu = \mu_0 \quad \text{vs} \quad H_1: \mu \neq \mu_0$$
+                    $$H_0: \mu = \mu_0 \quad \text{vs} \quad H_1: \mu \neq
+                    \mu_0$$
                   </div>
                 </div>
                 <p><strong>步骤2：构造检验统计量</strong></p>
@@ -2117,9 +2139,7 @@
                 </div>
                 <p><strong>步骤4：计算p值</strong></p>
                 <div class="bg-dark-bg rounded-lg p-4 my-4">
-                  <div class="text-center">
-                    $$p = 2P(Z > |z_{obs}|)$$
-                  </div>
+                  <div class="text-center">$$p = 2P(Z > |z_{obs}|)$$</div>
                 </div>
               </div>
               <div class="understanding-section">
@@ -2205,23 +2225,29 @@
                     $$t = \frac{\bar{X} - \mu_0}{s/\sqrt{n}} \sim t(n-1)$$
                   </div>
                 </div>
-                <p>
-                  这里的t统计量服从自由度为(n-1)的<strong>t分布</strong>。
-                </p>
+                <p>这里的t统计量服从自由度为(n-1)的<strong>t分布</strong>。</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                  <div class="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
-                    <h4 class="text-orange-400 font-semibold mb-2">🔍 t分布特点</h4>
+                  <div
+                    class="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4"
+                  >
+                    <h4 class="text-orange-400 font-semibold mb-2">
+                      🔍 t分布特点
+                    </h4>
                     <p class="text-gray-300 text-sm">
-                      • 对称分布，中心为0<br>
-                      • 比标准正态分布更"胖"<br>
+                      • 对称分布，中心为0<br />
+                      • 比标准正态分布更"胖"<br />
                       • 随自由度增加趋近标准正态分布
                     </p>
                   </div>
-                  <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
-                    <h4 class="text-blue-400 font-semibold mb-2">📊 适用条件</h4>
+                  <div
+                    class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4"
+                  >
+                    <h4 class="text-blue-400 font-semibold mb-2">
+                      📊 适用条件
+                    </h4>
                     <p class="text-gray-300 text-sm">
-                      • 总体标准差σ未知<br>
-                      • 总体近似正态分布<br>
+                      • 总体标准差σ未知<br />
+                      • 总体近似正态分布<br />
                       • 样本独立抽取
                     </p>
                   </div>
@@ -2397,10 +2423,14 @@
                   卡方检验主要用于<strong>分类数据</strong>的分析，包括拟合优度检验和独立性检验。
                 </p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                  <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
-                    <h4 class="text-purple-400 font-semibold mb-2">🎯 拟合优度检验</h4>
+                  <div
+                    class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4"
+                  >
+                    <h4 class="text-purple-400 font-semibold mb-2">
+                      🎯 拟合优度检验
+                    </h4>
                     <p class="text-gray-300 text-sm">
-                      检验观察频数是否符合理论分布<br>
+                      检验观察频数是否符合理论分布<br />
                       例如：掷骰子是否公平
                     </p>
                     <div class="bg-dark-bg rounded-lg p-2 mt-2">
@@ -2409,10 +2439,14 @@
                       </div>
                     </div>
                   </div>
-                  <div class="bg-pink-900/20 border border-pink-500/30 rounded-lg p-4">
-                    <h4 class="text-pink-400 font-semibold mb-2">🔗 独立性检验</h4>
+                  <div
+                    class="bg-pink-900/20 border border-pink-500/30 rounded-lg p-4"
+                  >
+                    <h4 class="text-pink-400 font-semibold mb-2">
+                      🔗 独立性检验
+                    </h4>
                     <p class="text-gray-300 text-sm">
-                      检验两个分类变量是否独立<br>
+                      检验两个分类变量是否独立<br />
                       例如：性别与专业选择是否独立
                     </p>
                     <div class="bg-dark-bg rounded-lg p-2 mt-2">
@@ -2503,9 +2537,7 @@
                 <p><strong>理论基础：</strong></p>
                 <p>当样本量足够大时，卡方统计量近似服从卡方分布：</p>
                 <div class="bg-dark-bg rounded-lg p-4 my-4">
-                  <div class="text-center">
-                    $$\chi^2 \sim \chi^2(df)$$
-                  </div>
+                  <div class="text-center">$$\chi^2 \sim \chi^2(df)$$</div>
                 </div>
                 <p>自由度df的计算：</p>
                 <ul class="text-gray-300 space-y-2 my-4">
@@ -2564,7 +2596,8 @@
                       <i class="fa fa-robot mr-2"></i>需要AI帮助？
                     </button>
                     <div class="next-step-hint hidden text-sm text-neon-green">
-                      <i class="fa fa-check-circle mr-1"></i>很好！卡方检验推导完成
+                      <i class="fa fa-check-circle mr-1"></i
+                      >很好！卡方检验推导完成
                     </div>
                   </div>
                 </div>
@@ -2593,23 +2626,32 @@
                 </p>
                 <div class="bg-dark-bg rounded-lg p-4 my-4">
                   <div class="text-center">
-                    $$\text{功效} = P(\text{拒绝}H_0 | H_1\text{为真}) = 1 - \beta$$
+                    $$\text{功效} = P(\text{拒绝}H_0 | H_1\text{为真}) = 1 -
+                    \beta$$
                   </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-                  <div class="bg-pink-900/20 border border-pink-500/30 rounded-lg p-4">
-                    <h4 class="text-pink-400 font-semibold mb-2">💪 功效的意义</h4>
+                  <div
+                    class="bg-pink-900/20 border border-pink-500/30 rounded-lg p-4"
+                  >
+                    <h4 class="text-pink-400 font-semibold mb-2">
+                      💪 功效的意义
+                    </h4>
                     <p class="text-gray-300 text-sm">
-                      • 功效越高，检验越敏感<br>
-                      • 能更好地发现真实的效应<br>
+                      • 功效越高，检验越敏感<br />
+                      • 能更好地发现真实的效应<br />
                       • 减少第二类错误的概率
                     </p>
                   </div>
-                  <div class="bg-cyan-900/20 border border-cyan-500/30 rounded-lg p-4">
-                    <h4 class="text-cyan-400 font-semibold mb-2">📊 影响因素</h4>
+                  <div
+                    class="bg-cyan-900/20 border border-cyan-500/30 rounded-lg p-4"
+                  >
+                    <h4 class="text-cyan-400 font-semibold mb-2">
+                      📊 影响因素
+                    </h4>
                     <p class="text-gray-300 text-sm">
-                      • 效应大小（效应越大，功效越高）<br>
-                      • 样本量（样本越大，功效越高）<br>
+                      • 效应大小（效应越大，功效越高）<br />
+                      • 样本量（样本越大，功效越高）<br />
                       • 显著性水平α（α越大，功效越高）
                     </p>
                   </div>
@@ -2702,13 +2744,17 @@
                   </div>
                   <div class="flex justify-between items-center">
                     <span class="text-gray-300">最薄弱环节:</span>
-                    <span id="theory-weakest-step" class="text-neon-orange font-bold"
+                    <span
+                      id="theory-weakest-step"
+                      class="text-neon-orange font-bold"
                       >-</span
                     >
                   </div>
                   <div class="flex justify-between items-center">
                     <span class="text-gray-300">最强项:</span>
-                    <span id="theory-strongest-step" class="text-neon-green font-bold"
+                    <span
+                      id="theory-strongest-step"
+                      class="text-neon-green font-bold"
                       >-</span
                     >
                   </div>
@@ -2727,7 +2773,10 @@
                   <h5 class="text-sm font-semibold text-neon-green mb-2">
                     📚 个性化学习建议
                   </h5>
-                  <div id="theory-learning-suggestions" class="text-sm text-gray-300">
+                  <div
+                    id="theory-learning-suggestions"
+                    class="text-sm text-gray-300"
+                  >
                     完成所有理论模块后将显示个性化建议
                   </div>
                 </div>
@@ -3505,48 +3554,204 @@
     </section>
 
     <!-- 页脚 -->
-    <footer class="bg-dark-card border-t border-gray-800 py-12">
+    <footer class="bg-dark-card py-12 border-t border-gray-800">
       <div class="container mx-auto px-4">
-        <div class="text-center">
-          <div class="flex items-center justify-center space-x-2 mb-4">
-            <div
-              class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center"
-            >
-              <i class="fa fa-flask text-white"></i>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <div class="flex items-center space-x-2 mb-6">
+              <div
+                class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center"
+              >
+                <i class="fa fa-calculator text-white text-xl"></i>
+              </div>
+              <h2 class="text-xl font-future font-bold text-white">
+                <span class="text-neon-blue">概率</span
+                ><span class="text-white">维度</span>
+              </h2>
             </div>
-            <h3 class="text-xl font-future font-bold text-white">
-              <span class="text-neon-blue">概率</span
-              ><span class="text-white">维度</span>
-            </h3>
-          </div>
-          <p class="text-gray-400 mb-6">
-            让统计学变得生动有趣，让数据科学触手可及
-          </p>
-          <div class="flex justify-center space-x-6">
-            <a
-              href="index.html"
-              class="text-gray-400 hover:text-neon-blue transition-colors"
-            >
-              <i class="fa fa-home mr-2"></i>首页
-            </a>
-            <a
-              href="#"
-              class="text-gray-400 hover:text-neon-purple transition-colors"
-            >
-              <i class="fa fa-book mr-2"></i>教程
-            </a>
-            <a
-              href="#"
-              class="text-gray-400 hover:text-neon-green transition-colors"
-            >
-              <i class="fa fa-envelope mr-2"></i>联系
-            </a>
-          </div>
-          <div class="mt-8 pt-8 border-t border-gray-800">
-            <p class="text-gray-500 text-sm">
-              © 2024 概率维度. 让学习成为一场精彩的冒险.
+            <p class="text-gray-400 mb-6">
+              探索概率与数理统计的奇妙世界，揭示数据背后的规律。
             </p>
+            <div class="flex space-x-4">
+              <a
+                href="https://www.douyin.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-red-500 hover:to-pink-500 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
+                title="抖音 - 记录美好生活"
+              >
+                <img
+                  src="../static/img/tiktok.svg"
+                  alt="抖音"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+              <a
+                href="https://www.bilibili.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-pink-400 hover:to-pink-600 hover:text-white transition-all duration-300 transform hover:scale-110 hover:-rotate-12"
+                title="哔哩哔哩 - 你感兴趣的视频都在B站"
+              >
+                <img
+                  src="../static/img/bilibili.svg"
+                  alt="哔哩哔哩"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+              <a
+                href="https://weixin.qq.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-green-400 hover:to-green-600 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-12"
+                title="微信 - 是一个生活方式"
+              >
+                <img
+                  src="../static/img/wechat.svg"
+                  alt="微信"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+              <a
+                href="https://weibo.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gradient-to-r hover:from-orange-400 hover:to-red-500 hover:text-white transition-all duration-300 transform hover:scale-110 hover:-rotate-12"
+                title="微博 - 随时随地发现新鲜事"
+              >
+                <img
+                  src="../static/img/weibo.svg"
+                  alt="微博"
+                  class="w-5 h-5 transition-transform duration-300"
+                />
+              </a>
+            </div>
           </div>
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">快速链接</h3>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="index.html#concepts"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >核心概念</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#simulations"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >概率模拟</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#visualizations"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >数据可视化</a
+                >
+              </li>
+              <li>
+                <a
+                  href="index.html#applications"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >应用场景</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">学习资源</h3>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >教程与指南</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >在线课程</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >书籍推荐</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-400 hover:text-neon-blue transition-colors"
+                  >研究论文</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-white font-future font-semibold mb-6">联系我们</h3>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <i class="fa fa-envelope text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400">WangHouxiong9558@outlook.com</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-map-marker text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400"
+                  >江西省南昌市高新技术开发区天祥大道289号</span
+                >
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-phone text-neon-blue mt-1 mr-3"></i>
+                <span class="text-gray-400">+86 173 5709 8869</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div
+          class="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"
+        >
+          <p class="text-gray-500 text-sm mb-4 md:mb-0">
+            © 2025 概率维度. 保留所有权利.
+          </p>
+          <div class="flex space-x-6">
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >隐私政策</a
+            >
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >服务条款</a
+            >
+            <a href="#" class="text-gray-500 hover:text-gray-300 text-sm"
+              >Cookie政策</a
+            >
+          </div>
+        </div>
+        
+        <!-- 备案信息 -->
+        <div class="pt-4 text-center">
+          <p class="text-gray-500 text-sm">
+            <a 
+              href="http://beian.miit.gov.cn/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="text-gray-500 hover:text-gray-300 transition-colors underline cursor-pointer inline-block py-1 px-2"
+              style="z-index: 999; position: relative;"
+            >
+              赣ICP备2025074925号
+            </a>
+          </p>
+          <p class="text-gray-600 text-xs mt-1">
+            审核通过日期：2025-10-27
+          </p>
         </div>
       </div>
     </footer>
@@ -4137,41 +4342,47 @@
       class TheoryExploration {
         constructor() {
           this.understandingScores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // 10个理论步骤
-          this.currentSection = 'error-types';
+          this.currentSection = "error-types";
           this.initializeElements();
           this.bindEvents();
           this.initializeKaTeX();
         }
 
         initializeElements() {
-          this.theoryNavBtns = document.querySelectorAll('.theory-nav-btn');
-          this.theorySections = document.querySelectorAll('.theory-section');
-          this.understandingBtns = document.querySelectorAll('.understanding-btn');
-          this.aiHelpBtns = document.querySelectorAll('.ai-help-btn');
+          this.theoryNavBtns = document.querySelectorAll(".theory-nav-btn");
+          this.theorySections = document.querySelectorAll(".theory-section");
+          this.understandingBtns =
+            document.querySelectorAll(".understanding-btn");
+          this.aiHelpBtns = document.querySelectorAll(".ai-help-btn");
         }
 
         bindEvents() {
           // 理论导航按钮事件
-          this.theoryNavBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              const section = e.target.closest('button').getAttribute('onclick').match(/'([^']+)'/)[1];
+          this.theoryNavBtns.forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              const section = e.target
+                .closest("button")
+                .getAttribute("onclick")
+                .match(/'([^']+)'/)[1];
               this.showTheorySection(section);
             });
           });
 
           // 理解度评分按钮事件
-          this.understandingBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              const step = parseInt(e.target.closest('.theory-step').getAttribute('data-step'));
-              const level = parseInt(e.target.getAttribute('data-level'));
+          this.understandingBtns.forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              const step = parseInt(
+                e.target.closest(".theory-step").getAttribute("data-step")
+              );
+              const level = parseInt(e.target.getAttribute("data-level"));
               this.setUnderstanding(step, level);
             });
           });
 
           // AI帮助按钮事件
-          this.aiHelpBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              const step = parseInt(e.target.getAttribute('data-step'));
+          this.aiHelpBtns.forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              const step = parseInt(e.target.getAttribute("data-step"));
               this.showAIHelp(step);
             });
           });
@@ -4179,7 +4390,7 @@
 
         initializeKaTeX() {
           // 渲染数学公式
-          if (typeof renderMathInElement !== 'undefined') {
+          if (typeof renderMathInElement !== "undefined") {
             renderMathInElement(document.body, {
               delimiters: [
                 { left: "$$", right: "$$", display: true },
@@ -4195,31 +4406,42 @@
 
         showTheorySection(sectionId) {
           // 隐藏所有理论部分
-          this.theorySections.forEach(section => {
-            section.classList.add('hidden');
+          this.theorySections.forEach((section) => {
+            section.classList.add("hidden");
           });
 
           // 显示选中的理论部分
           const targetSection = document.getElementById(`${sectionId}-section`);
           if (targetSection) {
-            targetSection.classList.remove('hidden');
+            targetSection.classList.remove("hidden");
             this.currentSection = sectionId;
           }
 
           // 更新导航按钮状态
-          this.theoryNavBtns.forEach(btn => {
-            btn.classList.remove('bg-neon-blue/30', 'bg-neon-green/30', 'bg-neon-orange/30', 'bg-neon-purple/30', 'bg-neon-pink/30');
-            btn.classList.add('bg-gray-700/20');
+          this.theoryNavBtns.forEach((btn) => {
+            btn.classList.remove(
+              "bg-neon-blue/30",
+              "bg-neon-green/30",
+              "bg-neon-orange/30",
+              "bg-neon-purple/30",
+              "bg-neon-pink/30"
+            );
+            btn.classList.add("bg-gray-700/20");
           });
 
           const activeBtn = document.querySelector(`[onclick*="${sectionId}"]`);
           if (activeBtn) {
-            activeBtn.classList.remove('bg-gray-700/20');
-            if (sectionId === 'error-types') activeBtn.classList.add('bg-neon-blue/30');
-            else if (sectionId === 'z-test') activeBtn.classList.add('bg-neon-green/30');
-            else if (sectionId === 't-test') activeBtn.classList.add('bg-neon-orange/30');
-            else if (sectionId === 'chi-square') activeBtn.classList.add('bg-neon-purple/30');
-            else if (sectionId === 'power-analysis') activeBtn.classList.add('bg-neon-pink/30');
+            activeBtn.classList.remove("bg-gray-700/20");
+            if (sectionId === "error-types")
+              activeBtn.classList.add("bg-neon-blue/30");
+            else if (sectionId === "z-test")
+              activeBtn.classList.add("bg-neon-green/30");
+            else if (sectionId === "t-test")
+              activeBtn.classList.add("bg-neon-orange/30");
+            else if (sectionId === "chi-square")
+              activeBtn.classList.add("bg-neon-purple/30");
+            else if (sectionId === "power-analysis")
+              activeBtn.classList.add("bg-neon-pink/30");
           }
         }
 
@@ -4228,18 +4450,18 @@
 
           // 更新按钮状态
           const stepElement = document.querySelector(`[data-step="${step}"]`);
-          const buttons = stepElement.querySelectorAll('.understanding-btn');
+          const buttons = stepElement.querySelectorAll(".understanding-btn");
           buttons.forEach((btn, index) => {
-            btn.classList.toggle('bg-neon-blue', index + 1 === level);
-            btn.classList.toggle('text-dark-bg', index + 1 === level);
-            btn.classList.toggle('bg-gray-700', index + 1 !== level);
-            btn.classList.toggle('text-white', index + 1 !== level);
+            btn.classList.toggle("bg-neon-blue", index + 1 === level);
+            btn.classList.toggle("text-dark-bg", index + 1 === level);
+            btn.classList.toggle("bg-gray-700", index + 1 !== level);
+            btn.classList.toggle("text-white", index + 1 !== level);
           });
 
           // 显示下一步提示
-          const nextStepHint = stepElement.querySelector('.next-step-hint');
+          const nextStepHint = stepElement.querySelector(".next-step-hint");
           if (level >= 3 && nextStepHint) {
-            nextStepHint.classList.remove('hidden');
+            nextStepHint.classList.remove("hidden");
           }
 
           // 渐进式解锁下一步
@@ -4248,47 +4470,54 @@
           }
 
           // 检查是否所有步骤都已评分
-          if (this.understandingScores.every(score => score > 0)) {
+          if (this.understandingScores.every((score) => score > 0)) {
             this.showUnderstandingRadar();
           }
         }
 
         unlockNextStep(step) {
-          const nextStepElement = document.querySelector(`[data-step="${step}"]`);
-          if (nextStepElement && nextStepElement.classList.contains('locked')) {
+          const nextStepElement = document.querySelector(
+            `[data-step="${step}"]`
+          );
+          if (nextStepElement && nextStepElement.classList.contains("locked")) {
             // 移除锁定状态
-            nextStepElement.classList.remove('locked');
-            nextStepElement.classList.add('unlocked');
+            nextStepElement.classList.remove("locked");
+            nextStepElement.classList.add("unlocked");
 
             // 更新标题样式
-            const title = nextStepElement.querySelector('h3');
-            const stepNumber = nextStepElement.querySelector('h3 span');
-            const lockIcon = nextStepElement.querySelector('.fa-lock');
+            const title = nextStepElement.querySelector("h3");
+            const stepNumber = nextStepElement.querySelector("h3 span");
+            const lockIcon = nextStepElement.querySelector(".fa-lock");
 
-            title.classList.remove('text-gray-500');
-            title.classList.add('text-neon-blue');
-            stepNumber.classList.remove('bg-gray-600', 'text-gray-400');
-            stepNumber.classList.add('bg-neon-blue', 'text-dark-bg');
+            title.classList.remove("text-gray-500");
+            title.classList.add("text-neon-blue");
+            stepNumber.classList.remove("bg-gray-600", "text-gray-400");
+            stepNumber.classList.add("bg-neon-blue", "text-dark-bg");
 
             if (lockIcon) {
-              lockIcon.parentElement.innerHTML = '<i class="fa fa-unlock text-neon-green"></i>';
+              lockIcon.parentElement.innerHTML =
+                '<i class="fa fa-unlock text-neon-green"></i>';
             }
 
             // 恢复内容透明度
-            const content = nextStepElement.querySelector('.message-content');
-            content.classList.remove('opacity-50');
+            const content = nextStepElement.querySelector(".message-content");
+            content.classList.remove("opacity-50");
 
             // 显示理解度内容，隐藏锁定消息
-            const lockedMessage = nextStepElement.querySelector('.locked-message');
-            const understandingContent = nextStepElement.querySelector('.understanding-content');
+            const lockedMessage =
+              nextStepElement.querySelector(".locked-message");
+            const understandingContent = nextStepElement.querySelector(
+              ".understanding-content"
+            );
 
-            if (lockedMessage) lockedMessage.classList.add('hidden');
-            if (understandingContent) understandingContent.classList.remove('hidden');
+            if (lockedMessage) lockedMessage.classList.add("hidden");
+            if (understandingContent)
+              understandingContent.classList.remove("hidden");
 
             // 添加解锁动画
-            nextStepElement.classList.add('animate-pulse');
+            nextStepElement.classList.add("animate-pulse");
             setTimeout(() => {
-              nextStepElement.classList.remove('animate-pulse');
+              nextStepElement.classList.remove("animate-pulse");
             }, 1000);
           }
         }
@@ -4304,32 +4533,47 @@
             7: "t分布比正态分布更'胖'，反映了用样本标准差估计总体标准差带来的额外不确定性。随着自由度增加，t分布趋近于标准正态分布。",
             8: "卡方检验主要用于分类数据分析，包括拟合优度检验和独立性检验。它比较观察频数与期望频数的差异。",
             9: "卡方统计量的构造基于皮尔逊卡方统计量，通过标准化的平方差之和来衡量观察值与期望值的偏离程度。",
-            10: "检验功效是正确拒绝假原假设的概率，反映检验的敏感性。功效分析帮助我们设计更好的实验和选择合适的样本量。"
+            10: "检验功效是正确拒绝假原假设的概率，反映检验的敏感性。功效分析帮助我们设计更好的实验和选择合适的样本量。",
           };
 
           alert(`AI助手提示：\n\n${helpTexts[step] || "暂无帮助信息"}`);
         }
 
         showUnderstandingRadar() {
-          const radarSection = document.getElementById('understanding-radar');
-          radarSection.classList.remove('hidden');
+          const radarSection = document.getElementById("understanding-radar");
+          radarSection.classList.remove("hidden");
 
           // 创建雷达图
-          const ctx = document.getElementById('theory-understanding-chart').getContext('2d');
+          const ctx = document
+            .getElementById("theory-understanding-chart")
+            .getContext("2d");
           new Chart(ctx, {
-            type: 'radar',
+            type: "radar",
             data: {
-              labels: ['第一类错误', '第二类错误', '错误权衡', 'Z检验基础', 'Z检验推导', 't检验背景', 't检验推导', '卡方应用', '卡方推导', '功效分析'],
-              datasets: [{
-                label: '理解程度',
-                data: this.understandingScores,
-                backgroundColor: 'rgba(0, 243, 255, 0.2)',
-                borderColor: '#00f3ff',
-                pointBackgroundColor: '#00f3ff',
-                pointBorderColor: '#fff',
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: '#00f3ff',
-              }]
+              labels: [
+                "第一类错误",
+                "第二类错误",
+                "错误权衡",
+                "Z检验基础",
+                "Z检验推导",
+                "t检验背景",
+                "t检验推导",
+                "卡方应用",
+                "卡方推导",
+                "功效分析",
+              ],
+              datasets: [
+                {
+                  label: "理解程度",
+                  data: this.understandingScores,
+                  backgroundColor: "rgba(0, 243, 255, 0.2)",
+                  borderColor: "#00f3ff",
+                  pointBackgroundColor: "#00f3ff",
+                  pointBorderColor: "#fff",
+                  pointHoverBackgroundColor: "#fff",
+                  pointHoverBorderColor: "#00f3ff",
+                },
+              ],
             },
             options: {
               responsive: true,
@@ -4339,24 +4583,24 @@
                   beginAtZero: true,
                   max: 5,
                   ticks: {
-                    color: '#9ca3af',
+                    color: "#9ca3af",
                   },
                   grid: {
-                    color: 'rgba(156, 163, 175, 0.3)',
+                    color: "rgba(156, 163, 175, 0.3)",
                   },
                   angleLines: {
-                    color: 'rgba(156, 163, 175, 0.3)',
+                    color: "rgba(156, 163, 175, 0.3)",
                   },
-                }
+                },
               },
               plugins: {
                 legend: {
                   labels: {
-                    color: '#ffffff',
-                  }
-                }
-              }
-            }
+                    color: "#ffffff",
+                  },
+                },
+              },
+            },
           });
 
           // 更新学习数据分析
@@ -4364,11 +4608,26 @@
         }
 
         updateLearningAnalysis() {
-          const stepNames = ['第一类错误', '第二类错误', '错误权衡', 'Z检验基础', 'Z检验推导', 't检验背景', 't检验推导', '卡方应用', '卡方推导', '功效分析'];
+          const stepNames = [
+            "第一类错误",
+            "第二类错误",
+            "错误权衡",
+            "Z检验基础",
+            "Z检验推导",
+            "t检验背景",
+            "t检验推导",
+            "卡方应用",
+            "卡方推导",
+            "功效分析",
+          ];
 
           // 计算平均理解度
-          const avgScore = (this.understandingScores.reduce((a, b) => a + b, 0) / this.understandingScores.length).toFixed(1);
-          document.getElementById('theory-avg-understanding').textContent = avgScore + '/5.0';
+          const avgScore = (
+            this.understandingScores.reduce((a, b) => a + b, 0) /
+            this.understandingScores.length
+          ).toFixed(1);
+          document.getElementById("theory-avg-understanding").textContent =
+            avgScore + "/5.0";
 
           // 找出最薄弱和最强的环节
           const minScore = Math.min(...this.understandingScores);
@@ -4376,49 +4635,72 @@
           const weakestIndex = this.understandingScores.indexOf(minScore);
           const strongestIndex = this.understandingScores.indexOf(maxScore);
 
-          document.getElementById('theory-weakest-step').textContent = stepNames[weakestIndex] + ` (${minScore}/5)`;
-          document.getElementById('theory-strongest-step').textContent = stepNames[strongestIndex] + ` (${maxScore}/5)`;
+          document.getElementById("theory-weakest-step").textContent =
+            stepNames[weakestIndex] + ` (${minScore}/5)`;
+          document.getElementById("theory-strongest-step").textContent =
+            stepNames[strongestIndex] + ` (${maxScore}/5)`;
 
           // 计算完成时间（模拟）
-          const completionTime = new Date().toLocaleTimeString('zh-CN', { hour12: false });
-          document.getElementById('theory-completion-time').textContent = completionTime;
+          const completionTime = new Date().toLocaleTimeString("zh-CN", {
+            hour12: false,
+          });
+          document.getElementById("theory-completion-time").textContent =
+            completionTime;
 
           // 生成个性化学习建议
           this.generateLearningSuggestions(avgScore, weakestIndex, minScore);
         }
 
         generateLearningSuggestions(avgScore, weakestIndex, minScore) {
-          const stepNames = ['第一类错误', '第二类错误', '错误权衡', 'Z检验基础', 'Z检验推导', 't检验背景', 't检验推导', '卡方应用', '卡方推导', '功效分析'];
+          const stepNames = [
+            "第一类错误",
+            "第二类错误",
+            "错误权衡",
+            "Z检验基础",
+            "Z检验推导",
+            "t检验背景",
+            "t检验推导",
+            "卡方应用",
+            "卡方推导",
+            "功效分析",
+          ];
           const suggestions = [];
 
           if (avgScore >= 4.0) {
-            suggestions.push('🎉 优秀！您已经很好地掌握了假设检验的核心理论。');
-            suggestions.push('💡 建议：可以尝试更复杂的假设检验问题，如多重比较、非参数检验等。');
+            suggestions.push("🎉 优秀！您已经很好地掌握了假设检验的核心理论。");
+            suggestions.push(
+              "💡 建议：可以尝试更复杂的假设检验问题，如多重比较、非参数检验等。"
+            );
           } else if (avgScore >= 3.0) {
-            suggestions.push('👍 不错！您对大部分理论有了基本理解。');
-            suggestions.push(`🔍 重点关注：${stepNames[weakestIndex]}部分需要加强理解。`);
+            suggestions.push("👍 不错！您对大部分理论有了基本理解。");
+            suggestions.push(
+              `🔍 重点关注：${stepNames[weakestIndex]}部分需要加强理解。`
+            );
           } else {
-            suggestions.push('📚 需要更多练习！建议重新学习基础理论。');
-            suggestions.push(`⚠️ 优先复习：${stepNames[weakestIndex]}是当前的薄弱环节。`);
+            suggestions.push("📚 需要更多练习！建议重新学习基础理论。");
+            suggestions.push(
+              `⚠️ 优先复习：${stepNames[weakestIndex]}是当前的薄弱环节。`
+            );
           }
 
           if (minScore <= 2) {
             const helpTexts = {
-              0: '建议复习概率论基础，特别是条件概率的概念。',
-              1: '建议复习检验功效的定义，理解β错误与功效的关系。',
-              2: '建议复习样本量对检验的影响，理解如何平衡两类错误。',
-              3: '建议复习中心极限定理，这是Z检验的理论基础。',
-              4: '建议复习标准化过程，理解如何构造检验统计量。',
-              5: '建议复习t分布的性质，理解它与正态分布的区别。',
-              6: '建议复习自由度的概念，理解样本标准差的分布。',
-              7: '建议复习分类数据分析，理解频数与概率的关系。',
-              8: '建议复习卡方分布的性质，理解期望频数的计算。',
-              9: '建议复习功效分析的应用，理解样本量计算的原理。'
+              0: "建议复习概率论基础，特别是条件概率的概念。",
+              1: "建议复习检验功效的定义，理解β错误与功效的关系。",
+              2: "建议复习样本量对检验的影响，理解如何平衡两类错误。",
+              3: "建议复习中心极限定理，这是Z检验的理论基础。",
+              4: "建议复习标准化过程，理解如何构造检验统计量。",
+              5: "建议复习t分布的性质，理解它与正态分布的区别。",
+              6: "建议复习自由度的概念，理解样本标准差的分布。",
+              7: "建议复习分类数据分析，理解频数与概率的关系。",
+              8: "建议复习卡方分布的性质，理解期望频数的计算。",
+              9: "建议复习功效分析的应用，理解样本量计算的原理。",
             };
             suggestions.push(`📖 具体建议：${helpTexts[weakestIndex]}`);
           }
 
-          document.getElementById('theory-learning-suggestions').innerHTML = suggestions.join('<br>');
+          document.getElementById("theory-learning-suggestions").innerHTML =
+            suggestions.join("<br>");
         }
       }
 
@@ -4755,5 +5037,3 @@
     <script src="../static/js/toolbox.js"></script>
   </body>
 </html>
-
-
