@@ -1299,6 +1299,27 @@
             >
               立即订阅 <i class="fa fa-paper-plane ml-2"></i>
             </button>
+            <script>
+        // 提交表单时，通过 AJAX 发送数据
+        document.getElementById('email-form').addEventListener('submit', function(e) {
+            e.preventDefault();  // 阻止默认表单提交
+
+            const email = document.getElementById('email').value;
+
+            // AJAX 请求
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'submit_email.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert('邮箱提交成功!');
+                } else {
+                    alert('提交失败，请稍后再试');
+                }
+            };
+            xhr.send('email=' + encodeURIComponent(email));  // 发送邮箱数据
+        });
+    </script>
           </form>
         </div>
       </div>
