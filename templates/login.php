@@ -12,10 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     // 连接到数据库
-    $servername = "localhost";
-    $db_username = "root";
-    $db_password = "password";
-    $dbname = "email_database";
+    $servername = "8.148.208.76";
+    $db_username = "e-mail";
+    $db_password = "123456";
+    $dbname = "e-mail";
 
     $conn = new mysqli($servername, $db_username, $db_password, $dbname);
 
