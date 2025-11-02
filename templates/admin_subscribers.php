@@ -1,9 +1,16 @@
 <?php
-session_start(); // 确保会话管理
+session_start();
 
-// 验证管理员登录权限
+// 验证管理员是否已登录
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: login.php'); // 如果没有登录，重定向到登录页面
+    header("Location: login.php");  // 如果没有登录，跳转到登录页面
+    exit;
+}
+
+// 处理登出操作
+if (isset($_POST['logout'])) {
+    session_destroy();  // 销毁会话数据
+    header("Location: login.php");  // 重定向到登录页面
     exit;
 }
 
@@ -11,6 +18,7 @@ $servername = "8.148.208.76";
 $username = "e-mail";  // MySQL 用户名
 $password = "123456";  // MySQL 密码
 $dbname = "e-mail";  // 数据库名称
+
 // 创建数据库连接
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -55,6 +63,12 @@ if (isset($_GET['delete'])) {
 </head>
 <body>
     <h2>订阅者管理</h2>
+
+    <!-- 添加登出按钮 -->
+    <form method="POST">
+        <button type="submit" name="logout">登出</button>
+    </form>
+
     <table border="1" cellpadding="10">
         <thead>
             <tr>
