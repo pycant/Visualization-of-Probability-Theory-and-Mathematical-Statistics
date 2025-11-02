@@ -1299,26 +1299,77 @@
             >
               立即订阅 <i class="fa fa-paper-plane ml-2"></i>
             </button>
+            <div id="error-message" style="color: red;"></div>
+            <div id="success-message" style="color: green;"></div>
             <script>
-        // 提交表单时，通过 AJAX 发送数据
-        document.getElementById('email-form').addEventListener('submit', function(e) {
-            e.preventDefault();  // 阻止默认表单提交
+         document.getElementById('email-form').addEventListener('submit', function(e) {
+            e.preventDefault();
 
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
 
-            // AJAX 请求
+            // 清除之前的消息
+            errorMessage.textContent = '';
+            successMessage.textContent = '';
+
+            // 无效邮箱格式测试
+            if (!validateEmail(email)) {
+                errorMessage.textContent = '请输入有效的邮箱地址';
+                return;
+            }
+
+            // 空提交测试
+            if (!email) {
+                errorMessage.textContent = '邮箱地址不能为空';
+                return;
+            }
+
+            // 发送 AJAX 请求到服务器检查是否重复订阅
+            checkDuplicateSubscription(email, function(response) {
+                if (response === 'duplicate') {
+                    errorMessage.textContent = '该邮箱已订阅';
+                } else {
+                    // 如果没有重复订阅，提交到服务器
+                    subscribeEmail(email);
+                }
+            });
+        });
+
+        function validateEmail(email) {
+            const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            return regex.test(email);
+        }
+
+        function checkDuplicateSubscription(email, callback) {
+            // 使用 AJAX 请求检查是否已经订阅
             const xhr = new XMLHttpRequest();
             xhr.open('POST', 'submit_email.php', true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    alert('邮箱提交成功!');
+                    callback(xhr.responseText);  // 服务器返回是否重复
                 } else {
-                    alert('提交失败，请稍后再试');
+                    console.error('请求失败');
                 }
             };
-            xhr.send('email=' + encodeURIComponent(email));  // 发送邮箱数据
-        });
+            xhr.send('email_check=' + encodeURIComponent(email));  // 发送邮箱地址进行检查
+        }
+
+        function subscribeEmail(email) {
+            // 使用 AJAX 提交邮箱
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'submit_email.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    document.getElementById('success-message').textContent = '订阅成功！';
+                } else {
+                    console.error('提交失败');
+                }
+            };
+            xhr.send('email=' + encodeURIComponent(email));  // 提交邮箱
+        }
     </script>
           </form>
         </div>
