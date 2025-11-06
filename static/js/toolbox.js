@@ -552,29 +552,63 @@ class ProbabilityToolbox {
     if (pageIntroSelect) {
       pageIntroSelect.addEventListener("change", (e) => {
         const key = e.target.value;
-        const rawSrc = (this.pageIntroMap && this.pageIntroMap[key])
-          ? this.pageIntroMap[key]
-          : this.pageIntroMap["index"];
-        const src = encodeURI(rawSrc);
-        if (pageIntroSource && pageIntroVideo) {
-          pageIntroSource.src = src;
-          pageIntroVideo.load();
-        }
-        if (pageIntroDownload) {
-          pageIntroDownload.href = src;
-        }
-        if (pageIntroError) {
-          pageIntroError.classList.add("hidden");
-        }
+        this.setPageIntroVideo(key);
       });
     }
 
     if (pageIntroVideo) {
-      pageIntroVideo.addEventListener("error", () => {
+      const describeSupport = () => {
+        try {
+          const v = document.createElement("video");
+          const support = {
+            mp4_avc1: v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"') || "",
+            mp4_hvc1: v.canPlayType('video/mp4; codecs="hvc1"') || "",
+            webm_vp9: v.canPlayType('video/webm; codecs="vp9,opus"') || "",
+            quicktime: v.canPlayType('video/quicktime') || "",
+          };
+          return `支持检测 mp4(avc1)=${support.mp4_avc1||'no'}, mp4(hvc1)=${support.mp4_hvc1||'no'}, webm(vp9)=${support.webm_vp9||'no'}, mov(quicktime)=${support.quicktime||'no'}`;
+        } catch (_) {
+          return "支持检测不可用";
+        }
+      };
+
+      const getErrorText = () => {
+        const err = pageIntroVideo.error;
+        const codes = { 1: "用户中止", 2: "网络错误", 3: "解码错误", 4: "资源不支持" };
+        const src = pageIntroSource ? decodeURI(pageIntroSource.src || "") : "";
+        if (!err) {
+          return `视频加载失败，原因未知。源: ${src}. ${describeSupport()}`;
+        }
+        return `视频错误 code=${err.code}(${codes[err.code]||'未知'}), 源: ${src}。${describeSupport()}`;
+      };
+
+      const showError = (extra = "") => {
+        const text = `${getErrorText()}${extra ? '（'+extra+'）' : ''}`;
+        console.error(text);
         if (pageIntroError) {
+          pageIntroError.textContent = text;
           pageIntroError.classList.remove("hidden");
         }
+      };
+
+      const hideError = () => {
+        if (pageIntroError) {
+          pageIntroError.classList.add("hidden");
+        }
+      };
+
+      pageIntroVideo.addEventListener("error", () => showError());
+      pageIntroVideo.addEventListener("stalled", () => showError("数据获取停滞"));
+      pageIntroVideo.addEventListener("abort", () => showError("加载中止"));
+      pageIntroVideo.addEventListener("emptied", () => showError("媒体被清空"));
+      pageIntroVideo.addEventListener("waiting", () => {
+        // 不立即显示错误，等待 canplay
+        console.warn("video waiting: 正在缓冲...");
       });
+      pageIntroVideo.addEventListener("loadedmetadata", hideError);
+      pageIntroVideo.addEventListener("loadeddata", hideError);
+      pageIntroVideo.addEventListener("canplay", hideError);
+      pageIntroVideo.addEventListener("canplaythrough", hideError);
     }
 
     // 测试工具相关事件
@@ -654,7 +688,18 @@ class ProbabilityToolbox {
   // 初始化网页介绍栏：设置视频映射与默认加载当前页面视频
   initPageIntro() {
     try {
+      // 首选可播放 MP4 资产（占位），保留 MOV 作为兜底
       this.pageIntroMap = {
+        index: "/static/videos/正态分布.mp4",
+        random_variables: "/static/videos/泊松分布.mp4",
+        probability_distributions: "/static/videos/正态分布.mp4",
+        hypothesis_testing: "/static/videos/t分布.mp4",
+        interval_estimation: "/static/videos/t分布.mp4",
+        law_of_large_numbers: "/static/videos/正态分布.mp4",
+      };
+
+      // 原始 MOV 资源映射，用于最后回退
+      this.pageIntroMovMap = {
         index: "/static/videos/概率维度.mov",
         random_variables: "/static/videos/随机变量.mov",
         probability_distributions: "/static/videos/概率分布.mov",
@@ -680,17 +725,88 @@ class ProbabilityToolbox {
       if (pageIntroSelect) {
         pageIntroSelect.value = key;
       }
-      const src = encodeURI(this.pageIntroMap[key]);
-      if (pageIntroSource && pageIntroVideo) {
-        pageIntroSource.src = src;
-        pageIntroVideo.load();
-      }
-      if (pageIntroDownload) {
-        pageIntroDownload.href = src;
-      }
+      this.setPageIntroVideo(key, true);
     } catch (e) {
       // 安静失败，不影响其他工具
       console.warn("初始化网页介绍栏失败:", e);
+    }
+  }
+
+  // 设置网页介绍视频，带多源回退（mp4→webm→mov）与类型标注
+  setPageIntroVideo(key, quiet = false) {
+    try {
+      const pageIntroVideo = document.getElementById("page-intro-video");
+      const pageIntroSource = document.getElementById("page-intro-video-src");
+      const pageIntroDownload = document.getElementById("page-intro-download");
+      const pageIntroError = document.getElementById("page-intro-error");
+
+      if (!pageIntroVideo || !pageIntroSource) return;
+
+      const v = document.createElement("video");
+      const supportMp4 = v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+      const supportWebm = v.canPlayType('video/webm; codecs="vp9,opus"');
+
+      const primary = this.pageIntroMap && this.pageIntroMap[key] ? this.pageIntroMap[key] : null;
+      const altMov = this.pageIntroMovMap && this.pageIntroMovMap[key] ? this.pageIntroMovMap[key] : null;
+      const candidates = [];
+      if (primary) {
+        const basePrimary = primary.replace(/\.(mov|mp4|webm)$/i, "");
+        if (supportMp4) candidates.push(`${basePrimary}.mp4`);
+        if (supportWebm) candidates.push(`${basePrimary}.webm`);
+        candidates.push(primary);
+      }
+      if (altMov) {
+        const baseAlt = altMov.replace(/\.(mov|mp4|webm)$/i, "");
+        if (supportMp4) candidates.push(`${baseAlt}.mp4`);
+        if (supportWebm) candidates.push(`${baseAlt}.webm`);
+        candidates.push(altMov);
+      }
+
+      let attemptIndex = 0;
+
+      const applySrc = (src) => {
+        const enc = encodeURI(src);
+        pageIntroSource.src = enc;
+        try {
+          const lower = enc.toLowerCase();
+          if (lower.endsWith(".mp4")) {
+            pageIntroSource.type = "video/mp4";
+          } else if (lower.endsWith(".webm")) {
+            pageIntroSource.type = "video/webm";
+          } else if (lower.endsWith(".mov")) {
+            pageIntroSource.type = "video/quicktime";
+          } else {
+            pageIntroSource.removeAttribute("type");
+          }
+        } catch (_) {}
+        pageIntroVideo.load();
+        if (pageIntroDownload) pageIntroDownload.href = enc;
+        if (pageIntroError) pageIntroError.classList.add("hidden");
+      };
+
+      const tryNext = () => {
+        if (attemptIndex >= candidates.length) {
+          if (!quiet) console.error("所有候选视频源均无法播放:", candidates);
+          if (pageIntroError) {
+            pageIntroError.classList.remove("hidden");
+            pageIntroError.textContent = `⚠️ 所有候选视频源均无法播放，请提供 MP4(H.264) 或 WebM(VP9) 版本。尝试过: ${candidates.join(', ')}`;
+          }
+          return;
+        }
+        const nextSrc = candidates[attemptIndex++];
+        applySrc(nextSrc);
+        // 为当前尝试绑定一次性错误监听，失败则自动尝试下一个
+        const onErr = () => {
+          pageIntroVideo.removeEventListener("error", onErr);
+          if (!quiet) console.warn("视频源失败，尝试下一个:", nextSrc);
+          tryNext();
+        };
+        pageIntroVideo.addEventListener("error", onErr, { once: true });
+      };
+
+      tryNext();
+    } catch (e) {
+      if (!quiet) console.warn("设置网页介绍视频失败:", e);
     }
   }
 
