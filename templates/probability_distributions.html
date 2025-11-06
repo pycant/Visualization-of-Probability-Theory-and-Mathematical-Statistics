@@ -2049,6 +2049,24 @@
                       1.00
                     </div>
                   </div>
+                  <div class="bg-gray-800 p-3 rounded-lg">
+                    <div class="text-sm text-gray-400">偏度 Skewness γ1</div>
+                    <div
+                      id="skewness"
+                      class="text-lg font-semibold text-neon-blue"
+                    >
+                      0.00
+                    </div>
+                  </div>
+                  <div class="bg-gray-800 p-3 rounded-lg">
+                    <div class="text-sm text-gray-400">峰度 Kurtosis β2</div>
+                    <div
+                      id="kurtosis"
+                      class="text-lg font-semibold text-neon-blue"
+                    >
+                      3.00
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2122,23 +2140,9 @@
               <div
                 class="mt-6 bg-dark-bg rounded-xl p-6 border border-gray-800"
               >
-                <h4
-                  class="text-lg font-semibold mb-4 text-white flex items-center"
-                >
-                  <i class="fa fa-info-circle text-neon-blue mr-3"></i> 分布信息
-                </h4>
+
                 <div id="distribution-info" class="text-gray-300">
-                  <p>
-                    <strong>正态分布</strong
-                    >是最重要的连续概率分布，具有钟形曲线的特征。它在自然界和社会现象中广泛存在，是中心极限定理的基础。
-                  </p>
-                  <p class="mt-2">
-                    <strong>应用场景：</strong
-                    >身高、体重、测量误差、考试成绩等。
-                  </p>
-                  <p class="mt-2">
-                    <strong>特性：</strong>对称性、68-95-99.7规则、可加性等。
-                  </p>
+                  <!-- 内嵌理论翻转卡片将由脚本动态渲染到此处，随当前分布变化 -->
                 </div>
               </div>
             </div>
@@ -3972,6 +3976,304 @@
               </div>
             </div>
           </div>
+          
+          <!-- 威布尔分布理论 - 翻转卡片 -->
+          <div class="multi-page-card page-1" id="weibull-theory-card" data-total-pages="4">
+            <div class="card-container">
+              <div class="card-page card-front" data-page="1">
+                <div class="content-tag">分布介绍</div>
+                <div class="flex items-center mb-6">
+                  <div class="w-12 h-12 rounded-lg bg-neon-teal/20 flex items-center justify-center mr-4">
+                    <i class="fa fa-cogs text-neon-teal text-xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-future font-bold text-white">威布尔分布理论</h3>
+                </div>
+                <p class="text-gray-300">威布尔分布广泛用于可靠性与寿命分析，形状参数控制危险率递增或递减，指数分布是其特例。</p>
+              </div>
+              <div class="card-page card-back" data-page="2">
+                <div class="content-tag">分布函数推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">定义与常用形式</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$f(x)=\frac{k}{\lambda}\left(\frac{x}{\lambda}\right)^{k-1}e^{-\left(\frac{x}{\lambda}\right)^k},\quad x\ge0$$</div>
+                  <div class="math-formula">$$F(x)=1-e^{-\left(\frac{x}{\lambda}\right)^k}$$</div>
+                </div>
+              </div>
+              <div class="card-page card-inner" data-page="3">
+                <div class="content-tag">期望方差推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">数字特征</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$E[X]=\lambda\,\Gamma\left(1+\frac{1}{k}\right)$$</div>
+                  <div class="math-formula">$$Var(X)=\lambda^2\left[\Gamma\left(1+\frac{2}{k}\right)-\Gamma\left(1+\frac{1}{k}\right)^2\right]$$</div>
+                </div>
+              </div>
+              <div class="card-page card-extra" data-page="4">
+                <div class="content-tag">重要性质推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">性质与应用</h3>
+                <ul class="text-gray-300 space-y-2">
+                  <li>• 形状参数控制风险率的单调性。</li>
+                  <li>• 可靠性工程与寿命分析常用。</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-navigation">
+              <div class="nav-arrow prev-arrow" data-card="weibull-theory-card"><i class="fas fa-chevron-left"></i></div>
+              <div class="flex gap-2 mx-4">
+                <div class="nav-dot active" data-card="weibull-theory-card" data-page="1"></div>
+                <div class="nav-dot" data-card="weibull-theory-card" data-page="2"></div>
+                <div class="nav-dot" data-card="weibull-theory-card" data-page="3"></div>
+                <div class="nav-dot" data-card="weibull-theory-card" data-page="4"></div>
+              </div>
+              <div class="nav-arrow next-arrow" data-card="weibull-theory-card"><i class="fas fa-chevron-right"></i></div>
+            </div>
+          </div>
+
+          <!-- 对数正态分布理论 - 翻转卡片 -->
+          <div class="multi-page-card page-1" id="lognormal-theory-card" data-total-pages="4">
+            <div class="card-container">
+              <div class="card-page card-front" data-page="1">
+                <div class="content-tag">分布介绍</div>
+                <div class="flex items-center mb-6">
+                  <div class="w-12 h-12 rounded-lg bg-neon-indigo/20 flex items-center justify-center mr-4">
+                    <i class="fa fa-line-chart text-neon-indigo text-xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-future font-bold text-white">对数正态分布理论</h3>
+                </div>
+                <p class="text-gray-300">其对数服从正态分布，适用于正值且右偏的数据，常见于金融与自然现象。</p>
+              </div>
+              <div class="card-page card-back" data-page="2">
+                <div class="content-tag">分布函数推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">定义与常用形式</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$f(x)=\frac{1}{x\sigma\sqrt{2\pi}}\exp\left(-\frac{(\ln x-\mu)^2}{2\sigma^2}\right),\quad x>0$$</div>
+                </div>
+              </div>
+              <div class="card-page card-inner" data-page="3">
+                <div class="content-tag">期望方差推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">数字特征</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$E[X]=\exp\left(\mu+\frac{\sigma^2}{2}\right)$$</div>
+                  <div class="math-formula">$$Var(X)=\left(e^{\sigma^2}-1\right)\exp\left(2\mu+\sigma^2\right)$$</div>
+                </div>
+              </div>
+              <div class="card-page card-extra" data-page="4">
+                <div class="content-tag">重要性质推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">性质与应用</h3>
+                <ul class="text-gray-300 space-y-2">
+                  <li>• 乘法过程的结果常呈对数正态。</li>
+                  <li>• 常用于资产价格与尺寸分布。</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-navigation">
+              <div class="nav-arrow prev-arrow" data-card="lognormal-theory-card"><i class="fas fa-chevron-left"></i></div>
+              <div class="flex gap-2 mx-4">
+                <div class="nav-dot active" data-card="lognormal-theory-card" data-page="1"></div>
+                <div class="nav-dot" data-card="lognormal-theory-card" data-page="2"></div>
+                <div class="nav-dot" data-card="lognormal-theory-card" data-page="3"></div>
+                <div class="nav-dot" data-card="lognormal-theory-card" data-page="4"></div>
+              </div>
+              <div class="nav-arrow next-arrow" data-card="lognormal-theory-card"><i class="fas fa-chevron-right"></i></div>
+            </div>
+          </div>
+
+          <!-- 帕累托分布理论 - 翻转卡片 -->
+          <div class="multi-page-card page-1" id="pareto-theory-card" data-total-pages="4">
+            <div class="card-container">
+              <div class="card-page card-front" data-page="1">
+                <div class="content-tag">分布介绍</div>
+                <div class="flex items-center mb-6">
+                  <div class="w-12 h-12 rounded-lg bg-neon-pink/20 flex items-center justify-center mr-4">
+                    <i class="fa fa-signal text-neon-pink text-xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-future font-bold text-white">帕累托分布理论</h3>
+                </div>
+                <p class="text-gray-300">重尾分布，刻画幂律特性，常见于财富分配、城市规模与网络流量。</p>
+              </div>
+              <div class="card-page card-back" data-page="2">
+                <div class="content-tag">分布函数推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">定义与常用形式</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$f(x)=\frac{\alpha x_m^{\alpha}}{x^{\alpha+1}},\quad x\ge x_m$$</div>
+                  <div class="math-formula">$$F(x)=1-\left(\frac{x_m}{x}\right)^{\alpha}$$</div>
+                </div>
+              </div>
+              <div class="card-page card-inner" data-page="3">
+                <div class="content-tag">期望方差推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">数字特征</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$E[X]=\begin{cases}\frac{\alpha x_m}{\alpha-1}, & \alpha>1\\ \text{不存在}, & \alpha\le1\end{cases}$$</div>
+                  <div class="math-formula">$$Var(X)=\begin{cases}\frac{\alpha x_m^2}{(\alpha-1)^2(\alpha-2)}, & \alpha>2\\ \text{不存在}, & \alpha\le2\end{cases}$$</div>
+                </div>
+              </div>
+              <div class="card-page card-extra" data-page="4">
+                <div class="content-tag">重要性质推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">性质与应用</h3>
+                <ul class="text-gray-300 space-y-2">
+                  <li>• 幂律特性，具有重尾。</li>
+                  <li>• 用于风险管理和网络流量分析。</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-navigation">
+              <div class="nav-arrow prev-arrow" data-card="pareto-theory-card"><i class="fas fa-chevron-left"></i></div>
+              <div class="flex gap-2 mx-4">
+                <div class="nav-dot active" data-card="pareto-theory-card" data-page="1"></div>
+                <div class="nav-dot" data-card="pareto-theory-card" data-page="2"></div>
+                <div class="nav-dot" data-card="pareto-theory-card" data-page="3"></div>
+                <div class="nav-dot" data-card="pareto-theory-card" data-page="4"></div>
+              </div>
+              <div class="nav-arrow next-arrow" data-card="pareto-theory-card"><i class="fas fa-chevron-right"></i></div>
+            </div>
+          </div>
+
+          <!-- 拉普拉斯分布理论 - 翻转卡片 -->
+          <div class="multi-page-card page-1" id="laplace-theory-card" data-total-pages="4">
+            <div class="card-container">
+              <div class="card-page card-front" data-page="1">
+                <div class="content-tag">分布介绍</div>
+                <div class="flex items-center mb-6">
+                  <div class="w-12 h-12 rounded-lg bg-neon-cyan/20 flex items-center justify-center mr-4">
+                    <i class="fa fa-diamond text-neon-cyan text-xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-future font-bold text-white">拉普拉斯分布理论</h3>
+                </div>
+                <p class="text-gray-300">双指数分布，具有对称的指数衰减特征，常用于信号处理与稀疏建模。</p>
+              </div>
+              <div class="card-page card-back" data-page="2">
+                <div class="content-tag">分布函数推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">定义与常用形式</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$f(x)=\frac{1}{2b}\exp\left(-\frac{|x-\mu|}{b}\right)$$</div>
+                </div>
+              </div>
+              <div class="card-page card-inner" data-page="3">
+                <div class="content-tag">期望方差推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">数字特征</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$E[X]=\mu$$</div>
+                  <div class="math-formula">$$Var(X)=2b^2$$</div>
+                </div>
+              </div>
+              <div class="card-page card-extra" data-page="4">
+                <div class="content-tag">重要性质推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">性质与应用</h3>
+                <ul class="text-gray-300 space-y-2">
+                  <li>• 稳健性较好，抗异常值。</li>
+                  <li>• 稀疏建模与L1正则化相关。</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-navigation">
+              <div class="nav-arrow prev-arrow" data-card="laplace-theory-card"><i class="fas fa-chevron-left"></i></div>
+              <div class="flex gap-2 mx-4">
+                <div class="nav-dot active" data-card="laplace-theory-card" data-page="1"></div>
+                <div class="nav-dot" data-card="laplace-theory-card" data-page="2"></div>
+                <div class="nav-dot" data-card="laplace-theory-card" data-page="3"></div>
+                <div class="nav-dot" data-card="laplace-theory-card" data-page="4"></div>
+              </div>
+              <div class="nav-arrow next-arrow" data-card="laplace-theory-card"><i class="fas fa-chevron-right"></i></div>
+            </div>
+          </div>
+
+          <!-- 狄利克雷分布理论 - 翻转卡片 -->
+          <div class="multi-page-card page-1" id="dirichlet-theory-card" data-total-pages="4">
+            <div class="card-container">
+              <div class="card-page card-front" data-page="1">
+                <div class="content-tag">分布介绍</div>
+                <div class="flex items-center mb-6">
+                  <div class="w-12 h-12 rounded-lg bg-neon-yellow/20 flex items-center justify-center mr-4">
+                    <i class="fa fa-sitemap text-neon-yellow text-xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-future font-bold text-white">狄利克雷分布理论</h3>
+                </div>
+                <p class="text-gray-300">定义在单纯形上的多元分布，是多项分布的共轭先验，常用于贝叶斯主题模型。</p>
+              </div>
+              <div class="card-page card-back" data-page="2">
+                <div class="content-tag">分布函数推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">定义与常用形式</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$f(\mathbf{x})=\frac{1}{B(\boldsymbol{\alpha})}\prod_{i=1}^K x_i^{\alpha_i-1},\ \sum_i x_i=1,\ x_i\ge0$$</div>
+                  <div class="math-formula">$$B(\boldsymbol{\alpha})=\frac{\prod_{i=1}^K \Gamma(\alpha_i)}{\Gamma\left(\sum_{i=1}^K \alpha_i\right)}$$</div>
+                </div>
+              </div>
+              <div class="card-page card-inner" data-page="3">
+                <div class="content-tag">期望方差推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">数字特征</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$E[X_i]=\frac{\alpha_i}{\sum_j \alpha_j}$$</div>
+                  <div class="math-formula">$$Var(X_i)=\frac{\alpha_i(\sum_j \alpha_j-\alpha_i)}{(\sum_j \alpha_j)^2(\sum_j \alpha_j+1)}$$</div>
+                </div>
+              </div>
+              <div class="card-page card-extra" data-page="4">
+                <div class="content-tag">重要性质推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">性质与应用</h3>
+                <ul class="text-gray-300 space-y-2">
+                  <li>• 多项分布的共轭先验。</li>
+                  <li>• 常用于主题模型与概率简单形建模。</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-navigation">
+              <div class="nav-arrow prev-arrow" data-card="dirichlet-theory-card"><i class="fas fa-chevron-left"></i></div>
+              <div class="flex gap-2 mx-4">
+                <div class="nav-dot active" data-card="dirichlet-theory-card" data-page="1"></div>
+                <div class="nav-dot" data-card="dirichlet-theory-card" data-page="2"></div>
+                <div class="nav-dot" data-card="dirichlet-theory-card" data-page="3"></div>
+                <div class="nav-dot" data-card="dirichlet-theory-card" data-page="4"></div>
+              </div>
+              <div class="nav-arrow next-arrow" data-card="dirichlet-theory-card"><i class="fas fa-chevron-right"></i></div>
+            </div>
+          </div>
+
+          <!-- 逆伽马分布理论 - 翻转卡片 -->
+          <div class="multi-page-card page-1" id="invgamma-theory-card" data-total-pages="4">
+            <div class="card-container">
+              <div class="card-page card-front" data-page="1">
+                <div class="content-tag">分布介绍</div>
+                <div class="flex items-center mb-6">
+                  <div class="w-12 h-12 rounded-lg bg-neon-orange/20 flex items-center justify-center mr-4">
+                    <i class="fa fa-undo text-neon-orange text-xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-future font-bold text-white">逆伽马分布理论</h3>
+                </div>
+                <p class="text-gray-300">伽马分布的倒数分布，是方差参数的常用先验，在层次贝叶斯模型中使用广泛。</p>
+              </div>
+              <div class="card-page card-back" data-page="2">
+                <div class="content-tag">分布函数推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">定义与常用形式</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$f(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-(\alpha+1)}e^{-\beta/x},\quad x>0$$</div>
+                </div>
+              </div>
+              <div class="card-page card-inner" data-page="3">
+                <div class="content-tag">期望方差推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">数字特征</h3>
+                <div class="space-y-4">
+                  <div class="math-formula">$$E[X]=\begin{cases}\frac{\beta}{\alpha-1}, & \alpha>1\\ \text{不存在}, & \alpha\le1\end{cases}$$</div>
+                  <div class="math-formula">$$Var(X)=\begin{cases}\frac{\beta^2}{(\alpha-1)^2(\alpha-2)}, & \alpha>2\\ \text{不存在}, & \alpha\le2\end{cases}$$</div>
+                </div>
+              </div>
+              <div class="card-page card-extra" data-page="4">
+                <div class="content-tag">重要性质推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">性质与应用</h3>
+                <ul class="text-gray-300 space-y-2">
+                  <li>• 正态未知方差的共轭先验。</li>
+                  <li>• 层次贝叶斯中的方差建模。</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-navigation">
+              <div class="nav-arrow prev-arrow" data-card="invgamma-theory-card"><i class="fas fa-chevron-left"></i></div>
+              <div class="flex gap-2 mx-4">
+                <div class="nav-dot active" data-card="invgamma-theory-card" data-page="1"></div>
+                <div class="nav-dot" data-card="invgamma-theory-card" data-page="2"></div>
+                <div class="nav-dot" data-card="invgamma-theory-card" data-page="3"></div>
+                <div class="nav-dot" data-card="invgamma-theory-card" data-page="4"></div>
+              </div>
+              <div class="nav-arrow next-arrow" data-card="invgamma-theory-card"><i class="fas fa-chevron-right"></i></div>
+            </div>
+          </div>
+
         </div>
 
         <!-- 分布关系图 -->
@@ -4834,120 +5136,207 @@
 
       // 更新分布信息
       function updateDistributionInfo(distribution) {
-        const info = {
-          normal: {
-            description:
-              "正态分布是最重要的连续概率分布，具有钟形曲线的特征。它在自然界和社会现象中广泛存在，是中心极限定理的基础。",
-            applications: "身高、体重、测量误差、考试成绩等。",
-            properties: "对称性、68-95-99.7规则、可加性等。",
-          },
-          poisson: {
-            description:
-              "泊松分布描述单位时间内随机事件发生次数的概率分布。当二项分布的n很大、p很小时，可用泊松分布近似。",
-            applications: "电话呼叫次数、交通事故、放射性衰变等。",
-            properties: "离散性、期望等于方差、可加性等。",
-          },
-          exponential: {
-            description:
-              "指数分布描述事件间隔时间的概率分布，具有无记忆性。它是泊松过程中事件间隔时间的分布。",
-            applications: "设备寿命、服务时间、等待时间等。",
-            properties: "无记忆性、单调递减、与泊松分布的关系等。",
-          },
-          binomial: {
-            description:
-              "二项分布描述n次独立伯努利试验中成功次数的概率分布。它是最基本的离散概率分布之一。",
-            applications: "质量检验、市场调研、医学试验等。",
-            properties: "离散性、对称性（p=0.5时）、正态近似等。",
-          },
-          uniform: {
-            description:
-              "均匀分布是最简单的连续概率分布，在指定区间内所有值等概率出现。它常用作随机数生成的基础。",
-            applications: "随机数生成、蒙特卡罗模拟、概率建模等。",
-            properties: "等概率性、有界性、线性变换不变性等。",
-          },
-          chisquare: {
-            description:
-              "卡方分布由k个独立标准正态随机变量的平方和构成。它在假设检验和置信区间估计中有重要应用。",
-            applications: "拟合优度检验、独立性检验、方差估计等。",
-            properties: "非负性、右偏性、可加性等。",
-          },
-          beta: {
-            description:
-              "贝塔分布是定义在[0,1]区间上的连续概率分布，由两个形状参数α和β控制。它常用于建模比例和概率。",
-            applications: "贝叶斯统计、项目管理、质量控制等。",
-            properties: "有界性、形状多样性、共轭先验等。",
-          },
-          t: {
-            description:
-              "学生t分布用于小样本统计推断，当样本量增大时趋近于标准正态分布。它在假设检验中应用广泛。",
-            applications: "小样本均值检验、置信区间估计、回归分析等。",
-            properties: "对称性、厚尾性、渐近正态性等。",
-          },
-          gamma: {
-            description:
-              "伽马分布是指数分布和卡方分布的推广，常用于建模等待时间和生存分析。它具有丰富的形状变化。",
-            applications: "可靠性分析、排队论、生存分析等。",
-            properties: "非负性、形状参数控制、可加性等。",
-          },
-          f: {
-            description:
-              "F分布是两个卡方分布的比值分布，广泛用于方差分析和回归分析中的假设检验。",
-            applications: "方差分析、回归显著性检验、模型比较等。",
-            properties: "非负性、右偏性、与卡方分布的关系等。",
-          },
-          dirichlet: {
-            description:
-              "狄利克雷分布是多元贝塔分布的推广，定义在单纯形上。它是多项分布的共轭先验分布，在贝叶斯统计中应用广泛。",
-            applications: "主题建模、文本分析、贝叶斯推断等。",
-            properties: "多元性、共轭先验、单纯形约束等。",
-          },
-          weibull: {
-            description:
-              "威布尔分布广泛用于可靠性分析和生存分析，能够建模各种失效模式。它包含指数分布作为特例。",
-            applications: "可靠性工程、生存分析、风速建模等。",
-            properties: "形状参数控制、包含指数分布、危险率函数等。",
-          },
-          lognormal: {
-            description:
-              "对数正态分布描述其对数服从正态分布的随机变量。它常用于建模正值且右偏的数据。",
-            applications: "收入分布、股价建模、粒径分析等。",
-            properties: "正值性、右偏性、几何平均等。",
-          },
-          pareto: {
-            description:
-              "帕累托分布也称为幂律分布，常用于描述财富分布、城市规模等现象。它体现了80-20法则。",
-            applications: "财富分布、网络分析、风险管理等。",
-            properties: "重尾性、幂律特征、80-20法则等。",
-          },
-          laplace: {
-            description:
-              "拉普拉斯分布也称为双指数分布，具有对称的指数衰减特征。它在信号处理和机器学习中有重要应用。",
-            applications: "信号处理、图像去噪、稀疏建模等。",
-            properties: "对称性、双指数衰减、L1正则化等。",
-          },
-          invgamma: {
-            description:
-              "逆伽马分布是伽马分布的倒数分布，常用作方差参数的先验分布。它在贝叶斯统计中应用广泛。",
-            applications: "贝叶斯推断、方差建模、层次模型等。",
-            properties: "正值性、重尾性、共轭先验等。",
-          },
-        };
-
-        const currentInfo = info[distribution];
-        const infoElement = document.getElementById("distribution-info");
-        infoElement.innerHTML = `
-                <p><strong>${
-                  document.getElementById("chart-title").textContent
-                }</strong>${currentInfo.description}</p>
-                <p class="mt-2"><strong>应用场景：</strong>${
-                  currentInfo.applications
-                }</p>
-                <p class="mt-2"><strong>特性：</strong>${
-                  currentInfo.properties
-                }</p>
-            `;
+        renderInlineTheoryCard(distribution);
       }
 
+      // 渲染“分布信息”中的内嵌理论卡片
+      function renderInlineTheoryCard(distribution) {
+        const container = document.getElementById('distribution-info');
+        if (!container) return;
+        container.innerHTML = ''; // 清空旧内容
+
+        const sourceId = `${distribution}-theory-card`;
+        const sourceCard = document.getElementById(sourceId);
+        let inlineCard;
+
+        if (sourceCard) {
+          // 克隆现有理论卡片
+          inlineCard = sourceCard.cloneNode(true);
+          const inlineId = `${distribution}-theory-card-inline`;
+          inlineCard.id = inlineId;
+          inlineCard.setAttribute('data-current-page', '1');
+
+          // 修正导航元素的data-card属性，指向新ID
+          inlineCard.querySelectorAll('[data-card]').forEach(el => el.setAttribute('data-card', inlineId));
+
+          // 确保只有第一页显示
+          inlineCard.querySelectorAll('.card-page').forEach((page, index) => {
+            page.style.display = index === 0 ? 'block' : 'none';
+          });
+
+          container.appendChild(inlineCard);
+          // 为克隆的卡片单独初始化导航
+          initializeCard(inlineId);
+          attachCardNavigationHandlers(inlineId, inlineCard);
+        } else {
+          // 如果不存在，创建占位卡片
+          inlineCard = createPlaceholderTheoryCard(distribution);
+          container.appendChild(inlineCard);
+          const inlineId = inlineCard.id;
+          initializeCard(inlineId);
+          attachCardNavigationHandlers(inlineId, inlineCard);
+          
+          // 渲染KaTeX公式
+          if (typeof renderMathInElement === 'function') {
+            try {
+              renderMathInElement(inlineCard, {
+                delimiters: [
+                  { left: "$$", right: "$$", display: true },
+                  { left: "$", right: "$", display: false },
+                  { left: "\\[", right: "\\]", display: true },
+                  { left: "\\(", right: "\\)", display: false },
+                ],
+              });
+            } catch (e) {
+              console.warn('KaTeX render failed for placeholder card:', e);
+            }
+          }
+        }
+      }
+
+      // 为指定的卡片ID和范围绑定导航事件
+      function attachCardNavigationHandlers(cardId, scopeEl) {
+        // 箭头导航
+        scopeEl.querySelectorAll('.nav-arrow').forEach(arrow => {
+          arrow.addEventListener('click', function() {
+            if (this.classList.contains('disabled')) return;
+            const targetCardId = this.getAttribute('data-card');
+            if (isFlipping(targetCardId)) return;
+
+            const card = document.getElementById(targetCardId);
+            const currentPage = parseInt(card.getAttribute('data-current-page'));
+            const totalPages = parseInt(card.getAttribute('data-total-pages'));
+            if (this.classList.contains('prev-arrow')) {
+              if (currentPage > 1) navigateToPage(targetCardId, currentPage - 1);
+            } else if (this.classList.contains('next-arrow')) {
+              if (currentPage < totalPages) navigateToPage(targetCardId, currentPage + 1);
+            }
+          });
+        });
+
+        // 圆点导航
+        scopeEl.querySelectorAll('.nav-dot').forEach(dot => {
+          dot.addEventListener('click', function() {
+            const targetCardId = this.getAttribute('data-card');
+            if (isFlipping(targetCardId)) return;
+            const targetPage = parseInt(this.getAttribute('data-page'));
+            const currentPage = parseInt(document.getElementById(targetCardId).getAttribute('data-current-page'));
+            if (targetPage !== currentPage) navigateToPage(targetCardId, targetPage);
+          });
+        });
+      }
+
+      // 生成占位理论卡片的HTML结构
+      function createPlaceholderTheoryCard(distribution) {
+        const inlineId = `${distribution}-theory-card-inline`;
+        const wrapper = document.createElement('div');
+        const iconInfo = getCardIconAndColor(distribution);
+        const distName = getDistributionNameFull(distribution);
+
+        wrapper.innerHTML = `
+          <div class="multi-page-card page-1" id="${inlineId}" data-total-pages="4">
+            <div class="card-container">
+              <div class="card-page card-front" data-page="1" style="display: block;">
+                <div class="content-tag">分布介绍</div>
+                <div class="flex items-center mb-6">
+                  <div class="w-12 h-12 rounded-lg ${iconInfo.bg}/20 flex items-center justify-center mr-4">
+                    <i class="fa ${iconInfo.icon} ${iconInfo.text} text-xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-future font-bold text-white">${distName}理论</h3>
+                </div>
+                <p class="text-gray-300">暂未提供完整理论卡片，以下为该分布的基础介绍与关键性质。</p>
+              </div>
+              <div class="card-page card-back" data-page="2" style="display: none;">
+                <div class="content-tag">分布函数推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">定义与常用形式</h3>
+                <div class="space-y-4">${getPlaceholderFormulaBlock(distribution)}</div>
+              </div>
+              <div class="card-page card-inner" data-page="3" style="display: none;">
+                <div class="content-tag">期望方差推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">数字特征</h3>
+                <div class="space-y-4">${getPlaceholderMomentsBlock(distribution)}</div>
+              </div>
+              <div class="card-page card-extra" data-page="4" style="display: none;">
+                <div class="content-tag">重要性质推导</div>
+                <h3 class="text-2xl font-future font-bold text-white mb-6">性质与应用</h3>
+                <ul class="text-gray-300 space-y-2">${getPlaceholderProperties(distribution)}</ul>
+              </div>
+            </div>
+            <div class="card-navigation">
+              <div class="nav-arrow prev-arrow" data-card="${inlineId}"><i class="fas fa-chevron-left"></i></div>
+              <div class="flex gap-2 mx-4">
+                <div class="nav-dot active" data-card="${inlineId}" data-page="1"></div>
+                <div class="nav-dot" data-card="${inlineId}" data-page="2"></div>
+                <div class="nav-dot" data-card="${inlineId}" data-page="3"></div>
+                <div class="nav-dot" data-card="${inlineId}" data-page="4"></div>
+              </div>
+              <div class="nav-arrow next-arrow" data-card="${inlineId}"><i class="fas fa-chevron-right"></i></div>
+            </div>
+          </div>
+        `;
+        return wrapper.firstElementChild;
+      }
+
+      // 获取占位卡片的图标和颜色
+      function getCardIconAndColor(distribution) {
+        const map = {
+          weibull: { icon: 'fa-cogs', text: 'text-neon-teal', bg: 'bg-neon-teal' },
+          lognormal: { icon: 'fa-line-chart', text: 'text-neon-indigo', bg: 'bg-neon-indigo' },
+          pareto: { icon: 'fa-signal', text: 'text-neon-pink', bg: 'bg-neon-pink' },
+          laplace: { icon: 'fa-diamond', text: 'text-neon-cyan', bg: 'bg-neon-cyan' },
+          dirichlet: { icon: 'fa-sitemap', text: 'text-neon-lime', bg: 'bg-neon-lime' },
+          invgamma: { icon: 'fa-undo', text: 'text-neon-orange', bg: 'bg-neon-orange' },
+        };
+        return map[distribution] || { icon: 'fa-book', text: 'text-neon-blue', bg: 'bg-neon-blue' };
+      }
+
+      // 获取分布的完整中文名
+      function getDistributionNameFull(name) {
+        const names = {
+          normal: '正态分布', poisson: '泊松分布', exponential: '指数分布', binomial: '二项分布', uniform: '均匀分布', chisquare: '卡方分布', beta: '贝塔分布', gamma: '伽马分布', t: 't分布', f: 'F分布',
+          weibull: '威布尔分布', lognormal: '对数正态分布', pareto: '帕累托分布', laplace: '拉普拉斯分布', dirichlet: '狄利克雷分布', invgamma: '逆伽马分布'
+        };
+        return names[name] || name;
+      }
+
+      // 获取占位卡片的公式内容
+      function getPlaceholderFormulaBlock(distribution) {
+        switch (distribution) {
+          case 'weibull': return `<div class="math-formula">$$f(x)=\frac{k}{\lambda}(\frac{x}{\lambda})^{k-1}e^{-(\frac{x}{\lambda})^k}, x\ge0$$</div><div class="math-formula">$$F(x)=1-e^{-(\frac{x}{\lambda})^k}$$</div>`;
+          case 'lognormal': return `<div class="math-formula">$$f(x)=\frac{1}{x\sigma\sqrt{2\pi}}\exp(-\frac{(\ln x-\mu)^2}{2\sigma^2}), x>0$$</div>`;
+          case 'pareto': return `<div class="math-formula">$$f(x)=\frac{\alpha x_m^{\alpha}}{x^{\alpha+1}}, x\ge x_m$$</div><div class="math-formula">$$F(x)=1-(\frac{x_m}{x})^{\alpha}$$</div>`;
+          case 'laplace': return `<div class="math-formula">$$f(x)=\frac{1}{2b}\exp(-\frac{|x-\mu|}{b})$$</div>`;
+          case 'dirichlet': return `<div class="math-formula">$$f(\mathbf{x})=\frac{1}{B(\boldsymbol{\alpha})}\prod_{i=1}^K x_i^{\alpha_i-1}$$</div>`;
+          case 'invgamma': return `<div class="math-formula">$$f(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-(\alpha+1)}e^{-\beta/x}, x>0$$</div>`;
+          default: return `<p class="text-gray-400">暂无详细推导。</p>`;
+        }
+      }
+
+      // 获取占位卡片的期望和方差内容
+      function getPlaceholderMomentsBlock(distribution) {
+        switch (distribution) {
+          case 'weibull': return `<div class="math-formula">$$E[X]=\lambda\Gamma(1+\frac{1}{k})$$</div><div class="math-formula">$$Var(X)=\lambda^2[\Gamma(1+\frac{2}{k})-\Gamma(1+\frac{1}{k})^2]$$</div>`;
+          case 'lognormal': return `<div class="math-formula">$$E[X]=\exp(\mu+\frac{\sigma^2}{2})$$</div><div class="math-formula">$$Var(X)=(e^{\sigma^2}-1)\exp(2\mu+\sigma^2)$$</div>`;
+          case 'pareto': return `<div class="math-formula">$$E[X]=\frac{\alpha x_m}{\alpha-1}, \alpha>1$$</div>`;
+          case 'laplace': return `<div class="math-formula">$$E[X]=\mu$$</div><div class="math-formula">$$Var(X)=2b^2$$</div>`;
+          case 'dirichlet': return `<div class="math-formula">$$E[X_i]=\frac{\alpha_i}{\sum_j \alpha_j}$$</div>`;
+          case 'invgamma': return `<div class="math-formula">$$E[X]=\frac{\beta}{\alpha-1}, \alpha>1$$</div>`;
+          default: return `<p class="text-gray-400">暂无数字特征推导。</p>`;
+        }
+      }
+
+      // 获取占位卡片的性质内容
+      function getPlaceholderProperties(distribution) {
+        switch (distribution) {
+          case 'weibull': return `<li>可靠性工程与寿命分析常用。</li>`;
+          case 'lognormal': return `<li>对数变换后为正态分布。</li>`;
+          case 'pareto': return `<li>重尾特性，刻画“二八定律”。</li>`;
+          case 'laplace': return `<li>L1正则化的基础。</li>`;
+          case 'dirichlet': return `<li>多项分布的共轭先验。</li>`;
+          case 'invgamma': return `<li>正态分布方差的共轭先验。</li>`;
+          default: return `<li>暂无更多性质。</li>`;
+        }
+      }
       // 更新图表
       function updateChart() {
         const data = generateDistributionData();
@@ -5520,7 +5909,7 @@
 
       // 更新统计信息
       function updateStatistics() {
-        let expectation, variance, stdDev;
+        let expectation, variance, stdDev, skewness, kurtosis;
 
         switch (currentDistribution) {
           case "normal":
@@ -5531,6 +5920,8 @@
             expectation = mean;
             variance = std * std;
             stdDev = std;
+            skewness = 0;
+            kurtosis = 3;
             break;
 
           case "poisson":
@@ -5540,6 +5931,8 @@
             expectation = lambda;
             variance = lambda;
             stdDev = Math.sqrt(lambda);
+            skewness = 1 / Math.sqrt(lambda);
+            kurtosis = 3 + 1 / lambda;
             break;
 
           case "exponential":
@@ -5549,6 +5942,8 @@
             expectation = 1 / expLambda;
             variance = 1 / (expLambda * expLambda);
             stdDev = 1 / expLambda;
+            skewness = 2;
+            kurtosis = 9;
             break;
 
           case "binomial":
@@ -5557,6 +5952,14 @@
             expectation = n * p;
             variance = n * p * (1 - p);
             stdDev = Math.sqrt(variance);
+            const denomVar = n * p * (1 - p);
+            if (denomVar > 0) {
+              skewness = (1 - 2 * p) / Math.sqrt(denomVar);
+              kurtosis = 3 + (1 - 6 * p * (1 - p)) / denomVar;
+            } else {
+              skewness = "未定义";
+              kurtosis = "未定义";
+            }
             break;
 
           case "uniform":
@@ -5565,6 +5968,8 @@
             expectation = (a + b) / 2;
             variance = ((b - a) * (b - a)) / 12;
             stdDev = Math.sqrt(variance);
+            skewness = 0;
+            kurtosis = 9 / 5;
             break;
 
           case "chisquare":
@@ -5572,6 +5977,8 @@
             expectation = k;
             variance = 2 * k;
             stdDev = Math.sqrt(2 * k);
+            skewness = Math.sqrt(8 / k);
+            kurtosis = 3 + 12 / k;
             break;
 
           case "beta":
@@ -5588,6 +5995,20 @@
                 (betaAlpha + betaBeta) *
                 (betaAlpha + betaBeta + 1));
             stdDev = Math.sqrt(variance);
+            if (betaAlpha > 0 && betaBeta > 0) {
+              const sumAB = betaAlpha + betaBeta;
+              skewness =
+                (2 * (betaBeta - betaAlpha) * Math.sqrt(sumAB + 1)) /
+                ((sumAB + 2) * Math.sqrt(betaAlpha * betaBeta));
+              const excessKurt =
+                (6 * (((betaAlpha - betaBeta) * (betaAlpha - betaBeta) * (sumAB + 1)) -
+                betaAlpha * betaBeta * (sumAB + 2))) /
+                (betaAlpha * betaBeta * (sumAB + 2) * (sumAB + 3));
+              kurtosis = 3 + excessKurt;
+            } else {
+              skewness = "未定义";
+              kurtosis = "未定义";
+            }
             break;
 
           case "t":
@@ -5596,6 +6017,8 @@
             variance = tDf > 2 ? tDf / (tDf - 2) : "未定义";
             stdDev =
               typeof variance === "number" ? Math.sqrt(variance) : "未定义";
+            skewness = tDf > 3 ? 0 : "未定义";
+            kurtosis = tDf > 4 ? (3 + 6 / (tDf - 4)) : "未定义";
             break;
 
           case "gamma":
@@ -5608,6 +6031,8 @@
             expectation = gammaAlpha / gammaBeta;
             variance = gammaAlpha / (gammaBeta * gammaBeta);
             stdDev = Math.sqrt(variance);
+            skewness = 2 / Math.sqrt(gammaAlpha);
+            kurtosis = 3 + 6 / gammaAlpha;
             break;
 
           case "f":
@@ -5621,6 +6046,8 @@
                 : "未定义";
             stdDev =
               typeof variance === "number" ? Math.sqrt(variance) : "未定义";
+            skewness = "未定义";
+            kurtosis = "未定义";
             break;
 
           case "dirichlet":
@@ -5631,6 +6058,23 @@
             expectation = dirAlpha1 / alphaSum; // 第一个分量的期望
             variance = (dirAlpha1 * (alphaSum - dirAlpha1)) / (alphaSum * alphaSum * (alphaSum + 1));
             stdDev = Math.sqrt(variance);
+            {
+              const a = dirAlpha1;
+              const b = alphaSum - dirAlpha1;
+              if (a > 0 && b > 0) {
+                const sumAB = a + b;
+                skewness =
+                  (2 * (b - a) * Math.sqrt(sumAB + 1)) /
+                  ((sumAB + 2) * Math.sqrt(a * b));
+                const excessKurt =
+                  (6 * (((a - b) * (a - b) * (sumAB + 1)) - a * b * (sumAB + 2))) /
+                  (a * b * (sumAB + 2) * (sumAB + 3));
+                kurtosis = 3 + excessKurt;
+              } else {
+                skewness = "未定义";
+                kurtosis = "未定义";
+              }
+            }
             break;
 
           case "weibull":
@@ -5639,6 +6083,21 @@
             expectation = weibullLambda * gamma(1 + 1/weibullK);
             variance = weibullLambda * weibullLambda * (gamma(1 + 2/weibullK) - Math.pow(gamma(1 + 1/weibullK), 2));
             stdDev = Math.sqrt(variance);
+            {
+              const m1 = expectation;
+              const m2 = weibullLambda * weibullLambda * gamma(1 + 2 / weibullK);
+              const m3 = Math.pow(weibullLambda, 3) * gamma(1 + 3 / weibullK);
+              const m4 = Math.pow(weibullLambda, 4) * gamma(1 + 4 / weibullK);
+              if (stdDev > 0) {
+                const mu3 = m3 - 3 * m1 * m2 + 2 * Math.pow(m1, 3);
+                const mu4 = m4 - 4 * m1 * m3 + 6 * m1 * m1 * m2 - 3 * Math.pow(m1, 4);
+                skewness = mu3 / Math.pow(stdDev, 3);
+                kurtosis = mu4 / Math.pow(stdDev, 4);
+              } else {
+                skewness = "未定义";
+                kurtosis = "未定义";
+              }
+            }
             break;
 
           case "lognormal":
@@ -5647,6 +6106,11 @@
             expectation = Math.exp(lnMu + lnSigma * lnSigma / 2);
             variance = (Math.exp(lnSigma * lnSigma) - 1) * Math.exp(2 * lnMu + lnSigma * lnSigma);
             stdDev = Math.sqrt(variance);
+            {
+              const s2 = lnSigma * lnSigma;
+              skewness = (Math.exp(s2) + 2) * Math.sqrt(Math.exp(s2) - 1);
+              kurtosis = Math.exp(4 * s2) + 2 * Math.exp(3 * s2) + 3 * Math.exp(2 * s2) - 3;
+            }
             break;
 
           case "pareto":
@@ -5655,6 +6119,26 @@
             expectation = paretoAlpha > 1 ? (paretoAlpha * paretoXm) / (paretoAlpha - 1) : "未定义";
             variance = paretoAlpha > 2 ? (paretoXm * paretoXm * paretoAlpha) / ((paretoAlpha - 1) * (paretoAlpha - 1) * (paretoAlpha - 2)) : "未定义";
             stdDev = typeof variance === "number" ? Math.sqrt(variance) : "未定义";
+            if (paretoAlpha > 3) {
+              const m1 = paretoAlpha * paretoXm / (paretoAlpha - 1);
+              const m2 = paretoAlpha * Math.pow(paretoXm, 2) / (paretoAlpha - 2);
+              const m3 = paretoAlpha * Math.pow(paretoXm, 3) / (paretoAlpha - 3);
+              const m4 = paretoAlpha * Math.pow(paretoXm, 4) / (paretoAlpha - 4);
+              const varVal = m2 - m1 * m1;
+              if (varVal > 0) {
+                const sigma = Math.sqrt(varVal);
+                const mu3 = m3 - 3 * m1 * m2 + 2 * Math.pow(m1, 3);
+                const mu4 = m4 - 4 * m1 * m3 + 6 * m1 * m1 * m2 - 3 * Math.pow(m1, 4);
+                skewness = mu3 / Math.pow(sigma, 3);
+                kurtosis = paretoAlpha > 4 ? (mu4 / Math.pow(varVal, 2)) : "未定义";
+              } else {
+                skewness = "未定义";
+                kurtosis = "未定义";
+              }
+            } else {
+              skewness = "未定义";
+              kurtosis = "未定义";
+            }
             break;
 
           case "laplace":
@@ -5663,6 +6147,8 @@
             expectation = laplaceMu;
             variance = 2 * laplaceB * laplaceB;
             stdDev = Math.sqrt(variance);
+            skewness = 0;
+            kurtosis = 6;
             break;
 
           case "invgamma":
@@ -5671,6 +6157,27 @@
             expectation = invGammaAlpha > 1 ? invGammaBeta / (invGammaAlpha - 1) : "未定义";
             variance = invGammaAlpha > 2 ? (invGammaBeta * invGammaBeta) / ((invGammaAlpha - 1) * (invGammaAlpha - 1) * (invGammaAlpha - 2)) : "未定义";
             stdDev = typeof variance === "number" ? Math.sqrt(variance) : "未定义";
+            if (invGammaAlpha > 3) {
+              const m1 = invGammaBeta / (invGammaAlpha - 1);
+              const m2 = Math.pow(invGammaBeta, 2) / ((invGammaAlpha - 1) * (invGammaAlpha - 2));
+              const m3 = Math.pow(invGammaBeta, 3) / ((invGammaAlpha - 1) * (invGammaAlpha - 2) * (invGammaAlpha - 3));
+              const m4 = invGammaAlpha > 4 ? Math.pow(invGammaBeta, 4) / ((invGammaAlpha - 1) * (invGammaAlpha - 2) * (invGammaAlpha - 3) * (invGammaAlpha - 4)) : NaN;
+              const varVal = m2 - m1 * m1;
+              if (varVal > 0) {
+                const sigma = Math.sqrt(varVal);
+                const mu3 = m3 - 3 * m1 * m2 + 2 * Math.pow(m1, 3);
+                skewness = mu3 / Math.pow(sigma, 3);
+                kurtosis = invGammaAlpha > 4 && !isNaN(m4)
+                  ? ((m4 - 4 * m1 * m3 + 6 * m1 * m1 * m2 - 3 * Math.pow(m1, 4)) / Math.pow(varVal, 2))
+                  : "未定义";
+              } else {
+                skewness = "未定义";
+                kurtosis = "未定义";
+              }
+            } else {
+              skewness = "未定义";
+              kurtosis = "未定义";
+            }
             break;
         }
 
@@ -5682,6 +6189,10 @@
           typeof variance === "number" ? variance.toFixed(2) : variance;
         document.getElementById("std-dev").textContent =
           typeof stdDev === "number" ? stdDev.toFixed(2) : stdDev;
+        document.getElementById("skewness").textContent =
+          typeof skewness === "number" ? skewness.toFixed(2) : skewness;
+        document.getElementById("kurtosis").textContent =
+          typeof kurtosis === "number" ? kurtosis.toFixed(2) : kurtosis;
       }
 
       // 切换PDF/CDF

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#131a37"/>
+      <stop offset="100%" stop-color="#0a1024"/>
+    </linearGradient>
+    <linearGradient id="accent5" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff8c42"/>
+      <stop offset="100%" stop-color="#00c8ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg5)"/>
+  <!-- Line chart -->
+  <polyline points="80,480 160,460 240,470 320,430 400,450 480,420 560,460 640,440 720,480 800,420 880,450 960,430 1040,470 1120,440"
+            fill="none" stroke="#ff8c42" stroke-width="4"/>
+  <g fill="#ff8c42">
+    <circle cx="320" cy="430" r="6"/>
+    <circle cx="800" cy="420" r="6"/>
+    <circle cx="1040" cy="470" r="6"/>
+  </g>
+  <!-- Camera icon -->
+  <g transform="translate(200,260)">
+    <rect x="-120" y="-60" width="180" height="120" rx="14" ry="14" fill="#ff8c42" opacity="0.85"/>
+    <polygon points="80,-30 140,-10 140,10 80,30" fill="#ff8c42" opacity="0.85"/>
+    <circle cx="-40" cy="0" r="28" fill="#0a1024"/>
+    <circle cx="-40" cy="0" r="12" fill="#00c8ff"/>
+  </g>
+  <!-- Title -->
+  <text x="80" y="420" fill="#ffe9df" font-size="44" font-weight="700">直播打赏异常检测</text>
+  <text x="80" y="468" fill="#ffc9a3" font-size="22">大数定律 • 滚动均值 • 异常识别</text>
+  <rect x="20" y="20" width="1160" height="560" rx="18" ry="18" fill="none" stroke="url(#accent5)" stroke-width="2" opacity="0.5"/>
+</svg>

@@ -22,6 +22,7 @@ class ProbabilityToolbox {
 
   init() {
     this.createToolboxHTML();
+    this.initPageIntro();
     this.bindEvents();
     this.initDistributionTables();
     // 显示聊天历史并强制渲染LaTeX和markdown
@@ -91,6 +92,49 @@ class ProbabilityToolbox {
                                         <button id="send-message" class="bg-neon-blue text-dark-bg px-4 py-2 rounded-lg hover:bg-neon-blue/80 transition-colors" aria-label="发送消息" title="发送消息">
                                             <i class="fa fa-paper-plane"></i>
                                         </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 网页介绍栏 -->
+                        <div class="tool-accordion">
+                            <div class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-green transition-all duration-300 cursor-pointer" data-tool="page-intro">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center">
+                                            <i class="fa fa-film text-neon-green text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-white">网页介绍栏</h3>
+                                            <p class="text-sm text-gray-400">各页面视频介绍</p>
+                                        </div>
+                                    </div>
+                                    <i class="fa fa-chevron-down text-gray-400 transition-transform duration-300" id="page-intro-chevron"></i>
+                                </div>
+                            </div>
+                            <div class="tool-content hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700" id="page-intro-content">
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-3">
+                                        <label class="text-gray-300 text-sm">选择页面:</label>
+                                        <select id="page-intro-select" class="bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-neon-green focus:outline-none">
+                                            <option value="index">首页</option>
+                                            <option value="random_variables">随机变量</option>
+                                            <option value="probability_distributions">概率分布</option>
+                                            <option value="hypothesis_testing">假设检验</option>
+                                            <option value="interval_estimation">区间估计</option>
+                                            <option value="law_of_large_numbers">大数定律</option>
+                                        </select>
+                                    </div>
+                                    <div class="bg-gray-800 rounded-lg overflow-hidden">
+                                        <video id="page-intro-video" controls class="w-full rounded-lg" preload="metadata">
+                                            <source id="page-intro-video-src" src="">
+                                            您的浏览器不支持视频播放。
+                                        </video>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <div id="page-intro-error" class="text-yellow-400 hidden">⚠️ 视频无法播放，请检查文件或格式。</div>
+                                        <a id="page-intro-download" href="#" target="_blank" class="text-neon-green hover:text-white transition-colors">下载当前视频</a>
                                     </div>
                                 </div>
                             </div>
@@ -498,6 +542,41 @@ class ProbabilityToolbox {
       this.runHypothesisTest();
     });
 
+    // 网页介绍栏选择事件与视频错误提示
+    const pageIntroSelect = document.getElementById("page-intro-select");
+    const pageIntroVideo = document.getElementById("page-intro-video");
+    const pageIntroSource = document.getElementById("page-intro-video-src");
+    const pageIntroDownload = document.getElementById("page-intro-download");
+    const pageIntroError = document.getElementById("page-intro-error");
+
+    if (pageIntroSelect) {
+      pageIntroSelect.addEventListener("change", (e) => {
+        const key = e.target.value;
+        const rawSrc = (this.pageIntroMap && this.pageIntroMap[key])
+          ? this.pageIntroMap[key]
+          : this.pageIntroMap["index"];
+        const src = encodeURI(rawSrc);
+        if (pageIntroSource && pageIntroVideo) {
+          pageIntroSource.src = src;
+          pageIntroVideo.load();
+        }
+        if (pageIntroDownload) {
+          pageIntroDownload.href = src;
+        }
+        if (pageIntroError) {
+          pageIntroError.classList.add("hidden");
+        }
+      });
+    }
+
+    if (pageIntroVideo) {
+      pageIntroVideo.addEventListener("error", () => {
+        if (pageIntroError) {
+          pageIntroError.classList.remove("hidden");
+        }
+      });
+    }
+
     // 测试工具相关事件
     document
       .getElementById("test-latex-render")
@@ -570,6 +649,49 @@ class ProbabilityToolbox {
         this.closeToolbox();
       }
     });
+  }
+
+  // 初始化网页介绍栏：设置视频映射与默认加载当前页面视频
+  initPageIntro() {
+    try {
+      this.pageIntroMap = {
+        index: "/static/videos/概率维度.mov",
+        random_variables: "/static/videos/随机变量.mov",
+        probability_distributions: "/static/videos/概率分布.mov",
+        hypothesis_testing: "/static/videos/假设检验.mov",
+        interval_estimation: "/static/videos/区间估计.mov",
+        law_of_large_numbers: "/static/videos/大数定律.mov",
+      };
+
+      const path = window.location.pathname || "/";
+      let key = "index";
+      if (path.endsWith("random_variables.html")) key = "random_variables";
+      else if (path.endsWith("probability_distributions.html")) key = "probability_distributions";
+      else if (path.endsWith("hypothesis_testing.html")) key = "hypothesis_testing";
+      else if (path.endsWith("interval_estimation.html")) key = "interval_estimation";
+      else if (path.endsWith("law_of_large_numbers.html")) key = "law_of_large_numbers";
+      else if (path === "/" || path.endsWith("index.html")) key = "index";
+
+      const pageIntroSelect = document.getElementById("page-intro-select");
+      const pageIntroVideo = document.getElementById("page-intro-video");
+      const pageIntroSource = document.getElementById("page-intro-video-src");
+      const pageIntroDownload = document.getElementById("page-intro-download");
+
+      if (pageIntroSelect) {
+        pageIntroSelect.value = key;
+      }
+      const src = encodeURI(this.pageIntroMap[key]);
+      if (pageIntroSource && pageIntroVideo) {
+        pageIntroSource.src = src;
+        pageIntroVideo.load();
+      }
+      if (pageIntroDownload) {
+        pageIntroDownload.href = src;
+      }
+    } catch (e) {
+      // 安静失败，不影响其他工具
+      console.warn("初始化网页介绍栏失败:", e);
+    }
   }
 
   toggleToolbox() {

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f1730"/>
+      <stop offset="100%" stop-color="#0a1024"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00c8ff"/>
+      <stop offset="100%" stop-color="#4fd1ff"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9b5de5"/>
+      <stop offset="100%" stop-color="#00f5a0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg)"/>
+  <!-- Waves -->
+  <path d="M0,420 C200,380 300,460 500,430 C700,400 900,470 1200,430 L1200,600 L0,600 Z"
+        fill="#0e1a36"/>
+  <path d="M0,460 C220,430 320,500 520,470 C740,440 920,510 1200,470 L1200,600 L0,600 Z"
+        fill="url(#wave)" opacity="0.22"/>
+  <path d="M0,500 C240,470 340,540 540,510 C760,480 940,550 1200,510 L1200,600 L0,600 Z"
+        fill="#00f5a0" opacity="0.12"/>
+  <!-- Droplet icon -->
+  <g transform="translate(80,80)" filter="url(#glow)">
+    <path d="M120 40 C100 90 60 120 60 160 C60 205 97 240 140 240 C183 240 220 205 220 160 C220 110 170 75 120 40 Z"
+          fill="#00c8ff" opacity="0.8"/>
+    <circle cx="170" cy="145" r="12" fill="#9b5de5" opacity="0.9"/>
+  </g>
+  <!-- Title -->
+  <text x="80" y="340" fill="#cfe7ff" font-size="44" font-weight="700">洪水频率分析与极值分布</text>
+  <text x="80" y="392" fill="#84c5ff" font-size="22">Gumbel/GEV 极值理论 • 防洪工程设计</text>
+  <!-- Accent border -->
+  <rect x="20" y="20" width="1160" height="560" rx="18" ry="18" fill="none" stroke="url(#accent)" stroke-width="2" opacity="0.5"/>
+</svg>

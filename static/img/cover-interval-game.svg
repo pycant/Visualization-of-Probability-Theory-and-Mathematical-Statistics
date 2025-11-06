@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f1730"/>
+      <stop offset="100%" stop-color="#0d142a"/>
+    </linearGradient>
+    <linearGradient id="accent3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9b5de5"/>
+      <stop offset="100%" stop-color="#00f5a0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg3)"/>
+  <!-- End portal stylized frame -->
+  <g transform="translate(820,300)">
+    <rect x="-160" y="-160" width="320" height="320" fill="#1c213e" stroke="#9b5de5" stroke-width="6"/>
+    <rect x="-120" y="-120" width="240" height="240" fill="#111735" stroke="#00f5a0" stroke-width="4"/>
+    <circle r="8" fill="#00f5a0" opacity="0.9"/>
+    <circle r="58" fill="none" stroke="#00f5a0" stroke-width="2" opacity="0.3"/>
+    <circle r="108" fill="none" stroke="#9b5de5" stroke-width="2" opacity="0.25"/>
+  </g>
+  <!-- Gamepad icon -->
+  <g transform="translate(220,280)">
+    <rect x="-120" y="-60" rx="30" ry="30" width="240" height="120" fill="#9b5de5" opacity="0.85"/>
+    <circle cx="60" cy="0" r="16" fill="#00f5a0"/>
+    <circle cx="90" cy="-20" r="10" fill="#00f5a0"/>
+    <circle cx="90" cy="20" r="10" fill="#00f5a0"/>
+    <rect x="-60" y="-6" width="12" height="12" fill="#0f1730"/>
+    <rect x="-80" y="-6" width="12" height="12" fill="#0f1730"/>
+    <rect x="-40" y="-6" width="12" height="12" fill="#0f1730"/>
+    <rect x="-60" y="-26" width="12" height="12" fill="#0f1730"/>
+    <rect x="-60" y="14" width="12" height="12" fill="#0f1730"/>
+  </g>
+  <!-- Title -->
+  <text x="80" y="440" fill="#eae2ff" font-size="44" font-weight="700">游戏策略：末地之门定位</text>
+  <text x="80" y="488" fill="#c5aff4" font-size="22">区间估计 • 置信水平 • 探索效率</text>
+  <rect x="20" y="20" width="1160" height="560" rx="18" ry="18" fill="none" stroke="url(#accent3)" stroke-width="2" opacity="0.5"/>
+</svg>
