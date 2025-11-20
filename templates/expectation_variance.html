@@ -1432,6 +1432,8 @@
       </div>
     </footer>
 
+    <script src="../static/js/include-footer.js" defer></script>
+
     <!-- JavaScript -->
     <script>
       // 全局变量
@@ -2155,5 +2157,15 @@
 
     <!-- 工具箱组件 -->
     <script src="/static/js/toolbox.js"></script>
-  </body>
+</body>
+<script>
+  window.NAV_CONFIG = {
+    active: 'expectation_variance',
+    sectionLinks: [
+      { label: '理论基础', href: '#theory' },
+      { label: '交互实验', href: '#interactive' }
+    ]
+  };
+</script>
+<script src="../static/js/include-navbar.js"></script>
 </html>

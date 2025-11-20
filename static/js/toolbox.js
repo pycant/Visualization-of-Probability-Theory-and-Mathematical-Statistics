@@ -3,14 +3,35 @@
  * 包含AI智能助手、假设检验、分位数表等工具
  */
 
+// 轻量日志开关：通过 URL 参数 tbdebug=1 或设置 window.TOOLBOX_DEBUG=true 启用
+window.TB_DEBUG = /[?&]tbdebug=1/.test(location.search) || !!window.TOOLBOX_DEBUG;
+window.TB_LOG = function () {
+  if (window.TB_DEBUG) {
+    try { console.log.apply(console, arguments); } catch (_) {}
+  }
+};
+window.TB_WARN = function () {
+  if (window.TB_DEBUG) {
+    try { console.warn.apply(console, arguments); } catch (_) {}
+  }
+};
+window.TB_ERROR = function () {
+  if (window.TB_DEBUG) {
+    try { console.error.apply(console, arguments); } catch (_) {}
+  }
+};
+
 class ProbabilityToolbox {
   constructor() {
     this.isOpen = false;
     this.currentTool = null;
     this.chatHistory = this.loadChatHistory();
+    // 原文显示开关（false: 显示渲染版；true: 显示原文）
+    this.showRaw = false;
     this.apiKey = "sk-fbc4de9c1fd949aea95d4cd1a5bf48e2";
     this.defaultPrompt =
-      "你是一个专业的概率论与数理统计助手，擅长解答相关的数学问题，提供清晰的解释和计算步骤。请用中文回答问题。";
+      "你是一个专业的概率论与数理统计助手，擅长解答相关的数学问题，提供清晰的解释和计算步骤。请用中文回答问题。所有数学公式必须使用标准 LaTeX 定界：行内统一使用 \\(" +
+      " ... \\)，陈列公式统一使用 \\[ ... \\]；严禁使用 $...$ 或 $$...$$ 作为定界，也不要使用 [ ... ] 作为公式定界。概率统计中的符号请使用规范写法（如 \\mathbb{E}, \\operatorname{Var}, \\Pr, \\chi^2, \\Lambda 等）。在使用可伸缩括号时确保 \\left 与 \\right 成对（例如 \\left( ... \\right)），不要写成 \\right\\) 之类的错误形式。必要时给出关键推导与结论。";
 
     // 计算器状态
     this.previousValue = 0;
@@ -80,9 +101,14 @@ class ProbabilityToolbox {
                                 <div class="mb-4">
                                     <div class="flex justify-between items-center mb-4">
                                         <h3 class="text-lg font-semibold text-neon-blue">AI智能助手</h3>
-                                        <button id="clear-chat" class="text-sm text-gray-400 hover:text-white transition-colors">
-                                            <i class="fa fa-trash mr-1"></i>清空对话
-                                        </button>
+                                        <div class="flex items-center space-x-2">
+                                            <button id="toggle-raw" class="text-sm text-gray-400 hover:text-white transition-colors" title="原文开关">
+                                                <i class="fa fa-file-alt mr-1"></i>显示原文
+                                            </button>
+                                            <button id="clear-chat" class="text-sm text-gray-400 hover:text-white transition-colors">
+                                                <i class="fa fa-trash mr-1"></i>清空对话
+                                            </button>
+                                        </div>
                                     </div>
                                     <div id="chat-messages" class="h-96 overflow-y-auto bg-gray-800 rounded-lg p-4 mb-4 space-y-3">
                                         <!-- 聊天消息将在这里显示 -->
@@ -487,6 +513,16 @@ class ProbabilityToolbox {
                                         </button>
                                         <div id="system-test-result" class="mt-2 text-xs text-gray-400"></div>
                                     </div>
+
+                                    <!-- AI消息LaTeX诊断 -->
+                                    <div class="bg-gray-800 rounded-lg p-4">
+                                        <h4 class="text-sm font-semibold text-gray-300 mb-2">AI消息LaTeX诊断</h4>
+                                        <p class="text-xs text-gray-400 mb-3">自动构造多种公式示例并检查渲染</p>
+                                        <button id="test-chat-latex" class="w-full bg-neon-green hover:bg-neon-green/80 text-dark-bg p-2 rounded text-sm font-medium transition-colors">
+                                            <i class="fa fa-play mr-2"></i>运行AI消息LaTeX诊断
+                                        </button>
+                                        <div id="latex-diagnostic-result" class="mt-2 text-xs text-gray-400"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -537,6 +573,20 @@ class ProbabilityToolbox {
       this.clearChat();
     });
 
+    // 原文开关：切换显示原始文本或渲染内容
+    const toggleBtn = document.getElementById("toggle-raw");
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        this.showRaw = !this.showRaw;
+        // 更新按钮文案
+        toggleBtn.innerHTML = this.showRaw
+          ? '<i class="fa fa-eye mr-1"></i>显示渲染'
+          : '<i class="fa fa-file-alt mr-1"></i>显示原文';
+        // 应用到所有已存在消息
+        this.updateRawToggleView();
+      });
+    }
+
     // 假设检验相关事件
     document.getElementById("run-test").addEventListener("click", () => {
       this.runHypothesisTest();
@@ -584,7 +634,7 @@ class ProbabilityToolbox {
 
       const showError = (extra = "") => {
         const text = `${getErrorText()}${extra ? '（'+extra+'）' : ''}`;
-        console.error(text);
+        TB_ERROR(text);
         if (pageIntroError) {
           pageIntroError.textContent = text;
           pageIntroError.classList.remove("hidden");
@@ -597,13 +647,20 @@ class ProbabilityToolbox {
         }
       };
 
+      // 仅在真正的 error 事件时展示错误文案
       pageIntroVideo.addEventListener("error", () => showError());
-      pageIntroVideo.addEventListener("stalled", () => showError("数据获取停滞"));
-      pageIntroVideo.addEventListener("abort", () => showError("加载中止"));
-      pageIntroVideo.addEventListener("emptied", () => showError("媒体被清空"));
+      // 以下状态在切换 source 或重新 load() 时正常出现，不作为错误提示，仅记录日志
+      pageIntroVideo.addEventListener("stalled", () => {
+        TB_WARN("video stalled: 数据获取暂时停滞（非致命）");
+      });
+      pageIntroVideo.addEventListener("abort", () => {
+        TB_WARN("video abort: 加载被中止（通常由于切换源或重新加载）");
+      });
+      pageIntroVideo.addEventListener("emptied", () => {
+        TB_WARN("video emptied: 媒体被清空（重新设置 src 的正常现象）");
+      });
       pageIntroVideo.addEventListener("waiting", () => {
-        // 不立即显示错误，等待 canplay
-        console.warn("video waiting: 正在缓冲...");
+        TB_WARN("video waiting: 正在缓冲...");
       });
       pageIntroVideo.addEventListener("loadedmetadata", hideError);
       pageIntroVideo.addEventListener("loadeddata", hideError);
@@ -628,6 +685,12 @@ class ProbabilityToolbox {
       .getElementById("test-system-status")
       .addEventListener("click", () => {
         this.testSystemStatus();
+      });
+
+    document
+      .getElementById("test-chat-latex")
+      .addEventListener("click", () => {
+        this.testChatLatexDiagnosis();
       });
 
     // 检验方法分类变化事件
@@ -728,11 +791,11 @@ class ProbabilityToolbox {
       this.setPageIntroVideo(key, true);
     } catch (e) {
       // 安静失败，不影响其他工具
-      console.warn("初始化网页介绍栏失败:", e);
+      TB_WARN("初始化网页介绍栏失败:", e);
     }
   }
 
-  // 设置网页介绍视频，带多源回退（mp4→webm→mov）与类型标注
+  // 设置网页介绍视频，精简回退：优先使用本地 MP4，必要时再尝试 MOV（仅在浏览器支持时）
   setPageIntroVideo(key, quiet = false) {
     try {
       const pageIntroVideo = document.getElementById("page-intro-video");
@@ -744,21 +807,18 @@ class ProbabilityToolbox {
 
       const v = document.createElement("video");
       const supportMp4 = v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
-      const supportWebm = v.canPlayType('video/webm; codecs="vp9,opus"');
+      const supportQuickTime = v.canPlayType('video/quicktime');
 
       const primary = this.pageIntroMap && this.pageIntroMap[key] ? this.pageIntroMap[key] : null;
       const altMov = this.pageIntroMovMap && this.pageIntroMovMap[key] ? this.pageIntroMovMap[key] : null;
+
+      // 仅使用实际存在的本地 MP4 作为首选，避免无文件的 .webm/.mp4 组合导致 404 与反复重载
       const candidates = [];
       if (primary) {
-        const basePrimary = primary.replace(/\.(mov|mp4|webm)$/i, "");
-        if (supportMp4) candidates.push(`${basePrimary}.mp4`);
-        if (supportWebm) candidates.push(`${basePrimary}.webm`);
         candidates.push(primary);
       }
-      if (altMov) {
-        const baseAlt = altMov.replace(/\.(mov|mp4|webm)$/i, "");
-        if (supportMp4) candidates.push(`${baseAlt}.mp4`);
-        if (supportWebm) candidates.push(`${baseAlt}.webm`);
+      // 如浏览器宣称支持 QuickTime（Safari 等），再追加 MOV 作为兜底
+      if (altMov && supportQuickTime) {
         candidates.push(altMov);
       }
 
@@ -786,7 +846,7 @@ class ProbabilityToolbox {
 
       const tryNext = () => {
         if (attemptIndex >= candidates.length) {
-          if (!quiet) console.error("所有候选视频源均无法播放:", candidates);
+          if (!quiet) TB_ERROR("所有候选视频源均无法播放:", candidates);
           if (pageIntroError) {
             pageIntroError.classList.remove("hidden");
             pageIntroError.textContent = `⚠️ 所有候选视频源均无法播放，请提供 MP4(H.264) 或 WebM(VP9) 版本。尝试过: ${candidates.join(', ')}`;
@@ -798,7 +858,7 @@ class ProbabilityToolbox {
         // 为当前尝试绑定一次性错误监听，失败则自动尝试下一个
         const onErr = () => {
           pageIntroVideo.removeEventListener("error", onErr);
-          if (!quiet) console.warn("视频源失败，尝试下一个:", nextSrc);
+          if (!quiet) TB_WARN("视频源失败，尝试下一个:", nextSrc);
           tryNext();
         };
         pageIntroVideo.addEventListener("error", onErr, { once: true });
@@ -806,7 +866,7 @@ class ProbabilityToolbox {
 
       tryNext();
     } catch (e) {
-      if (!quiet) console.warn("设置网页介绍视频失败:", e);
+      if (!quiet) TB_WARN("设置网页介绍视频失败:", e);
     }
   }
 
@@ -822,6 +882,18 @@ class ProbabilityToolbox {
     const sidebar = document.getElementById("toolbox-sidebar");
     const sidebarContent = sidebar.querySelector("div");
     const body = document.body;
+
+    // 动态计算导航栏高度，避免遮挡
+    try {
+      const nav = document.getElementById("global-nav") || document.querySelector("nav");
+      const navRect = nav ? nav.getBoundingClientRect() : null;
+      const navHeight = navRect ? Math.ceil(navRect.height) : 64; // 默认4rem
+      // 设置顶部偏移与可视高度，确保侧边栏紧贴导航栏下方
+      sidebarContent.style.top = navHeight + "px";
+      sidebarContent.style.height = `calc(100vh - ${navHeight}px)`;
+    } catch (e) {
+      // 静默失败，保留原有样式
+    }
 
     sidebarContent.classList.remove("translate-x-full");
     body.style.marginRight = "600px"; // 匹配侧边栏宽度
@@ -1244,16 +1316,27 @@ class ProbabilityToolbox {
     messageDiv.className = `message ${role} ${isLoading ? "loading" : ""}`;
 
     const roleClass = role === "user" ? "text-neon-blue" : "text-neon-green";
+    // 统一预处理：标点标准化 + 方括号规范化 + 括号内未定界TeX包裹 + 定界修复
+    let renderContent = this.preprocessLatex(content);
     const roleName = role === "user" ? "您" : "AI助手";
 
-    // 创建消息内容容器
+    // 创建消息内容总容器
     const contentContainer = document.createElement("div");
     contentContainer.className =
-      "message-content text-gray-300 text-sm leading-relaxed max-w-none";
+      "message-content max-w-none";
 
-    // 如果是加载状态，添加思考动画
+    // 渲染版容器（用于Markdown/LaTeX）
+    const renderedDiv = document.createElement("div");
+    renderedDiv.className = "message-rendered text-gray-300 text-sm leading-relaxed";
+
+    // 原文容器（严格显示原始文本）
+    const rawDiv = document.createElement("pre");
+    rawDiv.className = "message-raw hidden whitespace-pre-wrap break-words bg-gray-900/50 rounded p-2 text-xs text-gray-400";
+    rawDiv.textContent = content; // 原始内容不做任何预处理
+
+    // 填充渲染版内容
     if (isLoading) {
-      contentContainer.innerHTML = `
+      renderedDiv.innerHTML = `
         <div class="flex items-center space-x-2">
           <div class="thinking-animation">
             <div class="dot"></div>
@@ -1264,27 +1347,29 @@ class ProbabilityToolbox {
         </div>
       `;
     } else if (role !== "user") {
-      // 如果是AI助手的回复，渲染Markdown和LaTeX
       try {
+        // 保护数学片段，避免Markdown解析阶段移除反斜杠导致定界失效
+        const protectedSeg = this.protectMathSegments(renderContent);
         if (window.marked && window.marked.parse) {
-          // marked 4.3.0版本使用marked.parse()函数
-          const htmlContent = marked.parse(content);
-          contentContainer.innerHTML = htmlContent;
+          const htmlContent = marked.parse(protectedSeg.protectedText);
+          const restoredHtml = this.restoreMathSegments(htmlContent, protectedSeg.segments);
+          renderedDiv.innerHTML = restoredHtml;
         } else if (window.marked) {
-          // 兼容旧版本marked
-          const htmlContent = marked(content);
-          contentContainer.innerHTML = htmlContent;
+          const htmlContent = marked(protectedSeg.protectedText);
+          const restoredHtml = this.restoreMathSegments(htmlContent, protectedSeg.segments);
+          renderedDiv.innerHTML = restoredHtml;
         } else {
-          console.warn("marked库未加载，使用简单换行处理");
-          contentContainer.innerHTML = content.replace(/\n/g, "<br>");
+          TB_WARN("marked库未加载，使用简单换行处理");
+          renderedDiv.innerHTML = renderContent.replace(/\n/g, "<br>");
         }
       } catch (error) {
-        console.error("Markdown渲染错误:", error);
-        console.log("marked对象:", window.marked);
-        contentContainer.innerHTML = content.replace(/\n/g, "<br>");
+        TB_ERROR("Markdown渲染错误:", error);
+        TB_LOG("marked对象:", window.marked);
+        renderedDiv.innerHTML = renderContent.replace(/\n/g, "<br>");
       }
     } else {
-      contentContainer.textContent = content;
+      // 用户消息渲染版以纯文本呈现
+      renderedDiv.textContent = renderContent;
     }
 
     messageDiv.innerHTML = `
@@ -1305,6 +1390,18 @@ class ProbabilityToolbox {
 
     // 将渲染好的内容插入到消息容器中
     const messageContentDiv = messageDiv.querySelector(".message-content");
+    // 根据当前开关设置显示哪一种
+    if (this.showRaw) {
+      renderedDiv.classList.add("hidden");
+      rawDiv.classList.remove("hidden");
+    } else {
+      renderedDiv.classList.remove("hidden");
+      rawDiv.classList.add("hidden");
+    }
+
+    contentContainer.appendChild(renderedDiv);
+    contentContainer.appendChild(rawDiv);
+
     messageContentDiv.appendChild(contentContainer);
 
     chatMessages.appendChild(messageDiv);
@@ -1316,6 +1413,214 @@ class ProbabilityToolbox {
     if (!isLoading && !skipSave) {
       this.chatHistory.push({ role, content });
       this.saveChatHistory();
+    }
+
+    // 返回创建的消息DOM节点，便于测试诊断定位
+    return messageDiv;
+  }
+
+  // 将类似“[ \Lambda = ... ]”的非标准写法自动规范为“\[ ... \]”以便KaTeX解析
+  normalizeLatexBrackets(content) {
+    try {
+      if (typeof content !== "string") return content;
+      let result = content;
+      // 匹配方括号中含有常见LaTeX命令的片段，转换为 \\[ ... \\]
+      result = result.replace(/\[([^\]]*\\(frac|sqrt|int|sum|prod|lim|log|ln|exp|Lambda|lambda|chi|alpha|beta|gamma|theta|mu|sigma|mathbb|mathcal|operatorname)[^\]]*)\]/g, "\\[$1\\]");
+      // 针对整行的方括号公式进行兜底转换（避免误伤Markdown链接）
+      result = result.replace(/(^|\n)\s*\[\s*([\s\S]*?)\s*\]\s*(?=\n|$)/g, "$1\\[ $2 \\\]");
+      return result;
+    } catch (e) {
+      console.warn("normalizeLatexBrackets error:", e);
+      return content;
+    }
+  }
+
+  // 额外的稳健方括号规范化：使用函数替换，确保右端生成"\\]"
+  normalizeBlockBracketsRobust(content) {
+    try {
+      if (typeof content !== "string") return content;
+      return content.replace(/(^|\n)\s*\[\s*([\s\S]*?)\s*\]\s*(?=\n|$)/g, (m, pre, inner) => `${pre}\\[ ${inner} \\]`);
+    } catch (e) {
+      console.warn("normalizeBlockBracketsRobust error:", e);
+      return content;
+    }
+  }
+
+  // 规范化常见错配定界："( ... \)" => "\( ... \)"；"\[ ... ]" => "\[ ... \]"
+  normalizeMismatchedDelimiters(content) {
+    try {
+      if (typeof content !== "string") return content;
+      let result = content;
+      // 将普通左括号 + LaTeX右定界 \) 的片段修正为标准内联定界
+      result = result.replace(/\(\s*([^)]*?)\s*\\\)/g, "\\($1\\)");
+      // 将 display 起始 \\[ 与普通右方括号 ] 搭配的片段补齐为 \\]
+      result = result.replace(/\\\[\s*([\s\S]*?)\s*\](?=\s|$)/g, "\\[ $1 \\]");
+      return result;
+    } catch (e) {
+      console.warn("normalizeMismatchedDelimiters error:", e);
+      return content;
+    }
+  }
+
+  // 自动识别括号中的TeX片段并包裹为 \( ... \) 以便作为内联公式渲染
+  autoWrapInlineLaTeX(content) {
+    try {
+      if (typeof content !== "string") return content;
+      let result = content;
+
+      // 仅对圆括号内容进行检查：若存在明显TeX特征且未定界，则包裹为 \( ... \)
+      result = result.replace(/\(([^)]+)\)/g, (m, inner) => {
+        // 跳过包含HTML标签的片段，避免破坏结构
+        if (/<[^>]+>/.test(inner)) return m;
+        // 跳过已存在数学定界的片段（包含左右定界）
+        if (/(\$|\\\(|\\\[|\\\)|\\\])/.test(inner)) return m;
+        // 识别常见TeX特征
+        const texLike = /\\[a-zA-Z]+|[_^]\{|\\left|\\right|\\frac|\\exp|\\mathbf|\\mathbb|\\mathcal|\\sigma|\\mu|\\Lambda|\\Sigma|\\det|\\log|\\top/.test(inner);
+        if (texLike) {
+          return `\\(${inner}\\)`;
+        }
+        return m;
+      });
+
+      return result;
+    } catch (e) {
+      console.warn("autoWrapInlineLaTeX error:", e);
+      return content;
+    }
+  }
+
+  // 将常见中文全角标点标准化为ASCII，避免LaTeX定界解析失败
+  standardizeTextPunctuation(content) {
+    try {
+      if (typeof content !== "string") return content;
+      return content
+        .replace(/（/g, "(")
+        .replace(/）/g, ")")
+        .replace(/【/g, "[")
+        .replace(/】/g, "]")
+        .replace(/，/g, ",")
+        .replace(/：/g, ":");
+    } catch (e) {
+      console.warn("standardizeTextPunctuation error:", e);
+      return content;
+    }
+  }
+
+  // 修复未闭合或不匹配的LaTeX定界符（\( ... \)、\[ ... \]、\left( ... \right)）
+  repairUnbalancedLatexDelimiters(content) {
+    try {
+      if (typeof content !== "string") return content;
+      let result = content;
+
+      // 1) 将 "\( ... )" 这种缺少 "\)" 的形式修复为 "\( ... \)"
+      result = result.replace(/\\\(([^)]*?)\)(?!\s*\\\))/g, "\\($1\\)");
+
+      // 2) 修复 "\\left( ... \\right" 缺少右括号的情况
+      result = result.replace(/\\left\(([^)]*?)\\right(?!\))/g, "\\left($1\\right)");
+
+      // 3) 统计并补齐块级定界 "\\[ ... \\]" 的右端
+      const openBlock = (result.match(/\\\[/g) || []).length;
+      const closeBlock = (result.match(/\\\]/g) || []).length;
+      if (openBlock > closeBlock) {
+        result += " ".repeat(openBlock - closeBlock).replace(/ /g, " \\]");
+      }
+
+      // 4) 统计并补齐内联定界 "\\( ... \\)" 的右端
+      const openInline = (result.match(/\\\(/g) || []).length;
+      const closeInline = (result.match(/\\\)/g) || []).length;
+      if (openInline > closeInline) {
+        result += " ".repeat(openInline - closeInline).replace(/ /g, " \\)");
+      }
+
+      return result;
+    } catch (e) {
+      console.warn("repairUnbalancedLatexDelimiters error:", e);
+      return content;
+    }
+  }
+
+  // 更安全的本地定界修复：只修正就地缺失，不进行全局补齐
+  repairLocalLatexDelimiters(content) {
+    try {
+      if (typeof content !== "string") return content;
+      let result = content;
+      // 将 "\\( ... )" 这种缺少 "\\)" 的形式修复为 "\\( ... \\)"
+      result = result.replace(/\\\(([^)]*?)\)(?!\s*\\\))/g, "\\($1\\)");
+      // 修复 "\\left( ... \\right" 缺少右括号的情况
+      result = result.replace(/\\left\(([^)]*?)\\right(?!\))/g, "\\left($1\\right)");
+      return result;
+    } catch (e) {
+      console.warn("repairLocalLatexDelimiters error:", e);
+      return content;
+    }
+  }
+
+  // 保护已定界的数学片段，避免预处理破坏原始LaTeX
+  protectMathSegments(content) {
+    try {
+      if (typeof content !== "string") return { protectedText: content, segments: [] };
+      const segments = [];
+      let protectedText = content;
+
+      const pushSeg = (m) => {
+        const ph = `__MATH_SEG_${segments.length}__`;
+        segments.push({ ph, text: m });
+        return ph;
+      };
+
+      // 优先保护块级 $$ ... $$
+      protectedText = protectedText.replace(/\$\$([\s\S]*?)\$\$/g, (m) => pushSeg(m));
+      // 保护 \\[ ... \\]
+      protectedText = protectedText.replace(/\\\[[\s\S]*?\\\]/g, (m) => pushSeg(m));
+      // 保护 \\( ... \\)
+      protectedText = protectedText.replace(/\\\([\s\S]*?\\\)/g, (m) => pushSeg(m));
+      // 保护单美元 $ ... $（不匹配 $$）
+      protectedText = protectedText.replace(/\$(?!\$)([\s\S]*?)\$(?!\$)/g, (m) => pushSeg(m));
+
+      return { protectedText, segments };
+    } catch (e) {
+      console.warn("protectMathSegments error:", e);
+      return { protectedText: content, segments: [] };
+    }
+  }
+
+  // 恢复被保护的数学片段占位符
+  restoreMathSegments(text, segments) {
+    try {
+      if (!Array.isArray(segments) || !segments.length) return text;
+      let result = text;
+      segments.forEach((seg) => {
+        result = result.replace(seg.ph, seg.text);
+      });
+      return result;
+    } catch (e) {
+      console.warn("restoreMathSegments error:", e);
+      return text;
+    }
+  }
+
+  // 统一的LaTeX预处理管线：先标准化标点，再规范方括号，再自动包裹未定界的TeX，最后修复未闭合定界
+  preprocessLatex(content) {
+    try {
+      if (typeof content !== "string") return content;
+      // 先保护已定界的数学片段，避免误改
+      const { protectedText, segments } = this.protectMathSegments(content);
+      let remainder = this.standardizeTextPunctuation(protectedText);
+      remainder = this.normalizeLatexBrackets(remainder);
+      // 额外兜底，保证块级方括号转换的右端是 \\]
+      remainder = this.normalizeBlockBracketsRobust(remainder);
+      // 修正常见错配定界（如 (p\) 与 \\[ ... ]）
+      remainder = this.normalizeMismatchedDelimiters(remainder);
+      // 仅对非数学片段尝试自动包裹内联TeX
+      remainder = this.autoWrapInlineLaTeX(remainder);
+      // 进行本地修复，避免全局闭合符号的强行补齐
+      remainder = this.repairLocalLatexDelimiters(remainder);
+      // 恢复已保护的数学片段
+      const result = this.restoreMathSegments(remainder, segments);
+      return result;
+    } catch (e) {
+      console.warn("preprocessLatex error:", e);
+      return content;
     }
   }
 
@@ -1329,26 +1634,26 @@ class ProbabilityToolbox {
   // 渲染单个容器中的LaTeX公式
   renderMathInContainer(container) {
     if (!container) {
-      console.warn("renderMathInContainer: 容器为空");
+      TB_WARN("renderMathInContainer: 容器为空");
       return;
     }
 
     // 检查容器中是否包含LaTeX内容
     const content = container.textContent || container.innerText || "";
     const hasLatex = /\$.*?\$|\\\[.*?\\\]|\\\(.*?\\\)/.test(content);
-    console.log(
+    TB_LOG(
       `容器内容检查 - 包含LaTeX: ${hasLatex}, 内容长度: ${content.length}`
     );
 
     if (!hasLatex) {
-      console.log("容器中未发现LaTeX内容，跳过渲染");
+      TB_LOG("容器中未发现LaTeX内容，跳过渲染");
       return;
     }
 
     // 渲染LaTeX公式 - 支持KaTeX和MathJax
     if (window.renderMathInElement) {
       // 使用KaTeX渲染
-      console.log("使用KaTeX渲染LaTeX");
+      TB_LOG("使用KaTeX渲染LaTeX");
       try {
         renderMathInElement(container, {
           delimiters: [
@@ -1368,43 +1673,43 @@ class ProbabilityToolbox {
             "code",
           ],
         });
-        console.log("KaTeX渲染成功");
+        TB_LOG("KaTeX渲染成功");
       } catch (error) {
-        console.error("KaTeX单容器渲染错误:", error);
+        TB_ERROR("KaTeX单容器渲染错误:", error);
       }
     } else if (window.MathJax && window.MathJax.typesetPromise) {
       // 使用MathJax渲染
-      console.log("使用MathJax (新版) 渲染LaTeX");
+      TB_LOG("使用MathJax (新版) 渲染LaTeX");
       window.MathJax.typesetPromise([container])
         .then(() => {
-          console.log("MathJax渲染成功");
+          TB_LOG("MathJax渲染成功");
         })
         .catch((err) => {
-          console.error("MathJax单容器渲染错误:", err);
+          TB_ERROR("MathJax单容器渲染错误:", err);
         });
     } else if (window.MathJax && window.MathJax.Hub) {
       // 兼容旧版MathJax
-      console.log("使用MathJax (旧版Hub) 渲染LaTeX");
+      TB_LOG("使用MathJax (旧版Hub) 渲染LaTeX");
       try {
         window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, container]);
-        console.log("MathJax Hub渲染已排队");
+        TB_LOG("MathJax Hub渲染已排队");
       } catch (error) {
-        console.error("MathJax Hub单容器渲染错误:", error);
+        TB_ERROR("MathJax Hub单容器渲染错误:", error);
       }
     } else {
-      console.warn("未找到可用的LaTeX渲染库 (KaTeX或MathJax)");
+      TB_WARN("未找到可用的LaTeX渲染库 (KaTeX或MathJax)");
     }
   }
 
   // 强制重新渲染所有LaTeX和Markdown内容
   forceRerenderMath() {
-    console.log("开始强制重新渲染LaTeX和Markdown");
+    TB_LOG("开始强制重新渲染LaTeX和Markdown");
 
     // 使用多次尝试确保渲染成功
     const attemptRender = (attempt = 0) => {
       const chatMessages = document.getElementById("chat-messages");
       if (!chatMessages) {
-        console.warn(`尝试 ${attempt + 1}: 未找到chat-messages容器`);
+        TB_WARN(`尝试 ${attempt + 1}: 未找到chat-messages容器`);
         if (attempt < 5) {
           setTimeout(() => attemptRender(attempt + 1), 100);
         }
@@ -1421,8 +1726,11 @@ class ProbabilityToolbox {
       }
 
       messageContents.forEach((container, index) => {
-        console.log(`渲染第 ${index + 1} 个容器`);
-        this.renderMathInContainer(container);
+        // 仅针对渲染版容器进行LaTeX渲染，避免影响原文
+        const target = container.querySelector('.message-rendered');
+        if (!target) return;
+        console.log(`渲染第 ${index + 1} 个容器（渲染版）`);
+        this.renderMathInContainer(target);
       });
 
       // 检查渲染库状态
@@ -1444,6 +1752,21 @@ class ProbabilityToolbox {
 
     // 延迟执行确保DOM完全更新
     setTimeout(() => attemptRender(), 100);
+  }
+
+  // 应用原文/渲染视图切换到所有已有消息
+  updateRawToggleView() {
+    const chatMessages = document.getElementById("chat-messages");
+    if (!chatMessages) return;
+    const renderedNodes = chatMessages.querySelectorAll('.message-rendered');
+    const rawNodes = chatMessages.querySelectorAll('.message-raw');
+    if (this.showRaw) {
+      renderedNodes.forEach((el) => el.classList.add('hidden'));
+      rawNodes.forEach((el) => el.classList.remove('hidden'));
+    } else {
+      renderedNodes.forEach((el) => el.classList.remove('hidden'));
+      rawNodes.forEach((el) => el.classList.add('hidden'));
+    }
   }
 
   displayChatHistory() {
@@ -2736,6 +3059,80 @@ class ProbabilityToolbox {
     }
   }
 
+  // 诊断AI消息中的LaTeX渲染情况：构造多种公式写法并检测是否成功渲染
+  testChatLatexDiagnosis() {
+    const resultDiv = document.getElementById("latex-diagnostic-result");
+    resultDiv.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i>正在运行诊断...';
+    // 使用“纯文本消息”注入，贴近真实AI输出路径
+    const tests = [
+      {
+        id: "inline_plain",
+        content: "$a^2 + b^2 = c^2$",
+      },
+      {
+        id: "display_plain",
+        content:
+          "\\[\n\\Phi(x) = \\frac{1}{\\sqrt{2\\pi}} \\int_{-\\infty}^x e^{-\\frac{t^2}{2}} \, dt.\n\\]",
+      },
+      {
+        id: "expect_var_plain",
+        content:
+          "\\[\n\\mathbb{E}[X_i] = \\mu, \\quad \\operatorname{Var}(X_i) = \\sigma^2 > 0,\n\\]",
+      },
+      {
+        id: "brackets_plain",
+        content:
+          "[ \\Lambda = \\frac{1}{(2\\pi)^{p/2} |\\Sigma|^{1/2}} \\exp\\left( -\\frac{1}{2} (\\mathbf{x}-\\boldsymbol{\\mu})^\\top \\boldsymbol{\\Sigma}^{-1} (\\mathbf{x}-\\boldsymbol{\\mu}) \\right) ]",
+      },
+      {
+        id: "paren_plain",
+        content: "( \\mu + \\sigma \\)",
+      },
+    ];
+
+    // 诊断时强制切换到“渲染版”以检测KaTeX输出
+    if (this.showRaw) {
+      this.showRaw = false;
+      this.updateRawToggleView();
+    }
+
+    // 插入消息但不写入历史，记录DOM节点用于判定
+    const nodes = tests.map((t) => {
+      const node = this.addMessageToChat("assistant", t.content, false, true);
+      if (node) node.setAttribute("data-test-id", t.id);
+      return { id: t.id, node };
+    });
+
+    // 强制渲染后收集结果（延时确保DOM完成）
+    setTimeout(() => {
+      this.forceRerenderMath();
+      setTimeout(() => {
+        const results = nodes.map((n) => {
+          const container = n.node
+            ? n.node.querySelector(".message-rendered")
+            : null;
+          const rendered = container
+            ? !!(
+                container.querySelector(".katex") ||
+                container.querySelector("mjx-container")
+              )
+            : false;
+          return { id: n.id, rendered, note: n.node ? "" : "未找到消息元素" };
+        });
+
+        const total = results.length;
+        const passed = results.filter((r) => r.rendered).length;
+        let html = `<div class="text-xs"><div class="font-medium">渲染通过 ${passed}/${total}</div>`;
+        results.forEach((r) => {
+          const icon = r.rendered ? "fa-check text-green-400" : "fa-times text-red-400";
+          html += `<div><i class="fa ${icon} mr-1"></i>${r.id}${r.note ? "（" + r.note + "）" : ""}</div>`;
+        });
+        html += `</div>`;
+        resultDiv.innerHTML = html;
+      }, 250);
+    }, 100);
+  }
+
   testSystemStatus() {
     const resultDiv = document.getElementById("system-test-result");
     resultDiv.innerHTML =
@@ -2819,20 +3216,20 @@ window.renderLatexInElement = function (element, options = {}) {
   const hasLatex = /\$.*?\$|\\\[.*?\\\]|\\\(.*?\\\)/.test(content);
 
   if (!hasLatex) {
-    console.log("元素中未发现LaTeX内容，跳过渲染");
+    TB_LOG("元素中未发现LaTeX内容，跳过渲染");
     return false;
   }
 
-  console.log("开始渲染LaTeX内容");
+  TB_LOG("开始渲染LaTeX内容");
 
   // 尝试使用KaTeX渲染
   if (window.renderMathInElement) {
     try {
       renderMathInElement(element, finalOptions);
-      console.log("KaTeX渲染成功");
+      TB_LOG("KaTeX渲染成功");
       return true;
     } catch (error) {
-      console.error("KaTeX渲染失败:", error);
+      TB_ERROR("KaTeX渲染失败:", error);
     }
   }
 
@@ -2840,10 +3237,10 @@ window.renderLatexInElement = function (element, options = {}) {
   if (window.MathJax && window.MathJax.typesetPromise) {
     window.MathJax.typesetPromise([element])
       .then(() => {
-        console.log("MathJax渲染成功");
+        TB_LOG("MathJax渲染成功");
       })
       .catch((err) => {
-        console.error("MathJax渲染失败:", err);
+        TB_ERROR("MathJax渲染失败:", err);
       });
     return true;
   }
@@ -2852,40 +3249,40 @@ window.renderLatexInElement = function (element, options = {}) {
   if (window.MathJax && window.MathJax.Hub) {
     try {
       window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, element]);
-      console.log("MathJax Hub渲染已排队");
+      TB_LOG("MathJax Hub渲染已排队");
       return true;
     } catch (error) {
-      console.error("MathJax Hub渲染失败:", error);
+      TB_ERROR("MathJax Hub渲染失败:", error);
     }
   }
 
-  console.warn("未找到可用的LaTeX渲染库");
+  TB_WARN("未找到可用的LaTeX渲染库");
   return false;
 };
 
 // 全局Markdown渲染函数
 window.renderMarkdownInElement = function (element, content) {
   if (!element) {
-    console.warn("renderMarkdownInElement: 元素为空");
+    TB_WARN("renderMarkdownInElement: 元素为空");
     return false;
   }
 
   try {
     if (window.marked && window.marked.parse) {
       element.innerHTML = marked.parse(content);
-      console.log("Markdown渲染成功 (marked.parse)");
+      TB_LOG("Markdown渲染成功 (marked.parse)");
       return true;
     } else if (window.marked) {
       element.innerHTML = marked(content);
-      console.log("Markdown渲染成功 (marked)");
+      TB_LOG("Markdown渲染成功 (marked)");
       return true;
     } else {
-      console.warn("marked库未加载，使用简单换行处理");
+      TB_WARN("marked库未加载，使用简单换行处理");
       element.innerHTML = content.replace(/\n/g, "<br>");
       return false;
     }
   } catch (error) {
-    console.error("Markdown渲染错误:", error);
+    TB_ERROR("Markdown渲染错误:", error);
     element.innerHTML = content.replace(/\n/g, "<br>");
     return false;
   }
@@ -2894,4 +3291,15 @@ window.renderMarkdownInElement = function (element, content) {
 // 页面加载完成后初始化工具箱
 document.addEventListener("DOMContentLoaded", () => {
   window.probabilityToolbox = new ProbabilityToolbox();
+  try {
+    const path = (window.location && window.location.pathname) || "";
+    if (path.endsWith("/templates/random_variables.html")) {
+      // 页面加载后小延时执行诊断，避免未就绪的DOM导致找不到节点
+      setTimeout(() => {
+        if (window.probabilityToolbox && typeof window.probabilityToolbox.testChatLatexDiagnosis === "function") {
+          window.probabilityToolbox.testChatLatexDiagnosis();
+        }
+      }, 500);
+    }
+  } catch (_) {}
 });

@@ -4882,6 +4882,8 @@
       </div>
     </footer>
 
+    <script src="../static/js/include-footer.js" defer></script>
+
     <script>
       // 全局变量
       let currentDistribution = "normal";
@@ -8085,7 +8087,16 @@
 
     <!-- 工具箱组件 -->
     <script src="/static/js/toolbox.js"></script>
-  </body>
+</body>
+<script>
+  window.NAV_CONFIG = {
+    active: 'probability_distributions',
+    sectionLinks: [
+      { label: '分布概览', href: '#distributions-overview' }
+    ]
+  };
+</script>
+<script src="../static/js/include-navbar.js"></script>
 </html>
 
 

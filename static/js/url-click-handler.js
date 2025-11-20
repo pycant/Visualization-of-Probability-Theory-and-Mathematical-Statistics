@@ -167,18 +167,31 @@ class URLClickHandler {
      * 添加点击视觉反馈
      * @param {HTMLElement} element - 被点击的元素
      */
-    addClickFeedback(element) {
-        // 添加临时高亮效果
+  addClickFeedback(element) {
+        // 添加更科幻的临时高亮与脉冲效果
         const originalStyle = element.style.cssText;
-        
-        element.style.transition = 'all 0.3s ease';
-        element.style.boxShadow = '0 0 10px rgba(0, 255, 255, 0.8)';
-        element.style.transform = 'scale(1.05)';
+        element.style.transition = 'all 0.35s ease';
+        element.style.boxShadow = '0 0 0 2px rgba(167,139,250,0.7), 0 0 16px rgba(0, 232, 255, 0.6), 0 0 28px rgba(167,139,250,0.4)';
+        element.style.transform = 'scale(1.06)';
+        element.style.filter = 'drop-shadow(0 0 6px rgba(165,243,252,0.6))';
+
+        // 轻微呼吸脉冲
+        let up = true;
+        const start = Date.now();
+        const duration = 900;
+        const pulse = () => {
+            const t = Date.now() - start;
+            if (t > duration) return;
+            element.style.transform = up ? 'scale(1.065)' : 'scale(1.055)';
+            up = !up;
+            setTimeout(pulse, 110);
+        };
+        pulse();
 
         setTimeout(() => {
             element.style.cssText = originalStyle;
-        }, 1000);
-    }
+        }, 1100);
+  }
 
     /**
      * 手动触发点击（供外部调用）

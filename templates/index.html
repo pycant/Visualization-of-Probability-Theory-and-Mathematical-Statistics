@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -340,45 +340,10 @@
           >
         </div>
 
-        <!-- 移动端菜单按钮 -->
-        <button
-          class="md:hidden text-white text-2xl"
-          id="menu-toggle"
-          aria-label="打开导航菜单"
-          title="打开导航菜单"
-        >
-          <i class="fa fa-bars"></i>
-        </button>
+        
       </div>
 
-      <!-- 移动端导航菜单 -->
-      <div
-        class="md:hidden hidden glass-effect absolute w-full"
-        id="mobile-menu"
-      >
-        <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
-          <a
-            href="#concepts"
-            class="hover:text-neon-blue transition-colors duration-300 py-2"
-            >核心概念</a
-          >
-          <a
-            href="#simulations"
-            class="hover:text-neon-blue transition-colors duration-300 py-2"
-            >概率模拟</a
-          >
-          <a
-            href="#visualizations"
-            class="hover:text-neon-blue transition-colors duration-300 py-2"
-            >数据可视化</a
-          >
-          <a
-            href="#applications"
-            class="hover:text-neon-blue transition-colors duration-300 py-2"
-            >应用场景</a
-          >
-        </div>
-      </div>
+      
     </nav>
 
     <!-- 英雄区域 -->
@@ -437,9 +402,9 @@
     <!-- 核心概念部分 -->
     <section id="concepts" class="py-20 relative">
       <div class="absolute inset-0 bg-grid opacity-20"></div>
-      <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center mb-16">
-          <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+      <div class="container mx-auto px-4 relative z-10 max-w-7xl">
+        <div class="text-left mb-8">
+          <h2 class="text-center text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
             <span class="text-neon-blue">核心</span>概念
           </h2>
           <p class="text-gray-400 max-w-2xl mx-auto">
@@ -447,9 +412,29 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-12 gap-8 items-start">
+          <aside class="col-span-12 lg:col-span-3 order-2 lg:order-1 sticky top-24">
+            <div id="toc" class="bg-dark-card rounded-xl p-4 border border-gray-800 max-h-[70vh] overflow-auto"></div>
+          </aside>
+          <div class="col-span-12 lg:col-span-9 order-1 lg:order-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- 第1章：随机事件与概率 -->
+          <div id="第一章-随机事件与概率" class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group">
+            <div class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors">
+              <i class="fa fa-dice text-neon-blue text-2xl"></i>
+            </div>
+            <div class="text-xs text-gray-400 mb-2">第1章</div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">随机事件与概率</h3>
+            <p class="text-gray-400">事件运算、条件概率、全概率公式与贝叶斯公式。</p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a href="chapter1.html" class="text-neon-blue hover:text-white transition-colors flex items-center">
+                进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
           <!-- 概念卡片1 -->
           <div
+            id="第二章-随机变量及其分布"
             class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
           >
             <!-- 微缩预览：随机变量 -->
@@ -483,9 +468,8 @@
             >
               <i class="fa fa-random text-neon-blue text-2xl"></i>
             </div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">
-              随机变量
-            </h3>
+            <div class="text-xs text-gray-400 mb-2">第2章</div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">随机变量</h3>
             <p class="text-gray-400">
               表示随机现象结果的变量，是概率理论的基础。分为离散型和连续型，描述了不确定性的数学表达。
             </p>
@@ -535,9 +519,8 @@
               <i class="fa fa-area-chart text-neon-purple text-xl mr-1"></i>
               <i class="fa fa-infinity text-neon-purple text-xl"></i>
             </div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">
-              概率分布
-            </h3>
+            <div class="text-xs text-gray-400 mb-2">第2章</div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">概率分布</h3>
             <p class="text-gray-400">
               描述随机变量取值的概率规律，如正态分布、泊松分布等。是数据分析和预测的核心工具。
             </p>
@@ -586,9 +569,8 @@
             >
               <i class="fa fa-calculator text-neon-green text-2xl"></i>
             </div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">
-              期望与方差
-            </h3>
+            <div class="text-xs text-gray-400 mb-2">第2章</div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">期望与方差</h3>
             <p class="text-gray-400">
               描述随机变量的集中趋势和离散程度，是概率分布的重要数字特征，用于风险评估和决策分析。
             </p>
@@ -602,8 +584,88 @@
             </div>
           </div>
 
+          <!-- 第3章：多维随机变量及其分布 -->
+          <div id="第三章-多维随机变量及其分布" class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group">
+            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors">
+              <i class="fa fa-layer-group text-neon-purple text-2xl"></i>
+            </div>
+            <div class="text-xs text-gray-400 mb-2">第3章</div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">多维随机变量及其分布</h3>
+            <p class="text-gray-400">二维及多维随机变量、相关与协方差、条件分布。</p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a href="chapter3.html" class="text-neon-purple hover:text-white transition-colors flex items-center">
+                进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
+          <!-- 概念卡片4 - 大数定律（调整顺序以贴合教材第5章） -->
+          <div
+            id="第四章-大数定律与中心极限定理"
+            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
+          >
+            <!-- 微缩预览：大数定律 -->
+            <div
+              class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+              data-target-url="law_of_large_numbers.html"
+              aria-label="打开大数定律页面"
+              role="button"
+            >
+              <iframe
+                src="law_of_large_numbers.html"
+                class="pointer-events-none"
+                style="
+                  position: absolute;
+                  left: 50%;
+                  top: 50%;
+                  transform: translate(-50%, -50%) scale(0.25);
+                  transform-origin: center center;
+                  width: 1600px;
+                  height: 900px;
+                "
+              ></iframe>
+              <div
+                class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
+              >
+                大数定律 · 预览
+              </div>
+            </div>
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors"
+            >
+              <i class="fa fa-random text-neon-green text-2xl"></i>
+            </div>
+            <div class="text-xs text-gray-400 mb-2">第4章</div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">大数定律</h3>
+            <p class="text-gray-400">
+              描述大量重复试验中随机现象的统计规律性，是频率趋近于概率的理论基础，支撑着统计推断。
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a
+                href="law_of_large_numbers.html"
+                class="text-neon-green hover:text-white transition-colors flex items-center"
+              >
+                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 第5章：统计量及其分布 -->
+          <div id="第五章-统计量及其分布" class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange transition-all duration-300 transform hover:-translate-y-2 group">
+            <div class="w-14 h-14 rounded-lg bg-neon-orange/10 flex items-center justify-center mb-6 group-hover:bg-neon-orange/20 transition-colors">
+              <i class="fa fa-chart-bar text-neon-orange text-2xl"></i>
+            </div>
+            <div class="text-xs text-gray-400 mb-2">第5章</div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">统计量及其分布</h3>
+            <p class="text-gray-400">样本均值、方差及三大抽样分布的性质。</p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a href="chapter5.html" class="text-neon-orange hover:text-white transition-colors flex items-center">
+                进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
           <!-- 概念卡片4 - 区间估计 -->
           <div
+            id="第六章-参数估计"
             class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange transition-all duration-300 transform hover:-translate-y-2 group"
           >
             <!-- 微缩预览：区间估计 -->
@@ -655,6 +717,7 @@
 
           <!-- 概念卡片5 - 假设检验 -->
           <div
+            id="第七章-假设检验"
             class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
           >
             <!-- 微缩预览：假设检验 -->
@@ -704,55 +767,37 @@
             </div>
           </div>
 
-          <!-- 概念卡片7 -->
-          <div
-            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
-          >
-            <!-- 微缩预览：大数定律 -->
-            <div
-              class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
-              data-target-url="law_of_large_numbers.html"
-              aria-label="打开大数定律页面"
-              role="button"
-            >
-              <iframe
-                src="law_of_large_numbers.html"
-                class="pointer-events-none"
-                style="
-                  position: absolute;
-                  left: 50%;
-                  top: 50%;
-                  transform: translate(-50%, -50%) scale(0.25);
-                  transform-origin: center center;
-                  width: 1600px;
-                  height: 900px;
-                "
-              ></iframe>
-              <div
-                class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
-              >
-                大数定律 · 预览
-              </div>
+          <!-- 第8章：方差分析与回归分析 -->
+          <div id="第八章-方差分析与回归分析" class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group">
+            <div class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors">
+              <i class="fa fa-project-diagram text-neon-green text-2xl"></i>
             </div>
-            <div
-              class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors"
-            >
-              <i class="fa fa-random text-neon-green text-2xl"></i>
-            </div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">
-              大数定律
-            </h3>
-            <p class="text-gray-400">
-              描述大量重复试验中随机现象的统计规律性，是频率趋近于概率的理论基础，支撑着统计推断。
-            </p>
+            <div class="text-xs text-gray-400 mb-2">第8章</div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">方差分析与回归分析</h3>
+            <p class="text-gray-400">单因素与双因素方差分析，简单与多元回归。</p>
             <div class="mt-6 pt-4 border-t border-gray-800">
-              <a
-                href="law_of_large_numbers.html"
-                class="text-neon-green hover:text-white transition-colors flex items-center"
-              >
-                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              <a href="chapter8.html" class="text-neon-green hover:text-white transition-colors flex items-center">
+                进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
               </a>
             </div>
+          </div>
+
+          <!-- 附表 -->
+          <div id="附表" class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group">
+            <div class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors">
+              <i class="fa fa-table text-neon-blue text-2xl"></i>
+            </div>
+            <div class="text-xs text-gray-400 mb-2">附</div>
+            <h3 class="text-xl font-future font-semibold mb-3 text-white">附表</h3>
+            <p class="text-gray-400">常用分布与临界值表，便于查阅与教学。</p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a href="appendix.html" class="text-neon-blue hover:text-white transition-colors flex items-center">
+                进入附表 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
           </div>
         </div>
       </div>
@@ -2314,6 +2359,7 @@
               role="alert"
               aria-live="polite"
               class="hidden sm:col-span-2 mt-2 text-sm rounded-md border p-3 bg-dark-bg border-gray-700 text-gray-300"
+              style="word-break:break-word;overflow-wrap:anywhere;max-height:8rem;overflow:auto;"
             ></div>
             <script>
               (function () {
@@ -2434,10 +2480,11 @@
 
                     if (subResp.ok) {
                       setInputValid(true);
-                      showFeedback(
-                        "success",
-                        (subText || "订阅成功").replace(/\s+/g, "")
-                      );
+                      const sanitized = (subText || "").replace(/<[^>]*>/g, "");
+                      const message = /订阅成功/.test(sanitized)
+                        ? "订阅成功"
+                        : sanitized.trim() || "订阅成功";
+                      showFeedback("success", message);
                       emailInput.value = "";
                     } else {
                       showFeedback("error", "提交失败，请稍后重试");
@@ -2456,6 +2503,11 @@
       </div>
     </section>
 
+    <!-- 页脚（动态引入） -->
+    <div id="site-footer"></div>
+    <script src="../static/js/include-footer.js" defer></script>
+    
+    <!-- 原内联页脚已抽取为 partial -->
     <!-- 页脚 -->
     <footer class="bg-dark-card py-12 border-t border-gray-800">
       <div class="container mx-auto px-4">
@@ -2671,31 +2723,14 @@
         }
       });
 
-      // 移动端菜单切换
-      const menuToggle = document.getElementById("menu-toggle");
-      const mobileMenu = document.getElementById("mobile-menu");
-
-      menuToggle.addEventListener("click", () => {
-        mobileMenu.classList.toggle("hidden");
-        const icon = menuToggle.querySelector("i");
-        if (icon.classList.contains("fa-bars")) {
-          icon.classList.replace("fa-bars", "fa-times");
-        } else {
-          icon.classList.replace("fa-times", "fa-bars");
-        }
-      });
+      
 
       // 平滑滚动
       document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         anchor.addEventListener("click", function (e) {
           e.preventDefault();
 
-          // 关闭移动菜单（如果打开）
-          if (!mobileMenu.classList.contains("hidden")) {
-            mobileMenu.classList.add("hidden");
-            const icon = menuToggle.querySelector("i");
-            icon.classList.replace("fa-times", "fa-bars");
-          }
+          
 
           const href = this.getAttribute("href");
           if (href && href !== "#") {
@@ -2810,11 +2845,10 @@
       function rollDice(trials) {
         // 守护：Chart或图表未初始化时直接返回，避免阻塞其他交互逻辑
         if (
-          typeof window.Chart === "undefined" ||
-          typeof window.diceChart === "undefined" ||
-          !window.diceChart ||
-          !window.diceChart.data ||
-          typeof window.diceChart.update !== "function"
+          typeof Chart === "undefined" ||
+          !diceChart ||
+          !diceChart.data ||
+          typeof diceChart.update !== "function"
         ) {
           console.warn("Chart.js 未加载或骰子图未初始化，跳过 rollDice()");
           return;
@@ -2824,8 +2858,8 @@
           const roll = Math.floor(Math.random() * 6);
           results[roll]++;
         }
-        window.diceChart.data.datasets[0].data = results;
-        window.diceChart.update();
+        diceChart.data.datasets[0].data = results;
+        diceChart.update();
       }
 
       // 正态分布模拟
@@ -3022,15 +3056,10 @@
         const error = Math.abs((piEstimate - piExact) / piExact) * 100;
 
         // 更新图表（守护：Chart缺失或未初始化则跳过图表更新）
-        if (
-          typeof window.monteCarloChart !== "undefined" &&
-          window.monteCarloChart &&
-          window.monteCarloChart.data &&
-          typeof window.monteCarloChart.update === "function"
-        ) {
-          window.monteCarloChart.data.datasets[0].data = insidePoints;
-          window.monteCarloChart.data.datasets[1].data = outsidePoints;
-          window.monteCarloChart.update();
+        if (monteCarloChart && monteCarloChart.data && typeof monteCarloChart.update === "function") {
+          monteCarloChart.data.datasets[0].data = insidePoints;
+          monteCarloChart.data.datasets[1].data = outsidePoints;
+          monteCarloChart.update();
         } else {
           console.warn("Chart.js 未加载或蒙特卡洛图未初始化，跳过图表更新");
         }
@@ -4110,32 +4139,32 @@
           points.push({ x, y });
         }
 
-        // 尺度变换以适配画布
-        let minX = Infinity,
-          maxX = -Infinity,
-          minY = Infinity,
-          maxY = -Infinity;
-        for (const p of points) {
-          if (p.x < minX) minX = p.x;
-          if (p.x > maxX) maxX = p.x;
-          if (p.y < minY) minY = p.y;
-          if (p.y > maxY) maxY = p.y;
-        }
+        // 尺度变换以适配画布，原点固定在中心，Y轴向上为正
         const margin = 10;
-        const spanX = maxX - minX || 1;
-        const spanY = maxY - minY || 1;
-        const scaleX = (width - 2 * margin) / spanX;
-        const scaleY = (height - 2 * margin) / spanY;
+        let maxAbsX = 0,
+          maxAbsY = 0;
+        for (const p of points) {
+          const ax = Math.abs(p.x);
+          const ay = Math.abs(p.y);
+          if (ax > maxAbsX) maxAbsX = ax;
+          if (ay > maxAbsY) maxAbsY = ay;
+        }
+        const cx = width / 2;
+        const cy = height / 2;
+        const scaleX = (width / 2 - margin) / (maxAbsX || 1);
+        const scaleY = (height / 2 - margin) / (maxAbsY || 1);
         const scale = Math.min(scaleX, scaleY);
 
         // 清空并绘制路径
         ctx.clearRect(0, 0, width, height);
+        // 坐标轴
+        drawWalkAxes(ctx, width, height);
         ctx.strokeStyle = "rgba(0, 255, 102, 0.9)";
         ctx.lineWidth = 2;
         ctx.beginPath();
         for (let i = 0; i < points.length; i++) {
-          const px = (points[i].x - minX) * scale + margin;
-          const py = (points[i].y - minY) * scale + margin;
+          const px = cx + points[i].x * scale;
+          const py = cy - points[i].y * scale;
           if (i === 0) ctx.moveTo(px, py);
           else ctx.lineTo(px, py);
         }
@@ -4145,10 +4174,10 @@
         try {
           const start = points[0];
           const end = points[points.length - 1];
-          const sx = (start.x - minX) * scale + margin;
-          const sy = (start.y - minY) * scale + margin;
-          const ex = (end.x - minX) * scale + margin;
-          const ey = (end.y - minY) * scale + margin;
+          const sx = cx + start.x * scale;
+          const sy = cy - start.y * scale;
+          const ex = cx + end.x * scale;
+          const ey = cy - end.y * scale;
 
           // 起点
           ctx.fillStyle = "rgba(0, 200, 255, 0.95)";
@@ -4203,23 +4232,20 @@
       }
 
       function computeWalkScale(points, width, height) {
-        let minX = Infinity,
-          maxX = -Infinity,
-          minY = Infinity,
-          maxY = -Infinity;
-        for (const p of points) {
-          if (p.x < minX) minX = p.x;
-          if (p.x > maxX) maxX = p.x;
-          if (p.y < minY) minY = p.y;
-          if (p.y > maxY) maxY = p.y;
-        }
+        // 原点固定中心，按最大绝对值自适应缩放
         const margin = 10;
-        const spanX = maxX - minX || 1;
-        const spanY = maxY - minY || 1;
-        const scaleX = (width - 2 * margin) / spanX;
-        const scaleY = (height - 2 * margin) / spanY;
+        let maxAbsX = 0,
+          maxAbsY = 0;
+        for (const p of points) {
+          const ax = Math.abs(p.x);
+          const ay = Math.abs(p.y);
+          if (ax > maxAbsX) maxAbsX = ax;
+          if (ay > maxAbsY) maxAbsY = ay;
+        }
+        const scaleX = (width / 2 - margin) / (maxAbsX || 1);
+        const scaleY = (height / 2 - margin) / (maxAbsY || 1);
         const scale = Math.min(scaleX, scaleY);
-        return { minX, minY, scale, margin };
+        return { scale, margin, cx: width / 2, cy: height / 2 };
       }
 
       function drawWalkTo(index) {
@@ -4234,16 +4260,18 @@
         if (!walkAnimScale) {
           walkAnimScale = computeWalkScale(walkAnimPoints, width, height);
         }
-        const { minX, minY, scale, margin } = walkAnimScale;
+        const { scale, margin, cx, cy } = walkAnimScale;
 
         ctx.clearRect(0, 0, width, height);
+        // 坐标轴
+        drawWalkAxes(ctx, width, height);
         ctx.strokeStyle = "rgba(0, 255, 102, 0.9)";
         ctx.lineWidth = 2;
         ctx.beginPath();
         const upTo = Math.min(index, walkAnimPoints.length - 1);
         for (let i = 0; i <= upTo; i++) {
-          const px = (walkAnimPoints[i].x - minX) * scale + margin;
-          const py = (walkAnimPoints[i].y - minY) * scale + margin;
+          const px = cx + walkAnimPoints[i].x * scale;
+          const py = cy - walkAnimPoints[i].y * scale;
           if (i === 0) ctx.moveTo(px, py);
           else ctx.lineTo(px, py);
         }
@@ -4251,21 +4279,21 @@
 
         // 当前点
         const cp = walkAnimPoints[upTo] || { x: 0, y: 0 };
-        const cx = (cp.x - minX) * scale + margin;
-        const cy = (cp.y - minY) * scale + margin;
+        const cpx = cx + cp.x * scale;
+        const cpy = cy - cp.y * scale;
         ctx.fillStyle = "rgba(255, 153, 0, 0.9)";
         ctx.beginPath();
-        ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+        ctx.arc(cpx, cpy, 3, 0, Math.PI * 2);
         ctx.fill();
 
         // 起点与终点标记
         try {
           const start = walkAnimPoints[0] || { x: 0, y: 0 };
           const end = walkAnimPoints[walkAnimPoints.length - 1] || { x: 0, y: 0 };
-          const sx = (start.x - minX) * scale + margin;
-          const sy = (start.y - minY) * scale + margin;
-          const ex = (end.x - minX) * scale + margin;
-          const ey = (end.y - minY) * scale + margin;
+          const sx = cx + start.x * scale;
+          const sy = cy - start.y * scale;
+          const ex = cx + end.x * scale;
+          const ey = cy - end.y * scale;
 
           // 起点
           ctx.fillStyle = "rgba(0, 200, 255, 0.95)";
@@ -4287,6 +4315,31 @@
         }
 
         updateWalkDashboard(upTo);
+      }
+
+      // 绘制随机游走坐标轴（中心为原点）
+      function drawWalkAxes(ctx, width, height) {
+        const cx = width / 2;
+        const cy = height / 2;
+        ctx.save();
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+        ctx.lineWidth = 1;
+        // X轴
+        ctx.beginPath();
+        ctx.moveTo(0, cy);
+        ctx.lineTo(width, cy);
+        ctx.stroke();
+        // Y轴
+        ctx.beginPath();
+        ctx.moveTo(cx, 0);
+        ctx.lineTo(cx, height);
+        ctx.stroke();
+        // 原点标记
+        ctx.fillStyle = "rgba(255,255,255,0.35)";
+        ctx.beginPath();
+        ctx.arc(cx, cy, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
       }
 
       function updateWalkDashboard(idx) {
@@ -5474,7 +5527,7 @@
     </script>
 
     <!-- 工具箱组件 -->
-    <script src="/static/js/toolbox.js"></script>
+    <script src="/static/js/toolbox.js?v=20251113"></script>
 
     <!-- LaTeX和Markdown渲染测试 -->
     <script>
@@ -5610,5 +5663,67 @@
         }
       }
     </script>
-  </body>
+    <script>
+      (function () {
+        const tocEl = document.getElementById('toc');
+        if (!tocEl) return;
+        fetch('../docs/目录.md')
+          .then((r) => (r.ok ? r.text() : Promise.reject(new Error('无法读取目录.md'))))
+          .then((md) => {
+            const lines = md.split(/\r?\n/).filter(Boolean);
+            const chapters = [];
+            for (const line of lines) {
+              const m = line.match(/^##\s*(.+)$/);
+              if (m) {
+                chapters.push(m[1].trim());
+              }
+            }
+            if (!chapters.length) {
+              tocEl.innerHTML = '<p class="text-gray-400">未找到章节信息。</p>';
+              return;
+            }
+            const header = document.createElement('h3');
+            header.className = 'text-white font-future font-semibold mb-3';
+            header.textContent = '目录';
+            const ul = document.createElement('ul');
+            ul.className = 'space-y-2';
+            chapters.forEach((title) => {
+              const id = title.replace(/\s+/g, '-');
+              const li = document.createElement('li');
+              const a = document.createElement('a');
+              a.href = `#${id}`;
+              a.textContent = title;
+              a.className = 'block text-neon-blue hover:text-white';
+              a.addEventListener('click', (e) => {
+                const el = document.getElementById(id);
+                if (el) {
+                  e.preventDefault();
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              });
+              li.appendChild(a);
+              ul.appendChild(li);
+            });
+            tocEl.appendChild(header);
+            tocEl.appendChild(ul);
+          })
+          .catch((err) => {
+            tocEl.innerHTML = '<p class="text-gray-400">目录加载失败。</p>';
+            console.warn(err);
+          });
+      })();
+    </script>
+</body>
+<script>
+  window.NAV_CONFIG = {
+    active: 'index',
+    sectionLinks: [
+      { label: '核心概念', href: '#concepts' },
+      { label: '概率模拟', href: '#simulations' },
+      { label: '数据可视化', href: '#visualizations' },
+      { label: '应用场景', href: '#applications' }
+    ]
+  };
+</script>
+<script src="../static/js/include-navbar.js"></script>
 </html>

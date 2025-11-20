@@ -1,0 +1,414 @@
+<nav id="global-nav" class="fixed top-0 left-0 right-0 z-40 border-b border-white/10">
+  <style>
+    /* 仅作用于导航内部的美化样式 */
+    #global-nav {
+      position: relative;
+      overflow: hidden;
+      /* 主题与配色变量 */
+      --brand-grad-start: #00e8ff;
+      --brand-grad-end: #8b5cf6;
+      --text-default: #cbd5e1; /* slate-300 */
+      --text-muted: #94a3b8;   /* slate-400 */
+      --text-active: #a5f3fc;  /* cyan-200 */
+      --text-hover: #ffffff;
+      /* 背景颜色变量（更深蓝渐变） */
+      --nav-bg-start: rgba(15, 23, 42, 0.85); /* slate-900 */
+      --nav-bg-end: rgba(30, 41, 59, 0.85);   /* slate-800 */
+      /* 章节专属颜色 */
+      --accent-random: #22d3ee;           /* cyan-400 */
+      --accent-distributions: #a78bfa;    /* violet-300 */
+      --accent-expectation: #14b8a6;      /* teal-500 */
+      --accent-lln: #22c55e;              /* green-500 */
+      --accent-interval: #f59e0b;         /* amber-500 */
+      --accent-hypothesis: #ec4899;       /* pink-500 */
+
+      background: linear-gradient(90deg, var(--nav-bg-start), var(--nav-bg-end));
+      background-size: 200% 200%;
+      animation: navGradientShift 30s linear infinite;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 6px 24px rgba(0, 255, 255, 0.08);
+    }
+
+    /* 霓虹星空与扫描光束叠加效果 */
+    #global-nav::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(1200px 400px at 15% 0%, rgba(34,211,238,0.06), transparent),
+        radial-gradient(1000px 400px at 85% 0%, rgba(167,139,250,0.06), transparent);
+      mix-blend-mode: screen; opacity: 0.8; filter: blur(0.5px);
+    }
+    #global-nav::after {
+      content: ""; position: absolute; top: 0; bottom: 0; left: -20%; width: 40%;
+      pointer-events: none; background: linear-gradient(90deg, transparent, rgba(167,139,250,0.12), transparent);
+      transform: translateX(-100%);
+      animation: navSweep 8s ease-in-out infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes navGradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes navSweep {
+      0% { transform: translateX(-120%); }
+      50% { transform: translateX(120%); }
+      100% { transform: translateX(-120%); }
+    }
+    #global-nav .brand {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(90deg, var(--brand-grad-start), var(--brand-grad-end));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-shadow: 0 0 10px rgba(103, 232, 249, 0.5);
+    }
+    #global-nav .brand-icon {
+      height: 22px; width: 22px; filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.55));
+    }
+    #global-nav .nav-link {
+      position: relative; transition: color .2s ease, transform .2s ease, text-shadow .2s ease;
+      color: var(--text-default);
+    }
+    #global-nav .nav-link:hover { color: var(--text-hover); transform: translateY(-1px); text-shadow: 0 0 6px rgba(165,243,252,0.6); }
+    #global-nav .nav-link:active, #global-nav .nav-link:focus-visible { color: var(--text-active); }
+    #global-nav .nav-link::after {
+      content: ""; position: absolute; left: 0; bottom: -2px; height: 2px; width: 0;
+      background: linear-gradient(90deg, var(--brand-grad-start), var(--brand-grad-end)); transition: width .25s ease;
+      box-shadow: 0 0 12px rgba(34, 211, 238, 0.55);
+    }
+    #global-nav .nav-link:hover::after { width: 100%; }
+    #global-nav .active-glow { color: var(--text-active); text-shadow: 0 0 8px rgba(165,243,252,0.8); }
+    #global-nav .active-glow::after { width: 100%; }
+
+    /* 文本选择高亮：在导航中选中文字时颜色与背景变化 */
+    #global-nav *::selection {
+      background: rgba(167, 139, 250, 0.25); /* violet glow */
+      color: #ffffff;
+    }
+
+    #global-nav #chapters-toggle { transition: color .2s ease; }
+    #global-nav #chapters-toggle { color: var(--text-default); }
+    #global-nav #chapters-toggle:hover { color: #fff; }
+    #global-nav #chapters-toggle:active, #global-nav #chapters-toggle:focus-visible { color: var(--text-active); }
+    #global-nav #chapters-toggle svg { transition: transform .2s ease; }
+    #global-nav #chapters-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+    /* 兼容章节下拉提升到 body 的情况：不依赖父级选择器 */
+    #chapters-dropdown .panel {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: radial-gradient(1200px 400px at 10% 0%, rgba(34,211,238,0.07), transparent),
+                  radial-gradient(900px 400px at 90% 0%, rgba(167,139,250,0.07), transparent),
+                  rgba(0,0,0,0.80);
+      box-shadow: 0 12px 40px rgba(34, 211, 238, 0.18), 0 16px 50px rgba(167, 139, 250, 0.18);
+    }
+    /* 章节卡片（更炫酷） */
+    #chapters-list .chapter-card {
+      position: relative; display: flex; align-items: center; gap: 12px;
+      border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.12);
+      background:
+        radial-gradient(800px 200px at 0% 0%, rgba(34,211,238,0.10), transparent),
+        radial-gradient(600px 200px at 100% 0%, rgba(167,139,250,0.10), transparent),
+        rgba(17,24,39,0.60);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+      color: var(--text-default);
+      padding: 10px 12px 10px 18px;
+      will-change: transform, box-shadow;
+      transform-style: preserve-3d;
+      opacity: 0; transform: translateY(8px) scale(0.985);
+    }
+    #chapters-list .chapter-card:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 10px 28px var(--accent-shadow), 0 14px 36px var(--accent-2-shadow);
+      color: var(--text-hover);
+    }
+    #chapters-list .chapter-card:active,
+    #chapters-list .chapter-card:focus-visible { color: var(--text-active); }
+
+    /* 左侧霓虹色条（随章节变换配色） */
+    #chapters-list .chapter-card.chapter-link::before {
+      content: ""; position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+      width: 4px; height: 65%; border-radius: 2px; opacity: 0.9;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 10px var(--accent-bar-shadow);
+    }
+    /* 章节专属色条 */
+    #chapters-list .chapter-card.chapter-random_variables::before {
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    }
+    #chapters-list .chapter-card.chapter-probability_distributions::before {
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    }
+    #chapters-list .chapter-card.chapter-expectation_variance::before {
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    }
+    #chapters-list .chapter-card.chapter-law_of_large_numbers::before {
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    }
+    #chapters-list .chapter-card.chapter-interval_estimation::before {
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    }
+    #chapters-list .chapter-card.chapter-hypothesis_testing::before {
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    }
+
+    /* 图标与文案 */
+    #chapters-list .chapter-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 32px; width: 32px; border-radius: 9999px;
+      background: rgba(51,65,85,0.45); /* slate-700/45 */
+      color: var(--text-active);
+      box-shadow: 0 0 12px var(--accent-icon-glow);
+      border: 1px solid rgba(255,255,255,0.10);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    #chapters-list .chapter-card:hover .chapter-icon {
+      transform: translateY(-1px) scale(1.04);
+      box-shadow: 0 0 16px rgba(167,139,250,0.35);
+    }
+    #chapters-list .chapter-title { font-weight: 600; color: var(--accent); }
+    #chapters-list .chapter-subtitle { font-size: 12px; color: var(--accent-2); }
+
+    /* 图标内路径按每项主色显示 */
+    #chapters-list .chapter-icon svg path { fill: var(--accent); stroke: var(--accent); }
+
+    /* 每个选项的主辅色变量（默认与各章节覆盖） */
+    /* 默认色与半透明色（用于光晕与涟漪） */
+    #chapters-list .chapter-card {
+      --accent: #22d3ee; --accent-2: #a78bfa;
+      --accent-shadow: rgba(34,211,238,0.22);
+      --accent-2-shadow: rgba(167,139,250,0.22);
+      --accent-ghost: rgba(167,139,250,0.14);
+      --accent-ripple: rgba(167,139,250,0.25);
+      --accent-bar-shadow: rgba(34,211,238,0.35);
+      --accent-icon-glow: rgba(167,139,250,0.35);
+    }
+    /* 每项专属色（主/辅色与派生半透明） */
+    #chapters-list .chapter-card.chapter-random_variables {
+      --accent: #06b6d4; --accent-2: #22d3ee;
+      --accent-shadow: rgba(6,182,212,0.22); --accent-2-shadow: rgba(34,211,238,0.22);
+      --accent-ghost: rgba(34,211,238,0.14); --accent-ripple: rgba(34,211,238,0.25);
+      --accent-bar-shadow: rgba(6,182,212,0.35); --accent-icon-glow: rgba(34,211,238,0.35);
+    }
+    #chapters-list .chapter-card.chapter-probability_distributions {
+      --accent: #7c3aed; --accent-2: #a78bfa;
+      --accent-shadow: rgba(124,58,237,0.22); --accent-2-shadow: rgba(167,139,250,0.22);
+      --accent-ghost: rgba(167,139,250,0.14); --accent-ripple: rgba(167,139,250,0.25);
+      --accent-bar-shadow: rgba(124,58,237,0.35); --accent-icon-glow: rgba(167,139,250,0.35);
+    }
+    #chapters-list .chapter-card.chapter-expectation_variance {
+      --accent: #0d9488; --accent-2: #34d399;
+      --accent-shadow: rgba(13,148,136,0.22); --accent-2-shadow: rgba(52,211,153,0.22);
+      --accent-ghost: rgba(52,211,153,0.14); --accent-ripple: rgba(52,211,153,0.25);
+      --accent-bar-shadow: rgba(13,148,136,0.35); --accent-icon-glow: rgba(52,211,153,0.35);
+    }
+    #chapters-list .chapter-card.chapter-law_of_large_numbers {
+      --accent: #16a34a; --accent-2: #22c55e;
+      --accent-shadow: rgba(22,163,74,0.22); --accent-2-shadow: rgba(34,197,94,0.22);
+      --accent-ghost: rgba(34,197,94,0.14); --accent-ripple: rgba(34,197,94,0.25);
+      --accent-bar-shadow: rgba(22,163,74,0.35); --accent-icon-glow: rgba(34,197,94,0.35);
+    }
+    #chapters-list .chapter-card.chapter-interval_estimation {
+      --accent: #d97706; --accent-2: #f59e0b;
+      --accent-shadow: rgba(217,119,6,0.22); --accent-2-shadow: rgba(245,158,11,0.22);
+      --accent-ghost: rgba(245,158,11,0.14); --accent-ripple: rgba(245,158,11,0.25);
+      --accent-bar-shadow: rgba(217,119,6,0.35); --accent-icon-glow: rgba(245,158,11,0.35);
+    }
+    #chapters-list .chapter-card.chapter-hypothesis_testing {
+      --accent: #db2777; --accent-2: #f472b6;
+      --accent-shadow: rgba(219,39,119,0.22); --accent-2-shadow: rgba(244,114,182,0.22);
+      --accent-ghost: rgba(244,114,182,0.14); --accent-ripple: rgba(244,114,182,0.25);
+      --accent-bar-shadow: rgba(219,39,119,0.35); --accent-icon-glow: rgba(244,114,182,0.35);
+    }
+
+    /* 不同字体族的分色支持（可选：为文本段落添加相应类） */
+    #chapters-list .chapter-title .font-sans { color: var(--accent); }
+    #chapters-list .chapter-title .font-serif { color: var(--accent-2); }
+    #chapters-list .chapter-title .font-mono { color: #38bdf8; }
+
+    /* 卡片闪光扫过 */
+    #chapters-list .chapter-card::after {
+      content: ""; position: absolute; top: 0; bottom: 0; left: -30%; width: 30%; pointer-events: none;
+      background: linear-gradient(90deg, transparent, var(--accent-ghost), transparent);
+      transform: translateX(0);
+      opacity: 0; transition: opacity .2s ease;
+    }
+    #chapters-list .chapter-card:hover::after { opacity: 1; animation: shimmerSweep 1.8s ease forwards; }
+
+    /* 入场与脉冲动画 */
+    @keyframes cardEnter {
+      0% { opacity: 0; transform: translateY(10px) scale(0.98); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes shimmerSweep {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(300%); }
+    }
+    @keyframes glowPulse {
+      0% { box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+      50% { box-shadow: 0 10px 28px var(--accent-shadow), 0 14px 36px var(--accent-2-shadow); }
+      100% { box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+    }
+    /* 下拉展开时分批入场 */
+    #chapters-dropdown.dropdown-shown #chapters-list .chapter-card { animation: cardEnter 420ms cubic-bezier(0.22,1,0.36,1) forwards; }
+    #chapters-dropdown.dropdown-shown #chapters-list li:nth-child(1) .chapter-card { animation-delay: 40ms; }
+    #chapters-dropdown.dropdown-shown #chapters-list li:nth-child(2) .chapter-card { animation-delay: 90ms; }
+    #chapters-dropdown.dropdown-shown #chapters-list li:nth-child(3) .chapter-card { animation-delay: 140ms; }
+    #chapters-dropdown.dropdown-shown #chapters-list li:nth-child(4) .chapter-card { animation-delay: 190ms; }
+    #chapters-dropdown.dropdown-shown #chapters-list li:nth-child(5) .chapter-card { animation-delay: 240ms; }
+    #chapters-dropdown.dropdown-shown #chapters-list li:nth-child(6) .chapter-card { animation-delay: 290ms; }
+
+    /* 点击涟漪效果 */
+    #chapters-list .chapter-card .ripple {
+      position: absolute; border-radius: 9999px; pointer-events: none;
+      background: radial-gradient(circle, var(--accent-ripple) 0%, transparent 60%);
+      transform: scale(0); opacity: 0.7;
+      animation: ripplePulse 600ms ease-out forwards;
+    }
+    @keyframes ripplePulse {
+      0% { transform: scale(0); opacity: 0.8; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+
+    #global-nav #nav-page-links a { color: var(--text-muted); }
+    #global-nav #nav-page-links a:hover { color: var(--text-hover); }
+    #global-nav #nav-page-links a:active, #global-nav #nav-page-links a:focus-visible { color: var(--text-active); }
+    /* 限制页内链接容器的宽高与滚动，不挤占其他元素 */
+    #global-nav #nav-page-links {
+      max-width: 50vw; /* 限制长度 */
+      max-height: 40px; /* 单行高度 */
+      overflow-x: auto; overflow-y: hidden; /* 横向滚动 */
+      -webkit-overflow-scrolling: touch;
+      flex-wrap: nowrap; /* 禁止换行，避免撑高导航 */
+      flex: 0 0 auto; /* 不扩展占位 */
+    }
+    #global-nav #nav-page-links::-webkit-scrollbar { height: 8px; }
+    #global-nav #nav-page-links::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.4); border-radius: 4px; }
+    #global-nav #nav-page-links li { flex: 0 0 auto; }
+    #global-nav #nav-page-links a {
+      display: inline-block; white-space: nowrap; /* 单行显示 */
+      text-overflow: ellipsis; overflow: hidden; /* 超出省略 */
+    }
+
+    /* 导航栏其他元素最小宽度与单行显示，避免文字多行 */
+    #global-nav .brand { white-space: nowrap; min-width: 120px; }
+    #global-nav #nav-home-link { white-space: nowrap; min-width: 32px; flex: 0 0 auto; }
+    #global-nav #chapters-toggle { white-space: nowrap; min-width: 96px; flex: 0 0 auto; }
+    #global-nav #chapters-toggle span { white-space: nowrap; }
+
+    /* 左侧组：确保每个子项（a/button/span）间距相等 */
+    #global-nav > div > div > div.flex.items-center.space-x-4 {
+      gap: 12px; /* 统一子项间距 */
+    }
+    /* 避免与可能存在的 space-x-* 类产生双重间距 */
+    #global-nav > div > div > div.flex.items-center.space-x-4 > * {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+
+    /* 保证页面跳转选择框在显示区域内：固定最小/最大宽度、单行且不被挤压 */
+    #global-nav #nav-page-select {
+      white-space: nowrap; min-width: 120px;
+      width: clamp(140px, 18vw, 220px); max-width: 220px;
+      flex: 0 0 auto; /* 不随容器收缩，避免被挤出视区 */
+      overflow: hidden; text-overflow: ellipsis;
+    }
+  </style>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    <div class="flex h-14 items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <a href="./index.html" class="flex items-center space-x-2">
+          <img src="/static/img/cosmology-icon.svg" alt="logo" class="brand-icon">
+          <span class="text-xl font-semibold brand">概率可视化</span>
+        </a>
+        <a id="nav-home-link" data-route="index" href="./index.html" class="nav-link py-2">首页</a>
+        <button id="chapters-toggle" class="text-gray-300 py-2 inline-flex items-center space-x-1" aria-haspopup="true" aria-expanded="false">
+          <span>章节目录</span>
+          <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+      </div>
+      <div class="flex items-center gap-3">
+        <ul id="nav-page-links" class="flex flex-wrap items-center gap-x-4 gap-y-2"></ul>
+        <!-- 页面内锚点下拉选择：便于快速跳转到本页各部分 -->
+        <label for="nav-page-select" class="sr-only">页面跳转</label>
+        <select id="nav-page-select" class="hidden md:block bg-slate-800/70 border border-white/10 text-slate-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-cyan-300">
+          <!-- 由脚本根据 window.NAV_CONFIG.sectionLinks 动态填充 -->
+        </select>
+      </div>
+    </div>
+
+    <!-- 下拉目录：绝对定位覆盖内容区域，不改变导航栏尺寸 -->
+    <div id="chapters-dropdown" class="absolute left-0 right-0 hidden z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="panel rounded-md backdrop-blur p-3">
+          <ul id="chapters-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <li>
+              <a data-route="random_variables" href="./random_variables.html" class="nav-link chapter-card chapter-link chapter-random_variables group">
+                <span class="chapter-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4h2v12H4V4zm10 0h2v12h-2V4zM8 8h4v4H8V8z"/></svg>
+                </span>
+                <span class="flex flex-col">
+                  <span class="chapter-title">随机变量</span>
+                  <span class="chapter-subtitle">定义、分布与性质</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a data-route="probability_distributions" href="./probability_distributions.html" class="nav-link chapter-card chapter-link chapter-probability_distributions group">
+                <span class="chapter-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v2H3v-2zm0-8h4v8H3v-8zm6-4h4v12H9V6zm6 6h4v6h-4v-6z"/></svg>
+                </span>
+                <span class="flex flex-col">
+                  <span class="chapter-title">概率分布</span>
+                  <span class="chapter-subtitle">常见分布与图形</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a data-route="expectation_variance" href="./expectation_variance.html" class="nav-link chapter-card chapter-link chapter-expectation_variance group">
+                <span class="chapter-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l4 8H8l4-8zm-9 18h18v-2H3v2z"/></svg>
+                </span>
+                <span class="flex flex-col">
+                  <span class="chapter-title">期望与方差</span>
+                  <span class="chapter-subtitle">集中趋势与离散程度</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a data-route="law_of_large_numbers" href="./law_of_large_numbers.html" class="nav-link chapter-card chapter-link chapter-law_of_large_numbers group">
+                <span class="chapter-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M4 18h16v-2H4v2zm0-5h10v-2H4v2zm0-5h6V6H4v2z"/></svg>
+                </span>
+                <span class="flex flex-col">
+                  <span class="chapter-title">大数定律</span>
+                  <span class="chapter-subtitle">样本均值的稳定性</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a data-route="interval_estimation" href="./interval_estimation.html" class="nav-link chapter-card chapter-link chapter-interval_estimation group">
+                <span class="chapter-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M5 11h14v2H5v-2zm2-6h10v2H7V5zm0 12h10v2H7v-2z"/></svg>
+                </span>
+                <span class="flex flex-col">
+                  <span class="chapter-title">区间估计</span>
+                  <span class="chapter-subtitle">置信区间与精度</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a data-route="hypothesis_testing" href="./hypothesis_testing.html" class="nav-link chapter-card chapter-link chapter-hypothesis_testing group">
+                <span class="chapter-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7l3-7z"/></svg>
+                </span>
+                <span class="flex flex-col">
+                  <span class="chapter-title">假设检验</span>
+                  <span class="chapter-subtitle">原假设与显著性</span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

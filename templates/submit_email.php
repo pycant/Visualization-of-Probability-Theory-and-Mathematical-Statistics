@@ -1,11 +1,14 @@
 <?php
 // 数据库配置
-$host = '8.148.208.76';
+$servername = '8.148.208.76';
 $dbname = 'e-mail';
 $username = 'e-mail';
 $password = '123456';
 
-// 设置响应头为JSON格式
+// 响应为纯文本（便于前端处理）
+header('Content-Type: text/plain; charset=utf-8');
+
+// 创建数据库连接
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // 检查连接
