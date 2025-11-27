@@ -5,26 +5,220 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>第3章 多维随机变量及其分布</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="../static/libs/fontawesome/font-awesome.min.css"
+    />
     <link rel="icon" href="../static/images/favicon.ico" />
+    <style>
+      /* 章节主题变量 */
+      .min-h-screen {
+        --accent: #a78bfa; /* violet-300 */
+        --accent-2: #22d3ee; /* cyan-400 */
+        --accent-ghost: rgba(167, 139, 250, 0.1);
+        --accent-glow: rgba(34, 211, 238, 0.18);
+      }
+      /* 背景霓虹与扫描光束 */
+      .min-h-screen {
+        position: relative;
+        overflow: hidden;
+      }
+      .min-h-screen::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+            1000px 400px at 12% 0%,
+            var(--accent-ghost),
+            transparent
+          ),
+          radial-gradient(
+            900px 360px at 88% 0%,
+            rgba(34, 211, 238, 0.1),
+            transparent
+          );
+        mix-blend-mode: screen;
+        opacity: 0.9;
+      }
+      .min-h-screen::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -25%;
+        width: 40%;
+        pointer-events: none;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(167, 139, 250, 0.16),
+          transparent
+        );
+        transform: translateX(-100%);
+        animation: sweepBeam 10s ease-in-out infinite;
+        mix-blend-mode: screen;
+      }
+      @keyframes sweepBeam {
+        0% {
+          transform: translateX(-120%);
+        }
+        50% {
+          transform: translateX(120%);
+        }
+        100% {
+          transform: translateX(-120%);
+        }
+      }
+      /* 卡片发光与渐变边框 */
+      .bg-dark-card {
+        border-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35),
+          0 10px 28px var(--accent-glow);
+      }
+      .bg-dark-card:hover {
+        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.4),
+          0 16px 40px var(--accent-glow);
+        transform: translateY(-2px);
+        transition: all 0.2s ease;
+      }
+      .bg-dark-card {
+        position: relative;
+      }
+      .bg-dark-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 16px;
+        padding: 1px;
+        background: linear-gradient(180deg, var(--accent), var(--accent-2));
+        -webkit-mask: linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+      }
+      /* 标题渐变与下划线发光 */
+      h2,
+      h3 {
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      h3::after {
+        content: "";
+        display: block;
+        height: 2px;
+        margin-top: 6px;
+        width: 0;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        box-shadow: 0 0 10px var(--accent-2);
+        transition: width 0.25s ease;
+      }
+      section:hover h3::after {
+        width: 64px;
+      }
+      /* 图标徽记发光 */
+      .rounded-lg.bg-neon-purple\/10 {
+        box-shadow: 0 0 14px var(--accent-ghost);
+      }
+      /* 交替浅色着色卡片 */
+      section:nth-of-type(2n + 1) .bg-dark-bg\/50 {
+        background: radial-gradient(
+            600px 200px at 8% 0%,
+            rgba(167, 139, 250, 0.1),
+            transparent
+          ),
+          rgba(17, 24, 39, 0.6);
+      }
+      /* text-neon-* 兜底 */
+      .text-neon-purple {
+        color: var(--accent);
+      }
+      .text-neon-orange {
+        color: #f59e0b;
+      }
+      .text-neon-green {
+        color: #22c55e;
+      }
+      body.text-white {
+        color: #e6edf7;
+      }
+      .bg-dark-card {
+        position: relative;
+        background: radial-gradient(
+            1200px 460px at 8% 0%,
+            var(--accent-ghost),
+            transparent
+          ),
+          rgba(17, 24, 39, 0.65);
+      }
+        background: radial-gradient(
+            1200px 460px at 8% 0%,
+            var(--accent-ghost),
+            transparent
+          ),
+          rgba(17, 24, 39, 0.65);
+      }
+      .bg-dark-bg\/50 {
+        background: radial-gradient(
+            700px 240px at 10% 0%,
+            var(--accent-ghost),
+            transparent
+          ),
+          rgba(31, 41, 55, 0.6);
+        backdrop-filter: blur(2px);
+      }
+      main p {
+        color: #e6edf7;
+      }
+      main li {
+        color: #d1d9e6;
+      }
+      .text-gray-300 {
+        color: #e6edf7 !important;
+      }
+      .text-gray-400 {
+        color: #cbd5e1 !important;
+      }
+      .text-gray-500 {
+        color: #94a3b8 !important;
+      }
+      html,
+      body {
+        background-color: #0f172a;
+      }
+      .bg-dark-bg {
+        background-color: #0f172a !important;
+      }
+      .min-h-screen-bg {
+        background: linear-gradient(
+          180deg,
+          #0f172a 0%,
+          #0b1220 40%,
+          #111827 100%
+        );
+      }
+    </style>
   </head>
   <body class="bg-dark-bg text-white">
     <div class="min-h-screen bg-gradient-to-b from-dark-bg to-dark-card/50">
-      <header class="container mx-auto px-4 py-6 flex items-center justify-between">
-        <a href="index.html" class="text-neon-purple hover:underline flex items-center"><i class="fa fa-arrow-left mr-2"></i> 返回主页</a>
-        <h1 class="text-xl text-gray-400">概率维度</h1>
-      </header>
-
       <main class="container mx-auto px-4">
         <section class="bg-dark-card border border-gray-800 rounded-2xl p-8">
           <div class="flex items-center mb-6">
-            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mr-4"><i class="fa fa-layer-group text-neon-purple text-2xl"></i></div>
+            <div
+              class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mr-4"
+            >
+              <i class="fa fa-layer-group text-neon-purple text-2xl"></i>
+            </div>
             <div>
               <div class="text-xs text-gray-400">第3章</div>
               <h2 class="text-2xl font-bold">多维随机变量及其分布</h2>
             </div>
           </div>
-          <p class="text-gray-300">本章节聚焦联合分布、边缘分布与条件分布，讨论相关系数、协方差矩阵及其性质。</p>
+          <p class="text-gray-300">
+            本章节聚焦联合分布、边缘分布与条件分布，讨论相关系数、协方差矩阵及其性质。
+          </p>
           <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
               <h3 class="font-semibold mb-3">内容建设中</h3>
@@ -37,15 +231,81 @@
             </div>
             <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
               <h3 class="font-semibold mb-3">学习建议</h3>
-              <p class="text-gray-400 text-sm">结合可视化热图与PCA示例，理解多维数据结构与相关性模式。</p>
+              <p class="text-gray-400 text-sm">
+                结合可视化热图与PCA示例，理解多维数据结构与相关性模式。
+              </p>
+            </div>
+          </div>
+        </section>
+        <section
+          id="overview"
+          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
+        >
+          <h3 class="text-xl font-semibold mb-4 text-white">概述</h3>
+          <p class="text-gray-300">
+            本章聚焦二维与多维随机变量的联合分布、边缘分布与条件分布，讨论协方差与相关系数及其性质，为理解多维数据结构与线性关系奠定基础。
+          </p>
+        </section>
+        <section
+          id="key-topics"
+          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
+        >
+          <h3 class="text-xl font-semibold mb-4 text-white">核心要点</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
+              <ul class="text-gray-400 space-y-2 text-sm">
+                <li>• 二维与多维联合分布</li>
+                <li>• 边缘分布与条件分布</li>
+                <li>• 协方差与相关系数</li>
+              </ul>
+            </div>
+            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
+              <ul class="text-gray-400 space-y-2 text-sm">
+                <li>• 正态向量及其性质</li>
+                <li>• 线性变换与不变性</li>
+                <li>• 相关结构的可视化理解</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section
+          id="learn-tips"
+          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
+        >
+          <h3 class="text-xl font-semibold mb-4 text-white">学习建议</h3>
+          <p class="text-gray-400 text-sm">
+            结合可视化热图与主成分分析示例，理解协方差矩阵与相关性模式，并尝试使用降维方法观察多维结构。
+          </p>
+        </section>
+        <section
+          id="resources"
+          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
+        >
+          <h3 class="text-xl font-semibold mb-4 text-white">延伸资源</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
+              <p class="text-gray-400 text-sm">示例数据与练习题占位</p>
+            </div>
+            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
+              <p class="text-gray-400 text-sm">参考资料与可视化工具占位</p>
             </div>
           </div>
         </section>
       </main>
-
-      <footer class="container mx-auto px-4 py-8 text-sm text-gray-500">
-        <p>© 概率维度</p>
-      </footer>
     </div>
+    <div id="site-footer"></div>
+    <script>
+      globalThis.NAV_CONFIG = {
+        sectionLinks: [
+          { label: "概述", href: "#overview" },
+          { label: "核心要点", href: "#key-topics" },
+          { label: "学习建议", href: "#learn-tips" },
+          { label: "资源", href: "#resources" },
+        ],
+      };
+    </script>
+    <script src="../static/js/include-navbar.js"></script>
+    <script src="../static/js/toolbox.js"></script>
+    <script src="../static/js/include-footer.js" defer></script>
   </body>
 </html>

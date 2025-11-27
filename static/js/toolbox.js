@@ -4,22 +4,138 @@
  */
 
 // 轻量日志开关：通过 URL 参数 tbdebug=1 或设置 window.TOOLBOX_DEBUG=true 启用
-window.TB_DEBUG = /[?&]tbdebug=1/.test(location.search) || !!window.TOOLBOX_DEBUG;
-window.TB_LOG = function () {
-  if (window.TB_DEBUG) {
-    try { console.log.apply(console, arguments); } catch (_) {}
+globalThis.TB_DEBUG =
+  /[?&]tbdebug=1/.test(location.search) || !!globalThis.TOOLBOX_DEBUG;
+globalThis.TB_LOG = function () {
+  if (globalThis.TB_DEBUG) {
+    try {
+      console.log.apply(console, arguments);
+    } catch (_) {}
   }
 };
-window.TB_WARN = function () {
-  if (window.TB_DEBUG) {
-    try { console.warn.apply(console, arguments); } catch (_) {}
+globalThis.TB_WARN = function () {
+  if (globalThis.TB_DEBUG) {
+    try {
+      console.warn.apply(console, arguments);
+    } catch (_) {}
   }
 };
-window.TB_ERROR = function () {
-  if (window.TB_DEBUG) {
-    try { console.error.apply(console, arguments); } catch (_) {}
+globalThis.TB_ERROR = function () {
+  if (globalThis.TB_DEBUG) {
+    try {
+      console.error.apply(console, arguments);
+    } catch (_) {}
   }
 };
+
+function TB_getExistingSelectors() {
+  const set = new Set();
+  const sheets = Array.from(document.styleSheets || []);
+  for (let i = 0; i < sheets.length; i++) {
+    const sheet = sheets[i];
+    let rules;
+    try {
+      rules = sheet.cssRules || sheet.rules;
+    } catch (_) {
+      rules = null;
+    }
+    if (!rules) continue;
+    for (let j = 0; j < rules.length; j++) {
+      const r = rules[j];
+      if (r && r.selectorText) set.add(r.selectorText.trim());
+    }
+  }
+  return set;
+}
+
+function TB_buildDefaultsFor(list) {
+  const m = {
+    ".font-future":
+      'font-family: "Roboto", sans-serif; letter-spacing: 0.05em;',
+    ".text-neon-blue": "color: var(--neon-blue);",
+    ".text-neon-purple": "color: var(--neon-purple);",
+    ".text-neon-green": "color: var(--neon-green);",
+    ".bg-neon-blue": "background-color: var(--neon-blue);",
+    ".bg-neon-purple": "background-color: var(--neon-purple);",
+    ".bg-neon-green": "background-color: var(--neon-green);",
+    ".bg-dark-bg": "background-color: var(--dark-bg);",
+    ".bg-dark-card": "background-color: var(--dark-card);",
+    ".accent-neon-blue": "accent-color: var(--neon-blue);",
+    ".accent-neon-purple": "accent-color: var(--neon-purple);",
+    ".accent-neon-green": "accent-color: var(--neon-green);",
+    ".border-glow": "box-shadow: 0 0 10px rgba(0,243,255,0.3);",
+  };
+  let css = "";
+  for (let i = 0; i < list.length; i++) {
+    const sel = list[i];
+    const decl = m[sel];
+    if (decl) css += sel + "{" + decl + "}\n";
+  }
+  return css;
+}
+
+function TB_needSelectors() {
+  const required = [
+    ".font-future",
+    ".text-neon-blue",
+    ".text-neon-purple",
+    ".text-neon-green",
+    ".bg-neon-blue",
+    ".bg-neon-purple",
+    ".bg-neon-green",
+    ".bg-dark-bg",
+    ".bg-dark-card",
+    ".accent-neon-blue",
+    ".accent-neon-purple",
+    ".accent-neon-green",
+    ".border-glow",
+  ];
+  const existing = TB_getExistingSelectors();
+  const missing = [];
+  for (let i = 0; i < required.length; i++) {
+    const sel = required[i];
+    if (!existing.has(sel)) missing.push(sel);
+  }
+  return missing;
+}
+
+function ensureToolboxStyles() {
+  const root = document.documentElement;
+  const getVar = function (name) {
+    const v = getComputedStyle(root).getPropertyValue(name);
+    return (v || "").trim();
+  };
+  const defaults = [
+    ["--dark-bg", "#0f172a"],
+    ["--dark-card", "#1e293b"],
+    ["--neon-blue", "#00f3ff"],
+    ["--neon-purple", "#bf00ff"],
+    ["--neon-green", "#00ff66"],
+  ];
+  const missingVars = [];
+  for (let i = 0; i < defaults.length; i++) {
+    const name = defaults[i][0];
+    if (!getVar(name)) missingVars.push(defaults[i]);
+  }
+  const missingSelectors = TB_needSelectors();
+  if (!missingVars.length && !missingSelectors.length) return;
+  let style = document.getElementById("toolbox-default-styles");
+  if (!style) {
+    style = document.createElement("style");
+    style.id = "toolbox-default-styles";
+  }
+  let css = "";
+  if (missingVars.length) {
+    css += ":root{";
+    for (let i = 0; i < missingVars.length; i++) {
+      css += missingVars[i][0] + ":" + missingVars[i][1] + ";";
+    }
+    css += "}\n";
+  }
+  if (missingSelectors.length) css += TB_buildDefaultsFor(missingSelectors);
+  style.textContent += css;
+  if (!style.parentNode) document.head.appendChild(style);
+}
 
 class ProbabilityToolbox {
   constructor() {
@@ -42,6 +158,11 @@ class ProbabilityToolbox {
   }
 
   init() {
+    try {
+      ensureToolboxStyles();
+    } catch (e) {
+      globalThis.TB_WARN("ensureToolboxStyles", e);
+    }
     this.createToolboxHTML();
     this.initPageIntro();
     this.bindEvents();
@@ -611,12 +732,17 @@ class ProbabilityToolbox {
         try {
           const v = document.createElement("video");
           const support = {
-            mp4_avc1: v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"') || "",
+            mp4_avc1:
+              v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"') || "",
             mp4_hvc1: v.canPlayType('video/mp4; codecs="hvc1"') || "",
             webm_vp9: v.canPlayType('video/webm; codecs="vp9,opus"') || "",
-            quicktime: v.canPlayType('video/quicktime') || "",
+            quicktime: v.canPlayType("video/quicktime") || "",
           };
-          return `支持检测 mp4(avc1)=${support.mp4_avc1||'no'}, mp4(hvc1)=${support.mp4_hvc1||'no'}, webm(vp9)=${support.webm_vp9||'no'}, mov(quicktime)=${support.quicktime||'no'}`;
+          return `支持检测 mp4(avc1)=${support.mp4_avc1 || "no"}, mp4(hvc1)=${
+            support.mp4_hvc1 || "no"
+          }, webm(vp9)=${support.webm_vp9 || "no"}, mov(quicktime)=${
+            support.quicktime || "no"
+          }`;
         } catch (_) {
           return "支持检测不可用";
         }
@@ -624,16 +750,23 @@ class ProbabilityToolbox {
 
       const getErrorText = () => {
         const err = pageIntroVideo.error;
-        const codes = { 1: "用户中止", 2: "网络错误", 3: "解码错误", 4: "资源不支持" };
+        const codes = {
+          1: "用户中止",
+          2: "网络错误",
+          3: "解码错误",
+          4: "资源不支持",
+        };
         const src = pageIntroSource ? decodeURI(pageIntroSource.src || "") : "";
         if (!err) {
           return `视频加载失败，原因未知。源: ${src}. ${describeSupport()}`;
         }
-        return `视频错误 code=${err.code}(${codes[err.code]||'未知'}), 源: ${src}。${describeSupport()}`;
+        return `视频错误 code=${err.code}(${
+          codes[err.code] || "未知"
+        }), 源: ${src}。${describeSupport()}`;
       };
 
       const showError = (extra = "") => {
-        const text = `${getErrorText()}${extra ? '（'+extra+'）' : ''}`;
+        const text = `${getErrorText()}${extra ? "（" + extra + "）" : ""}`;
         TB_ERROR(text);
         if (pageIntroError) {
           pageIntroError.textContent = text;
@@ -687,11 +820,9 @@ class ProbabilityToolbox {
         this.testSystemStatus();
       });
 
-    document
-      .getElementById("test-chat-latex")
-      .addEventListener("click", () => {
-        this.testChatLatexDiagnosis();
-      });
+    document.getElementById("test-chat-latex").addEventListener("click", () => {
+      this.testChatLatexDiagnosis();
+    });
 
     // 检验方法分类变化事件
     document.getElementById("test-category").addEventListener("change", () => {
@@ -771,13 +902,17 @@ class ProbabilityToolbox {
         law_of_large_numbers: "/static/videos/大数定律.mov",
       };
 
-      const path = window.location.pathname || "/";
+      const path = (globalThis.location && globalThis.location.pathname) || "/";
       let key = "index";
       if (path.endsWith("random_variables.html")) key = "random_variables";
-      else if (path.endsWith("probability_distributions.html")) key = "probability_distributions";
-      else if (path.endsWith("hypothesis_testing.html")) key = "hypothesis_testing";
-      else if (path.endsWith("interval_estimation.html")) key = "interval_estimation";
-      else if (path.endsWith("law_of_large_numbers.html")) key = "law_of_large_numbers";
+      else if (path.endsWith("probability_distributions.html"))
+        key = "probability_distributions";
+      else if (path.endsWith("hypothesis_testing.html"))
+        key = "hypothesis_testing";
+      else if (path.endsWith("interval_estimation.html"))
+        key = "interval_estimation";
+      else if (path.endsWith("law_of_large_numbers.html"))
+        key = "law_of_large_numbers";
       else if (path === "/" || path.endsWith("index.html")) key = "index";
 
       const pageIntroSelect = document.getElementById("page-intro-select");
@@ -806,11 +941,19 @@ class ProbabilityToolbox {
       if (!pageIntroVideo || !pageIntroSource) return;
 
       const v = document.createElement("video");
-      const supportMp4 = v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
-      const supportQuickTime = v.canPlayType('video/quicktime');
+      const supportMp4 = v.canPlayType(
+        'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
+      );
+      const supportQuickTime = v.canPlayType("video/quicktime");
 
-      const primary = this.pageIntroMap && this.pageIntroMap[key] ? this.pageIntroMap[key] : null;
-      const altMov = this.pageIntroMovMap && this.pageIntroMovMap[key] ? this.pageIntroMovMap[key] : null;
+      const primary =
+        this.pageIntroMap && this.pageIntroMap[key]
+          ? this.pageIntroMap[key]
+          : null;
+      const altMov =
+        this.pageIntroMovMap && this.pageIntroMovMap[key]
+          ? this.pageIntroMovMap[key]
+          : null;
 
       // 仅使用实际存在的本地 MP4 作为首选，避免无文件的 .webm/.mp4 组合导致 404 与反复重载
       const candidates = [];
@@ -849,7 +992,9 @@ class ProbabilityToolbox {
           if (!quiet) TB_ERROR("所有候选视频源均无法播放:", candidates);
           if (pageIntroError) {
             pageIntroError.classList.remove("hidden");
-            pageIntroError.textContent = `⚠️ 所有候选视频源均无法播放，请提供 MP4(H.264) 或 WebM(VP9) 版本。尝试过: ${candidates.join(', ')}`;
+            pageIntroError.textContent = `⚠️ 所有候选视频源均无法播放，请提供 MP4(H.264) 或 WebM(VP9) 版本。尝试过: ${candidates.join(
+              ", "
+            )}`;
           }
           return;
         }
@@ -885,7 +1030,8 @@ class ProbabilityToolbox {
 
     // 动态计算导航栏高度，避免遮挡
     try {
-      const nav = document.getElementById("global-nav") || document.querySelector("nav");
+      const nav =
+        document.getElementById("global-nav") || document.querySelector("nav");
       const navRect = nav ? nav.getBoundingClientRect() : null;
       const navHeight = navRect ? Math.ceil(navRect.height) : 64; // 默认4rem
       // 设置顶部偏移与可视高度，确保侧边栏紧贴导航栏下方
@@ -1322,16 +1468,17 @@ class ProbabilityToolbox {
 
     // 创建消息内容总容器
     const contentContainer = document.createElement("div");
-    contentContainer.className =
-      "message-content max-w-none";
+    contentContainer.className = "message-content max-w-none";
 
     // 渲染版容器（用于Markdown/LaTeX）
     const renderedDiv = document.createElement("div");
-    renderedDiv.className = "message-rendered text-gray-300 text-sm leading-relaxed";
+    renderedDiv.className =
+      "message-rendered text-gray-300 text-sm leading-relaxed";
 
     // 原文容器（严格显示原始文本）
     const rawDiv = document.createElement("pre");
-    rawDiv.className = "message-raw hidden whitespace-pre-wrap break-words bg-gray-900/50 rounded p-2 text-xs text-gray-400";
+    rawDiv.className =
+      "message-raw hidden whitespace-pre-wrap break-words bg-gray-900/50 rounded p-2 text-xs text-gray-400";
     rawDiv.textContent = content; // 原始内容不做任何预处理
 
     // 填充渲染版内容
@@ -1350,13 +1497,19 @@ class ProbabilityToolbox {
       try {
         // 保护数学片段，避免Markdown解析阶段移除反斜杠导致定界失效
         const protectedSeg = this.protectMathSegments(renderContent);
-        if (window.marked && window.marked.parse) {
+        if (globalThis.marked && globalThis.marked.parse) {
           const htmlContent = marked.parse(protectedSeg.protectedText);
-          const restoredHtml = this.restoreMathSegments(htmlContent, protectedSeg.segments);
+          const restoredHtml = this.restoreMathSegments(
+            htmlContent,
+            protectedSeg.segments
+          );
           renderedDiv.innerHTML = restoredHtml;
-        } else if (window.marked) {
+        } else if (globalThis.marked) {
           const htmlContent = marked(protectedSeg.protectedText);
-          const restoredHtml = this.restoreMathSegments(htmlContent, protectedSeg.segments);
+          const restoredHtml = this.restoreMathSegments(
+            htmlContent,
+            protectedSeg.segments
+          );
           renderedDiv.innerHTML = restoredHtml;
         } else {
           TB_WARN("marked库未加载，使用简单换行处理");
@@ -1364,7 +1517,7 @@ class ProbabilityToolbox {
         }
       } catch (error) {
         TB_ERROR("Markdown渲染错误:", error);
-        TB_LOG("marked对象:", window.marked);
+        TB_LOG("marked对象:", globalThis.marked);
         renderedDiv.innerHTML = renderContent.replace(/\n/g, "<br>");
       }
     } else {
@@ -1425,9 +1578,15 @@ class ProbabilityToolbox {
       if (typeof content !== "string") return content;
       let result = content;
       // 匹配方括号中含有常见LaTeX命令的片段，转换为 \\[ ... \\]
-      result = result.replace(/\[([^\]]*\\(frac|sqrt|int|sum|prod|lim|log|ln|exp|Lambda|lambda|chi|alpha|beta|gamma|theta|mu|sigma|mathbb|mathcal|operatorname)[^\]]*)\]/g, "\\[$1\\]");
+      result = result.replace(
+        /\[([^\]]*\\(frac|sqrt|int|sum|prod|lim|log|ln|exp|Lambda|lambda|chi|alpha|beta|gamma|theta|mu|sigma|mathbb|mathcal|operatorname)[^\]]*)\]/g,
+        "\\[$1\\]"
+      );
       // 针对整行的方括号公式进行兜底转换（避免误伤Markdown链接）
-      result = result.replace(/(^|\n)\s*\[\s*([\s\S]*?)\s*\]\s*(?=\n|$)/g, "$1\\[ $2 \\\]");
+      result = result.replace(
+        /(^|\n)\s*\[\s*([\s\S]*?)\s*\]\s*(?=\n|$)/g,
+        "$1\\[ $2 \\]"
+      );
       return result;
     } catch (e) {
       console.warn("normalizeLatexBrackets error:", e);
@@ -1439,7 +1598,10 @@ class ProbabilityToolbox {
   normalizeBlockBracketsRobust(content) {
     try {
       if (typeof content !== "string") return content;
-      return content.replace(/(^|\n)\s*\[\s*([\s\S]*?)\s*\]\s*(?=\n|$)/g, (m, pre, inner) => `${pre}\\[ ${inner} \\]`);
+      return content.replace(
+        /(^|\n)\s*\[\s*([\s\S]*?)\s*\]\s*(?=\n|$)/g,
+        (m, pre, inner) => `${pre}\\[ ${inner} \\]`
+      );
     } catch (e) {
       console.warn("normalizeBlockBracketsRobust error:", e);
       return content;
@@ -1475,7 +1637,10 @@ class ProbabilityToolbox {
         // 跳过已存在数学定界的片段（包含左右定界）
         if (/(\$|\\\(|\\\[|\\\)|\\\])/.test(inner)) return m;
         // 识别常见TeX特征
-        const texLike = /\\[a-zA-Z]+|[_^]\{|\\left|\\right|\\frac|\\exp|\\mathbf|\\mathbb|\\mathcal|\\sigma|\\mu|\\Lambda|\\Sigma|\\det|\\log|\\top/.test(inner);
+        const texLike =
+          /\\[a-zA-Z]+|[_^]\{|\\left|\\right|\\frac|\\exp|\\mathbf|\\mathbb|\\mathcal|\\sigma|\\mu|\\Lambda|\\Sigma|\\det|\\log|\\top/.test(
+            inner
+          );
         if (texLike) {
           return `\\(${inner}\\)`;
         }
@@ -1516,7 +1681,10 @@ class ProbabilityToolbox {
       result = result.replace(/\\\(([^)]*?)\)(?!\s*\\\))/g, "\\($1\\)");
 
       // 2) 修复 "\\left( ... \\right" 缺少右括号的情况
-      result = result.replace(/\\left\(([^)]*?)\\right(?!\))/g, "\\left($1\\right)");
+      result = result.replace(
+        /\\left\(([^)]*?)\\right(?!\))/g,
+        "\\left($1\\right)"
+      );
 
       // 3) 统计并补齐块级定界 "\\[ ... \\]" 的右端
       const openBlock = (result.match(/\\\[/g) || []).length;
@@ -1547,7 +1715,10 @@ class ProbabilityToolbox {
       // 将 "\\( ... )" 这种缺少 "\\)" 的形式修复为 "\\( ... \\)"
       result = result.replace(/\\\(([^)]*?)\)(?!\s*\\\))/g, "\\($1\\)");
       // 修复 "\\left( ... \\right" 缺少右括号的情况
-      result = result.replace(/\\left\(([^)]*?)\\right(?!\))/g, "\\left($1\\right)");
+      result = result.replace(
+        /\\left\(([^)]*?)\\right(?!\))/g,
+        "\\left($1\\right)"
+      );
       return result;
     } catch (e) {
       console.warn("repairLocalLatexDelimiters error:", e);
@@ -1558,7 +1729,8 @@ class ProbabilityToolbox {
   // 保护已定界的数学片段，避免预处理破坏原始LaTeX
   protectMathSegments(content) {
     try {
-      if (typeof content !== "string") return { protectedText: content, segments: [] };
+      if (typeof content !== "string")
+        return { protectedText: content, segments: [] };
       const segments = [];
       let protectedText = content;
 
@@ -1569,13 +1741,22 @@ class ProbabilityToolbox {
       };
 
       // 优先保护块级 $$ ... $$
-      protectedText = protectedText.replace(/\$\$([\s\S]*?)\$\$/g, (m) => pushSeg(m));
+      protectedText = protectedText.replace(/\$\$([\s\S]*?)\$\$/g, (m) =>
+        pushSeg(m)
+      );
       // 保护 \\[ ... \\]
-      protectedText = protectedText.replace(/\\\[[\s\S]*?\\\]/g, (m) => pushSeg(m));
+      protectedText = protectedText.replace(/\\\[[\s\S]*?\\\]/g, (m) =>
+        pushSeg(m)
+      );
       // 保护 \\( ... \\)
-      protectedText = protectedText.replace(/\\\([\s\S]*?\\\)/g, (m) => pushSeg(m));
+      protectedText = protectedText.replace(/\\\([\s\S]*?\\\)/g, (m) =>
+        pushSeg(m)
+      );
       // 保护单美元 $ ... $（不匹配 $$）
-      protectedText = protectedText.replace(/\$(?!\$)([\s\S]*?)\$(?!\$)/g, (m) => pushSeg(m));
+      protectedText = protectedText.replace(
+        /\$(?!\$)([\s\S]*?)\$(?!\$)/g,
+        (m) => pushSeg(m)
+      );
 
       return { protectedText, segments };
     } catch (e) {
@@ -1651,7 +1832,7 @@ class ProbabilityToolbox {
     }
 
     // 渲染LaTeX公式 - 支持KaTeX和MathJax
-    if (window.renderMathInElement) {
+    if (globalThis.renderMathInElement) {
       // 使用KaTeX渲染
       TB_LOG("使用KaTeX渲染LaTeX");
       try {
@@ -1677,21 +1858,25 @@ class ProbabilityToolbox {
       } catch (error) {
         TB_ERROR("KaTeX单容器渲染错误:", error);
       }
-    } else if (window.MathJax && window.MathJax.typesetPromise) {
+    } else if (globalThis.MathJax && globalThis.MathJax.typesetPromise) {
       // 使用MathJax渲染
       TB_LOG("使用MathJax (新版) 渲染LaTeX");
-      window.MathJax.typesetPromise([container])
+      globalThis.MathJax.typesetPromise([container])
         .then(() => {
           TB_LOG("MathJax渲染成功");
         })
         .catch((err) => {
           TB_ERROR("MathJax单容器渲染错误:", err);
         });
-    } else if (window.MathJax && window.MathJax.Hub) {
+    } else if (globalThis.MathJax && globalThis.MathJax.Hub) {
       // 兼容旧版MathJax
       TB_LOG("使用MathJax (旧版Hub) 渲染LaTeX");
       try {
-        window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, container]);
+        globalThis.MathJax.Hub.Queue([
+          "Typeset",
+          globalThis.MathJax.Hub,
+          container,
+        ]);
         TB_LOG("MathJax Hub渲染已排队");
       } catch (error) {
         TB_ERROR("MathJax Hub单容器渲染错误:", error);
@@ -1727,17 +1912,17 @@ class ProbabilityToolbox {
 
       messageContents.forEach((container, index) => {
         // 仅针对渲染版容器进行LaTeX渲染，避免影响原文
-        const target = container.querySelector('.message-rendered');
+        const target = container.querySelector(".message-rendered");
         if (!target) return;
         console.log(`渲染第 ${index + 1} 个容器（渲染版）`);
         this.renderMathInContainer(target);
       });
 
       // 检查渲染库状态
-      const hasKaTeX = !!window.renderMathInElement;
+      const hasKaTeX = !!globalThis.renderMathInElement;
       const hasMathJax = !!(
-        window.MathJax &&
-        (window.MathJax.typesetPromise || window.MathJax.Hub)
+        globalThis.MathJax &&
+        (globalThis.MathJax.typesetPromise || globalThis.MathJax.Hub)
       );
       console.log(`渲染库状态 - KaTeX: ${hasKaTeX}, MathJax: ${hasMathJax}`);
 
@@ -1758,14 +1943,14 @@ class ProbabilityToolbox {
   updateRawToggleView() {
     const chatMessages = document.getElementById("chat-messages");
     if (!chatMessages) return;
-    const renderedNodes = chatMessages.querySelectorAll('.message-rendered');
-    const rawNodes = chatMessages.querySelectorAll('.message-raw');
+    const renderedNodes = chatMessages.querySelectorAll(".message-rendered");
+    const rawNodes = chatMessages.querySelectorAll(".message-raw");
     if (this.showRaw) {
-      renderedNodes.forEach((el) => el.classList.add('hidden'));
-      rawNodes.forEach((el) => el.classList.remove('hidden'));
+      renderedNodes.forEach((el) => el.classList.add("hidden"));
+      rawNodes.forEach((el) => el.classList.remove("hidden"));
     } else {
-      renderedNodes.forEach((el) => el.classList.remove('hidden'));
-      rawNodes.forEach((el) => el.classList.add('hidden'));
+      renderedNodes.forEach((el) => el.classList.remove("hidden"));
+      rawNodes.forEach((el) => el.classList.add("hidden"));
     }
   }
 
@@ -2996,8 +3181,8 @@ class ProbabilityToolbox {
       document.body.appendChild(testElement);
 
       // 测试全局渲染函数
-      if (typeof window.renderLatexInElement === "function") {
-        window.renderLatexInElement(testElement);
+      if (typeof globalThis.renderLatexInElement === "function") {
+        globalThis.renderLatexInElement(testElement);
 
         setTimeout(() => {
           const hasRendered = testElement.querySelector(".katex") !== null;
@@ -3062,7 +3247,8 @@ class ProbabilityToolbox {
   // 诊断AI消息中的LaTeX渲染情况：构造多种公式写法并检测是否成功渲染
   testChatLatexDiagnosis() {
     const resultDiv = document.getElementById("latex-diagnostic-result");
-    resultDiv.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i>正在运行诊断...';
+    resultDiv.innerHTML =
+      '<i class="fa fa-spinner fa-spin mr-1"></i>正在运行诊断...';
     // 使用“纯文本消息”注入，贴近真实AI输出路径
     const tests = [
       {
@@ -3072,7 +3258,7 @@ class ProbabilityToolbox {
       {
         id: "display_plain",
         content:
-          "\\[\n\\Phi(x) = \\frac{1}{\\sqrt{2\\pi}} \\int_{-\\infty}^x e^{-\\frac{t^2}{2}} \, dt.\n\\]",
+          "\\[\n\\Phi(x) = \\frac{1}{\\sqrt{2\\pi}} \\int_{-\\infty}^x e^{-\\frac{t^2}{2}} , dt.\n\\]",
       },
       {
         id: "expect_var_plain",
@@ -3124,8 +3310,12 @@ class ProbabilityToolbox {
         const passed = results.filter((r) => r.rendered).length;
         let html = `<div class="text-xs"><div class="font-medium">渲染通过 ${passed}/${total}</div>`;
         results.forEach((r) => {
-          const icon = r.rendered ? "fa-check text-green-400" : "fa-times text-red-400";
-          html += `<div><i class="fa ${icon} mr-1"></i>${r.id}${r.note ? "（" + r.note + "）" : ""}</div>`;
+          const icon = r.rendered
+            ? "fa-check text-green-400"
+            : "fa-times text-red-400";
+          html += `<div><i class="fa ${icon} mr-1"></i>${r.id}${
+            r.note ? "（" + r.note + "）" : ""
+          }</div>`;
         });
         html += `</div>`;
         resultDiv.innerHTML = html;
@@ -3150,9 +3340,11 @@ class ProbabilityToolbox {
     // 检查全局渲染函数
     checks.push({
       name: "全局LaTeX渲染",
-      status: typeof window.renderLatexInElement === "function",
+      status: typeof globalThis.renderLatexInElement === "function",
       message:
-        typeof window.renderLatexInElement === "function" ? "可用" : "不可用",
+        typeof globalThis.renderLatexInElement === "function"
+          ? "可用"
+          : "不可用",
     });
 
     // 检查聊天历史
@@ -3191,7 +3383,7 @@ class ProbabilityToolbox {
 }
 
 // 全局LaTeX渲染函数，可在其他页面中调用
-window.renderLatexInElement = function (element, options = {}) {
+globalThis.renderLatexInElement = function (element, options = {}) {
   if (!element) {
     console.warn("renderLatexInElement: 元素为空");
     return;
@@ -3223,7 +3415,7 @@ window.renderLatexInElement = function (element, options = {}) {
   TB_LOG("开始渲染LaTeX内容");
 
   // 尝试使用KaTeX渲染
-  if (window.renderMathInElement) {
+  if (globalThis.renderMathInElement) {
     try {
       renderMathInElement(element, finalOptions);
       TB_LOG("KaTeX渲染成功");
@@ -3234,8 +3426,8 @@ window.renderLatexInElement = function (element, options = {}) {
   }
 
   // 尝试使用MathJax渲染
-  if (window.MathJax && window.MathJax.typesetPromise) {
-    window.MathJax.typesetPromise([element])
+  if (globalThis.MathJax && globalThis.MathJax.typesetPromise) {
+    globalThis.MathJax.typesetPromise([element])
       .then(() => {
         TB_LOG("MathJax渲染成功");
       })
@@ -3246,9 +3438,13 @@ window.renderLatexInElement = function (element, options = {}) {
   }
 
   // 尝试使用旧版MathJax
-  if (window.MathJax && window.MathJax.Hub) {
+  if (globalThis.MathJax && globalThis.MathJax.Hub) {
     try {
-      window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, element]);
+      globalThis.MathJax.Hub.Queue([
+        "Typeset",
+        globalThis.MathJax.Hub,
+        element,
+      ]);
       TB_LOG("MathJax Hub渲染已排队");
       return true;
     } catch (error) {
@@ -3261,18 +3457,18 @@ window.renderLatexInElement = function (element, options = {}) {
 };
 
 // 全局Markdown渲染函数
-window.renderMarkdownInElement = function (element, content) {
+globalThis.renderMarkdownInElement = function (element, content) {
   if (!element) {
     TB_WARN("renderMarkdownInElement: 元素为空");
     return false;
   }
 
   try {
-    if (window.marked && window.marked.parse) {
+    if (globalThis.marked && globalThis.marked.parse) {
       element.innerHTML = marked.parse(content);
       TB_LOG("Markdown渲染成功 (marked.parse)");
       return true;
-    } else if (window.marked) {
+    } else if (globalThis.marked) {
       element.innerHTML = marked(content);
       TB_LOG("Markdown渲染成功 (marked)");
       return true;
@@ -3290,14 +3486,21 @@ window.renderMarkdownInElement = function (element, content) {
 
 // 页面加载完成后初始化工具箱
 document.addEventListener("DOMContentLoaded", () => {
-  window.probabilityToolbox = new ProbabilityToolbox();
   try {
-    const path = (window.location && window.location.pathname) || "";
+    ensureToolboxStyles();
+  } catch (_) {}
+  globalThis.probabilityToolbox = new ProbabilityToolbox();
+  try {
+    const path = (globalThis.location && globalThis.location.pathname) || "";
     if (path.endsWith("/templates/random_variables.html")) {
       // 页面加载后小延时执行诊断，避免未就绪的DOM导致找不到节点
       setTimeout(() => {
-        if (window.probabilityToolbox && typeof window.probabilityToolbox.testChatLatexDiagnosis === "function") {
-          window.probabilityToolbox.testChatLatexDiagnosis();
+        if (
+          globalThis.probabilityToolbox &&
+          typeof globalThis.probabilityToolbox.testChatLatexDiagnosis ===
+            "function"
+        ) {
+          globalThis.probabilityToolbox.testChatLatexDiagnosis();
         }
       }, 500);
     }

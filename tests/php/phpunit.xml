@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<phpunit bootstrap="tests/php/bootstrap.php" colors="true">
+  <testsuites>
+    <testsuite name="Project PHP Tests">
+      <directory>./</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <env name="ALLOW_DB_TESTS" value="0"/>
+  </php>
+</phpunit>

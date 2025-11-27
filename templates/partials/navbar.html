@@ -2,7 +2,7 @@
   <style>
     /* 仅作用于导航内部的美化样式 */
     #global-nav {
-      position: relative;
+      position: fixed; top: 0; left: 0; right: 0;
       overflow: hidden;
       /* 主题与配色变量 */
       --brand-grad-start: #00e8ff;
@@ -311,6 +311,7 @@
       flex: 0 0 auto; /* 不随容器收缩，避免被挤出视区 */
       overflow: hidden; text-overflow: ellipsis;
     }
+    body { padding-top: 56px; }
   </style>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
     <div class="flex h-14 items-center justify-between">
