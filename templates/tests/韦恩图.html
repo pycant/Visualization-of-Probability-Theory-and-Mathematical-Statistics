@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件运算可视化沙盒 | 鼠标交互版</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e6e6e6;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff7eee, #6e7bff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 126, 238, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b8b8b8;
+            margin-bottom: 20px;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .visualization-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .controls-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #6e7bff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .venn-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: rgba(30, 30, 46, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sample-space {
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            top: 5%;
+            left: 5%;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.2rem;
+        }
+        
+        .event {
+            position: absolute;
+            border-radius: 50%;
+            cursor: grab;
+            transition: transform 0.2s, filter 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            user-select: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .event:active {
+            cursor: grabbing;
+        }
+        
+        .event-a {
+            background: rgba(255, 126, 238, 0.7);
+            border: 2px solid #ff7eee;
+            left: 30%;
+            top: 40%;
+            width: 160px;
+            height: 160px;
+            z-index: 2;
+        }
+        
+        .event-b {
+            background: rgba(110, 123, 255, 0.7);
+            border: 2px solid #6e7bff;
+            left: 50%;
+            top: 40%;
+            width: 160px;
+            height: 160px;
+            z-index: 1;
+        }
+        
+        .intersection {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(180, 70, 255, 0.8);
+            pointer-events: none;
+            z-index: 3;
+            box-shadow: 0 0 20px rgba(180, 70, 255, 0.5);
+        }
+        
+        .event-label {
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .calculations {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .calc-item {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .calc-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-top: 5px;
+            color: #6e7bff;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        .control-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #ff7eee;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mode-toggle {
+            display: flex;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .mode-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .mode-option.active {
+            background: rgba(110, 123, 255, 0.3);
+            box-shadow: 0 0 10px rgba(110, 123, 255, 0.3);
+        }
+        
+        .theme-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .theme-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.08);
+            transition: all 0.3s;
+        }
+        
+        .theme-option.active {
+            background: rgba(255, 126, 238, 0.3);
+            box-shadow: 0 0 10px rgba(255, 126, 238, 0.3);
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+            border-left: 4px solid #6e7bff;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #ff7eee;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .history {
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .history h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #6e7bff;
+        }
+        
+        .history-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .history-item {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .history-item h3 {
+            color: #ff7eee;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        @media (max-width: 600px) {
+            .calculations, .history-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .dragging {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+            z-index: 10;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+        }
+        
+        .constraint-hint {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>事件运算可视化沙盒</h1>
+            <p class="subtitle">通过拖拽交互直观理解并集、交集与补集运算</p>
+        </header>
+        
+        <div class="content">
+            <div class="visualization-panel">
+                <h2 class="panel-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="9" cy="9" r="2"/>
+                        <circle cx="15" cy="15" r="2"/>
+                        <path d="M9 15a6 6 0 0 0 6 0"/>
+                    </svg>
+                    韦恩图可视化
+                </h2>
+                
+                <div class="venn-container">
+                    <div class="sample-space">样本空间 S</div>
+                    <div class="event event-a">
+                        <span class="event-label">事件 A</span>
+                    </div>
+                    <div class="event event-b">
+                        <span class="event-label">事件 B</span>
+                    </div>
+                    <div class="intersection"></div>
+                </div>
+                
+                <div class="calculations">
+                    <div class="calc-item">
+                        <div>P(A ∪ B)</div>
+                        <div class="calc-value" id="union-value">0.00</div>
+                    </div>
+                    <div class="calc-item">
+                        <div>P(A ∩ B)</div>
+                        <div class="calc-value" id="intersection-value">0.00</div>
+                    </div>
+                    <div class="calc-item">
+                        <div>P(A̅)</div>
+                        <div class="calc-value" id="complement-a-value">0.00</div>
+                    </div>
+                    <div class="calc-item">
+                        <div>P(B̅)</div>
+                        <div class="calc-value" id="complement-b-value">0.00</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls-panel">
+                <h2 class="panel-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 15v2m-6 4h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2zm10-10V7a4 4 0 0 0-8 0v4h8z"/>
+                    </svg>
+                    控制面板
+                </h2>
+                
+                <div class="control-group">
+                    <h3 class="control-title">交互模式</h3>
+                    <div class="mode-toggle">
+                        <div class="mode-option active" data-mode="free">自由模式</div>
+                        <div class="mode-option" data-mode="independent">独立模式</div>
+                        <div class="mode-option" data-mode="lock-a">锁定事件A</div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3 class="control-title">事件标签</h3>
+                    <div class="theme-selector">
+                        <div class="theme-option active" data-theme="default">事件A/事件B</div>
+                        <div class="theme-option" data-theme="social">吃瓜/发弹幕</div>
+                        <div class="theme-option" data-theme="interaction">点赞/收藏</div>
+                    </div>
+                </div>
+                
+                <div class="instructions">
+                    <h3>操作指南</h3>
+                    <ul>
+                        <li><strong>拖拽事件区域</strong>：直接拖拽事件A或事件B的圆形区域来改变它们的位置和重叠程度</li>
+                        <li><strong>自由模式</strong>：可以自由调整两个事件的位置和重叠</li>
+                        <li><strong>独立模式</strong>：系统会自动保持 P(A∩B) = P(A) × P(B)</li>
+                        <li><strong>锁定模式</strong>：锁定一个事件，只调整另一个事件的位置</li>
+                        <li><strong>约束提示</strong>：当达到最小或最大重叠时会有视觉反馈</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="history">
+            <h2>历史背景</h2>
+            <div class="history-content">
+                <div class="history-item">
+                    <h3>韦恩图</h3>
+                    <p>由约翰·韦恩（John Venn）于1880年提出，用于直观表示集合之间的关系。韦恩图通过圆形区域的重叠来展示集合的交集、并集等运算。</p>
+                </div>
+                <div class="history-item">
+                    <h3>概率公理化</h3>
+                    <p>科尔莫哥洛夫（Kolmogorov）在1933年系统化地提出了概率的公理化定义，基于集合论和测度论建立了现代概率论的基础。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const eventA = document.querySelector('.event-a');
+            const eventB = document.querySelector('.event-b');
+            const intersection = document.querySelector('.intersection');
+            const vennContainer = document.querySelector('.venn-container');
+            
+            // 概率显示元素
+            const unionValue = document.getElementById('union-value');
+            const intersectionValue = document.getElementById('intersection-value');
+            const complementAValue = document.getElementById('complement-a-value');
+            const complementBValue = document.getElementById('complement-b-value');
+            
+            // 控制元素
+            const modeOptions = document.querySelectorAll('.mode-option');
+            const themeOptions = document.querySelectorAll('.theme-option');
+            const eventLabels = document.querySelectorAll('.event-label');
+            
+            // 状态变量
+            let isDragging = false;
+            let currentEvent = null;
+            let currentMode = 'free';
+            let currentTheme = 'default';
+            
+            // 事件位置和尺寸
+            const eventAProps = {
+                x: 140,
+                y: 160,
+                width: 160,
+                height: 160,
+                radius: 80
+            };
+            
+            const eventBProps = {
+                x: 220,
+                y: 160,
+                width: 160,
+                height: 160,
+                radius: 80
+            };
+            
+            // 初始化事件位置
+            updateEventPosition(eventA, eventAProps.x, eventAProps.y);
+            updateEventPosition(eventB, eventBProps.x, eventBProps.y);
+            updateIntersection();
+            updateCalculations();
+            
+            // 拖拽功能实现
+            eventA.addEventListener('mousedown', startDrag);
+            eventB.addEventListener('mousedown', startDrag);
+            
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', endDrag);
+            
+            // 触摸设备支持
+            eventA.addEventListener('touchstart', startDrag);
+            eventB.addEventListener('touchstart', startDrag);
+            
+            document.addEventListener('touchmove', drag);
+            document.addEventListener('touchend', endDrag);
+            
+            function startDrag(e) {
+                e.preventDefault();
+                isDragging = true;
+                currentEvent = e.target.classList.contains('event-a') ? eventA : eventB;
+                currentEvent.classList.add('dragging');
+                
+                // 设置初始拖拽点
+                if (e.type === 'mousedown') {
+                    currentEvent.dataset.offsetX = e.offsetX;
+                    currentEvent.dataset.offsetY = e.offsetY;
+                } else if (e.type === 'touchstart') {
+                    const touch = e.touches[0];
+                    const rect = currentEvent.getBoundingClientRect();
+                    currentEvent.dataset.offsetX = touch.clientX - rect.left;
+                    currentEvent.dataset.offsetY = touch.clientY - rect.top;
+                }
+            }
+            
+            function drag(e) {
+                if (!isDragging || !currentEvent) return;
+                
+                e.preventDefault();
+                
+                let clientX, clientY;
+                if (e.type === 'mousemove') {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                } else if (e.type === 'touchmove') {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                }
+                
+                const containerRect = vennContainer.getBoundingClientRect();
+                const offsetX = parseFloat(currentEvent.dataset.offsetX);
+                const offsetY = parseFloat(currentEvent.dataset.offsetY);
+                
+                // 计算新位置
+                let newX = clientX - containerRect.left - offsetX;
+                let newY = clientY - containerRect.top - offsetY;
+                
+                // 边界约束
+                newX = Math.max(0, Math.min(containerRect.width - currentEvent.offsetWidth, newX));
+                newY = Math.max(0, Math.min(containerRect.height - currentEvent.offsetHeight, newY));
+                
+                // 更新事件位置
+                if (currentEvent === eventA) {
+                    eventAProps.x = newX;
+                    eventAProps.y = newY;
+                } else {
+                    eventBProps.x = newX;
+                    eventBProps.y = newY;
+                }
+                
+                // 在独立模式下自动调整另一个事件
+                if (currentMode === 'independent') {
+                    adjustForIndependentEvents();
+                }
+                
+                // 在锁定模式下保持一个事件固定
+                if (currentMode === 'lock-a' && currentEvent === eventB) {
+                    // 在锁定A模式下，只允许移动B，A保持固定
+                } else if (currentMode === 'lock-a' && currentEvent === eventA) {
+                    // 不允许移动A
+                    eventAProps.x = 140;
+                    eventAProps.y = 160;
+                }
+                
+                updateEventPosition(currentEvent, newX, newY);
+                updateIntersection();
+                updateCalculations();
+            }
+            
+            function endDrag() {
+                isDragging = false;
+                if (currentEvent) {
+                    currentEvent.classList.remove('dragging');
+                    currentEvent = null;
+                }
+            }
+            
+            function updateEventPosition(element, x, y) {
+                element.style.left = `${x}px`;
+                element.style.top = `${y}px`;
+            }
+            
+            function updateIntersection() {
+                // 计算两个事件圆形的中心点距离
+                const aCenterX = eventAProps.x + eventAProps.width / 2;
+                const aCenterY = eventAProps.y + eventAProps.height / 2;
+                const bCenterX = eventBProps.x + eventBProps.width / 2;
+                const bCenterY = eventBProps.y + eventBProps.height / 2;
+                
+                const distance = Math.sqrt(
+                    Math.pow(aCenterX - bCenterX, 2) + 
+                    Math.pow(aCenterY - bCenterY, 2)
+                );
+                
+                // 计算重叠区域
+                const radiusSum = eventAProps.radius + eventBProps.radius;
+                
+                if (distance >= radiusSum) {
+                    // 无重叠
+                    intersection.style.display = 'none';
+                } else {
+                    // 有重叠
+                    intersection.style.display = 'block';
+                    
+                    // 计算重叠区域的位置和大小
+                    const overlapRadius = Math.max(0, (eventAProps.radius + eventBProps.radius - distance) / 2);
+                    
+                    // 计算重叠区域的中心点
+                    const t = 0.5 + (eventAProps.radius - eventBProps.radius) / (2 * distance);
+                    const overlapX = aCenterX + t * (bCenterX - aCenterX);
+                    const overlapY = aCenterY + t * (bCenterY - aCenterY);
+                    
+                    intersection.style.width = `${overlapRadius * 2}px`;
+                    intersection.style.height = `${overlapRadius * 2}px`;
+                    intersection.style.left = `${overlapX - overlapRadius}px`;
+                    intersection.style.top = `${overlapY - overlapRadius}px`;
+                }
+            }
+            
+            function updateCalculations() {
+                // 计算重叠面积比例（简化计算）
+                const aCenterX = eventAProps.x + eventAProps.width / 2;
+                const aCenterY = eventAProps.y + eventAProps.height / 2;
+                const bCenterX = eventBProps.x + eventBProps.width / 2;
+                const bCenterY = eventBProps.y + eventBProps.height / 2;
+                
+                const distance = Math.sqrt(
+                    Math.pow(aCenterX - bCenterX, 2) + 
+                    Math.pow(aCenterY - bCenterY, 2)
+                );
+                
+                const radiusSum = eventAProps.radius + eventBProps.radius;
+                
+                // 简化计算重叠比例
+                let overlapRatio = 0;
+                if (distance < radiusSum) {
+                    overlapRatio = 1 - (distance / radiusSum);
+                }
+                
+                // 计算各概率值
+                const pA = 0.4; // 固定P(A)为0.4
+                const pB = 0.5; // 固定P(B)为0.5
+                const pIntersection = pA * pB * overlapRatio * 2.5; // 缩放因子使视觉效果更明显
+                const pUnion = pA + pB - pIntersection;
+                const pComplementA = 1 - pA;
+                const pComplementB = 1 - pB;
+                
+                // 更新显示
+                unionValue.textContent = pUnion.toFixed(2);
+                intersectionValue.textContent = pIntersection.toFixed(2);
+                complementAValue.textContent = pComplementA.toFixed(2);
+                complementBValue.textContent = pComplementB.toFixed(2);
+            }
+            
+            function adjustForIndependentEvents() {
+                // 在独立模式下，自动调整另一个事件的位置以保持独立性
+                if (currentEvent === eventA) {
+                    // 调整B的位置以保持P(A∩B) = P(A) × P(B)
+                    const targetDistance = eventAProps.radius + eventBProps.radius - 
+                                         (eventAProps.radius + eventBProps.radius) * 0.3; // 简化计算
+                    
+                    const aCenterX = eventAProps.x + eventAProps.width / 2;
+                    const aCenterY = eventAProps.y + eventAProps.height / 2;
+                    
+                    // 计算B的新位置
+                    const angle = Math.atan2(eventBProps.y - aCenterY, eventBProps.x - aCenterX);
+                    const newX = aCenterX + Math.cos(angle) * targetDistance - eventBProps.width / 2;
+                    const newY = aCenterY + Math.sin(angle) * targetDistance - eventBProps.height / 2;
+                    
+                    // 边界约束
+                    const containerRect = vennContainer.getBoundingClientRect();
+                    eventBProps.x = Math.max(0, Math.min(containerRect.width - eventBProps.width, newX));
+                    eventBProps.y = Math.max(0, Math.min(containerRect.height - eventBProps.height, newY));
+                    
+                    updateEventPosition(eventB, eventBProps.x, eventBProps.y);
+                } else if (currentEvent === eventB) {
+                    // 调整A的位置以保持P(A∩B) = P(A) × P(B)
+                    const targetDistance = eventAProps.radius + eventBProps.radius - 
+                                         (eventAProps.radius + eventBProps.radius) * 0.3; // 简化计算
+                    
+                    const bCenterX = eventBProps.x + eventBProps.width / 2;
+                    const bCenterY = eventBProps.y + eventBProps.height / 2;
+                    
+                    // 计算A的新位置
+                    const angle = Math.atan2(eventAProps.y - bCenterY, eventAProps.x - bCenterX);
+                    const newX = bCenterX + Math.cos(angle) * targetDistance - eventAProps.width / 2;
+                    const newY = bCenterY + Math.sin(angle) * targetDistance - eventAProps.height / 2;
+                    
+                    // 边界约束
+                    const containerRect = vennContainer.getBoundingClientRect();
+                    eventAProps.x = Math.max(0, Math.min(containerRect.width - eventAProps.width, newX));
+                    eventAProps.y = Math.max(0, Math.min(containerRect.height - eventAProps.height, newY));
+                    
+                    updateEventPosition(eventA, eventAProps.x, eventAProps.y);
+                }
+            }
+            
+            // 模式切换
+            modeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    modeOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentMode = this.dataset.mode;
+                    
+                    // 重置到初始位置
+                    eventAProps.x = 140;
+                    eventAProps.y = 160;
+                    eventBProps.x = 220;
+                    eventBProps.y = 160;
+                    
+                    updateEventPosition(eventA, eventAProps.x, eventAProps.y);
+                    updateEventPosition(eventB, eventBProps.x, eventBProps.y);
+                    updateIntersection();
+                    updateCalculations();
+                });
+            });
+            
+            // 主题切换
+            themeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    themeOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentTheme = this.dataset.theme;
+                    
+                    // 更新事件标签
+                    if (currentTheme === 'default') {
+                        eventLabels[0].textContent = '事件 A';
+                        eventLabels[1].textContent = '事件 B';
+                    } else if (currentTheme === 'social') {
+                        eventLabels[0].textContent = '吃瓜';
+                        eventLabels[1].textContent = '发弹幕';
+                    } else if (currentTheme === 'interaction') {
+                        eventLabels[0].textContent = '点赞';
+                        eventLabels[1].textContent = '收藏';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -5,255 +5,773 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>第1章 随机事件与概率</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../static/css/random_variables.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+
     <!-- KaTeX 样式与脚本（用于 LaTeX 公式渲染） -->
     <link rel="stylesheet" href="../static/libs/katex/css/katex.min.css" />
     <script src="../static/libs/katex/js/katex.min.js"></script>
     <script src="../static/libs/katex/js/auto-render.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
     <link rel="icon" href="../static/images/favicon.ico" />
-    <style>
-      /* 章节页未来感背景与卡片光效（仅当前页面） */
-      body {
-        background: radial-gradient(1200px 500px at 10% 0%, rgba(34,211,238,0.06), transparent),
-                    radial-gradient(1000px 500px at 90% 0%, rgba(167,139,250,0.06), transparent),
-                    linear-gradient(180deg, #0b1220, #121725);
+    <link rel="stylesheet" href="../static/css/chapter1.css" />
+    <style type="text/tailwindcss">
+      .gap-8 {
+        gap: 1rem;
       }
-      .fx-holo {
-        position: relative; overflow: hidden;
-        background: linear-gradient(180deg, rgba(17,24,39,0.75), rgba(31,41,55,0.7));
-        border: 1px solid rgba(255,255,255,0.12);
-        box-shadow: 0 10px 35px rgba(34,211,238,0.12), 0 16px 40px rgba(167,139,250,0.12);
-      }
-      .fx-holo::before { /* 边缘色散 */
-        content: ""; position: absolute; inset: 0; pointer-events: none;
-        background: radial-gradient(800px 300px at 15% 0%, rgba(34,211,238,0.06), transparent),
-                    radial-gradient(700px 300px at 85% 0%, rgba(167,139,250,0.06), transparent);
-        mix-blend-mode: screen;
-      }
-      .fx-holo:hover { box-shadow: 0 12px 40px rgba(34,211,238,0.18), 0 20px 55px rgba(167,139,250,0.18); }
-      .fx-ambient { backdrop-filter: blur(8px); }
-      .fx-title-glow { text-shadow: 0 0 10px rgba(103,232,249,0.35); }
-
-      /* 多色霓虹主题（打破单调） */
-      .accent-cyan.fx-holo   { box-shadow: 0 10px 35px rgba(34,211,238,0.20), 0 16px 40px rgba(34,211,238,0.10); }
-      .accent-purple.fx-holo { box-shadow: 0 10px 35px rgba(167,139,250,0.20), 0 16px 40px rgba(167,139,250,0.10); }
-      .accent-pink.fx-holo   { box-shadow: 0 10px 35px rgba(236,72,153,0.22), 0 16px 40px rgba(236,72,153,0.12); }
-      .accent-lime.fx-holo   { box-shadow: 0 10px 35px rgba(163,230,53,0.22), 0 16px 40px rgba(163,230,53,0.12); }
-      .accent-amber.fx-holo  { box-shadow: 0 10px 35px rgba(245,158,11,0.22), 0 16px 40px rgba(245,158,11,0.12); }
-      .accent-cyan .fx-title-glow   { text-shadow: 0 0 12px rgba(34,211,238,0.45); }
-      .accent-purple .fx-title-glow { text-shadow: 0 0 12px rgba(167,139,250,0.45); }
-      .accent-pink .fx-title-glow   { text-shadow: 0 0 12px rgba(236,72,153,0.45); }
-      .accent-lime .fx-title-glow   { text-shadow: 0 0 12px rgba(163,230,53,0.45); }
-      .accent-amber .fx-title-glow  { text-shadow: 0 0 12px rgba(245,158,11,0.45); }
     </style>
     <script>
       // 为导航注入页面级锚点链接（在导航脚本加载前定义）
       window.NAV_CONFIG = {
-        active: 'chapter1',
+        active: "chapter1",
         sectionLinks: [
-          { href: '#sec-1-1', label: '1.1 随机事件及其运算' },
-          { href: '#sec-1-2', label: '1.2 概率的定义与确定方法' },
-          { href: '#sec-1-3', label: '1.3 概率的性质' },
-          { href: '#sec-1-4', label: '1.4 条件概率' },
-          { href: '#sec-1-5', label: '1.5 独立性' }
-        ]
+          { href: "#sec-1-1", label: "1.1 随机事件及其运算" },
+          { href: "#sec-1-2", label: "1.2 概率的定义与确定方法" },
+          { href: "#sec-1-3", label: "1.3 概率的性质" },
+          { href: "#sec-1-4", label: "1.4 条件概率" },
+          { href: "#sec-1-5", label: "1.5 独立性" },
+        ],
       };
     </script>
   </head>
   <body class="bg-dark-bg text-white">
+    <canvas id="bg-noise" aria-hidden="true"></canvas>
     <!-- 通过脚本动态注入统一导航栏 -->
     <script src="../static/js/include-navbar.js"></script>
 
-    <div class="min-h-screen bg-gradient-to-b from-dark-bg to-dark-card/50 pt-20">
-      <!-- 章节 Hero -->
-      <section class="container mx-auto px-4">
-        <div class="bg-dark-card border border-gray-800 rounded-2xl p-8 fx-holo fx-ambient accent-cyan">
-          <div class="flex items-center mb-6">
-            <div class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mr-4">
-              <i class="fa fa-dice text-neon-blue text-2xl"></i>
+    <div
+      class="min-h-screen bg-gradient-to-b from-dark-bg to-dark-card/50 pt-20 bg-overlay"
+    >
+      <section
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 text-center py-24 clip-path-slant"
+      >
+        <div class="absolute inset-0 bg-grid opacity-10"></div>
+        <h1 class="title-gradient hero-title font-extrabold leading-tight">
+          第1章 随机事件与概率
+        </h1>
+        <p class="subtitle hero-subtitle mt-3 sm:mt-4">
+          概率论的基础概念与运算规则，直观理解事件与独立性。
+        </p>
+        <div class="mt-5 flex flex-wrap justify-center gap-2">
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-dice"></i> 随机事件
+          </span>
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-code-branch"></i> 条件概率
+          </span>
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-link"></i> 独立性
+          </span>
+        </div>
+        <div class="mt-6 flex justify-center">
+          <div class="glass-card fx-holo rounded-xl px-4 py-3">
+            <div class="text-sm text-gray-300 mb-2">关键公式</div>
+            <div>$$P(A\mid B)=\frac{P(A\cap B)}{P(B)}$$</div>
+            <div class="mt-2">$$P(A\cup B)=P(A)+P(B)-P(A\cap B)$$</div>
+          </div>
+        </div>
+        <div
+          class="mt-6 sm:mt-8 flex flex-wrap gap-3 justify-center"
+          id="hero-links"
+        ></div>
+      </section>
+      <section
+        id="sec-1-1"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="flex flex-col lg:flex-row gap-8">
+            <div class="flex-1">
+              <canvas
+                id="venn-canvas"
+                width="560"
+                height="360"
+                class="w-full rounded-xl bg-dark-card/60"
+              ></canvas>
+              <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>P(A∪B)</div>
+                  <div id="v-union" class="text-neon-blue text-lg">0.00</div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>P(A∩B)</div>
+                  <div id="v-intersection" class="text-neon-purple text-lg">
+                    0.00
+                  </div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>P(A̅)</div>
+                  <div id="v-complement-a" class="text-neon-green text-lg">
+                    0.00
+                  </div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>P(B̅)</div>
+                  <div id="v-complement-b" class="text-neon-green text-lg">
+                    0.00
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <div class="text-xs text-gray-400">第1章</div>
-              <h1 class="text-2xl font-bold fx-title-glow">随机事件与概率</h1>
+            <div class="w-full lg:w-72">
+              <div class="space-y-5">
+                <div>
+                  <div class="mb-2 text-sm">P(A)</div>
+                  <input
+                    id="venn-pa"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="40"
+                    class="w-full accent-neon-purple"
+                  />
+                </div>
+                <div>
+                  <div class="mb-2 text-sm">P(B)</div>
+                  <input
+                    id="venn-pb"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="50"
+                    class="w-full accent-neon-blue"
+                  />
+                </div>
+                <div>
+                  <div class="mb-2 text-sm">交集强度</div>
+                  <input
+                    id="venn-overlap"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="30"
+                    class="w-full accent-neon-green"
+                  />
+                  <div class="mt-1 text-xs text-gray-300">自由模式下生效</div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input id="venn-independent" type="checkbox" />
+                  <label for="venn-independent" class="text-sm">独立模式</label>
+                </div>
+                <div>
+                  <div class="mb-2 text-sm">事件标签</div>
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      class="px-3 py-1 rounded-md border border-white/15 bg-white/5"
+                      data-theme="default"
+                    >
+                      事件A/事件B
+                    </button>
+                    <button
+                      class="px-3 py-1 rounded-md border border-white/15 bg-white/5"
+                      data-theme="social"
+                    >
+                      吃瓜/发弹幕
+                    </button>
+                    <button
+                      class="px-3 py-1 rounded-md border border-white/15 bg-white/5"
+                      data-theme="interaction"
+                    >
+                      点赞/收藏
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <p class="text-gray-300">从随机试验与样本空间出发，理解事件的代数运算与概率公理，并在具体例子中掌握条件概率与独立性。</p>
+        </div>
+        <div class="mt-8 glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <h3 class="text-xl font-semibold mb-3">历史介绍</h3>
+          <ul class="list-disc pl-6 space-y-2 text-gray-200">
+            <li>
+              韦恩图由约翰·韦恩（John Venn, 1880）提出，用于集合关系可视化。
+            </li>
+            <li>
+              概率的集合化与公理化在 20 世纪由科尔莫哥洛夫（Kolmogorov,
+              1933）系统化，基于集合与测度的形式化定义。
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section
+        id="sec-1-2"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="flex flex-col lg:flex-row gap-8">
+            <div class="flex-1">
+              <div class="mb-3 text-lg font-semibold">
+                概率的定义及其确定方法｜骰子到暴击
+              </div>
+              <canvas
+                id="crit-bar"
+                width="560"
+                height="240"
+                class="w-full rounded-xl bg-dark-card/60"
+              ></canvas>
+              <canvas
+                id="crit-line"
+                width="560"
+                height="160"
+                class="w-full rounded-xl bg-dark-card/60 mt-4"
+              ></canvas>
+            </div>
+            <div class="w-full lg:w-80">
+              <div class="space-y-5">
+                <div>
+                  <div class="mb-2 text-sm">暴击率 p</div>
+                  <input
+                    id="crit-p"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="30"
+                    class="w-full accent-neon-green"
+                  />
+                </div>
+                <div>
+                  <div class="mb-2 text-sm">攻击次数 n</div>
+                  <input
+                    id="crit-n"
+                    type="range"
+                    min="1"
+                    max="50"
+                    value="10"
+                    class="w-full accent-neon-blue"
+                  />
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                  <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                    <div>理论值 P(≥1)</div>
+                    <div id="crit-theory" class="text-neon-blue text-lg">
+                      0.00
+                    </div>
+                  </div>
+                  <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                    <div>频率估计</div>
+                    <div id="crit-freq" class="text-neon-purple text-lg">
+                      0.00
+                    </div>
+                  </div>
+                  <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                    <div>误差 |Δ|</div>
+                    <div id="crit-error" class="text-neon-green text-lg">
+                      0.00
+                    </div>
+                  </div>
+                  <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                    <div>试验次数</div>
+                    <div id="crit-trials" class="text-lg">0</div>
+                  </div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    id="crit-once"
+                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                  >
+                    试验一次
+                  </button>
+                  <button
+                    id="crit-100"
+                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                  >
+                    试验100次
+                  </button>
+                  <button
+                    id="crit-1000"
+                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                  >
+                    试验1000次
+                  </button>
+                  <button
+                    id="crit-reset"
+                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                  >
+                    清空
+                  </button>
+                </div>
+                <div class="text-xs text-gray-300">
+                  前提：独立同分布（i.i.d.）。若存在依赖，频率法与理论值可能不一致。
+                </div>
+                <div
+                  class="rounded-lg border border-white/10 bg-white/5 p-3 text-sm text-gray-200"
+                >
+                  <div class="font-medium mb-2">样本空间：古典法 vs 频率法</div>
+                  <div>
+                    等可能样本空间（如骰子）用于经典概率的定义；Bernoulli
+                    独立试验用于频率法收敛观察。
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-8 glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <h3 class="text-xl font-semibold mb-3">历史介绍</h3>
+          <ul class="list-disc pl-6 space-y-2 text-gray-200">
+            <li>
+              古典概率由拉普拉斯（Laplace, 1812）系统阐述，基于等可能样本空间。
+            </li>
+            <li>
+              频率法由伯努利（Jakob Bernoulli,
+              1713）的大数定律奠基，说明频率向理论概率收敛。
+            </li>
+          </ul>
         </div>
       </section>
 
-      <main class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-          <!-- 左侧目录 -->
-          <aside class="hidden md:block md:col-span-3">
-            <div class="bg-dark-card border border-gray-800 rounded-xl p-6 fx-holo fx-ambient accent-cyan sticky top-24">
-              <h3 class="text-sm font-semibold mb-3 fx-title-glow">章节目录</h3>
-              <ul class="text-gray-400 text-sm space-y-2">
-                <li><a class="hover:text-neon-blue transition-colors" href="#sec-1-1">1.1 随机事件及其运算</a></li>
-                <li><a class="hover:text-neon-blue transition-colors" href="#sec-1-2">1.2 概率的定义与确定方法</a></li>
-                <li><a class="hover:text-neon-blue transition-colors" href="#sec-1-3">1.3 概率的性质</a></li>
-                <li><a class="hover:text-neon-blue transition-colors" href="#sec-1-4">1.4 条件概率</a></li>
-                <li><a class="hover:text-neon-blue transition-colors" href="#sec-1-5">1.5 独立性</a></li>
-              </ul>
-            </div>
-          </aside>
-
-          <!-- 右侧内容 -->
-          <div class="md:col-span-9 space-y-10">
-            <!-- 小节1：随机事件及其运算（对齐 1.1） -->
-            <section id="sec-1-1" class="scroll-mt-20">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-                <div class="bg-dark-card border border-gray-800 rounded-xl p-6 fx-holo fx-ambient accent-cyan h-full flex flex-col">
-                  <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 rounded-lg bg-neon-blue/10 flex items-center justify-center mr-3">
-                      <i class="fa fa-flask text-neon-blue"></i>
-                    </div>
-                    <h2 class="text-xl font-semibold">1.1 随机事件及其运算</h2>
-                  </div>
-                  <p class="text-gray-300 text-sm mb-4">随机试验是指在相同条件下可重复进行、结果不确定但具有可统计性的一类试验；其所有可能结果构成样本空间 <span class="text-neon-blue">Ω</span>。</p>
-                  <ul class="text-gray-400 text-sm space-y-2">
-                    <li>• 掷骰子试验：<span class="text-gray-300">Ω = {1,2,3,4,5,6}</span></li>
-                    <li>• 事件的表示：<span class="text-gray-300">A = {偶数点数} = {2,4,6}</span></li>
-                    <li>• 频率与概率：大量试验中频率趋近于概率</li>
-                  </ul>
-                </div>
-              </div>
-            </section>
-
-            <!-- 小节2：概率的定义与确定方法（对齐 1.2） -->
-            <section id="sec-1-2" class="scroll-mt-20">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-                <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6 fx-holo fx-ambient accent-amber h-full flex flex-col">
-                  <h3 class="font-semibold mb-3">1.2 频率法：掷骰子模拟</h3>
-                  <p class="text-gray-400 text-sm mb-4">点击按钮进行一次试验，观察各点数频次与总次数，理解频率趋近于概率。</p>
-                  <div class="grid grid-cols-3 gap-3 text-sm">
-                    <div class="bg-gray-800/50 p-3 rounded border border-gray-700">总次数：<span id="dice-total" class="text-neon-blue">0</span></div>
-                    <div class="bg-gray-800/50 p-3 rounded border border-gray-700">最近结果：<span id="dice-last" class="text-neon-blue">-</span></div>
-                    <div class="flex items-center gap-2">
-                      <button id="dice-roll" class="bg-neon-blue text-dark-bg px-3 py-2 rounded hover:bg-neon-blue/80 transition-colors">掷一次</button>
-                      <button id="dice-reset" class="bg-gray-700 text-white px-3 py-2 rounded hover:bg-gray-600 transition-colors">重置</button>
-                    </div>
-                  </div>
-                  <div class="mt-4 grid grid-cols-3 md:grid-cols-6 gap-3 text-sm">
-                    <div class="bg-gray-800/50 p-3 rounded border border-gray-700 text-center">1：<span id="dice-count-1" class="text-gray-300">0</span></div>
-                    <div class="bg-gray-800/50 p-3 rounded border border-gray-700 text-center">2：<span id="dice-count-2" class="text-gray-300">0</span></div>
-                    <div class="bg-gray-800/50 p-3 rounded border border-gray-700 text-center">3：<span id="dice-count-3" class="text-gray-300">0</span></div>
-                    <div class="bg-gray-800/50 p-3 rounded border border-gray-700 text-center">4：<span id="dice-count-4" class="text-gray-300">0</span></div>
-                    <div class="bg-gray-800/50 p-3 rounded border border-gray-700 text-center">5：<span id="dice-count-5" class="text-gray-300">0</span></div>
-                    <div class="bg-gray-800/50 p-3 rounded border border-gray-700 text-center">6：<span id="dice-count-6" class="text-gray-300">0</span></div>
-                  </div>
-                </div>
-                <div class="bg-dark-card border border-gray-800 rounded-xl p-6 fx-holo fx-ambient accent-cyan h-full flex flex-col">
-                  <h3 class="font-semibold mb-3">1.2 其他确定方法</h3>
-                  <ul class="text-gray-400 text-sm space-y-2">
-                    <li>• 古典方法：有限样本空间中等可能性假设。</li>
-                    <li>• 几何方法：区域面积（体积）比例。</li>
-                    <li>• 主观方法：先验信息与专家判断。</li>
-                  </ul>
-                </div>
-              </div>
-            </section>
-
-            <!-- 小节3：概率的性质（对齐 1.3） -->
-            <section id="sec-1-3" class="scroll-mt-20">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-                <div class="bg-dark-card border border-gray-800 rounded-xl p-6 fx-holo fx-ambient accent-purple h-full flex flex-col">
-                  <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 rounded-lg bg-neon-purple/10 flex items-center justify-center mr-3">
-                      <i class="fa fa-diagram-project text-neon-purple"></i>
-                    </div>
-                    <h2 class="text-xl font-semibold">1.3 概率的性质</h2>
-                  </div>
-                  <p class="text-gray-300 text-sm mb-4">事件之间可做并、交与补运算；概率满足非负性、规范化与可列可加性等基础公理。</p>
-                  <ul class="text-gray-400 text-sm space-y-2">
-                    <li>• 并集：<span class="text-gray-300">A ∪ B</span> 表示「发生 A 或 B」</li>
-                    <li>• 交集：<span class="text-gray-300">A ∩ B</span> 表示「同时发生」</li>
-                    <li>• 补集：<span class="text-gray-300">A<sup>c</sup></span> 表示「不发生 A」</li>
-                    <li>• 概率公理：<span class="text-gray-300">0 ≤ P(A) ≤ 1，P(Ω)=1</span>；互不相容事件的和率等于概率之和</li>
-                  </ul>
-                  <div class="bg-gray-800/40 rounded p-3 mt-3 text-center text-gray-300 formula-scroll">$$P(A \cup B) = P(A) + P(B) - P(A \cap B)$$</div>
-                </div>
-                <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6 fx-holo fx-ambient accent-pink h-full flex flex-col">
-                  <h3 class="font-semibold mb-3">课堂要点</h3>
-                  <div class="text-gray-400 text-sm space-y-2">
-                    <p>• 用韦恩图直观理解并、交、补的空间关系。</p>
-                    <p>• 理解互斥与独立的区别：互斥 <span class="text-gray-300">A ∩ B = ∅</span>；独立 <span class="text-gray-300">P(A∩B)=P(A)P(B)</span>。</p>
-                    <p>• 练习：给定骰子试验，计算 <span class="text-gray-300">P(偶数)、P(≥4)、P(偶数∩≥4)</span>。</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <!-- 小节4：条件概率（对齐 1.4） -->
-            <section id="sec-1-4" class="scroll-mt-20">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-                <div class="bg-dark-card border border-gray-800 rounded-xl p-6 fx-holo fx-ambient accent-lime h-full flex flex-col">
-                  <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 rounded-lg bg-neon-green/10 flex items-center justify-center mr-3">
-                      <i class="fa fa-diagram-next text-neon-green"></i>
-                    </div>
-                    <h2 class="text-xl font-semibold">1.4 条件概率</h2>
-                  </div>
-                  <p class="text-gray-300 text-sm mb-4">条件概率定义为 <span class="text-neon-blue">P(A|B) = \(\frac{P(A\cap B)}{P(B)}\)</span>（<span class="text-gray-400">要求 P(B) &gt; 0</span>）。独立性可理解为「条件概率不改变原概率」。</p>
-                  <ul class="text-gray-400 text-sm space-y-2">
-                    <li>• 全概率公式：<span class="text-gray-300">P(A)=\(\sum_i P(A|B_i)P(B_i)\)</span></li>
-                    <li>• 贝叶斯公式：<span class="text-gray-300">P(B_i|A)=\(\frac{P(A|B_i)P(B_i)}{\sum_j P(A|B_j)P(B_j)}\)</span></li>
-                  </ul>
-                </div>
-                <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6 fx-holo fx-ambient accent-pink h-full flex flex-col">
-                  <h3 class="font-semibold mb-3">条件概率计算器</h3>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                    <label class="flex flex-col">
-                      <span class="text-gray-400 mb-1">P(A∩B)</span>
-                      <input id="pAB" type="number" step="0.0001" min="0" max="1" class="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white" placeholder="例如 0.25" />
-                    </label>
-                    <label class="flex flex-col">
-                      <span class="text-gray-400 mb-1">P(B)</span>
-                      <input id="pB" type="number" step="0.0001" min="0" max="1" class="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white" placeholder="例如 0.5" />
-                    </label>
-                    <label class="flex flex-col md:col-span-2">
-                      <span class="text-gray-400 mb-1">（可选）P(A)</span>
-                      <input id="pA" type="number" step="0.0001" min="0" max="1" class="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white" placeholder="用于独立性粗判，例如 0.5" />
-                    </label>
-                    <div class="md:col-span-2 flex items-center gap-2">
-                      <button id="cond-calc" class="bg-neon-green text-dark-bg px-3 py-2 rounded hover:bg-neon-green/80 transition-colors">计算</button>
-                      <span id="cond-result" class="text-gray-300"></span>
-                    </div>
-                    <div class="md:col-span-2 text-gray-400" id="ind-result"></div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <!-- 小节5：独立性（对齐 1.5） -->
-            <section id="sec-1-5" class="scroll-mt-20">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-                <div class="bg-dark-card border border-gray-800 rounded-xl p-6 fx-holo fx-ambient accent-cyan h-full flex flex-col">
-                  <div class="flex items-center mb-4">
-                    <div class="w-10 h-10 rounded-lg bg-neon-blue/10 flex items-center justify-center mr-3">
-                      <i class="fa fa-shuffle text-neon-blue"></i>
-                    </div>
-                    <h2 class="text-xl font-semibold">1.5 独立性</h2>
-                  </div>
-                  <p class="text-gray-300 text-sm mb-4">两个事件的独立性指 <span class="text-gray-300">P(A∩B)=P(A)P(B)</span>。可通过比较 <span class="text-gray-300">P(A|B)</span> 与 <span class="text-gray-300">P(A)</span> 判断是否近似独立。</p>
-                  <div class="text-gray-400 text-sm">配合上方计算器给出独立性判断结果。</div>
-                </div>
-                <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6 fx-holo fx-ambient accent-purple h-full flex flex-col">
-                  <h3 class="font-semibold mb-3">示例与练习</h3>
-                  <ul class="text-gray-400 text-sm space-y-2">
-                    <li>• 掷骰子试验中事件「偶数」与「≥4」不独立。</li>
-                    <li>• 抽样试验中有放回与无放回对独立性的影响。</li>
-                  </ul>
-                </div>
-              </div>
-            </section>
+      <section
+        id="sec-1-3"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-3 sm:p-4 mb-4">
+          <div class="flex items-center gap-2">
+            <button id="gacha-tab-experience" class="mode-tab active">
+              抽卡体验
+            </button>
+            <button id="gacha-tab-experiment" class="mode-tab">批量实验</button>
+            <button id="gacha-tab-theory" class="mode-tab">理论讲解</button>
           </div>
         </div>
-      </main>
-      </main>
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="flex flex-col lg:flex-row gap-8">
+            <div class="w-full lg:w-72">
+              <div class="space-y-5">
+                <div class="text-lg font-semibold">抽卡/盲盒概率实验台</div>
+                <div
+                  id="gacha-param-header"
+                  class="tool-header bg-dark-bg rounded-lg p-4 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer flex items-center justify-between"
+                >
+                  <div class="font-medium">参数调节面板</div>
+                  <i
+                    class="fa fa-chevron-down text-gray-400 transition-transform duration-300"
+                    id="gacha-param-chevron"
+                  ></i>
+                </div>
+                <div
+                  id="gacha-param-content"
+                  class="tool-content mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                >
+                  <div class="mb-3 text-sm text-gray-300">
+                    点击标题可收起/展开；点击“保存”则收起并在下方显示参数汇总。
+                  </div>
+                  <div>
+                    <div class="mb-2 text-sm flex items-center justify-between">
+                      <span>5★基础概率 p5 (%)</span
+                      ><span id="gacha-p5-val" class="param-val">0.6%</span>
+                    </div>
+                    <input
+                      id="gacha-p5"
+                      type="range"
+                      min="0"
+                      max="5"
+                      step="0.1"
+                      value="0.6"
+                      class="w-full accent-neon-purple"
+                    />
+                  </div>
+                  <div>
+                    <div class="mb-2 text-sm flex items-center justify-between">
+                      <span>4★基础概率 p4 (%)</span
+                      ><span id="gacha-p4-val" class="param-val">5.1%</span>
+                    </div>
+                    <input
+                      id="gacha-p4"
+                      type="range"
+                      min="0"
+                      max="20"
+                      step="0.1"
+                      value="5.1"
+                      class="w-full accent-neon-green"
+                    />
+                  </div>
+                  <div>
+                    <div class="mb-2 text-sm flex items-center justify-between">
+                      <span>5★保底阈值</span
+                      ><span id="gacha-pity5-val" class="param-val">90</span>
+                    </div>
+                    <input
+                      id="gacha-pity5"
+                      type="range"
+                      min="1"
+                      max="200"
+                      value="90"
+                      class="w-full accent-neon-blue"
+                    />
+                  </div>
+                  <div>
+                    <div class="mb-2 text-sm flex items-center justify-between">
+                      <span>4★保底阈值</span
+                      ><span id="gacha-pity4-val" class="param-val">10</span>
+                    </div>
+                    <input
+                      id="gacha-pity4"
+                      type="range"
+                      min="1"
+                      max="50"
+                      value="10"
+                      class="w-full accent-neon-blue"
+                    />
+                  </div>
+                  <div>
+                    <div class="mb-2 text-sm flex items-center justify-between">
+                      <span>限定概率（50/50） (%)</span
+                      ><span id="gacha-featured-val" class="param-val"
+                        >50%</span
+                      >
+                    </div>
+                    <input
+                      id="gacha-featured"
+                      type="range"
+                      min="0"
+                      max="100"
+                      value="50"
+                      class="w-full accent-neon-purple"
+                    />
+                  </div>
+                  <div>
+                    <div class="mb-2 text-sm flex items-center justify-between">
+                      <span>连续抽 N 次</span
+                      ><span id="gacha-n-val" class="param-val">90</span>
+                    </div>
+                    <input
+                      id="gacha-n"
+                      type="range"
+                      min="1"
+                      max="200"
+                      value="90"
+                      class="w-full accent-neon-blue"
+                    />
+                  </div>
+                  <div>
+                    <div class="mb-2 text-sm flex items-center justify-between">
+                      <span>单抽价格 (¥)</span
+                      ><span id="gacha-cost-val" class="param-val">¥16</span>
+                    </div>
+                    <input
+                      id="gacha-cost"
+                      type="range"
+                      min="1"
+                      max="100"
+                      value="16"
+                      class="w-full accent-neon-purple"
+                    />
+                  </div>
+                  <div class="mt-3 flex justify-end">
+                    <button
+                      id="gacha-param-save"
+                      class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                    >
+                      保存
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="gacha-param-summary"
+                  class="hidden mt-2 p-4 bg-dark-bg rounded-lg border border-gray-700"
+                >
+                  <div class="text-sm text-gray-300 mb-2">参数汇总</div>
+                  <div
+                    class="flex flex-wrap gap-2"
+                    id="gacha-param-summary-items"
+                  ></div>
+                </div>
+                <div id="gacha-ops" class="flex flex-wrap gap-2">
+                  <button
+                    id="gacha-run-1"
+                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                  >
+                    运行一次
+                  </button>
+                  <button
+                    id="gacha-single"
+                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                  >
+                    单抽
+                  </button>
+                  <button
+                    id="gacha-ten"
+                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                  >
+                    十连
+                  </button>
+                  <button
+                    id="gacha-run-100"
+                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                  >
+                    批量100次
+                  </button>
+                  <button
+                    id="gacha-run-1000"
+                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                  >
+                    批量1000次
+                  </button>
+                  <button
+                    id="gacha-reset"
+                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                  >
+                    清空
+                  </button>
+                </div>
+                <div
+                  class="grid grid-cols-2 gap-3 text-sm mode-experiment-only hidden"
+                >
+                  <div
+                    class="rounded-xl border border-gray-800 bg-dark-bg/50 p-4 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-1"
+                  >
+                    <div>理论命中 P(≥1)</div>
+                    <div id="gacha-theory" class="text-neon-blue text-lg">
+                      0.00
+                    </div>
+                  </div>
+                  <div
+                    class="rounded-xl border border-gray-800 bg-dark-bg/50 p-4 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-1"
+                  >
+                    <div>频率估计</div>
+                    <div id="gacha-freq" class="text-neon-purple text-lg">
+                      0.00
+                    </div>
+                  </div>
+                  <div
+                    class="rounded-xl border border-gray-800 bg-dark-bg/50 p-4 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-1"
+                  >
+                    <div>期望抽数 (近似)</div>
+                    <div id="gacha-exp" class="text-lg">0</div>
+                  </div>
+                  <div
+                    class="rounded-xl border border-gray-800 bg-dark-bg/50 p-4 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-1"
+                  >
+                    <div>成本估计</div>
+                    <div id="gacha-cost-view" class="text-lg">¥0</div>
+                  </div>
+                </div>
+                <div
+                  class="rounded-lg border border-white/10 bg-white/5 p-3 text-sm mt-3 mode-experience-only"
+                >
+                  <div class="flex flex-wrap gap-2 items-center">
+                    <span class="param-val"
+                      >抽奖次数 <span id="gacha-count">0</span></span
+                    >
+                    <span class="param-val"
+                      >4★保底 <span id="gacha-pity4">0</span></span
+                    >
+                    <span class="param-val"
+                      >5★保底 <span id="gacha-pity5">0</span></span
+                    >
+                    <span class="param-val"
+                      >距大保底 <span id="gacha-da">90</span></span
+                    >
+                  </div>
+                </div>
+                <div
+                  class="rounded-lg border border-white/10 bg-white/5 p-3 text-sm mode-experience-only"
+                >
+                  <div>幸运度</div>
+                  <div id="gacha-luck" class="mt-1 text-neon-green">—</div>
+                </div>
+                <div class="text-xs text-gray-300">
+                  前提：独立同分布或条件独立（按策略
+                  p_t）。递增保底为随抽次变动的概率；截断几何为第 k 抽保证命中。
+                </div>
+              </div>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-2 mode-hide-in-theory">
+                <span class="text-xs text-gray-300">图像视图</span>
+                <button
+                  id="gacha-view-4plus"
+                  class="px-2 py-1 rounded-md border border-white/15 bg-white/5"
+                >
+                  ≥4★
+                </button>
+                <button
+                  id="gacha-view-5"
+                  class="px-2 py-1 rounded-md border border-white/15 bg-white/5"
+                >
+                  只看5★
+                </button>
+              </div>
+              <div
+                class="grid grid-cols-1 md:grid-cols-2 gap-4 mode-hide-in-theory"
+              >
+                <div class="mode-experience-only">
+                  <div class="text-sm text-gray-300 mb-2">
+                    星级统计（次数/概率）
+                  </div>
+                  <div
+                    class="h-64 w-full rounded-xl bg-dark-card/60 p-3 overflow-auto"
+                  >
+                    <table
+                      class="w-full text-sm border border-white/10 rounded-xl overflow-hidden stats-table"
+                    >
+                      <thead>
+                        <tr>
+                          <th class="p-2">星级</th>
+                          <th class="p-2">次数</th>
+                          <th class="p-2">概率</th>
+                          <th class="p-2">理论概率</th>
+                        </tr>
+                      </thead>
+                      <tbody id="gacha-stars-table"></tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="mode-experiment-only hidden">
+                  <div class="text-sm text-gray-300 mb-2">
+                    实验结果记录（按批次）
+                  </div>
+                  <div class="h-64 w-full rounded-xl bg-dark-card/60">
+                    <canvas id="gacha-sessions"></canvas>
+                  </div>
+                </div>
+                <div class="mode-experience-only">
+                  <div class="text-sm text-gray-300 mb-2">保底进度时间轴</div>
+                  <div class="h-64 w-full rounded-xl bg-dark-card/60">
+                    <canvas id="gacha-pity"></canvas>
+                  </div>
+                </div>
+                <div class="mode-experiment-only hidden">
+                  <div class="text-sm text-gray-300 mb-2">
+                    命中率收敛（观察 vs 时序理论）
+                  </div>
+                  <div class="h-64 w-full rounded-xl bg-dark-card/60">
+                    <canvas id="gacha-conv"></canvas>
+                  </div>
+                </div>
+                <div>
+                  <div class="text-sm text-gray-300 mb-2">首次命中抽数分布</div>
+                  <div class="h-64 w-full rounded-xl bg-dark-card/60">
+                    <canvas id="gacha-hist"></canvas>
+                  </div>
+                </div>
+                <div>
+                  <div class="text-sm text-gray-300 mb-2">概率调度曲线</div>
+                  <div class="h-64 w-full rounded-xl bg-dark-card/60">
+                    <canvas id="gacha-prob"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="gacha-log mt-3 mode-experience-only">
+                <div class="text-sm text-gray-300 mb-2">抽卡日志</div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                  <div>
+                    <table
+                      class="w-full text-sm border border-white/10 rounded-xl overflow-hidden table-sum4"
+                    >
+                      <thead>
+                        <tr>
+                          <th colspan="3" class="p-2">4★汇总</th>
+                        </tr>
+                        <tr>
+                          <th class="p-2">次数</th>
+                          <th class="p-2">星级</th>
+                          <th class="p-2">结果</th>
+                        </tr>
+                      </thead>
+                      <tbody id="gacha-sum4"></tbody>
+                    </table>
+                  </div>
+                  <div>
+                    <table
+                      class="w-full text-sm border border-white/10 rounded-xl overflow-hidden"
+                    >
+                      <thead>
+                        <tr>
+                          <th class="p-2">次数</th>
+                          <th class="p-2">星级</th>
+                          <th class="p-2">是否命中</th>
+                          <th class="p-2">随机数</th>
+                        </tr>
+                      </thead>
+                      <tbody id="gacha-log-table"></tbody>
+                    </table>
+                  </div>
+                  <div>
+                    <table
+                      class="w-full text-sm border border-white/10 rounded-xl overflow-hidden table-sum5"
+                    >
+                      <thead>
+                        <tr>
+                          <th colspan="3" class="p-2">5★汇总</th>
+                        </tr>
+                        <tr>
+                          <th class="p-2">次数</th>
+                          <th class="p-2">星级</th>
+                          <th class="p-2">是否限定</th>
+                        </tr>
+                      </thead>
+                      <tbody id="gacha-sum5"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="w-full lg:w-80 mode-theory-only hidden">
+              <div class="text-lg font-semibold mb-3">讲解面板</div>
+              <div
+                id="gacha-formula"
+                class="rounded-xl border border-white/10 bg-white/5 p-3"
+              ></div>
+              <div
+                class="mt-3 rounded-xl border border-white/10 bg-white/5 p-3"
+              >
+                <div class="text-sm text-gray-300 mb-2">教材与视频</div>
+                <div class="text-xs text-gray-400 mb-2">
+                  参阅教材：
+                  <a
+                    href="../docs/概率导论 (Dimitri Bertsekas) (Z-Library).pdf"
+                    class="text-neon-blue underline"
+                    target="_blank"
+                    >概率导论（Bertsekas）</a
+                  >
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    id="gacha-video-url"
+                    type="text"
+                    placeholder="粘贴视频地址（如 mp4 或嵌入链接）"
+                    class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-neon-blue"
+                  />
+                  <button
+                    id="gacha-video-load"
+                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
+                  >
+                    加载视频
+                  </button>
+                </div>
+                <div
+                  id="gacha-video-slot"
+                  class="mt-2 rounded-lg overflow-hidden bg-black/30"
+                  style="min-height: 180px"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-8 glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <h3 class="text-xl font-semibold mb-3">历史介绍</h3>
+          <ul class="list-disc pl-6 space-y-2 text-gray-200">
+            <li>
+              “扭蛋/抽卡”源于日本的胶囊玩具文化，现代手游引入“保底”以缓解极端不幸体验。
+            </li>
+            <li>
+              概率中的补事件与加法公式是基础性质，帮助用“至少一次命中”解释直觉问题。
+            </li>
+          </ul>
+        </div>
+      </section>
 
       <!-- 页脚占位容器，将由 partial 注入 -->
-      <div id="site-footer"></div>
+      <div id="site-footer" class="mt-24"></div>
     </div>
 
     <!-- 页面交互脚本（抽取为独立文件，便于复用） -->
@@ -265,18 +783,18 @@
     <script src="../static/js/include-footer.js"></script>
     <!-- 启动 KaTeX 自动渲染（参考 hypothesis_testing 页面） -->
     <script>
-      document.addEventListener('DOMContentLoaded', function(){
+      document.addEventListener("DOMContentLoaded", function () {
         try {
           renderMathInElement(document.body, {
             delimiters: [
-              {left: '$$', right: '$$', display: true},
-              {left: '\\(', right: '\\)', display: false},
-              {left: '$', right: '$', display: false}
+              { left: "$$", right: "$$", display: true },
+              { left: "\\(", right: "\\)", display: false },
+              { left: "$", right: "$", display: false },
             ],
-            throwOnError: false
+            throwOnError: false,
           });
-        } catch(e) {
-          console.warn('KaTeX render init failed:', e);
+        } catch (e) {
+          console.warn("KaTeX render init failed:", e);
         }
       });
     </script>

@@ -1,0 +1,451 @@
+/* 章节页未来感背景与卡片光效（仅当前页面） */
+body {
+  background: radial-gradient(
+      1200px 500px at 10% 0%,
+      rgba(34, 211, 238, 0.06),
+      transparent
+    ),
+    radial-gradient(
+      1000px 500px at 90% 0%,
+      rgba(167, 139, 250, 0.06),
+      transparent
+    ),
+    linear-gradient(180deg, #0b1220, #121725);
+}
+/* 全屏噪声画布层 */
+#bg-noise {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  filter: brightness(var(--noise-brightness, 0.9))
+    contrast(var(--noise-contrast, 1.05));
+}
+/* 顶部叠加渐变，增强层次且避免纯像素噪声刺眼 */
+.bg-overlay::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+      1000px 500px at 10% 0%,
+      rgba(34, 211, 238, 0.06),
+      transparent
+    ),
+    radial-gradient(
+      800px 400px at 90% 0%,
+      rgba(167, 139, 250, 0.06),
+      transparent
+    );
+  mix-blend-mode: screen;
+}
+/* 玻璃态卡片，透明度 0.85 */
+.glass-card {
+  background: rgba(15, 23, 48, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+/* 标题文本渐变与阴影 */
+.title-gradient {
+  background: linear-gradient(90deg, hsl(220 70% 70%), hsl(270 70% 70%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 6px 24px rgba(103, 232, 249, 0.15);
+  animation: hueShift 8s linear infinite alternate;
+}
+.hero-title {
+  font-size: clamp(2rem, 6vw, 4rem);
+}
+.subtitle {
+  color: rgba(226, 232, 240, 0.9);
+  text-shadow: 0 2px 10px rgba(34, 211, 238, 0.12);
+}
+.hero-subtitle {
+  font-size: clamp(1rem, 2.8vw, 1.35rem);
+}
+@keyframes hueShift {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(35deg);
+  }
+}
+.fx-holo {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    rgba(17, 24, 39, 0.75),
+    rgba(31, 41, 55, 0.7)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 28px rgba(34, 211, 238, 0.08),
+    0 12px 32px rgba(167, 139, 250, 0.08);
+}
+.fx-holo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+      800px 300px at 15% 0%,
+      rgba(34, 211, 238, 0.03),
+      transparent
+    ),
+    radial-gradient(
+      700px 300px at 85% 0%,
+      rgba(167, 139, 250, 0.03),
+      transparent
+    );
+  mix-blend-mode: screen;
+}
+.fx-holo:hover {
+  box-shadow: 0 10px 35px rgba(34, 211, 238, 0.12),
+    0 16px 45px rgba(167, 139, 250, 0.12);
+}
+
+/* 1.3 抽卡实验台：缩小滑动条视觉尺寸 */
+#sec-1-3 input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 22px;
+}
+#sec-1-3 input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+#sec-1-3 input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  margin-top: -5px;
+}
+#sec-1-3 input[type="range"]::-moz-range-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+#sec-1-3 input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* 1.3 抽卡实验台：增大图表区域高度（CSS层面） */
+#sec-1-3 .gacha-canvas {
+  height: 280px;
+}
+
+/* 轻量 Python 代码高亮（用于公式/代码功能框） */
+.code-py {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  border-radius: 10px;
+  overflow: auto;
+}
+.code-py .py-kw {
+  color: var(--neon-purple, #bf00ff);
+}
+.code-py .py-com {
+  color: rgba(229, 231, 235, 0.6);
+  font-style: italic;
+}
+.code-py .py-str {
+  color: var(--neon-green, #00ff66);
+}
+.code-py .py-num {
+  color: #f59e0b;
+}
+.param-val {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+}
+.fx-ambient {
+  backdrop-filter: blur(8px);
+}
+.fx-title-glow {
+  text-shadow: 0 0 10px rgba(103, 232, 249, 0.35);
+}
+/* 多色霓虹主题（打破单调） */
+.accent-cyan.fx-holo {
+  box-shadow: 0 10px 35px rgba(34, 211, 238, 0.2),
+    0 16px 40px rgba(34, 211, 238, 0.1);
+}
+.accent-purple.fx-holo {
+  box-shadow: 0 10px 35px rgba(167, 139, 250, 0.2),
+    0 16px 40px rgba(167, 139, 250, 0.1);
+}
+.accent-pink.fx-holo {
+  box-shadow: 0 10px 35px rgba(236, 72, 153, 0.22),
+    0 16px 40px rgba(236, 72, 153, 0.12);
+}
+.accent-lime.fx-holo {
+  box-shadow: 0 10px 35px rgba(163, 230, 53, 0.22),
+    0 16px 40px rgba(163, 230, 53, 0.12);
+}
+.accent-amber.fx-holo {
+  box-shadow: 0 10px 35px rgba(245, 158, 11, 0.22),
+    0 16px 40px rgba(245, 158, 11, 0.12);
+}
+.accent-cyan .fx-title-glow {
+  text-shadow: 0 0 12px rgba(34, 211, 238, 0.45);
+}
+.accent-purple .fx-title-glow {
+  text-shadow: 0 0 12px rgba(167, 139, 250, 0.45);
+}
+.accent-pink .fx-title-glow {
+  text-shadow: 0 0 12px rgba(236, 72, 153, 0.45);
+}
+.accent-lime .fx-title-glow {
+  text-shadow: 0 0 12px rgba(163, 230, 53, 0.45);
+}
+.accent-amber .fx-title-glow {
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+}
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+:root {
+  --dark-bg: #0f172a;
+  --dark-card: #1e293b;
+  --neon-blue: #00f3ff;
+  --neon-purple: #bf00ff;
+  --neon-green: #00ff66;
+  --noise-brightness: 1.5;
+  --noise-contrast: 1.05;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.font-future {
+  font-family: "Roboto", sans-serif;
+  letter-spacing: 0.05em;
+}
+.text-neon-blue {
+  color: var(--neon-blue);
+}
+.text-neon-purple {
+  color: var(--neon-purple);
+}
+.text-neon-green {
+  color: var(--neon-green);
+}
+.bg-neon-blue {
+  background-color: var(--neon-blue);
+}
+.bg-neon-purple {
+  background-color: var(--neon-purple);
+}
+.bg-neon-green {
+  background-color: var(--neon-green);
+}
+.bg-dark-bg {
+  background-color: var(--dark-bg);
+}
+.bg-dark-card {
+  background-color: var(--dark-card);
+}
+
+.message-content {
+  line-height: 1.6;
+}
+.message-content h1,
+.message-content h2,
+.message-content h3,
+.message-content h4,
+.message-content h5,
+.message-content h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.message-content p {
+  margin-bottom: 1rem;
+}
+.message-content ul,
+.message-content ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+.message-content li {
+  margin-bottom: 0.25rem;
+}
+.message-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  background-color: rgba(30, 41, 59, 0.5);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.message-content th,
+.message-content td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.message-content th {
+  background-color: rgba(0, 243, 255, 0.1);
+  font-weight: 600;
+  color: #00f3ff;
+}
+.message-content code {
+  background-color: rgba(30, 41, 59, 0.8);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-family: "Courier New", monospace;
+  color: #00ff66;
+}
+.message-content pre {
+  background-color: rgba(30, 41, 59, 0.8);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+.message-content pre code {
+  background: none;
+  padding: 0;
+}
+.message-content blockquote {
+  border-left: 4px solid #00f3ff;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: #cbd5e1;
+}
+.message-content .katex {
+  color: #e5e7eb !important;
+}
+.message-content .katex-display {
+  margin: 1rem 0;
+}
+
+.formula-scroll {
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.formula-scroll .katex-display {
+  display: inline-block;
+  min-width: max-content;
+}
+.formula-scroll .katex-html {
+  display: inline-block;
+  min-width: max-content;
+}
+
+.accent-neon-blue {
+  accent-color: var(--neon-blue);
+}
+.accent-neon-purple {
+  accent-color: var(--neon-purple);
+}
+.accent-neon-green {
+  accent-color: var(--neon-green);
+}
+.clip-path-slant {
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+}
+.bg-grid {
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.hidden {
+  display: none;
+}
+
+#particles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: float 15s infinite ease-in-out;
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-30px) translateX(15px);
+  }
+  50% {
+    transform: translateY(-15px) translateX(-15px);
+  }
+  75% {
+    transform: translateY(30px) translateX(15px);
+  }
+}
+.gacha-log {
+  max-height: 380px;
+  overflow: auto;
+}
+.gacha-log table thead th {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e5e7eb;
+}
+.gacha-log table tbody tr.jin {
+  background-color: rgba(245, 158, 11, 0.12);
+}
+.gacha-log table tbody tr.zhi {
+  background-color: rgba(167, 139, 250, 0.12);
+}
+
+.mode-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  color: #e5e7eb;
+}
+.stats-table thead th {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e5e7eb;
+}
+.mode-tab.active {
+  background: rgba(0, 243, 255, 0.15);
+  border-color: rgba(0, 243, 255, 0.4);
+  color: #00f3ff;
+}
+.gacha-log .table-sum4 {
+  background-color: rgba(167, 139, 250, 0.08);
+}
+.gacha-log .table-sum5 {
+  background-color: rgba(245, 158, 11, 0.08);
+}
