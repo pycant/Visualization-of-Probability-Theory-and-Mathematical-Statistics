@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="../static/libs/katex/css/katex.min.css" />
     <script src="../static/libs/katex/js/katex.min.js"></script>
     <script src="../static/libs/katex/js/auto-render.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="../static/libs/chart/chart.umd.min.js"></script>
     <link rel="icon" href="../static/images/favicon.ico" />
     <link rel="stylesheet" href="../static/css/chapter1.css" />
     <style type="text/tailwindcss">
@@ -343,7 +343,7 @@
         </div>
         <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
           <div class="flex flex-col lg:flex-row gap-8">
-            <div class="w-full lg:w-72">
+            <div class="w-full lg:w-72 mode-hide-in-theory">
               <div class="space-y-5">
                 <div class="text-lg font-semibold">抽卡/盲盒概率实验台</div>
                 <div
@@ -522,38 +522,53 @@
                     清空
                   </button>
                 </div>
-                <div
-                  class="grid grid-cols-2 gap-3 text-sm mode-experiment-only hidden"
-                >
-                  <div
-                    class="rounded-xl border border-gray-800 bg-dark-bg/50 p-4 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-1"
-                  >
-                    <div>理论命中 P(≥1)</div>
-                    <div id="gacha-theory" class="text-neon-blue text-lg">
-                      0.00
+                <!-- 基础统计仪表盘 - 紧凑版 -->
+                <div class="mode-experiment-only hidden mb-4">
+                  <div class="text-sm text-gray-300 mb-2 font-medium">
+                    基础统计
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 text-sm">
+                    <div
+                      class="rounded-lg border border-gray-800 bg-dark-bg/50 p-3 hover:border-neon-green transition-all duration-300"
+                    >
+                      <div class="text-xs text-gray-400">理论命中 P(≥1)</div>
+                      <div
+                        id="gacha-theory"
+                        class="text-neon-blue text-base font-semibold"
+                      >
+                        0.00
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    class="rounded-xl border border-gray-800 bg-dark-bg/50 p-4 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-1"
-                  >
-                    <div>频率估计</div>
-                    <div id="gacha-freq" class="text-neon-purple text-lg">
-                      0.00
+                    <div
+                      class="rounded-lg border border-gray-800 bg-dark-bg/50 p-3 hover:border-neon-green transition-all duration-300"
+                    >
+                      <div class="text-xs text-gray-400">频率估计</div>
+                      <div
+                        id="gacha-freq"
+                        class="text-neon-purple text-base font-semibold"
+                      >
+                        0.00
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    class="rounded-xl border border-gray-800 bg-dark-bg/50 p-4 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-1"
-                  >
-                    <div>期望抽数 (近似)</div>
-                    <div id="gacha-exp" class="text-lg">0</div>
-                  </div>
-                  <div
-                    class="rounded-xl border border-gray-800 bg-dark-bg/50 p-4 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-1"
-                  >
-                    <div>成本估计</div>
-                    <div id="gacha-cost-view" class="text-lg">¥0</div>
+                    <div
+                      class="rounded-lg border border-gray-800 bg-dark-bg/50 p-3 hover:border-neon-green transition-all duration-300"
+                    >
+                      <div class="text-xs text-gray-400">期望抽数</div>
+                      <div id="gacha-exp" class="text-base font-semibold">
+                        0
+                      </div>
+                    </div>
+                    <div
+                      class="rounded-lg border border-gray-800 bg-dark-bg/50 p-3 hover:border-neon-green transition-all duration-300"
+                    >
+                      <div class="text-xs text-gray-400">成本估计</div>
+                      <div id="gacha-cost-view" class="text-base font-semibold">
+                        ¥0
+                      </div>
+                    </div>
                   </div>
                 </div>
+
                 <div
                   class="rounded-lg border border-white/10 bg-white/5 p-3 text-sm mt-3 mode-experience-only"
                 >
@@ -584,7 +599,7 @@
                 </div>
               </div>
             </div>
-            <div class="flex-1">
+            <div class="flex-1 mode-hide-in-theory">
               <div class="flex items-center gap-2 mb-2 mode-hide-in-theory">
                 <span class="text-xs text-gray-300">图像视图</span>
                 <button
@@ -600,6 +615,7 @@
                   只看5★
                 </button>
               </div>
+              <!-- 主要图表显示区域 -->
               <div
                 class="grid grid-cols-1 md:grid-cols-2 gap-4 mode-hide-in-theory"
               >
@@ -608,7 +624,7 @@
                     星级统计（次数/概率）
                   </div>
                   <div
-                    class="h-64 w-full rounded-xl bg-dark-card/60 p-3 overflow-auto"
+                    class="h-64 w-full rounded-xl bg-dark-card/60 p-3 overflow-auto mt-2"
                   >
                     <table
                       class="w-full text-sm border border-white/10 rounded-xl overflow-hidden stats-table"
@@ -660,6 +676,204 @@
                   </div>
                 </div>
               </div>
+              <!-- 实验模式仪表盘区域 -->
+              <div class="mode-experiment-only hidden mb-6">
+                <!-- 五星角色花费统计仪表盘 -->
+                <div class="mb-6">
+                  <div class="text-sm text-gray-300 mb-3 font-medium">
+                    五星角色获取统计
+                  </div>
+                  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
+                    <div
+                      class="rounded-xl border border-amber-800/50 bg-amber-900/20 p-4 hover:border-amber-600 transition-all duration-300"
+                    >
+                      <div class="text-amber-200">平均5★花费 (实验)</div>
+                      <div
+                        id="gacha-avg-cost-5star-exp"
+                        class="text-amber-400 text-lg font-bold"
+                      >
+                        ¥0
+                      </div>
+                      <div class="text-xs text-amber-300 mt-1">
+                        基于实验数据
+                      </div>
+                    </div>
+                    <div
+                      class="rounded-xl border border-amber-800/50 bg-amber-900/20 p-4 hover:border-amber-600 transition-all duration-300"
+                    >
+                      <div class="text-amber-200">平均5★花费 (理论)</div>
+                      <div
+                        id="gacha-avg-cost-5star-theory"
+                        class="text-amber-400 text-lg font-bold"
+                      >
+                        ¥0
+                      </div>
+                      <div class="text-xs text-amber-300 mt-1">理论期望值</div>
+                    </div>
+                    <div
+                      class="rounded-xl border border-purple-800/50 bg-purple-900/20 p-4 hover:border-purple-600 transition-all duration-300"
+                    >
+                      <div class="text-purple-200">限定5★花费 (实验)</div>
+                      <div
+                        id="gacha-avg-cost-featured-exp"
+                        class="text-purple-400 text-lg font-bold"
+                      >
+                        ¥0
+                      </div>
+                      <div class="text-xs text-purple-300 mt-1">
+                        考虑50/50机制
+                      </div>
+                    </div>
+                    <div
+                      class="rounded-xl border border-purple-800/50 bg-purple-900/20 p-4 hover:border-purple-600 transition-all duration-300"
+                    >
+                      <div class="text-purple-200">限定5★花费 (理论)</div>
+                      <div
+                        id="gacha-avg-cost-featured-theory"
+                        class="text-purple-400 text-lg font-bold"
+                      >
+                        ¥0
+                      </div>
+                      <div class="text-xs text-purple-300 mt-1">理论期望值</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 实验统计仪表盘 -->
+                <div class="mb-6">
+                  <div class="text-sm text-gray-300 mb-3 font-medium">
+                    实验统计概览
+                  </div>
+                  <div class="grid grid-cols-2 lg:grid-cols-6 gap-3 text-sm">
+                    <div
+                      class="rounded-xl border border-blue-800/50 bg-blue-900/20 p-4 hover:border-blue-600 transition-all duration-300"
+                    >
+                      <div class="text-blue-200">总实验次数</div>
+                      <div
+                        id="gacha-total-experiments"
+                        class="text-blue-400 text-lg font-bold"
+                      >
+                        0
+                      </div>
+                    </div>
+                    <div
+                      class="rounded-xl border border-green-800/50 bg-green-900/20 p-4 hover:border-green-600 transition-all duration-300"
+                    >
+                      <div class="text-green-200">成功率</div>
+                      <div
+                        id="gacha-success-rate"
+                        class="text-green-400 text-lg font-bold"
+                      >
+                        0%
+                      </div>
+                    </div>
+                    <div
+                      class="rounded-xl border border-red-800/50 bg-red-900/20 p-4 hover:border-red-600 transition-all duration-300"
+                    >
+                      <div class="text-red-200">最大花费</div>
+                      <div
+                        id="gacha-max-cost"
+                        class="text-red-400 text-lg font-bold"
+                      >
+                        ¥0
+                      </div>
+                    </div>
+                    <div
+                      class="rounded-xl border border-cyan-800/50 bg-cyan-900/20 p-4 hover:border-cyan-600 transition-all duration-300"
+                    >
+                      <div class="text-cyan-200">最小花费</div>
+                      <div
+                        id="gacha-min-cost"
+                        class="text-cyan-400 text-lg font-bold"
+                      >
+                        ¥0
+                      </div>
+                    </div>
+                    <div
+                      class="rounded-xl border border-yellow-800/50 bg-yellow-900/20 p-4 hover:border-yellow-600 transition-all duration-300"
+                    >
+                      <div class="text-yellow-200">标准差</div>
+                      <div
+                        id="gacha-cost-std"
+                        class="text-yellow-400 text-lg font-bold"
+                      >
+                        ¥0
+                      </div>
+                    </div>
+                    <div
+                      class="rounded-xl border border-indigo-800/50 bg-indigo-900/20 p-4 hover:border-indigo-600 transition-all duration-300"
+                    >
+                      <div class="text-indigo-200">中位数花费</div>
+                      <div
+                        id="gacha-median-cost"
+                        class="text-indigo-400 text-lg font-bold"
+                      >
+                        ¥0
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 保底机制统计 -->
+                <div class="mb-6">
+                  <div class="text-sm text-gray-300 mb-3 font-medium">
+                    保底机制统计
+                  </div>
+                  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
+                    <div
+                      class="rounded-xl border border-orange-800/50 bg-orange-900/20 p-4 hover:border-orange-600 transition-all duration-300"
+                    >
+                      <div class="text-orange-200">软保底触发率</div>
+                      <div
+                        id="gacha-soft-pity-rate"
+                        class="text-orange-400 text-lg font-bold"
+                      >
+                        0%
+                      </div>
+                      <div class="text-xs text-orange-300 mt-1">75抽后触发</div>
+                    </div>
+                    <div
+                      class="rounded-xl border border-red-800/50 bg-red-900/20 p-4 hover:border-red-600 transition-all duration-300"
+                    >
+                      <div class="text-red-200">硬保底触发率</div>
+                      <div
+                        id="gacha-hard-pity-rate"
+                        class="text-red-400 text-lg font-bold"
+                      >
+                        0%
+                      </div>
+                      <div class="text-xs text-red-300 mt-1">90抽必出</div>
+                    </div>
+                    <div
+                      class="rounded-xl border border-pink-800/50 bg-pink-900/20 p-4 hover:border-pink-600 transition-all duration-300"
+                    >
+                      <div class="text-pink-200">平均保底抽数</div>
+                      <div
+                        id="gacha-avg-pity-count"
+                        class="text-pink-400 text-lg font-bold"
+                      >
+                        0
+                      </div>
+                      <div class="text-xs text-pink-300 mt-1">
+                        获得5★时的抽数
+                      </div>
+                    </div>
+                    <div
+                      class="rounded-xl border border-teal-800/50 bg-teal-900/20 p-4 hover:border-teal-600 transition-all duration-300"
+                    >
+                      <div class="text-teal-200">歪率统计</div>
+                      <div
+                        id="gacha-miss-rate"
+                        class="text-teal-400 text-lg font-bold"
+                      >
+                        0%
+                      </div>
+                      <div class="text-xs text-teal-300 mt-1">非限定5★比例</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="gacha-log mt-3 mode-experience-only">
                 <div class="text-sm text-gray-300 mb-2">抽卡日志</div>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
@@ -715,44 +929,147 @@
                 </div>
               </div>
             </div>
-            <div class="w-full lg:w-80 mode-theory-only hidden">
-              <div class="text-lg font-semibold mb-3">讲解面板</div>
+            <!-- 理论讲解模式专用布局 -->
+            <div class="mode-theory-only hidden">
               <div
-                id="gacha-formula"
-                class="rounded-xl border border-white/10 bg-white/5 p-3"
-              ></div>
-              <div
-                class="mt-3 rounded-xl border border-white/10 bg-white/5 p-3"
+                class="flex flex-col lg:flex-row gap-4 lg:gap-6 max-h-[80vh] min-h-[500px]"
               >
-                <div class="text-sm text-gray-300 mb-2">教材与视频</div>
-                <div class="text-xs text-gray-400 mb-2">
-                  参阅教材：
-                  <a
-                    href="../docs/概率导论 (Dimitri Bertsekas) (Z-Library).pdf"
-                    class="text-neon-blue underline"
-                    target="_blank"
-                    >概率导论（Bertsekas）</a
-                  >
-                </div>
-                <div class="flex items-center gap-2">
-                  <input
-                    id="gacha-video-url"
-                    type="text"
-                    placeholder="粘贴视频地址（如 mp4 或嵌入链接）"
-                    class="w-full bg-gray-800 text-white py-2 px-3 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-neon-blue"
-                  />
-                  <button
-                    id="gacha-video-load"
-                    class="px-3 py-2 rounded-md border border-white/15 bg-white/5"
-                  >
-                    加载视频
-                  </button>
-                </div>
+                <!-- 左中侧：视频讲解区域 -->
                 <div
-                  id="gacha-video-slot"
-                  class="mt-2 rounded-lg overflow-hidden bg-black/30"
-                  style="min-height: 180px"
-                ></div>
+                  id="theory-video-panel"
+                  class="flex-1 lg:basis-2/3 lg:flex-none min-h-0 min-w-0"
+                >
+                  <div
+                    class="glass-card fx-holo rounded-2xl p-3 lg:p-4 h-full flex flex-col"
+                  >
+                    <div
+                      class="text-base font-semibold mb-2 text-center flex-shrink-0"
+                    >
+                      视频讲解
+                    </div>
+
+                    <!-- 视频加载控制 -->
+                    <div class="mb-2 flex-shrink-0">
+                      <div class="flex items-center gap-2 mb-1">
+                        <input
+                          id="gacha-video-url"
+                          type="text"
+                          placeholder="粘贴视频地址"
+                          class="flex-1 bg-gray-800 text-white py-1 px-2 rounded border border-gray-700 focus:outline-none focus:ring-1 focus:ring-neon-blue text-xs"
+                        />
+                        <button
+                          id="gacha-video-load"
+                          class="px-2 py-1 rounded border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-xs"
+                        >
+                          加载
+                        </button>
+                      </div>
+                      <div class="flex flex-wrap gap-1">
+                        <button
+                          class="px-1.5 py-0.5 rounded border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-xs"
+                          data-video-type="intro"
+                        >
+                          概率基础
+                        </button>
+                        <button
+                          class="px-1.5 py-0.5 rounded border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-xs"
+                          data-video-type="gacha"
+                        >
+                          抽卡机制
+                        </button>
+                        <button
+                          class="px-1.5 py-0.5 rounded border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-xs"
+                          data-video-type="pity"
+                        >
+                          保底系统
+                        </button>
+                        <button
+                          class="px-1.5 py-0.5 rounded border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-xs"
+                          data-video-type="probability"
+                        >
+                          概率计算
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- 视频播放区域 -->
+                    <div class="flex-1 min-h-0">
+                      <div
+                        id="gacha-video-slot"
+                        class="rounded-xl overflow-hidden bg-black/30 border border-white/10 h-full w-full"
+                      >
+                        <div
+                          class="flex items-center justify-center h-full text-gray-400"
+                        >
+                          <div class="text-center">
+                            <i
+                              class="fa-solid fa-play-circle text-2xl mb-1"
+                            ></i>
+                            <div class="text-xs">请加载视频开始学习</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 右侧：讲解面板 -->
+                <div
+                  id="theory-explain-panel"
+                  class="flex-1 lg:basis-1/3 lg:flex-none min-h-0 min-w-0"
+                >
+                  <div
+                    class="glass-card fx-holo rounded-2xl p-2 lg:p-3 h-full flex flex-col"
+                  >
+                    <div class="text-base font-semibold mb-2 flex-shrink-0">
+                      讲解面板
+                    </div>
+                    <div class="flex-1 min-h-0 flex flex-col gap-2 pr-1">
+                      <!-- 公式展示区域 -->
+                      <div class="flex-1 min-h-0">
+                        <div class="text-xs text-gray-300 mb-1 font-medium">
+                          相关公式
+                        </div>
+                        <div
+                          id="gacha-formula"
+                          class="rounded border border-white/10 bg-white/5 p-2 h-full overflow-auto"
+                        >
+                          <div class="text-xs font-medium mb-2">
+                            核心概率公式
+                          </div>
+                          <div class="space-y-1 text-xs">
+                            <div>
+                              \\(P(A \\cup B) = P(A) + P(B) - P(A \\cap B)\\)
+                            </div>
+                            <div>\\(P(A|B) = \\frac{P(A \\cap B)}{P(B)}\\)</div>
+                            <div>\\(P(\\text{至少一次}) = 1 - (1-p)^n\\)</div>
+                            <div class="text-xs text-gray-400 mt-1">
+                              抽卡概率核心公式
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 教材参考 -->
+                      <div class="flex-shrink-0">
+                        <div class="text-xs text-gray-300 mb-1 font-medium">
+                          参考教材
+                        </div>
+                        <div
+                          class="rounded border border-white/10 bg-white/5 p-1.5"
+                        >
+                          <a
+                            href="../docs/概率导论 (Dimitri Bertsekas) (Z-Library).pdf"
+                            class="text-neon-blue underline hover:text-neon-purple transition-colors text-xs"
+                            target="_blank"
+                          >
+                            概率导论（Bertsekas）
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -907,6 +907,32 @@
       "gacha-param-summary-items"
     );
     const paramSave = document.getElementById("gacha-param-save");
+
+    // 新增仪表盘元素引用
+    const avgCost5StarExpEl = document.getElementById(
+      "gacha-avg-cost-5star-exp"
+    );
+    const avgCost5StarTheoryEl = document.getElementById(
+      "gacha-avg-cost-5star-theory"
+    );
+    const avgCostFeaturedExpEl = document.getElementById(
+      "gacha-avg-cost-featured-exp"
+    );
+    const avgCostFeaturedTheoryEl = document.getElementById(
+      "gacha-avg-cost-featured-theory"
+    );
+    const totalExperimentsEl = document.getElementById(
+      "gacha-total-experiments"
+    );
+    const successRateEl = document.getElementById("gacha-success-rate");
+    const maxCostEl = document.getElementById("gacha-max-cost");
+    const minCostEl = document.getElementById("gacha-min-cost");
+    const costStdEl = document.getElementById("gacha-cost-std");
+    const medianCostEl = document.getElementById("gacha-median-cost");
+    const softPityRateEl = document.getElementById("gacha-soft-pity-rate");
+    const hardPityRateEl = document.getElementById("gacha-hard-pity-rate");
+    const avgPityCountEl = document.getElementById("gacha-avg-pity-count");
+    const missRateEl = document.getElementById("gacha-miss-rate");
     if (
       !p5Input ||
       !p4Input ||
@@ -920,6 +946,7 @@
     const lctx = line ? line.getContext("2d") : null;
     const bctx = bar ? bar.getContext("2d") : null;
     let currentMode = "experience";
+    let theoryLock = { left: null, right: null };
     function resizeCanvas(c, ctx) {
       const rect = c.getBoundingClientRect();
       const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
@@ -930,6 +957,81 @@
     function getSize(c) {
       const r = c.getBoundingClientRect();
       return { W: r.width, H: r.height };
+    }
+    function getMetrics(el) {
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      const cs = window.getComputedStyle(el);
+      return {
+        rect: { w: r.width, h: r.height },
+        client: { w: el.clientWidth, h: el.clientHeight },
+        scroll: { w: el.scrollWidth, h: el.scrollHeight },
+        styles: {
+          flexGrow: cs.flexGrow,
+          flexShrink: cs.flexShrink,
+          flexBasis: cs.flexBasis,
+          overflowX: cs.overflowX,
+          overflowY: cs.overflowY,
+        },
+        needsXScroll: el.scrollWidth > el.clientWidth,
+        needsYScroll: el.scrollHeight > el.clientHeight,
+      };
+    }
+    function enforceTheoryRatio() {
+      const vp = document.getElementById("theory-video-panel");
+      const ep = document.getElementById("theory-explain-panel");
+      const container = document.querySelector(".mode-theory-only > div.flex");
+      if (!vp || !ep || !container || currentMode !== "theory") return;
+      const cs = window.getComputedStyle(container);
+      const gap = parseFloat(cs.columnGap) || 0;
+      const cw = container.clientWidth || 0;
+      const avail = Math.max(0, cw - gap);
+      const left = Math.round((avail * 2) / 3);
+      const right = avail - left;
+      theoryLock.left = left;
+      theoryLock.right = right;
+      vp.style.flex = "0 0 auto";
+      ep.style.flex = "0 0 auto";
+      vp.style.width = left + "px";
+      ep.style.width = right + "px";
+      vp.style.minWidth = "0";
+      ep.style.minWidth = "0";
+    }
+    function applyLockedTheoryWidths() {
+      const vp = document.getElementById("theory-video-panel");
+      const ep = document.getElementById("theory-explain-panel");
+      if (!vp || !ep) return;
+      if (theoryLock.left == null || theoryLock.right == null) return;
+      vp.style.flex = "0 0 auto";
+      ep.style.flex = "0 0 auto";
+      vp.style.width = theoryLock.left + "px";
+      ep.style.width = theoryLock.right + "px";
+      vp.style.minWidth = "0";
+      ep.style.minWidth = "0";
+    }
+    function logPanelState(label) {
+      const vp = document.getElementById("theory-video-panel");
+      const ep = document.getElementById("theory-explain-panel");
+      const f = document.getElementById("gacha-formula");
+      const codeEl = document.querySelector("#gacha-formula .code-py");
+      const v = getMetrics(vp);
+      const e = getMetrics(ep);
+      const fo = getMetrics(f);
+      const co = getMetrics(codeEl);
+      const ratio =
+        v && e && e.rect.w > 0 ? +(v.rect.w / e.rect.w).toFixed(3) : null;
+      console.log("panel-state", {
+        label,
+        ratio,
+        videoW: v ? Math.round(v.rect.w) : null,
+        explainW: e ? Math.round(e.rect.w) : null,
+        vFlex: v ? v.styles.flexBasis : null,
+        eFlex: e ? e.styles.flexBasis : null,
+        formulaScrollX: fo ? fo.needsXScroll : null,
+        formulaScrollY: fo ? fo.needsYScroll : null,
+        codeScrollX: co ? co.needsXScroll : null,
+        codeScrollY: co ? co.needsYScroll : null,
+      });
     }
     function setTabActive(mode) {
       if (tabExp) tabExp.classList.toggle("active", mode === "experience");
@@ -965,6 +1067,27 @@
       );
       setOpsVisibilityForMode(mode);
       renderAll();
+      setTimeout(() => logPanelState("switchMode:" + mode), 50);
+      if (mode === "theory") {
+        enforceTheoryRatio();
+      }
+
+      // 当切换到理论模式时，重新渲染公式
+      if (mode === "theory") {
+        setTimeout(() => {
+          const formulaEl = document.getElementById("gacha-formula");
+          if (formulaEl && typeof renderMathInElement !== "undefined") {
+            renderMathInElement(formulaEl, {
+              delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+              ],
+              throwOnError: false,
+            });
+          }
+        }, 100);
+      }
     }
     function renderAll() {
       updateCharts();
@@ -1049,6 +1172,17 @@
     let sessionsChart = null;
     let sessionResults4 = [];
     let sessionResults5 = [];
+
+    // 新增统计数据存储
+    let experimentStats = {
+      costs5Star: [],
+      costsFeatured: [],
+      pityCountsWhen5Star: [],
+      softPityTriggers: 0,
+      hardPityTriggers: 0,
+      missedFeatured: 0,
+      totalExperiments: 0,
+    };
     function initCharts() {
       if (typeof Chart === "undefined") return;
       const starsEl = document.getElementById("gacha-stars");
@@ -1645,7 +1779,52 @@
         sessionResults4 = sessionResults4.slice(sessionResults4.length - 200);
       if (sessionResults5.length > 200)
         sessionResults5 = sessionResults5.slice(sessionResults5.length - 200);
+
+      // 收集实验统计数据
+      experimentStats.totalExperiments++;
+
+      if (first5 > 0) {
+        const cost5Star = first5 * costUnit;
+        experimentStats.costs5Star.push(cost5Star);
+        experimentStats.pityCountsWhen5Star.push(first5);
+
+        // 检查是否触发软保底或硬保底
+        if (first5 >= 75 && first5 < k5) {
+          experimentStats.softPityTriggers++;
+        } else if (first5 >= k5) {
+          experimentStats.hardPityTriggers++;
+        }
+
+        // 模拟限定角色获取（正确的50/50机制）
+        const featuredRate = parseFloat(featuredInput.value) / 100;
+
+        // 检查是否处于大保底状态
+        if (typeof experimentStats.isGuaranteed === "undefined") {
+          experimentStats.isGuaranteed = false;
+        }
+
+        let isFeatured;
+        if (experimentStats.isGuaranteed) {
+          // 大保底状态：必定获得限定
+          isFeatured = true;
+          experimentStats.isGuaranteed = false; // 重置大保底状态
+        } else {
+          // 小保底状态：按概率判断
+          isFeatured = Math.random() < featuredRate;
+          if (!isFeatured) {
+            experimentStats.isGuaranteed = true; // 歪了，下次进入大保底
+            experimentStats.missedFeatured++;
+          }
+        }
+
+        if (isFeatured) {
+          // 获得限定角色
+          experimentStats.costsFeatured.push(cost5Star);
+        }
+      }
+
       updateCharts();
+      updateExperimentDashboard();
     }
     function runBatch(m) {
       const chunk = Math.min(100, m);
@@ -1786,6 +1965,19 @@
       expEl.textContent = "0";
       costEl.textContent = "¥0";
       luckEl.textContent = "—";
+
+      // 重置实验统计数据
+      experimentStats = {
+        costs5Star: [],
+        costsFeatured: [],
+        pityCountsWhen5Star: [],
+        softPityTriggers: 0,
+        hardPityTriggers: 0,
+        missedFeatured: 0,
+        totalExperiments: 0,
+        isGuaranteed: false,
+      };
+      updateExperimentDashboard();
       if (p5Val) p5Val.textContent = parseFloat(p5Input.value) + "%";
       if (p4Val) p4Val.textContent = parseFloat(p4Input.value) + "%";
       if (pity5Val) pity5Val.textContent = parseInt(pity5Input.value, 10);
@@ -1834,6 +2026,172 @@
         updateParamSummary();
         paramSummary.classList.remove("hidden");
         if (paramChevron) paramChevron.style.transform = "rotate(0deg)";
+      }
+    }
+
+    // 计算理论上获得5★的期望抽数（考虑保底和软保底机制）
+    function calculateTheoretical5StarCost(p5, k5, cost) {
+      let expectedDraws = 0;
+      let survivalProb = 1; // 到第i抽还没出5★的概率
+
+      for (let i = 1; i <= k5; i++) {
+        let currentProb = p5;
+
+        // 软保底机制：从75抽开始概率递增（模拟原神机制）
+        if (i >= 75 && i < k5) {
+          // 软保底期间，概率逐渐增加
+          const softPityBonus = (i - 74) * 0.06; // 每抽增加6%
+          currentProb = Math.min(1, p5 + softPityBonus);
+        } else if (i >= k5) {
+          // 硬保底：第90抽必出
+          currentProb = 1;
+        }
+
+        // 第i抽出5★的概率 = 前面没出 * 这抽出
+        const probAtDraw = survivalProb * currentProb;
+        expectedDraws += i * probAtDraw;
+
+        // 更新存活概率（到下一抽还没出的概率）
+        survivalProb *= 1 - currentProb;
+
+        // 如果存活概率很小，可以提前结束
+        if (survivalProb < 0.0001) break;
+      }
+
+      return expectedDraws * cost;
+    }
+
+    // 计算理论上获得限定5★的期望花费（考虑50/50和大保底机制）
+    function calculateTheoreticalFeaturedCost(p5, k5, featuredRate, cost) {
+      const base5StarCost = calculateTheoretical5StarCost(p5, k5, cost);
+
+      // 正确的50/50机制建模：
+      // 状态转移：小保底 -> (成功获得限定 | 歪了进入大保底) -> 大保底 -> 必定获得限定
+      //
+      // 从小保底状态开始的期望花费：
+      // E = featuredRate * base5StarCost + (1 - featuredRate) * (base5StarCost + base5StarCost)
+      // 第一项：直接获得限定的情况
+      // 第二项：歪了之后还需要再抽一个5★的情况
+
+      const expectedCostFromSmallPity =
+        featuredRate * base5StarCost +
+        (1 - featuredRate) * (base5StarCost + base5StarCost);
+
+      return expectedCostFromSmallPity;
+    }
+
+    // 更新实验仪表盘
+    function updateExperimentDashboard() {
+      const cost = parseInt(costInput.value, 10);
+      const p5 = parseFloat(p5Input.value) / 100;
+      const k5 = parseInt(pity5Input.value, 10);
+      const featuredRate = parseFloat(featuredInput.value) / 100;
+
+      // 计算理论值 - 考虑保底机制
+      const theory5StarCost = calculateTheoretical5StarCost(p5, k5, cost);
+      const theoryFeaturedCost = calculateTheoreticalFeaturedCost(
+        p5,
+        k5,
+        featuredRate,
+        cost
+      ); // 考虑50/50机制
+
+      // 更新五星花费统计
+      if (avgCost5StarTheoryEl) {
+        avgCost5StarTheoryEl.textContent = `¥${Math.round(theory5StarCost)}`;
+      }
+      if (avgCostFeaturedTheoryEl) {
+        avgCostFeaturedTheoryEl.textContent = `¥${Math.round(
+          theoryFeaturedCost
+        )}`;
+      }
+
+      // 实验数据统计
+      const stats = experimentStats;
+      if (totalExperimentsEl) {
+        totalExperimentsEl.textContent = stats.totalExperiments.toString();
+      }
+
+      if (stats.costs5Star.length > 0) {
+        const avg5Star =
+          stats.costs5Star.reduce((a, b) => a + b, 0) / stats.costs5Star.length;
+        const avgFeatured =
+          stats.costsFeatured.length > 0
+            ? stats.costsFeatured.reduce((a, b) => a + b, 0) /
+              stats.costsFeatured.length
+            : 0;
+
+        if (avgCost5StarExpEl) {
+          avgCost5StarExpEl.textContent = `¥${Math.round(avg5Star)}`;
+        }
+        if (avgCostFeaturedExpEl) {
+          avgCostFeaturedExpEl.textContent = `¥${Math.round(avgFeatured)}`;
+        }
+
+        // 计算统计指标
+        const sortedCosts = [...stats.costs5Star].sort((a, b) => a - b);
+        const minCost = sortedCosts[0];
+        const maxCost = sortedCosts[sortedCosts.length - 1];
+        const medianCost = sortedCosts[Math.floor(sortedCosts.length / 2)];
+
+        // 计算标准差
+        const mean = avg5Star;
+        const variance =
+          stats.costs5Star.reduce(
+            (acc, cost) => acc + Math.pow(cost - mean, 2),
+            0
+          ) / stats.costs5Star.length;
+        const stdDev = Math.sqrt(variance);
+
+        if (minCostEl) minCostEl.textContent = `¥${Math.round(minCost)}`;
+        if (maxCostEl) maxCostEl.textContent = `¥${Math.round(maxCost)}`;
+        if (medianCostEl)
+          medianCostEl.textContent = `¥${Math.round(medianCost)}`;
+        if (costStdEl) costStdEl.textContent = `¥${Math.round(stdDev)}`;
+
+        // 成功率（获得至少一个5星的比例）
+        const successRate =
+          (stats.costs5Star.length / Math.max(1, stats.totalExperiments)) * 100;
+        if (successRateEl)
+          successRateEl.textContent = `${successRate.toFixed(1)}%`;
+
+        // 保底统计
+        if (stats.pityCountsWhen5Star.length > 0) {
+          const avgPityCount =
+            stats.pityCountsWhen5Star.reduce((a, b) => a + b, 0) /
+            stats.pityCountsWhen5Star.length;
+          if (avgPityCountEl)
+            avgPityCountEl.textContent = Math.round(avgPityCount).toString();
+
+          const softPityRate =
+            (stats.softPityTriggers / stats.pityCountsWhen5Star.length) * 100;
+          const hardPityRate =
+            (stats.hardPityTriggers / stats.pityCountsWhen5Star.length) * 100;
+
+          if (softPityRateEl)
+            softPityRateEl.textContent = `${softPityRate.toFixed(1)}%`;
+          if (hardPityRateEl)
+            hardPityRateEl.textContent = `${hardPityRate.toFixed(1)}%`;
+        }
+
+        // 歪率统计
+        const total5Stars = stats.costs5Star.length;
+        const missRate =
+          total5Stars > 0 ? (stats.missedFeatured / total5Stars) * 100 : 0;
+        if (missRateEl) missRateEl.textContent = `${missRate.toFixed(1)}%`;
+      } else {
+        // 重置显示
+        if (avgCost5StarExpEl) avgCost5StarExpEl.textContent = "¥0";
+        if (avgCostFeaturedExpEl) avgCostFeaturedExpEl.textContent = "¥0";
+        if (successRateEl) successRateEl.textContent = "0%";
+        if (maxCostEl) maxCostEl.textContent = "¥0";
+        if (minCostEl) minCostEl.textContent = "¥0";
+        if (costStdEl) costStdEl.textContent = "¥0";
+        if (medianCostEl) medianCostEl.textContent = "¥0";
+        if (softPityRateEl) softPityRateEl.textContent = "0%";
+        if (hardPityRateEl) hardPityRateEl.textContent = "0%";
+        if (avgPityCountEl) avgPityCountEl.textContent = "0";
+        if (missRateEl) missRateEl.textContent = "0%";
       }
     }
     function initFormulaBox(el, opts) {
@@ -1971,6 +2329,7 @@
         }
       }
       btnLatex.addEventListener("click", () => {
+        logPanelState("latex:before");
         setView("latex");
         if (typeof renderMathInElement !== "undefined") {
           renderMathInElement(content, {
@@ -1982,8 +2341,15 @@
             ],
           });
         }
+        setTimeout(() => logPanelState("latex:after"), 50);
+        applyLockedTheoryWidths();
       });
-      btnCode.addEventListener("click", () => setView("code"));
+      btnCode.addEventListener("click", () => {
+        logPanelState("code:before");
+        setView("code");
+        setTimeout(() => logPanelState("code:after"), 50);
+        applyLockedTheoryWidths();
+      });
       copyBtn.addEventListener("click", () => {
         const txt = content.textContent || "";
         navigator.clipboard && navigator.clipboard.writeText(txt);
@@ -1991,15 +2357,21 @@
       setView(opts.defaultView || "latex");
     }
     function updateFormulaBox() {
+      // 在理论模式下不更新公式框，保持静态内容
+      if (currentMode === "theory") {
+        console.log("理论模式：跳过公式框更新，保持静态内容");
+        return;
+      }
+      console.log("非理论模式：更新动态公式框");
       const n = parseInt(nInput.value, 10);
       const p5 = parseFloat(p5Input.value) / 100;
       const p4 = parseFloat(p4Input.value) / 100;
       const k5 = parseInt(pity5Input.value, 10);
       const k4 = parseInt(pity4Input.value, 10);
       const latex =
-        "$$\\textbf{保底调度模型}\\\\" +
-        "\\text{基础概率 }p_5,p_4;\\ \text{保底阈值 }k_5,k_4.\\\\" +
-        "p_t=\\begin{cases}1,& t\\ge k_5 \\[2pt] 1,& t\\ge k_4 \\[2pt] p_5+p_4,& t<k_4 \\end{cases},\\\\" +
+        "$$\\text{保底调度模型}\\\\" +
+        "\\text{基础概率 }p_5,p_4;\\ \\text{保底阈值 }k_5,k_4.\\\\" +
+        "p_t=\\begin{cases}1,& t\\ge k_5\\\\ 1,& t\\ge k_4\\\\ p_5+p_4,& t<k_4 \\end{cases},\\\\" +
         "\\text{时序理论命中： }P(\\ge 1)=1-\\prod_{t=1}^n(1-p_t).\\\\" +
         "\\text{首命中分布： }P(T=k)=p_k\\cdot\\prod_{t=1}^{k-1}(1-p_t).\\\\" +
         "\\text{期望抽数： }\\mathbb{E}[T]=\\sum_{k\\ge 1}P(T\\ge k).\\\\" +
@@ -2023,13 +2395,43 @@
       const urlInput = document.getElementById("gacha-video-url");
       const loadBtn = document.getElementById("gacha-video-load");
       const slot = document.getElementById("gacha-video-slot");
+      const saveNotesBtn = document.getElementById("save-notes");
+      const notesTextarea = document.getElementById("theory-notes");
+
       if (!loadBtn || !urlInput || !slot) return;
-      loadBtn.addEventListener("click", function () {
-        const url = (urlInput.value || "").trim();
+
+      // 视频加载功能
+      function loadVideo(url) {
         if (!url) return;
+
+        // 清空当前内容
+        slot.innerHTML = "";
+
+        // 检测视频类型并处理
+        if (url.includes("youtube.com") || url.includes("youtu.be")) {
+          // YouTube视频处理
+          let videoId = "";
+          if (url.includes("youtu.be/")) {
+            videoId = url.split("youtu.be/")[1].split("?")[0];
+          } else if (url.includes("watch?v=")) {
+            videoId = url.split("watch?v=")[1].split("&")[0];
+          }
+          if (videoId) {
+            url = `https://www.youtube.com/embed/${videoId}`;
+          }
+        } else if (url.includes("bilibili.com")) {
+          // Bilibili视频处理
+          const bvMatch = url.match(/BV[a-zA-Z0-9]+/);
+          if (bvMatch) {
+            url = `https://player.bilibili.com/player.html?bvid=${bvMatch[0]}`;
+          }
+        }
+
         const wrap = document.createElement("div");
         wrap.style.position = "relative";
         wrap.style.paddingTop = "56.25%"; // 16:9
+        wrap.style.width = "100%";
+
         const iframe = document.createElement("iframe");
         iframe.src = url;
         iframe.style.position = "absolute";
@@ -2037,13 +2439,186 @@
         iframe.style.left = "0";
         iframe.style.width = "100%";
         iframe.style.height = "100%";
+        iframe.style.border = "none";
         iframe.allow =
           "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
         iframe.allowFullscreen = true;
-        slot.innerHTML = "";
+
         wrap.appendChild(iframe);
         slot.appendChild(wrap);
+      }
+
+      // 加载视频按钮事件
+      loadBtn.addEventListener("click", function () {
+        const url = (urlInput.value || "").trim();
+        loadVideo(url);
       });
+
+      // 回车键加载视频
+      urlInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          const url = (urlInput.value || "").trim();
+          loadVideo(url);
+        }
+      });
+
+      // 预设视频按钮
+      const videoButtons = document.querySelectorAll("[data-video-type]");
+      videoButtons.forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const videoType = this.getAttribute("data-video-type");
+          let videoUrl = "";
+
+          // 预设视频URL（可以根据需要修改）
+          switch (videoType) {
+            case "intro":
+              videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // 示例URL
+              break;
+            case "gacha":
+              videoUrl = "https://www.bilibili.com/video/BV1xx411c7mu"; // 示例URL
+              break;
+            case "pity":
+              videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // 示例URL
+              break;
+            case "probability":
+              videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // 示例URL
+              break;
+          }
+
+          if (videoUrl) {
+            urlInput.value = videoUrl;
+            loadVideo(videoUrl);
+          }
+        });
+      });
+
+      // 知识点导航
+      const topicButtons = document.querySelectorAll("[data-topic]");
+      topicButtons.forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const topic = this.getAttribute("data-topic");
+          updateFormulaForTopic(topic);
+
+          // 高亮当前选中的知识点
+          topicButtons.forEach((b) =>
+            b.classList.remove("bg-neon-blue/20", "border-neon-blue")
+          );
+          this.classList.add("bg-neon-blue/20", "border-neon-blue");
+        });
+      });
+
+      // 学习笔记保存功能
+      if (saveNotesBtn && notesTextarea) {
+        saveNotesBtn.addEventListener("click", function () {
+          const notes = notesTextarea.value;
+          localStorage.setItem("gacha-theory-notes", notes);
+
+          // 显示保存成功提示
+          const originalText = saveNotesBtn.textContent;
+          saveNotesBtn.textContent = "已保存";
+          saveNotesBtn.classList.add("bg-green-600");
+
+          setTimeout(() => {
+            saveNotesBtn.textContent = originalText;
+            saveNotesBtn.classList.remove("bg-green-600");
+          }, 1500);
+        });
+
+        // 加载已保存的笔记
+        const savedNotes = localStorage.getItem("gacha-theory-notes");
+        if (savedNotes) {
+          notesTextarea.value = savedNotes;
+        }
+      }
+    }
+    function initTheoryFormulaBox() {
+      const formulaEl = document.getElementById("gacha-formula");
+      if (!formulaEl) return;
+      if (typeof renderMathInElement === "undefined") return;
+      renderMathInElement(formulaEl, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true },
+        ],
+        throwOnError: false,
+      });
+    }
+
+    // 根据知识点更新公式显示
+    function updateFormulaForTopic(topic) {
+      const formulaEl = document.getElementById("gacha-formula");
+      if (!formulaEl) return;
+
+      let formulaContent = "";
+
+      switch (topic) {
+        case "basic-probability":
+          formulaContent = `
+            <div class="text-sm font-medium mb-2">基础概率公式</div>
+            <div class="space-y-2 text-sm">
+              <div>$$P(A) = \\frac{\\text{有利结果数}}{\\text{总结果数}}$$</div>
+              <div>$$0 \\leq P(A) \\leq 1$$</div>
+              <div>$$P(\\Omega) = 1$$（必然事件）</div>
+              <div>$$P(\\emptyset) = 0$$（不可能事件）</div>
+            </div>
+          `;
+          break;
+        case "conditional-probability":
+          formulaContent = `
+            <div class="text-sm font-medium mb-2">条件概率公式</div>
+            <div class="space-y-2 text-sm">
+              <div>$$P(A|B) = \\frac{P(A \\cap B)}{P(B)}$$</div>
+              <div>$$P(A \\cap B) = P(A|B) \\cdot P(B)$$</div>
+              <div class="text-xs text-gray-400 mt-2">其中 $$P(B) > 0$$</div>
+            </div>
+          `;
+          break;
+        case "independence":
+          formulaContent = `
+            <div class="text-sm font-medium mb-2">独立性</div>
+            <div class="space-y-2 text-sm">
+              <div>$$P(A \\cap B) = P(A) \\cdot P(B)$$</div>
+              <div>$$P(A|B) = P(A)$$</div>
+              <div>$$P(B|A) = P(B)$$</div>
+              <div class="text-xs text-gray-400 mt-2">事件A和B相互独立</div>
+            </div>
+          `;
+          break;
+        case "gacha-mechanics":
+          formulaContent = `
+            <div class="text-sm font-medium mb-2">抽卡机制公式</div>
+            <div class="space-y-2 text-sm">
+              <div>$$P(\\text{至少一次}) = 1 - (1-p)^n$$</div>
+              <div>$$E[X] = \\frac{1}{p}$$（几何分布期望）</div>
+              <div>$$P(\\text{保底}) = 1$$（第k抽必出）</div>
+              <div class="text-xs text-gray-400 mt-2">其中 $$p$$ 为单抽概率，$$n$$ 为抽取次数</div>
+            </div>
+          `;
+          break;
+        default:
+          formulaContent = `
+            <div class="text-center text-gray-400 text-sm">
+              选择左侧知识点查看相关公式
+            </div>
+          `;
+      }
+
+      formulaEl.innerHTML = formulaContent;
+
+      // 重新渲染LaTeX公式
+      if (typeof renderMathInElement !== "undefined") {
+        renderMathInElement(formulaEl, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\(", right: "\\)", display: false },
+            { left: "\\[", right: "\\]", display: true },
+          ],
+          throwOnError: false,
+        });
+      }
     }
     p5Input.addEventListener("input", updateAll);
     p4Input.addEventListener("input", updateAll);
@@ -2098,11 +2673,14 @@
       });
     window.addEventListener("resize", () => {
       updateCharts();
+      logPanelState("resize");
+      enforceTheoryRatio();
     });
     updateAll();
     updateCharts();
     switchMode("experience");
     initVideoInterface();
+    initTheoryFormulaBox();
   }
 
   document.addEventListener("DOMContentLoaded", function () {

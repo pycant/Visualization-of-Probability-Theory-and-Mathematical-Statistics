@@ -168,6 +168,9 @@ body {
 .code-py .py-num {
   color: #f59e0b;
 }
+.code-py {
+  scrollbar-gutter: stable both-edges;
+}
 .param-val {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -348,6 +351,9 @@ body {
 .formula-scroll .katex-display {
   display: inline-block;
   min-width: max-content;
+}
+#gacha-formula {
+  scrollbar-gutter: stable both-edges;
 }
 .formula-scroll .katex-html {
   display: inline-block;
