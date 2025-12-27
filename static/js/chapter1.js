@@ -2683,6 +2683,722 @@
     initTheoryFormulaBox();
   }
 
+  function setupAmongUsAnalyzer() {
+    const priorInput = document.getElementById("au-prior");
+    const accInput = document.getElementById("au-accuracy");
+    const priorVal = document.getElementById("au-prior-val");
+    const accVal = document.getElementById("au-accuracy-val");
+    const controls = document.getElementById("au-evidence-controls");
+    const resultEl = document.getElementById("au-result");
+    const vizEl = document.getElementById("among-us-viz");
+    const formulaEl = document.getElementById("among-us-formula");
+    const chartCanvas = document.getElementById("au-trend-chart");
+
+    if (!priorInput || !accInput || !controls) return;
+
+    let evidenceCount = 0;
+    let history = []; // Store probability history
+    let chartInstance = null;
+
+    // Initialize Chart
+    if (chartCanvas && typeof Chart !== "undefined") {
+      chartInstance = new Chart(chartCanvas, {
+        type: "line",
+        data: {
+          labels: ["初始"],
+          datasets: [
+            {
+              label: "内鬼概率",
+              data: [0.2],
+              borderColor: "#00f3ff",
+              backgroundColor: "rgba(0, 243, 255, 0.1)",
+              borderWidth: 2,
+              pointBackgroundColor: "#00f3ff",
+              tension: 0.3,
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              mode: "index",
+              intersect: false,
+              callbacks: {
+                label: (ctx) => `${(ctx.raw * 100).toFixed(1)}%`,
+              },
+            },
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 1,
+              ticks: { color: "#9ca3af", callback: (v) => `${v * 100}%` },
+              grid: { color: "rgba(255, 255, 255, 0.1)" },
+            },
+            x: {
+              ticks: { color: "#9ca3af" },
+              grid: { display: false },
+            },
+          },
+        },
+      });
+    }
+
+    const evidenceList = [
+      "在电力室附近发现了尸体",
+      "红色玩家在监控室挂机",
+      "蓝色玩家没有做刷卡任务",
+      "看到绿色玩家使用了管道",
+      "氧气室警报没人去修",
+      "黄色玩家在反应堆附近徘徊",
+      "紫色玩家从医疗室出来",
+      "有人关闭了通讯室设备",
+      "餐厅发现血迹",
+      "导航室任务进度条没涨",
+      "黑色玩家试图关门",
+      "白色玩家在走廊突然停下",
+      "粉色玩家一直跟着我",
+      "青色玩家假装做倒垃圾任务",
+      "仓库里有奇怪的声音",
+      "有人在管理室查看地图",
+      "护盾室的灯光闪烁",
+      "引擎室发现有人躲藏",
+      "武器室开火动画显示异常",
+      "投票环节有人一直带节奏",
+    ];
+
+    function showEvidenceBubble(text) {
+      if (!vizEl) return;
+      // Remove existing bubble if any
+      const existing = vizEl.querySelector(".evidence-bubble");
+      if (existing) existing.remove();
+
+      const bubble = document.createElement("div");
+      bubble.className = "evidence-bubble";
+      bubble.innerHTML = `<i class="fa-solid fa-exclamation-circle text-neon-blue mr-2"></i>${text}`;
+      vizEl.appendChild(bubble);
+
+      // Auto remove after 2.5 seconds
+      setTimeout(() => {
+        bubble.classList.add("fade-out");
+        setTimeout(() => {
+          if (bubble.parentNode) bubble.remove();
+        }, 500);
+      }, 2500);
+    }
+
+    function update() {
+      const prior = parseInt(priorInput.value) / 100;
+      const acc = parseInt(accInput.value) / 100;
+
+      if (priorVal) priorVal.textContent = Math.round(prior * 100) + "%";
+      if (accVal) accVal.textContent = Math.round(acc * 100) + "%";
+
+      const lr = acc / (1 - acc);
+      const totalLR = Math.pow(lr, evidenceCount);
+      const oddsPrior = prior / (1 - prior);
+      const oddsPosterior = oddsPrior * totalLR;
+      const posterior = oddsPosterior / (1 + oddsPosterior);
+
+      if (resultEl) resultEl.textContent = (posterior * 100).toFixed(1) + "%";
+
+      renderViz(prior, posterior);
+      renderFormula(prior, acc, evidenceCount, posterior);
+
+      // Update Chart
+      if (chartInstance) {
+        // If evidence count is 0, reset chart
+        if (evidenceCount === 0) {
+          chartInstance.data.labels = ["初始"];
+          chartInstance.data.datasets[0].data = [prior];
+        } else {
+          // Rebuild history if needed, but for now simple push if count increases
+          // Actually, since this update() is called on input change too, we need to be careful.
+          // Let's just rebuild the array based on current params to be consistent
+          const dataPoints = [prior];
+          const labels = ["初始"];
+          let currentOdds = prior / (1 - prior);
+          for (let i = 1; i <= evidenceCount; i++) {
+            currentOdds *= lr;
+            const p = currentOdds / (1 + currentOdds);
+            dataPoints.push(p);
+            labels.push(`证据${i}`);
+          }
+          chartInstance.data.labels = labels;
+          chartInstance.data.datasets[0].data = dataPoints;
+        }
+        chartInstance.update();
+      }
+    }
+
+    function renderViz(prior, posterior) {
+      if (!vizEl) return;
+      const isHigh = posterior > 0.8;
+      const color = isHigh
+        ? "text-red-500"
+        : posterior > 0.5
+        ? "text-orange-400"
+        : "text-gray-400";
+      vizEl.innerHTML = `
+         <div class="text-center transition-all duration-500 transform ${
+           isHigh ? "scale-110" : "scale-100"
+         }">
+           <i class="fa-solid fa-user-astronaut text-8xl ${color} mb-4"></i>
+           <div class="text-xl ${color} font-bold">${
+        isHigh ? "内鬼确认！" : "身份存疑"
+      }</div>
+         </div>
+       `;
+    }
+
+    function renderFormula(prior, acc, k, post) {
+      if (!formulaEl) return;
+      const latex = `$$ P(\\text{Imp}|${k}\\text{Ev}) = \\frac{${acc.toFixed(
+        2
+      )}^{${k}} \\times ${prior.toFixed(2)}}{P(E)} \\approx ${(
+        post * 100
+      ).toFixed(1)}\\% $$`;
+      formulaEl.innerHTML = latex;
+      if (typeof renderMathInElement !== "undefined") {
+        renderMathInElement(formulaEl, {
+          delimiters: [{ left: "$$", right: "$$", display: true }],
+        });
+      }
+    }
+
+    function addEvidence() {
+      evidenceCount++;
+      update();
+      renderButtons();
+      const text =
+        evidenceList[Math.floor(Math.random() * evidenceList.length)];
+      showEvidenceBubble(text);
+    }
+
+    function resetEvidence() {
+      evidenceCount = 0;
+      update();
+      renderButtons();
+    }
+
+    function renderButtons() {
+      controls.innerHTML = "";
+      const addBtn = document.createElement("button");
+      addBtn.className =
+        "px-3 py-1 rounded border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20";
+      addBtn.textContent = "+ 发现疑点";
+      addBtn.onclick = addEvidence;
+      controls.appendChild(addBtn);
+
+      const resetBtn = document.createElement("button");
+      resetBtn.className =
+        "px-3 py-1 rounded border border-white/10 bg-white/5 text-gray-400 hover:bg-white/10";
+      resetBtn.textContent = "重置";
+      resetBtn.onclick = resetEvidence;
+      controls.appendChild(resetBtn);
+
+      const countSpan = document.createElement("span");
+      countSpan.className = "ml-2 text-sm text-gray-400 self-center";
+      countSpan.textContent = `当前证据: ${evidenceCount} 条`;
+      controls.appendChild(countSpan);
+    }
+
+    priorInput.addEventListener("input", update);
+    accInput.addEventListener("input", update);
+    renderButtons();
+    update();
+  }
+
+  function setupBayesLab() {
+    const scenarioSel = document.getElementById("bayes-scenario");
+    const baseInput = document.getElementById("bayes-base");
+    const sensInput = document.getElementById("bayes-sens");
+    const specInput = document.getElementById("bayes-spec");
+    const baseVal = document.getElementById("bayes-base-val");
+    const sensVal = document.getElementById("bayes-sens-val");
+    const specVal = document.getElementById("bayes-spec-val");
+
+    const posRateEl = document.getElementById("bayes-pos-rate");
+    const ppvEl = document.getElementById("bayes-ppv");
+    const vizEl = document.getElementById("bayes-viz");
+    const derivationEl = document.getElementById("bayes-derivation");
+    const legendEl = document.getElementById("bayes-legend");
+
+    function annotateDerivation() {
+      if (!derivationEl) return;
+      const root = derivationEl.querySelector(".katex-html");
+      if (!root) return;
+      function applyHints(color, hints) {
+        const spans = root.querySelectorAll(`span[style*="color: ${color}"]`);
+        spans.forEach((el) => {
+          const t = (el.textContent || "").replace(/\s+/g, "");
+          const hint = hints[t];
+          if (hint) {
+            el.setAttribute("title", hint);
+            el.setAttribute("aria-label", hint);
+            el.setAttribute("data-hint", hint);
+          }
+        });
+      }
+      applyHints("red", {
+        D: "事件成立（患病）",
+        "P(+|D)": "真阳性率（Sensitivity）",
+        "P(D)": "事件基础概率（Base Rate）",
+      });
+      applyHints("green", {
+        "¬D": "健康（非事件）",
+        "P(¬D)": "健康的基础概率",
+      });
+      applyHints("purple", {
+        "P(+|¬D)": "假阳性率（False Positive Rate）",
+      });
+    }
+
+    if (!scenarioSel || !baseInput || !sensInput || !specInput) return;
+
+    const scenarios = {
+      medical: { base: 0.1, sens: 99, spec: 95 },
+      security: { base: 1, sens: 95, spec: 90 },
+      cheat: { base: 5, sens: 98, spec: 98 },
+      custom: { base: 1, sens: 99, spec: 95 },
+    };
+
+    function setControls(s) {
+      baseInput.value = s.base;
+      sensInput.value = s.sens;
+      specInput.value = s.spec;
+      update();
+    }
+
+    scenarioSel.addEventListener("change", (e) => {
+      const v = e.target.value;
+      if (scenarios[v]) setControls(scenarios[v]);
+    });
+
+    function update() {
+      const base = parseFloat(baseInput.value) / 100;
+      const sens = parseFloat(sensInput.value) / 100;
+      const spec = parseFloat(specInput.value) / 100;
+
+      if (baseVal) baseVal.textContent = baseInput.value + "%";
+      if (sensVal) sensVal.textContent = sensInput.value + "%";
+      if (specVal) specVal.textContent = specInput.value + "%";
+
+      const falsePosRate = 1 - spec;
+      const pPos = sens * base + falsePosRate * (1 - base);
+      const ppv = (sens * base) / pPos;
+
+      if (posRateEl) posRateEl.textContent = (pPos * 100).toFixed(2) + "%";
+      if (ppvEl) ppvEl.textContent = (ppv * 100).toFixed(2) + "%";
+      if (legendEl) {
+        const total = 1000;
+        const infected = Math.round(total * base);
+        const healthy = total - infected;
+        const tp = Math.round(infected * sens);
+        const fn = infected - tp;
+        const tn = Math.round(healthy * spec);
+        const fp = healthy - tn;
+        legendEl.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="inline-block rounded-sm" style="width:10px;height:10px;background:#ef4444"></span>
+            <span>TP 真阳性 (${tp})</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-block rounded-sm" style="width:10px;height:10px;background:#a855f7"></span>
+            <span>FP 假阳性 (${fp})</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-block rounded-sm" style="width:10px;height:10px;background:#7f1d1d"></span>
+            <span>FN 假阴性 (${fn})</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-block rounded-sm" style="width:10px;height:10px;background:#10b981"></span>
+            <span>TN 真阴性 (${tn})</span>
+          </div>
+        `;
+      }
+      if (derivationEl) {
+        const scenario = (scenarioSel && scenarioSel.value) || "custom";
+        const scenarioName = {
+          medical: "罕见病检测",
+          security: "机场安检",
+          cheat: "反作弊系统",
+          custom: "自定义场景",
+        }[scenario];
+        const notesMap = {
+          medical: {
+            D: "患病",
+            notD: "健康",
+            posD: "真阳性率（检测阳性且患病）",
+            posNotD: "假阳性率（健康却被误报）",
+          },
+          security: {
+            D: "携带违禁品",
+            notD: "正常乘客",
+            posD: "真阳性率（安检识别违禁品）",
+            posNotD: "假阳性率（正常误报为危险）",
+          },
+          cheat: {
+            D: "作弊/外挂存在",
+            notD: "正常玩家",
+            posD: "真阳性率（检测正确识别作弊）",
+            posNotD: "假阳性率（正常被误判作弊）",
+          },
+          custom: {
+            D: "事件成立",
+            notD: "事件不成立",
+            posD: "真阳性率",
+            posNotD: "假阳性率",
+          },
+        }[scenario];
+        const latex = `$$\\begin{aligned}
+\\text{设颜色：}\\ &\\textcolor{red}{D},\\ \\textcolor{green}{\\neg D},\\ \\textcolor{red}{P(+|D)},\\ \\textcolor{purple}{P(+|\\neg D)} \\\\
+P(+) &= \\textcolor{red}{P(+|D)}\\,\\textcolor{red}{P(D)} + \\textcolor{purple}{P(+|\\neg D)}\\,\\textcolor{green}{P(\\neg D)} \\\\
+PPV &= \\frac{\\textcolor{red}{P(+|D)}\\,\\textcolor{red}{P(D)}}{\\textcolor{red}{P(+|D)}\\,\\textcolor{red}{P(D)}+\\textcolor{purple}{P(+|\\neg D)}\\,\\textcolor{green}{P(\\neg D)}} \\\\
+&= \\frac{${sens.toFixed(3)}\\times${base.toFixed(3)}}{${sens.toFixed(
+          3
+        )}\\times${base.toFixed(3)}+${falsePosRate.toFixed(3)}\\times${(
+          1 - base
+        ).toFixed(3)}} \\\\
+&\\approx ${(ppv * 100).toFixed(2)}\\%
+\\end{aligned}$$`;
+        const descHtml = `
+          <div class="mt-2 text-xs text-gray-400">
+            当前场景：${scenarioName}；
+            <span style="color:#ef4444">D</span> 表示 ${notesMap.D}；
+            <span style="color:#10b981">¬D</span> 表示 ${notesMap.notD}；
+            <span style="color:#ef4444">P(+|D)</span> 为 ${notesMap.posD}；
+            <span style="color:#a855f7">P(+|¬D)</span> 为 ${notesMap.posNotD}；
+            <span class="ml-1">真阳性事件：测试阳性且 D 成立。</span>
+          </div>
+        `;
+        derivationEl.innerHTML = `<div>${latex}</div>${descHtml}`;
+        if (typeof renderMathInElement !== "undefined") {
+          renderMathInElement(derivationEl, {
+            delimiters: [{ left: "$$", right: "$$", display: true }],
+          });
+          if (typeof requestAnimationFrame !== "undefined") {
+            requestAnimationFrame(annotateDerivation);
+          } else {
+            setTimeout(annotateDerivation, 0);
+          }
+        }
+      }
+
+      renderViz(base, sens, spec);
+    }
+
+    function renderViz(base, sens, spec) {
+      if (!vizEl) return;
+      const total = 1000;
+      const infected = Math.round(total * base);
+      const healthy = total - infected;
+
+      const tp = Math.round(infected * sens);
+      const fn = infected - tp;
+
+      const tn = Math.round(healthy * spec);
+      const fp = healthy - tn;
+
+      let canvas = vizEl.querySelector("canvas");
+      if (!canvas) {
+        canvas = document.createElement("canvas");
+        vizEl.innerHTML = "";
+        vizEl.appendChild(canvas);
+      }
+
+      const rect = vizEl.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+
+      const cols = 50;
+      const rows = 20;
+      const cellW = rect.width / cols;
+      const cellH = rect.height / rows;
+      const radius = Math.min(cellW, cellH) * 0.35;
+
+      let dots = [];
+      for (let i = 0; i < tp; i++) dots.push({ color: "#ef4444" });
+      for (let i = 0; i < fn; i++) dots.push({ color: "#7f1d1d" });
+      for (let i = 0; i < fp; i++) dots.push({ color: "#a855f7" });
+      for (let i = 0; i < tn; i++) dots.push({ color: "#10b981" });
+
+      dots.forEach((dot, idx) => {
+        const c = idx % cols;
+        const r = Math.floor(idx / cols);
+        const x = c * cellW + cellW / 2;
+        const y = r * cellH + cellH / 2;
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = dot.color;
+        ctx.fill();
+      });
+    }
+
+    baseInput.addEventListener("input", update);
+    sensInput.addEventListener("input", update);
+    specInput.addEventListener("input", update);
+
+    setControls(scenarios.medical);
+  }
+
+  function setupMontyHall() {
+    const doorsContainer = document.getElementById("monty-doors");
+    const keepBtn = document.getElementById("monty-keep");
+    const switchBtn = document.getElementById("monty-switch");
+    const msgEl = document.getElementById("monty-message");
+    const totalRunsEl = document.getElementById("monty-total-runs");
+    const keepRateEl = document.getElementById("monty-keep-rate");
+    const keepBar = document.getElementById("monty-keep-bar");
+    const switchRateEl = document.getElementById("monty-switch-rate");
+    const switchBar = document.getElementById("monty-switch-bar");
+    const montyDerivEl = document.getElementById("monty-derivation");
+
+    const sim10Btn = document.getElementById("monty-sim-10");
+    const sim100Btn = document.getElementById("monty-sim-100");
+    const resetBtn = document.getElementById("monty-reset");
+
+    if (!doorsContainer || !keepBtn || !switchBtn) return;
+
+    let state = "pick";
+    let prizeDoor = 0;
+    let selectedDoor = -1;
+    let openedDoor = -1;
+    let stats = { keepWins: 0, keepTotal: 0, switchWins: 0, switchTotal: 0 };
+
+    function initGame() {
+      state = "pick";
+      prizeDoor = Math.floor(Math.random() * 3);
+      selectedDoor = -1;
+      openedDoor = -1;
+      renderDoors();
+      updateMessage("请选择一扇门开始游戏");
+      keepBtn.disabled = true;
+      switchBtn.disabled = true;
+      keepBtn.classList.add("opacity-50");
+      switchBtn.classList.add("opacity-50");
+    }
+
+    function renderDoors(revealAll = false) {
+      doorsContainer.innerHTML = "";
+      for (let i = 0; i < 3; i++) {
+        const door = document.createElement("div");
+        door.className =
+          "relative w-24 h-36 cursor-pointer transition-transform duration-300 transform hover:scale-105";
+
+        const content = document.createElement("div");
+        content.className =
+          "absolute inset-0 flex items-center justify-center bg-gray-800 rounded-lg border border-gray-700";
+        if (i === prizeDoor) {
+          content.innerHTML =
+            '<i class="fa-solid fa-car text-4xl text-neon-green"></i>';
+        } else {
+          content.innerHTML =
+            '<i class="fa-solid fa-horse-head text-4xl text-gray-500"></i>';
+        }
+        door.appendChild(content);
+
+        const cover = document.createElement("div");
+        let coverClass =
+          "absolute inset-0 bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-lg border-2 border-indigo-400 flex items-center justify-center text-2xl font-bold text-white transition-all duration-500 origin-left";
+
+        if (i === selectedDoor) {
+          coverClass +=
+            " ring-4 ring-neon-purple shadow-[0_0_15px_rgba(167,139,250,0.5)]";
+        }
+
+        if (
+          revealAll ||
+          i === openedDoor ||
+          (state === "result" && i === prizeDoor)
+        ) {
+          coverClass += " opacity-0 pointer-events-none";
+          cover.style.transform = "perspective(1000px) rotateY(-110deg)";
+        }
+
+        cover.className = coverClass;
+        cover.textContent = i + 1;
+        door.appendChild(cover);
+
+        door.onclick = () => handleDoorClick(i);
+        doorsContainer.appendChild(door);
+      }
+    }
+
+    function updateMessage(text, type = "info") {
+      if (!msgEl) return;
+      msgEl.innerHTML = text;
+      if (type === "host") {
+        msgEl.className =
+          "text-center text-lg min-h-[1.75rem] text-neon-purple font-bold";
+        msgEl.innerHTML = `<i class="fa-solid fa-microphone mr-2"></i>${text}`;
+      } else {
+        msgEl.className = "text-center text-lg min-h-[1.75rem] text-gray-200";
+      }
+    }
+
+    const hostMessages = [
+      "哼哼，让我看看...这扇门后面只有山羊！",
+      "作为主持人，我不能让你选空，所以我帮你排除一个错误答案。",
+      "看来你运气不错（或者很差？），我打开了这扇门！",
+      "见证奇迹的时刻... 咩~ 是山羊！",
+    ];
+
+    function handleDoorClick(doorIdx) {
+      if (state !== "pick") return;
+      selectedDoor = doorIdx;
+
+      const availableDoors = [0, 1, 2].filter(
+        (d) => d !== prizeDoor && d !== selectedDoor
+      );
+      openedDoor =
+        availableDoors[Math.floor(Math.random() * availableDoors.length)];
+
+      state = "decide";
+      renderDoors();
+      // Random host message
+      const msg = hostMessages[Math.floor(Math.random() * hostMessages.length)];
+      updateMessage(
+        `${msg}<br>主持人打开了 ${openedDoor + 1} 号门（山羊）。你要换门吗？`,
+        "host"
+      );
+
+      keepBtn.disabled = false;
+      switchBtn.disabled = false;
+      keepBtn.classList.remove("opacity-50");
+      switchBtn.classList.remove("opacity-50");
+    }
+
+    function handleDecision(doSwitch) {
+      if (state !== "decide") return;
+
+      const finalDoor = doSwitch
+        ? [0, 1, 2].find((d) => d !== selectedDoor && d !== openedDoor)
+        : selectedDoor;
+      const win = finalDoor === prizeDoor;
+
+      if (doSwitch) {
+        stats.switchTotal++;
+        if (win) stats.switchWins++;
+      } else {
+        stats.keepTotal++;
+        if (win) stats.keepWins++;
+      }
+
+      state = "result";
+      renderDoors(true);
+      updateMessage(
+        win
+          ? doSwitch
+            ? "换门成功！你赢得了跑车！"
+            : "坚持成功！你赢得了跑车！"
+          : "很遗憾，是山羊。"
+      );
+      updateStats();
+
+      setTimeout(initGame, 2500);
+    }
+
+    function updateMessage(msg) {
+      msgEl.textContent = msg;
+    }
+
+    function updateStats() {
+      const keepRate =
+        stats.keepTotal > 0 ? (stats.keepWins / stats.keepTotal) * 100 : 0;
+      const switchRate =
+        stats.switchTotal > 0
+          ? (stats.switchWins / stats.switchTotal) * 100
+          : 0;
+      const total = stats.keepTotal + stats.switchTotal;
+
+      totalRunsEl.textContent = total;
+      keepRateEl.textContent = keepRate.toFixed(1) + "%";
+      keepBar.style.width = keepRate + "%";
+
+      switchRateEl.textContent = switchRate.toFixed(1) + "%";
+      switchBar.style.width = switchRate + "%";
+
+      if (montyDerivEl) {
+        if (total > 100) {
+          montyDerivEl.classList.remove("hidden");
+          const latex = `$$\\begin{aligned}
+P(\\text{win}|\\text{keep}) &= P(\\text{初选正确}) = \\frac{1}{3} \\\\
+P(\\text{win}|\\text{switch}) &= P(\\text{初选错误}) = \\frac{2}{3}
+\\end{aligned}$$`;
+          const html = `
+            <div class="text-sm text-gray-200 mb-2">理论推导</div>
+            <div class="mb-3">${latex}</div>
+            <div class="text-xs text-gray-400 space-y-1">
+              <div>情形 1：奖品在初选门（概率 1/3），主持人开一扇羊门，换门会失去奖品 → 换门输</div>
+              <div>情形 2：奖品不在初选门（概率 2/3），主持人开一扇羊门，换到剩余未开门即为奖品 → 换门赢</div>
+              <div>因此：换门策略的胜率 = 初选错误的概率 = 2/3；坚持策略胜率 = 初选正确的概率 = 1/3</div>
+              <div>当前模拟：坚持 ${keepRate.toFixed(
+                1
+              )}%，换门 ${switchRate.toFixed(1)}%</div>
+            </div>
+          `;
+          montyDerivEl.innerHTML = html;
+          if (typeof renderMathInElement !== "undefined") {
+            renderMathInElement(montyDerivEl, {
+              delimiters: [{ left: "$$", right: "$$", display: true }],
+            });
+          }
+        } else {
+          montyDerivEl.classList.add("hidden");
+          montyDerivEl.innerHTML = "";
+        }
+      }
+    }
+
+    function runSimulation(n) {
+      for (let i = 0; i < n; i++) {
+        const doSwitch = Math.random() < 0.5;
+        const p = Math.floor(Math.random() * 3);
+        const s = Math.floor(Math.random() * 3);
+        const avail = [0, 1, 2].filter((d) => d !== p && d !== s);
+        const o = avail[Math.floor(Math.random() * avail.length)];
+        const final = doSwitch ? [0, 1, 2].find((d) => d !== s && d !== o) : s;
+        const win = final === p;
+
+        if (doSwitch) {
+          stats.switchTotal++;
+          if (win) stats.switchWins++;
+        } else {
+          stats.keepTotal++;
+          if (win) stats.keepWins++;
+        }
+      }
+      updateStats();
+    }
+
+    keepBtn.addEventListener("click", () => handleDecision(false));
+    switchBtn.addEventListener("click", () => handleDecision(true));
+
+    if (sim10Btn) sim10Btn.addEventListener("click", () => runSimulation(10));
+    if (sim100Btn)
+      sim100Btn.addEventListener("click", () => runSimulation(100));
+    if (resetBtn)
+      resetBtn.addEventListener("click", () => {
+        stats = { keepWins: 0, keepTotal: 0, switchWins: 0, switchTotal: 0 };
+        updateStats();
+        initGame();
+      });
+
+    initGame();
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     try {
       setupPerlinBackground();
@@ -2718,6 +3434,21 @@
       setupGachaLab();
     } catch (e) {
       console.warn("Gacha lab setup failed:", e);
+    }
+    try {
+      setupAmongUsAnalyzer();
+    } catch (e) {
+      console.warn("Among Us analyzer setup failed:", e);
+    }
+    try {
+      setupBayesLab();
+    } catch (e) {
+      console.warn("Bayes lab setup failed:", e);
+    }
+    try {
+      setupMontyHall();
+    } catch (e) {
+      console.warn("Monty Hall setup failed:", e);
     }
   });
 })();

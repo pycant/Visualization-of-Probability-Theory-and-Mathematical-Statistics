@@ -1,0 +1,434 @@
+/* Chapter 3 专用样式 - 多维随机变量可视化 */
+
+#global-bg-blur {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  backdrop-filter: blur(var(--global-bg-blur, 12px));
+  background-color: rgba(128, 128, 128, var(--global-bg-tint, 0.12));
+  mix-blend-mode: multiply;
+}
+
+#marginal-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.bg-grid {
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.title-gradient {
+  background: linear-gradient(90deg, #00f3ff, #bf00ff 60%, #00ff66);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 3D可视化容器样式 */
+.plot-container {
+  position: relative;
+  background: rgba(15, 23, 48, 0.6);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.plot-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(34, 211, 238, 0.05),
+    transparent 50%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 联合概率表格样式 */
+.joint-prob-table {
+  background: rgba(15, 23, 48, 0.8);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.joint-prob-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.joint-prob-table th {
+  background: rgba(34, 211, 238, 0.15);
+  color: #00f3ff;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.joint-prob-table td {
+  padding: 8px 12px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.joint-prob-table td:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.joint-prob-table .marginal-cell {
+  background: rgba(167, 139, 250, 0.1);
+  color: #bf00ff;
+  font-weight: 600;
+}
+
+.joint-prob-table .total-cell {
+  background: rgba(0, 255, 102, 0.1);
+  color: #00ff66;
+  font-weight: 700;
+}
+
+/* 统计仪表盘样式 */
+.stats-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  background: rgba(15, 23, 48, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card:hover {
+  border-color: rgba(34, 211, 238, 0.3);
+  box-shadow: 0 4px 20px rgba(34, 211, 238, 0.1);
+  transform: translateY(-2px);
+}
+
+.stat-card .stat-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-card .stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* 参数控制面板样式 */
+.param-control {
+  background: rgba(15, 23, 48, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.param-control .param-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.param-control .param-value {
+  font-weight: 600;
+  font-family: "Courier New", monospace;
+}
+
+/* 自定义滑动条样式 */
+.param-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  transition: background 0.3s ease;
+}
+
+.param-slider:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.param-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid rgba(34, 211, 238, 0.5);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.param-slider::-webkit-slider-thumb:hover {
+  border-color: #00f3ff;
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.4);
+  transform: scale(1.1);
+}
+
+.param-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid rgba(34, 211, 238, 0.5);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 按钮样式增强 */
+.action-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.action-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.action-button:hover::before {
+  transform: translateX(100%);
+}
+
+.action-button:active {
+  transform: scale(0.98);
+}
+
+/* 独立性检验结果样式 */
+.independence-result {
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px solid;
+  text-align: center;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.independence-result.independent {
+  border-color: rgba(0, 255, 102, 0.5);
+  background: rgba(0, 255, 102, 0.1);
+  color: #00ff66;
+}
+
+.independence-result.dependent {
+  border-color: rgba(255, 102, 102, 0.5);
+  background: rgba(255, 102, 102, 0.1);
+  color: #ff6666;
+}
+
+.independence-result.uncertain {
+  border-color: rgba(255, 193, 7, 0.5);
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+}
+
+/* 动画效果 */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(34, 211, 238, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.6);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes data-flow {
+  0% {
+    transform: translateX(-100%) scaleX(0);
+  }
+  50% {
+    transform: translateX(0%) scaleX(1);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0);
+  }
+}
+
+.data-flow::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(34, 211, 238, 0.3),
+    transparent
+  );
+  animation: data-flow 2s ease-in-out infinite;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .stats-dashboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .joint-prob-table {
+    font-size: 0.75rem;
+  }
+
+  .joint-prob-table th,
+  .joint-prob-table td {
+    padding: 6px 8px;
+  }
+
+  .stat-card {
+    padding: 0.75rem;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1rem;
+  }
+}
+
+/* 工具提示样式 */
+.tooltip {
+  position: absolute;
+  background: rgba(15, 23, 48, 0.95);
+  border: 1px solid rgba(34, 211, 238, 0.5);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  color: #fff;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.tooltip.show {
+  opacity: 1;
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0;
+  border-style: solid;
+  border-color: rgba(34, 211, 238, 0.5) transparent transparent transparent;
+}
+
+/* 加载动画 */
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #00f3ff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 数据可视化画布增强 */
+canvas {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+canvas:hover {
+  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.2);
+}
+
+/* 选择器样式统一 */
+select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 32px;
+  transition: all 0.2s ease;
+}
+
+select:focus {
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
+}
+
+/* 输入框样式 */
+input[type="number"] {
+  transition: all 0.2s ease;
+}
+
+input[type="number"]:focus {
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.1);
+  outline: none;
+}

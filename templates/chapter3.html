@@ -6,306 +6,625 @@
     <title>第3章 多维随机变量及其分布</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
       rel="stylesheet"
-      href="../static/libs/fontawesome/font-awesome.min.css"
     />
+
+    <!-- KaTeX 样式与脚本（用于 LaTeX 公式渲染） -->
+    <link rel="stylesheet" href="../static/libs/katex/css/katex.min.css" />
+    <script src="../static/libs/katex/js/katex.min.js"></script>
+    <script src="../static/libs/katex/js/auto-render.min.js"></script>
+    <script src="../static/libs/chart/chart.umd.min.js"></script>
+
+    <!-- 3D可视化库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+
     <link rel="icon" href="../static/images/favicon.ico" />
-    <style>
-      /* 章节主题变量 */
-      .min-h-screen {
-        --accent: #a78bfa; /* violet-300 */
-        --accent-2: #22d3ee; /* cyan-400 */
-        --accent-ghost: rgba(167, 139, 250, 0.1);
-        --accent-glow: rgba(34, 211, 238, 0.18);
-      }
-      /* 背景霓虹与扫描光束 */
-      .min-h-screen {
-        position: relative;
-        overflow: hidden;
-      }
-      .min-h-screen::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(
-            1000px 400px at 12% 0%,
-            var(--accent-ghost),
-            transparent
-          ),
-          radial-gradient(
-            900px 360px at 88% 0%,
-            rgba(34, 211, 238, 0.1),
-            transparent
-          );
-        mix-blend-mode: screen;
-        opacity: 0.9;
-      }
-      .min-h-screen::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: -25%;
-        width: 40%;
-        pointer-events: none;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(167, 139, 250, 0.16),
-          transparent
-        );
-        transform: translateX(-100%);
-        animation: sweepBeam 10s ease-in-out infinite;
-        mix-blend-mode: screen;
-      }
-      @keyframes sweepBeam {
-        0% {
-          transform: translateX(-120%);
-        }
-        50% {
-          transform: translateX(120%);
-        }
-        100% {
-          transform: translateX(-120%);
-        }
-      }
-      /* 卡片发光与渐变边框 */
-      .bg-dark-card {
-        border-color: rgba(255, 255, 255, 0.1);
-        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35),
-          0 10px 28px var(--accent-glow);
-      }
-      .bg-dark-card:hover {
-        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.4),
-          0 16px 40px var(--accent-glow);
-        transform: translateY(-2px);
-        transition: all 0.2s ease;
-      }
-      .bg-dark-card {
-        position: relative;
-      }
-      .bg-dark-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: 16px;
-        padding: 1px;
-        background: linear-gradient(180deg, var(--accent), var(--accent-2));
-        -webkit-mask: linear-gradient(#000 0 0) content-box,
-          linear-gradient(#000 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-      }
-      /* 标题渐变与下划线发光 */
-      h2,
-      h3 {
-        background: linear-gradient(90deg, var(--accent), var(--accent-2));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-      }
-      h3::after {
-        content: "";
-        display: block;
-        height: 2px;
-        margin-top: 6px;
-        width: 0;
-        background: linear-gradient(90deg, var(--accent), var(--accent-2));
-        box-shadow: 0 0 10px var(--accent-2);
-        transition: width 0.25s ease;
-      }
-      section:hover h3::after {
-        width: 64px;
-      }
-      /* 图标徽记发光 */
-      .rounded-lg.bg-neon-purple\/10 {
-        box-shadow: 0 0 14px var(--accent-ghost);
-      }
-      /* 交替浅色着色卡片 */
-      section:nth-of-type(2n + 1) .bg-dark-bg\/50 {
-        background: radial-gradient(
-            600px 200px at 8% 0%,
-            rgba(167, 139, 250, 0.1),
-            transparent
-          ),
-          rgba(17, 24, 39, 0.6);
-      }
-      /* text-neon-* 兜底 */
-      .text-neon-purple {
-        color: var(--accent);
-      }
-      .text-neon-orange {
-        color: #f59e0b;
-      }
-      .text-neon-green {
-        color: #22c55e;
-      }
-      body.text-white {
-        color: #e6edf7;
-      }
-      .bg-dark-card {
-        position: relative;
-        background: radial-gradient(
-            1200px 460px at 8% 0%,
-            var(--accent-ghost),
-            transparent
-          ),
-          rgba(17, 24, 39, 0.65);
-      }
-        background: radial-gradient(
-            1200px 460px at 8% 0%,
-            var(--accent-ghost),
-            transparent
-          ),
-          rgba(17, 24, 39, 0.65);
-      }
-      .bg-dark-bg\/50 {
-        background: radial-gradient(
-            700px 240px at 10% 0%,
-            var(--accent-ghost),
-            transparent
-          ),
-          rgba(31, 41, 55, 0.6);
-        backdrop-filter: blur(2px);
-      }
-      main p {
-        color: #e6edf7;
-      }
-      main li {
-        color: #d1d9e6;
-      }
-      .text-gray-300 {
-        color: #e6edf7 !important;
-      }
-      .text-gray-400 {
-        color: #cbd5e1 !important;
-      }
-      .text-gray-500 {
-        color: #94a3b8 !important;
-      }
-      html,
-      body {
-        background-color: #0f172a;
-      }
-      .bg-dark-bg {
-        background-color: #0f172a !important;
-      }
-      .min-h-screen-bg {
-        background: linear-gradient(
-          180deg,
-          #0f172a 0%,
-          #0b1220 40%,
-          #111827 100%
-        );
+    <link rel="stylesheet" href="../static/css/chapter1.css" />
+    <link rel="stylesheet" href="../static/css/chapter3.css" />
+    <script src="../static/js/lib/noise2d.js"></script>
+    <script src="https://d3js.org/d3-contour.v3.min.js"></script>
+
+    <style type="text/tailwindcss">
+      .gap-8 {
+        gap: 1rem;
       }
     </style>
-  </head>
-  <body class="bg-dark-bg text-white">
-    <div class="min-h-screen bg-gradient-to-b from-dark-bg to-dark-card/50">
-      <main class="container mx-auto px-4">
-        <section class="bg-dark-card border border-gray-800 rounded-2xl p-8">
-          <div class="flex items-center mb-6">
-            <div
-              class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mr-4"
-            >
-              <i class="fa fa-layer-group text-neon-purple text-2xl"></i>
-            </div>
-            <div>
-              <div class="text-xs text-gray-400">第3章</div>
-              <h2 class="text-2xl font-bold">多维随机变量及其分布</h2>
-            </div>
-          </div>
-          <p class="text-gray-300">
-            本章节聚焦联合分布、边缘分布与条件分布，讨论相关系数、协方差矩阵及其性质。
-          </p>
-          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
-              <h3 class="font-semibold mb-3">内容建设中</h3>
-              <ul class="text-gray-400 space-y-2 text-sm">
-                <li>• 二维与多维联合分布</li>
-                <li>• 边缘分布与条件分布</li>
-                <li>• 协方差、相关系数</li>
-                <li>• 正态向量与线性变换</li>
-              </ul>
-            </div>
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
-              <h3 class="font-semibold mb-3">学习建议</h3>
-              <p class="text-gray-400 text-sm">
-                结合可视化热图与PCA示例，理解多维数据结构与相关性模式。
-              </p>
-            </div>
-          </div>
-        </section>
-        <section
-          id="overview"
-          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
-        >
-          <h3 class="text-xl font-semibold mb-4 text-white">概述</h3>
-          <p class="text-gray-300">
-            本章聚焦二维与多维随机变量的联合分布、边缘分布与条件分布，讨论协方差与相关系数及其性质，为理解多维数据结构与线性关系奠定基础。
-          </p>
-        </section>
-        <section
-          id="key-topics"
-          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
-        >
-          <h3 class="text-xl font-semibold mb-4 text-white">核心要点</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
-              <ul class="text-gray-400 space-y-2 text-sm">
-                <li>• 二维与多维联合分布</li>
-                <li>• 边缘分布与条件分布</li>
-                <li>• 协方差与相关系数</li>
-              </ul>
-            </div>
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
-              <ul class="text-gray-400 space-y-2 text-sm">
-                <li>• 正态向量及其性质</li>
-                <li>• 线性变换与不变性</li>
-                <li>• 相关结构的可视化理解</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-        <section
-          id="learn-tips"
-          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
-        >
-          <h3 class="text-xl font-semibold mb-4 text-white">学习建议</h3>
-          <p class="text-gray-400 text-sm">
-            结合可视化热图与主成分分析示例，理解协方差矩阵与相关性模式，并尝试使用降维方法观察多维结构。
-          </p>
-        </section>
-        <section
-          id="resources"
-          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
-        >
-          <h3 class="text-xl font-semibold mb-4 text-white">延伸资源</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
-              <p class="text-gray-400 text-sm">示例数据与练习题占位</p>
-            </div>
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
-              <p class="text-gray-400 text-sm">参考资料与可视化工具占位</p>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-    <div id="site-footer"></div>
+
     <script>
-      globalThis.NAV_CONFIG = {
+      // 为导航注入页面级锚点链接
+      window.NAV_CONFIG = {
+        active: "chapter3",
         sectionLinks: [
-          { label: "概述", href: "#overview" },
-          { label: "核心要点", href: "#key-topics" },
-          { label: "学习建议", href: "#learn-tips" },
-          { label: "资源", href: "#resources" },
+          { href: "#sec-3-1", label: "3.1 多维随机变量及其联合分布" },
+          { href: "#sec-3-2", label: "3.2 边际分布与独立性" },
+          { href: "#sec-3-3", label: "3.3 多维随机变量函数的分布" },
+          { href: "#sec-3-4", label: "3.4 多维随机变量的特征数" },
+          { href: "#sec-3-5", label: "3.5 条件分布与条件期望" },
         ],
       };
     </script>
+  </head>
+
+  <body class="bg-dark-bg text-white">
+    <canvas id="bg-noise" aria-hidden="true"></canvas>
+    <canvas id="marginal-glow" aria-hidden="true"></canvas>
+    <div id="global-bg-blur" aria-hidden="true"></div>
+    <!-- 通过脚本动态注入统一导航栏 -->
     <script src="../static/js/include-navbar.js"></script>
+
+    <div
+      class="min-h-screen bg-gradient-to-b from-dark-bg to-dark-card/50 pt-20 bg-overlay"
+    >
+      <!-- Hero Section -->
+      <section
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 text-center py-24 clip-path-slant"
+      >
+        <div class="absolute inset-0 bg-grid opacity-10"></div>
+        <h1 class="title-gradient hero-title font-extrabold leading-tight">
+          第3章 多维随机变量及其分布
+        </h1>
+        <p class="subtitle hero-subtitle mt-3 sm:mt-4">
+          探索变量间的联合行为，理解相关性与独立性的本质
+        </p>
+        <div class="mt-5 flex flex-wrap justify-center gap-2">
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-chart-scatter"></i> 联合分布
+          </span>
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-chart-bar"></i> 边际分布
+          </span>
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-link"></i> 相关性
+          </span>
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-balance-scale"></i> 独立性
+          </span>
+        </div>
+        <div class="mt-6 flex justify-center">
+          <div class="glass-card fx-holo rounded-xl px-4 py-3">
+            <div class="text-sm text-gray-300 mb-2">关键公式</div>
+            <div>
+              $f(x,y) = \frac{\partial^2 F(x,y)}{\partial x \partial y}$
+            </div>
+            <div class="mt-2">$\text{Cov}(X,Y) = E[XY] - E[X]E[Y]$</div>
+            <div class="mt-2">
+              $\rho(X,Y) =
+              \frac{\text{Cov}(X,Y)}{\sqrt{\text{Var}(X)\text{Var}(Y)}}$
+            </div>
+          </div>
+        </div>
+        <div
+          class="mt-6 sm:mt-8 flex flex-wrap gap-3 justify-center"
+          id="hero-links"
+        ></div>
+      </section>
+
+      <!-- 3.1 多维随机变量及其联合分布 -->
+      <section
+        id="sec-3-1"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold text-neon-blue mb-2">
+              <i class="fa-solid fa-cube mr-2"></i>双变量股票收益率分析器
+            </h2>
+            <p class="text-gray-300">
+              通过股票收益率的联合分布，直观理解二维随机变量的概念和性质
+            </p>
+          </div>
+
+          <div class="flex flex-col lg:flex-row gap-8">
+            <!-- 左侧可视化区域 -->
+            <div class="flex-1">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- 3D联合密度图 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">3D联合密度函数</div>
+                  <div id="joint-3d-plot" class="h-64 w-full"></div>
+                </div>
+
+                <!-- 等高线图 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">密度等高线图</div>
+                  <canvas
+                    id="contour-canvas"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+
+                <!-- 散点图 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">样本散点分布</div>
+                  <canvas
+                    id="scatter-canvas"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+
+                <!-- 边际分布 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">边际密度曲线</div>
+                  <canvas
+                    id="marginal-canvas"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+              </div>
+
+              <!-- 实时统计显示 -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>理论相关系数</div>
+                  <div id="theory-corr" class="text-neon-blue text-lg">
+                    0.00
+                  </div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>样本相关系数</div>
+                  <div id="sample-corr" class="text-neon-purple text-lg">
+                    0.00
+                  </div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>联合概率</div>
+                  <div id="joint-prob" class="text-neon-green text-lg">
+                    0.00
+                  </div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>样本数量</div>
+                  <div id="sample-count" class="text-lg">1000</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧控制面板 -->
+            <div class="w-full lg:w-80">
+              <div class="space-y-5">
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>股票A期望收益 μ₁ (%)</span>
+                    <span id="mu1-val" class="text-neon-blue">5.0%</span>
+                  </div>
+                  <input
+                    id="mu1-slider"
+                    type="range"
+                    min="-10"
+                    max="20"
+                    step="0.5"
+                    value="5"
+                    class="w-full accent-neon-blue"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>股票B期望收益 μ₂ (%)</span>
+                    <span id="mu2-val" class="text-neon-purple">8.0%</span>
+                  </div>
+                  <input
+                    id="mu2-slider"
+                    type="range"
+                    min="-10"
+                    max="20"
+                    step="0.5"
+                    value="8"
+                    class="w-full accent-neon-purple"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>股票A波动率 σ₁ (%)</span>
+                    <span id="sigma1-val" class="text-neon-green">15.0%</span>
+                  </div>
+                  <input
+                    id="sigma1-slider"
+                    type="range"
+                    min="5"
+                    max="50"
+                    step="1"
+                    value="15"
+                    class="w-full accent-neon-green"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>股票B波动率 σ₂ (%)</span>
+                    <span id="sigma2-val" class="text-neon-green">20.0%</span>
+                  </div>
+                  <input
+                    id="sigma2-slider"
+                    type="range"
+                    min="5"
+                    max="50"
+                    step="1"
+                    value="20"
+                    class="w-full accent-neon-green"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>相关系数 ρ</span>
+                    <span id="rho-val" class="text-yellow-400">0.3</span>
+                  </div>
+                  <input
+                    id="rho-slider"
+                    type="range"
+                    min="-0.9"
+                    max="0.9"
+                    step="0.1"
+                    value="0.3"
+                    class="w-full accent-yellow-400"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>样本数量</span>
+                    <span id="n-samples-val" class="text-gray-300">1000</span>
+                  </div>
+                  <input
+                    id="n-samples-slider"
+                    type="range"
+                    min="100"
+                    max="5000"
+                    step="100"
+                    value="1000"
+                    class="w-full accent-white"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm">分布类型</div>
+                  <select
+                    id="dist-type"
+                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white"
+                  >
+                    <option value="normal">二维正态分布</option>
+                    <option value="uniform">二维均匀分布</option>
+                    <option value="exponential">二维指数分布</option>
+                  </select>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    id="generate-samples"
+                    class="px-4 py-2 rounded-lg border border-neon-blue/30 bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20"
+                  >
+                    重新生成样本
+                  </button>
+                  <button
+                    id="reset-params"
+                    class="px-4 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10"
+                  >
+                    重置参数
+                  </button>
+                </div>
+
+                <!-- 联合概率计算器 -->
+                <div
+                  class="bg-dark-bg/50 rounded-xl p-4 border border-white/10"
+                >
+                  <div class="text-sm font-medium mb-3">联合概率计算器</div>
+                  <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <label>X范围: [</label>
+                      <input
+                        id="x-min"
+                        type="number"
+                        value="-5"
+                        class="w-12 bg-transparent border-b border-white/20 text-center"
+                      />
+                      <span>, </span>
+                      <input
+                        id="x-max"
+                        type="number"
+                        value="5"
+                        class="w-12 bg-transparent border-b border-white/20 text-center"
+                      />
+                      <span>]</span>
+                    </div>
+                    <div>
+                      <label>Y范围: [</label>
+                      <input
+                        id="y-min"
+                        type="number"
+                        value="-5"
+                        class="w-12 bg-transparent border-b border-white/20 text-center"
+                      />
+                      <span>, </span>
+                      <input
+                        id="y-max"
+                        type="number"
+                        value="5"
+                        class="w-12 bg-transparent border-b border-white/20 text-center"
+                      />
+                      <span>]</span>
+                    </div>
+                  </div>
+                  <button
+                    id="calc-joint-prob"
+                    class="mt-2 w-full py-1 rounded border border-white/20 bg-white/5 text-xs hover:bg-white/10"
+                  >
+                    计算 P(X∈[a,b], Y∈[c,d])
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 历史介绍 -->
+        <div class="mt-8 glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <h3 class="text-xl font-semibold mb-3">历史介绍</h3>
+          <ul class="list-disc pl-6 space-y-2 text-gray-200">
+            <li>
+              多维随机变量理论由高尔顿（Francis Galton,
+              1886）在研究身高遗传时首次系统提出。
+            </li>
+            <li>
+              皮尔逊（Karl Pearson,
+              1896）定义了相关系数，为多变量统计分析奠定基础。
+            </li>
+            <li>
+              现代投资组合理论中，马科维茨（Harry Markowitz,
+              1952）运用协方差矩阵优化资产配置。
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 3.2 边际分布与独立性 -->
+      <section
+        id="sec-3-2"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold text-neon-purple mb-2">
+              <i class="fa-solid fa-microscope mr-2"></i>独立性检验实验室
+            </h2>
+            <p class="text-gray-300">
+              通过社交媒体行为分析，理解随机变量独立性的判断方法
+            </p>
+          </div>
+
+          <div class="flex flex-col lg:flex-row gap-8">
+            <!-- 左侧可视化区域 -->
+            <div class="flex-1">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- 联合概率表 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">联合概率分布表</div>
+                  <div id="joint-prob-table" class="overflow-auto"></div>
+                </div>
+
+                <!-- 条件概率图 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">条件概率对比</div>
+                  <canvas
+                    id="conditional-prob-chart"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+
+                <!-- 独立性测试仪表盘 -->
+                <div class="bg-dark-card/60 rounded-xl p-4 md:col-span-2">
+                  <div class="text-sm text-gray-300 mb-2">独立性检验结果</div>
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                    <div class="text-center">
+                      <div class="text-xs text-gray-400">卡方统计量</div>
+                      <div
+                        id="chi-square-stat"
+                        class="text-lg font-bold text-neon-blue"
+                      >
+                        0.00
+                      </div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-xs text-gray-400">自由度</div>
+                      <div id="degrees-freedom" class="text-lg font-bold">
+                        1
+                      </div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-xs text-gray-400">p值</div>
+                      <div
+                        id="p-value"
+                        class="text-lg font-bold text-neon-green"
+                      >
+                        0.000
+                      </div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-xs text-gray-400">结论</div>
+                      <div
+                        id="independence-conclusion"
+                        class="text-lg font-bold text-yellow-400"
+                      >
+                        独立
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧控制面板 -->
+            <div class="w-full lg:w-80">
+              <div class="space-y-5">
+                <div>
+                  <div class="mb-2 text-sm">分析场景</div>
+                  <select
+                    id="scenario-select"
+                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white"
+                  >
+                    <option value="social">社交媒体行为</option>
+                    <option value="shopping">购物行为</option>
+                    <option value="learning">学习习惯</option>
+                    <option value="custom">自定义场景</option>
+                  </select>
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>样本大小</span>
+                    <span id="sample-size-val" class="text-gray-300">1000</span>
+                  </div>
+                  <input
+                    id="sample-size-slider"
+                    type="range"
+                    min="100"
+                    max="5000"
+                    step="100"
+                    value="1000"
+                    class="w-full accent-white"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>真实相关强度</span>
+                    <span id="true-correlation-val" class="text-neon-purple"
+                      >0.0</span
+                    >
+                  </div>
+                  <input
+                    id="true-correlation-slider"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value="0"
+                    class="w-full accent-neon-purple"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>噪声水平</span>
+                    <span id="noise-level-val" class="text-gray-300">0.1</span>
+                  </div>
+                  <input
+                    id="noise-level-slider"
+                    type="range"
+                    min="0"
+                    max="0.5"
+                    step="0.05"
+                    value="0.1"
+                    class="w-full accent-gray-400"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm">显著性水平 α</div>
+                  <select
+                    id="alpha-level"
+                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white"
+                  >
+                    <option value="0.01">0.01</option>
+                    <option value="0.05" selected>0.05</option>
+                    <option value="0.10">0.10</option>
+                  </select>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    id="run-independence-test"
+                    class="px-4 py-2 rounded-lg border border-neon-purple/30 bg-neon-purple/10 text-neon-purple hover:bg-neon-purple/20"
+                  >
+                    运行检验
+                  </button>
+                  <button
+                    id="batch-test"
+                    class="px-4 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10"
+                  >
+                    批量测试
+                  </button>
+                </div>
+
+                <!-- 边际分布提取器 -->
+                <div
+                  class="bg-dark-bg/50 rounded-xl p-4 border border-white/10"
+                >
+                  <div class="text-sm font-medium mb-3">边际分布提取器</div>
+                  <div class="space-y-2">
+                    <button
+                      id="show-marginal-x"
+                      class="w-full py-2 rounded border border-neon-blue/30 bg-neon-blue/10 text-neon-blue text-sm hover:bg-neon-blue/20"
+                    >
+                      显示X的边际分布
+                    </button>
+                    <button
+                      id="show-marginal-y"
+                      class="w-full py-2 rounded border border-neon-purple/30 bg-neon-purple/10 text-neon-purple text-sm hover:bg-neon-purple/20"
+                    >
+                      显示Y的边际分布
+                    </button>
+                    <button
+                      id="animate-integration"
+                      class="w-full py-2 rounded border border-neon-green/30 bg-neon-green/10 text-neon-green text-sm hover:bg-neon-green/20"
+                    >
+                      动画演示积分过程
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 页脚占位容器 -->
+      <div id="site-footer" class="mt-24"></div>
+    </div>
+
+    <!-- 页面交互脚本 -->
+    <script src="../static/js/chapter3.js"></script>
+
+    <!-- 工具脚本接入 -->
+    <script src="../static/js/url-click-handler.js"></script>
     <script src="../static/js/toolbox.js"></script>
-    <script src="../static/js/include-footer.js" defer></script>
+    <script src="../static/js/include-footer.js"></script>
+
+    <!-- 启动 KaTeX 自动渲染 -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        try {
+          renderMathInElement(document.body, {
+            delimiters: [
+              { left: "$", right: "$", display: true },
+              { left: "\\(", right: "\\)", display: false },
+              { left: "$", right: "$", display: false },
+            ],
+            throwOnError: false,
+          });
+        } catch (e) {
+          console.warn("KaTeX render init failed:", e);
+        }
+      });
+    </script>
   </body>
 </html>

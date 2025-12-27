@@ -339,11 +339,7 @@
             >应用场景</a
           >
         </div>
-
-        
       </div>
-
-      
     </nav>
 
     <!-- 英雄区域 -->
@@ -404,7 +400,9 @@
       <div class="absolute inset-0 bg-grid opacity-20"></div>
       <div class="container mx-auto px-4 relative z-10 max-w-7xl">
         <div class="text-left mb-8">
-          <h2 class="text-center text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4">
+          <h2
+            class="text-center text-[clamp(1.8rem,5vw,3rem)] font-future font-bold mb-4"
+          >
             <span class="text-neon-blue">核心</span>概念
           </h2>
           <p class="text-gray-400 max-w-2xl mx-auto">
@@ -413,391 +411,514 @@
         </div>
 
         <div class="grid grid-cols-12 gap-8 items-start">
-          <aside class="col-span-12 lg:col-span-3 order-2 lg:order-1 sticky top-24">
-            <div id="toc" class="bg-dark-card rounded-xl p-4 border border-gray-800 max-h-[70vh] overflow-auto"></div>
+          <aside
+            class="col-span-12 lg:col-span-3 order-2 lg:order-1 sticky top-24"
+          >
+            <div
+              id="toc"
+              class="bg-dark-card rounded-xl p-4 border border-gray-800 max-h-[70vh] overflow-auto"
+            ></div>
           </aside>
           <div class="col-span-12 lg:col-span-9 order-1 lg:order-2">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- 第1章：随机事件与概率 -->
-          <div id="第一章-随机事件与概率" class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group">
-            <div class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors">
-              <i class="fa fa-dice text-neon-blue text-2xl"></i>
-            </div>
-            <div class="text-xs text-gray-400 mb-2">第1章</div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">随机事件与概率</h3>
-            <p class="text-gray-400">事件运算、条件概率、全概率公式与贝叶斯公式。</p>
-            <div class="mt-6 pt-4 border-t border-gray-800">
-              <a href="chapter1.html" class="text-neon-blue hover:text-white transition-colors flex items-center">
-                进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
-              </a>
-            </div>
-          </div>
-          <!-- 概念卡片1 -->
-          <div
-            id="第二章-随机变量及其分布"
-            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
-          >
-            <!-- 微缩预览：随机变量 -->
-            <div
-              class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
-              data-target-url="random_variables.html"
-              aria-label="打开随机变量页面"
-              role="button"
-            >
-              <iframe
-                src="random_variables.html"
-                class="pointer-events-none"
-                style="
-                  position: absolute;
-                  left: 50%;
-                  top: 50%;
-                  transform: translate(-50%, -50%) scale(0.25);
-                  transform-origin: center center;
-                  width: 1600px;
-                  height: 900px;
-                "
-              ></iframe>
+              <!-- 第1章：随机事件与概率 -->
               <div
-                class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
+                id="第一章-随机事件与概率"
+                class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
               >
-                随机变量 · 预览
+                <div
+                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  data-target-url="chapter1.html"
+                  aria-label="打开第1章页面"
+                  role="button"
+                >
+                  <iframe
+                    src="chapter1.html"
+                    class="pointer-events-none"
+                    style="
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -50%) scale(0.25);
+                      transform-origin: center center;
+                      width: 1600px;
+                      height: 900px;
+                    "
+                  ></iframe>
+                  <div
+                    class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
+                  >
+                    随机事件与概率 · 预览
+                  </div>
+                </div>
+                <div
+                  class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors"
+                >
+                  <i class="fa fa-dice text-neon-blue text-2xl"></i>
+                </div>
+                <div class="text-xs text-gray-400 mb-2">第1章</div>
+                <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                  随机事件与概率
+                </h3>
+                <p class="text-gray-400">
+                  事件运算、条件概率、全概率公式与贝叶斯公式。
+                </p>
+                <div class="mt-6 pt-4 border-t border-gray-800">
+                  <a
+                    href="chapter1.html"
+                    class="text-neon-blue hover:text-white transition-colors flex items-center"
+                  >
+                    进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                  </a>
+                </div>
+              </div>
+              <!-- 概念卡片1 -->
+              <div
+                id="第二章-随机变量及其分布"
+                class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
+              >
+                <!-- 微缩预览：随机变量 -->
+                <div
+                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  data-target-url="random_variables.html"
+                  aria-label="打开随机变量页面"
+                  role="button"
+                >
+                  <iframe
+                    src="random_variables.html"
+                    class="pointer-events-none"
+                    style="
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -50%) scale(0.25);
+                      transform-origin: center center;
+                      width: 1600px;
+                      height: 900px;
+                    "
+                  ></iframe>
+                  <div
+                    class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
+                  >
+                    随机变量 · 预览
+                  </div>
+                </div>
+                <div
+                  class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors"
+                >
+                  <i class="fa fa-random text-neon-blue text-2xl"></i>
+                </div>
+                <div class="text-xs text-gray-400 mb-2">第2章</div>
+                <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                  随机变量
+                </h3>
+                <p class="text-gray-400">
+                  表示随机现象结果的变量，是概率理论的基础。分为离散型和连续型，描述了不确定性的数学表达。
+                </p>
+                <div class="mt-6 pt-4 border-t border-gray-800">
+                  <a
+                    href="random_variables.html"
+                    class="text-neon-blue hover:text-white transition-colors flex items-center"
+                  >
+                    深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                  </a>
+                </div>
+              </div>
+
+              <!-- 概念卡片2 -->
+              <div
+                class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group"
+              >
+                <!-- 微缩预览：概率分布 -->
+                <div
+                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  data-target-url="probability_distributions.html"
+                  aria-label="打开概率分布页面"
+                  role="button"
+                >
+                  <iframe
+                    src="probability_distributions.html"
+                    class="pointer-events-none"
+                    style="
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -50%) scale(0.25);
+                      transform-origin: center center;
+                      width: 1600px;
+                      height: 900px;
+                    "
+                  ></iframe>
+                  <div
+                    class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
+                  >
+                    概率分布 · 预览
+                  </div>
+                </div>
+                <div
+                  class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors"
+                >
+                  <i class="fa fa-area-chart text-neon-purple text-xl mr-1"></i>
+                  <i class="fa fa-infinity text-neon-purple text-xl"></i>
+                </div>
+                <div class="text-xs text-gray-400 mb-2">第2章</div>
+                <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                  概率分布
+                </h3>
+                <p class="text-gray-400">
+                  描述随机变量取值的概率规律，如正态分布、泊松分布等。是数据分析和预测的核心工具。
+                </p>
+                <div class="mt-6 pt-4 border-t border-gray-800">
+                  <a
+                    href="probability_distributions.html"
+                    class="text-neon-purple hover:text-white transition-colors flex items-center"
+                  >
+                    深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                  </a>
+                </div>
+              </div>
+
+              <!-- 概念卡片3 -->
+              <div
+                class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
+              >
+                <!-- 微缩预览：期望与方差 -->
+                <div
+                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  data-target-url="expectation_variance.html"
+                  aria-label="打开期望与方差页面"
+                  role="button"
+                >
+                  <iframe
+                    src="expectation_variance.html"
+                    class="pointer-events-none"
+                    style="
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -50%) scale(0.25);
+                      transform-origin: center center;
+                      width: 1600px;
+                      height: 900px;
+                    "
+                  ></iframe>
+                  <div
+                    class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
+                  >
+                    期望与方差 · 预览
+                  </div>
+                </div>
+                <div
+                  class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors"
+                >
+                  <i class="fa fa-calculator text-neon-green text-2xl"></i>
+                </div>
+                <div class="text-xs text-gray-400 mb-2">第2章</div>
+                <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                  期望与方差
+                </h3>
+                <p class="text-gray-400">
+                  描述随机变量的集中趋势和离散程度，是概率分布的重要数字特征，用于风险评估和决策分析。
+                </p>
+                <div class="mt-6 pt-4 border-t border-gray-800">
+                  <a
+                    href="expectation_variance.html"
+                    class="text-neon-green hover:text-white transition-colors flex items-center"
+                  >
+                    深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                  </a>
+                </div>
+              </div>
+
+              <!-- 第3章：多维随机变量及其分布 -->
+              <div
+                id="第三章-多维随机变量及其分布"
+                class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group"
+              >
+                <!-- 微缩预览：第3章 -->
+                <div
+                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  data-target-url="chapter3.html"
+                  aria-label="打开第3章页面"
+                  role="button"
+                >
+                  <iframe
+                    src="chapter3.html"
+                    class="pointer-events-none"
+                    style="
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -50%) scale(0.25);
+                      transform-origin: center center;
+                      width: 1600px;
+                      height: 900px;
+                    "
+                  ></iframe>
+                  <div
+                    class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
+                  >
+                    第3章 · 预览
+                  </div>
+                </div>
+                <div
+                  class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors"
+                >
+                  <i class="fa fa-layer-group text-neon-purple text-2xl"></i>
+                </div>
+                <div class="text-xs text-gray-400 mb-2">第3章</div>
+                <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                  多维随机变量及其分布
+                </h3>
+                <p class="text-gray-400">
+                  二维及多维随机变量、相关与协方差、条件分布。
+                </p>
+                <div class="mt-6 pt-4 border-t border-gray-800">
+                  <a
+                    href="chapter3.html"
+                    class="text-neon-purple hover:text-white transition-colors flex items-center"
+                  >
+                    进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                  </a>
+                </div>
+              </div>
+              <!-- 概念卡片4 - 大数定律（调整顺序以贴合教材第5章） -->
+              <div
+                id="第四章-大数定律与中心极限定理"
+                class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
+              >
+                <!-- 微缩预览：大数定律 -->
+                <div
+                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  data-target-url="law_of_large_numbers.html"
+                  aria-label="打开大数定律页面"
+                  role="button"
+                >
+                  <iframe
+                    src="law_of_large_numbers.html"
+                    class="pointer-events-none"
+                    style="
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -50%) scale(0.25);
+                      transform-origin: center center;
+                      width: 1600px;
+                      height: 900px;
+                    "
+                  ></iframe>
+                  <div
+                    class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
+                  >
+                    大数定律 · 预览
+                  </div>
+                </div>
+                <div
+                  class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors"
+                >
+                  <i class="fa fa-random text-neon-green text-2xl"></i>
+                </div>
+                <div class="text-xs text-gray-400 mb-2">第4章</div>
+                <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                  大数定律
+                </h3>
+                <p class="text-gray-400">
+                  描述大量重复试验中随机现象的统计规律性，是频率趋近于概率的理论基础，支撑着统计推断。
+                </p>
+                <div class="mt-6 pt-4 border-t border-gray-800">
+                  <a
+                    href="law_of_large_numbers.html"
+                    class="text-neon-green hover:text-white transition-colors flex items-center"
+                  >
+                    深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                  </a>
+                </div>
+              </div>
+
+              <!-- 第5章：统计量及其分布 -->
+              <div
+                id="第五章-统计量及其分布"
+                class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange transition-all duration-300 transform hover:-translate-y-2 group"
+              >
+                <div
+                  class="w-14 h-14 rounded-lg bg-neon-orange/10 flex items-center justify-center mb-6 group-hover:bg-neon-orange/20 transition-colors"
+                >
+                  <i class="fa fa-chart-bar text-neon-orange text-2xl"></i>
+                </div>
+                <div class="text-xs text-gray-400 mb-2">第5章</div>
+                <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                  统计量及其分布
+                </h3>
+                <p class="text-gray-400">
+                  样本均值、方差及三大抽样分布的性质。
+                </p>
+                <div class="mt-6 pt-4 border-t border-gray-800">
+                  <a
+                    href="chapter5.html"
+                    class="text-neon-orange hover:text-white transition-colors flex items-center"
+                  >
+                    进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                  </a>
+                </div>
+              </div>
+              <!-- 概念卡片4 - 区间估计 -->
+              <div
+                id="第六章-参数估计"
+                class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange transition-all duration-300 transform hover:-translate-y-2 group"
+              >
+                <!-- 微缩预览：区间估计 -->
+                <div
+                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  data-target-url="interval_estimation.html"
+                  aria-label="打开区间估计页面"
+                  role="button"
+                >
+                  <iframe
+                    src="interval_estimation.html"
+                    class="pointer-events-none"
+                    style="
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -50%) scale(0.25);
+                      transform-origin: center center;
+                      width: 1600px;
+                      height: 900px;
+                    "
+                  ></iframe>
+                  <div
+                    class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
+                  >
+                    区间估计 · 预览
+                  </div>
+                </div>
+                <div
+                  class="w-14 h-14 rounded-lg bg-orange-500/10 flex items-center justify-center mb-6 group-hover:bg-orange-500/20 transition-colors"
+                >
+                  <i class="fa fa-chart-bar text-orange-500 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                  区间估计
+                </h3>
+                <p class="text-gray-400">
+                  用样本统计量构造包含未知参数的区间，给出参数估计的精度和可信度，是统计推断的核心方法。
+                </p>
+                <div class="mt-6 pt-4 border-t border-gray-800">
+                  <a
+                    href="interval_estimation.html"
+                    class="text-orange-500 hover:text-white transition-colors flex items-center"
+                  >
+                    深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                  </a>
+                </div>
+              </div>
+
+              <!-- 概念卡片5 - 假设检验 -->
+              <div
+                id="第七章-假设检验"
+                class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
+              >
+                <!-- 微缩预览：假设检验 -->
+                <div
+                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  data-target-url="hypothesis_testing.html"
+                  aria-label="打开假设检验页面"
+                  role="button"
+                >
+                  <iframe
+                    src="hypothesis_testing.html"
+                    class="pointer-events-none"
+                    style="
+                      position: absolute;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -50%) scale(0.25);
+                      transform-origin: center center;
+                      width: 1600px;
+                      height: 900px;
+                    "
+                  ></iframe>
+                  <div
+                    class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
+                  >
+                    假设检验 · 预览
+                  </div>
+                </div>
+                <div
+                  class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors"
+                >
+                  <i class="fa fa-flask text-neon-blue text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                  假设检验
+                </h3>
+                <p class="text-gray-400">
+                  统计推断的重要方法，通过样本数据判断关于总体的假设是否成立，是科学研究的关键工具。
+                </p>
+                <div class="mt-6 pt-4 border-t border-gray-800">
+                  <a
+                    href="hypothesis_testing.html"
+                    class="text-neon-blue hover:text-white transition-colors flex items-center"
+                  >
+                    深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                  </a>
+                </div>
+              </div>
+
+              <!-- 第8章：方差分析与回归分析 -->
+              <div
+                id="第八章-方差分析与回归分析"
+                class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
+              >
+                <div
+                  class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors"
+                >
+                  <i class="fa fa-project-diagram text-neon-green text-2xl"></i>
+                </div>
+                <div class="text-xs text-gray-400 mb-2">第8章</div>
+                <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                  方差分析与回归分析
+                </h3>
+                <p class="text-gray-400">
+                  单因素与双因素方差分析，简单与多元回归。
+                </p>
+                <div class="mt-6 pt-4 border-t border-gray-800">
+                  <a
+                    href="chapter8.html"
+                    class="text-neon-green hover:text-white transition-colors flex items-center"
+                  >
+                    进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                  </a>
+                </div>
+              </div>
+
+              <!-- 附表 -->
+              <div
+                id="附表"
+                class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
+              >
+                <div
+                  class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors"
+                >
+                  <i class="fa fa-table text-neon-blue text-2xl"></i>
+                </div>
+                <div class="text-xs text-gray-400 mb-2">附</div>
+                <h3 class="text-xl font-future font-semibold mb-3 text-white">
+                  附表
+                </h3>
+                <p class="text-gray-400">
+                  常用分布与临界值表，便于查阅与教学。
+                </p>
+                <div class="mt-6 pt-4 border-t border-gray-800">
+                  <a
+                    href="appendix.html"
+                    class="text-neon-blue hover:text-white transition-colors flex items-center"
+                  >
+                    进入附表 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                  </a>
+                </div>
               </div>
             </div>
-            <div
-              class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors"
-            >
-              <i class="fa fa-random text-neon-blue text-2xl"></i>
-            </div>
-            <div class="text-xs text-gray-400 mb-2">第2章</div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">随机变量</h3>
-            <p class="text-gray-400">
-              表示随机现象结果的变量，是概率理论的基础。分为离散型和连续型，描述了不确定性的数学表达。
-            </p>
-            <div class="mt-6 pt-4 border-t border-gray-800">
-              <a
-                href="random_variables.html"
-                class="text-neon-blue hover:text-white transition-colors flex items-center"
-              >
-                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
-              </a>
-            </div>
-          </div>
-
-          <!-- 概念卡片2 -->
-          <div
-            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group"
-          >
-            <!-- 微缩预览：概率分布 -->
-            <div
-              class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
-              data-target-url="probability_distributions.html"
-              aria-label="打开概率分布页面"
-              role="button"
-            >
-              <iframe
-                src="probability_distributions.html"
-                class="pointer-events-none"
-                style="
-                  position: absolute;
-                  left: 50%;
-                  top: 50%;
-                  transform: translate(-50%, -50%) scale(0.25);
-                  transform-origin: center center;
-                  width: 1600px;
-                  height: 900px;
-                "
-              ></iframe>
-              <div
-                class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
-              >
-                概率分布 · 预览
-              </div>
-            </div>
-            <div
-              class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors"
-            >
-              <i class="fa fa-area-chart text-neon-purple text-xl mr-1"></i>
-              <i class="fa fa-infinity text-neon-purple text-xl"></i>
-            </div>
-            <div class="text-xs text-gray-400 mb-2">第2章</div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">概率分布</h3>
-            <p class="text-gray-400">
-              描述随机变量取值的概率规律，如正态分布、泊松分布等。是数据分析和预测的核心工具。
-            </p>
-            <div class="mt-6 pt-4 border-t border-gray-800">
-              <a
-                href="probability_distributions.html"
-                class="text-neon-purple hover:text-white transition-colors flex items-center"
-              >
-                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
-              </a>
-            </div>
-          </div>
-
-          <!-- 概念卡片3 -->
-          <div
-            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
-          >
-            <!-- 微缩预览：期望与方差 -->
-            <div
-              class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
-              data-target-url="expectation_variance.html"
-              aria-label="打开期望与方差页面"
-              role="button"
-            >
-              <iframe
-                src="expectation_variance.html"
-                class="pointer-events-none"
-                style="
-                  position: absolute;
-                  left: 50%;
-                  top: 50%;
-                  transform: translate(-50%, -50%) scale(0.25);
-                  transform-origin: center center;
-                  width: 1600px;
-                  height: 900px;
-                "
-              ></iframe>
-              <div
-                class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
-              >
-                期望与方差 · 预览
-              </div>
-            </div>
-            <div
-              class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors"
-            >
-              <i class="fa fa-calculator text-neon-green text-2xl"></i>
-            </div>
-            <div class="text-xs text-gray-400 mb-2">第2章</div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">期望与方差</h3>
-            <p class="text-gray-400">
-              描述随机变量的集中趋势和离散程度，是概率分布的重要数字特征，用于风险评估和决策分析。
-            </p>
-            <div class="mt-6 pt-4 border-t border-gray-800">
-              <a
-                href="expectation_variance.html"
-                class="text-neon-green hover:text-white transition-colors flex items-center"
-              >
-                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
-              </a>
-            </div>
-          </div>
-
-          <!-- 第3章：多维随机变量及其分布 -->
-          <div id="第三章-多维随机变量及其分布" class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group">
-            <div class="w-14 h-14 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors">
-              <i class="fa fa-layer-group text-neon-purple text-2xl"></i>
-            </div>
-            <div class="text-xs text-gray-400 mb-2">第3章</div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">多维随机变量及其分布</h3>
-            <p class="text-gray-400">二维及多维随机变量、相关与协方差、条件分布。</p>
-            <div class="mt-6 pt-4 border-t border-gray-800">
-              <a href="chapter3.html" class="text-neon-purple hover:text-white transition-colors flex items-center">
-                进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
-              </a>
-            </div>
-          </div>
-          <!-- 概念卡片4 - 大数定律（调整顺序以贴合教材第5章） -->
-          <div
-            id="第四章-大数定律与中心极限定理"
-            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
-          >
-            <!-- 微缩预览：大数定律 -->
-            <div
-              class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
-              data-target-url="law_of_large_numbers.html"
-              aria-label="打开大数定律页面"
-              role="button"
-            >
-              <iframe
-                src="law_of_large_numbers.html"
-                class="pointer-events-none"
-                style="
-                  position: absolute;
-                  left: 50%;
-                  top: 50%;
-                  transform: translate(-50%, -50%) scale(0.25);
-                  transform-origin: center center;
-                  width: 1600px;
-                  height: 900px;
-                "
-              ></iframe>
-              <div
-                class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
-              >
-                大数定律 · 预览
-              </div>
-            </div>
-            <div
-              class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors"
-            >
-              <i class="fa fa-random text-neon-green text-2xl"></i>
-            </div>
-            <div class="text-xs text-gray-400 mb-2">第4章</div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">大数定律</h3>
-            <p class="text-gray-400">
-              描述大量重复试验中随机现象的统计规律性，是频率趋近于概率的理论基础，支撑着统计推断。
-            </p>
-            <div class="mt-6 pt-4 border-t border-gray-800">
-              <a
-                href="law_of_large_numbers.html"
-                class="text-neon-green hover:text-white transition-colors flex items-center"
-              >
-                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
-              </a>
-            </div>
-          </div>
-
-          <!-- 第5章：统计量及其分布 -->
-          <div id="第五章-统计量及其分布" class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange transition-all duration-300 transform hover:-translate-y-2 group">
-            <div class="w-14 h-14 rounded-lg bg-neon-orange/10 flex items-center justify-center mb-6 group-hover:bg-neon-orange/20 transition-colors">
-              <i class="fa fa-chart-bar text-neon-orange text-2xl"></i>
-            </div>
-            <div class="text-xs text-gray-400 mb-2">第5章</div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">统计量及其分布</h3>
-            <p class="text-gray-400">样本均值、方差及三大抽样分布的性质。</p>
-            <div class="mt-6 pt-4 border-t border-gray-800">
-              <a href="chapter5.html" class="text-neon-orange hover:text-white transition-colors flex items-center">
-                进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
-              </a>
-            </div>
-          </div>
-          <!-- 概念卡片4 - 区间估计 -->
-          <div
-            id="第六章-参数估计"
-            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange transition-all duration-300 transform hover:-translate-y-2 group"
-          >
-            <!-- 微缩预览：区间估计 -->
-            <div
-              class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
-              data-target-url="interval_estimation.html"
-              aria-label="打开区间估计页面"
-              role="button"
-            >
-              <iframe
-                src="interval_estimation.html"
-                class="pointer-events-none"
-                style="
-                  position: absolute;
-                  left: 50%;
-                  top: 50%;
-                  transform: translate(-50%, -50%) scale(0.25);
-                  transform-origin: center center;
-                  width: 1600px;
-                  height: 900px;
-                "
-              ></iframe>
-              <div
-                class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
-              >
-                区间估计 · 预览
-              </div>
-            </div>
-            <div
-              class="w-14 h-14 rounded-lg bg-orange-500/10 flex items-center justify-center mb-6 group-hover:bg-orange-500/20 transition-colors"
-            >
-              <i class="fa fa-chart-bar text-orange-500 text-2xl"></i>
-            </div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">
-              区间估计
-            </h3>
-            <p class="text-gray-400">
-              用样本统计量构造包含未知参数的区间，给出参数估计的精度和可信度，是统计推断的核心方法。
-            </p>
-            <div class="mt-6 pt-4 border-t border-gray-800">
-              <a
-                href="interval_estimation.html"
-                class="text-orange-500 hover:text-white transition-colors flex items-center"
-              >
-                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
-              </a>
-            </div>
-          </div>
-
-          <!-- 概念卡片5 - 假设检验 -->
-          <div
-            id="第七章-假设检验"
-            class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
-          >
-            <!-- 微缩预览：假设检验 -->
-            <div
-              class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
-              data-target-url="hypothesis_testing.html"
-              aria-label="打开假设检验页面"
-              role="button"
-            >
-              <iframe
-                src="hypothesis_testing.html"
-                class="pointer-events-none"
-                style="
-                  position: absolute;
-                  left: 50%;
-                  top: 50%;
-                  transform: translate(-50%, -50%) scale(0.25);
-                  transform-origin: center center;
-                  width: 1600px;
-                  height: 900px;
-                "
-              ></iframe>
-              <div
-                class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
-              >
-                假设检验 · 预览
-              </div>
-            </div>
-            <div
-              class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors"
-            >
-              <i class="fa fa-flask text-neon-blue text-2xl"></i>
-            </div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">
-              假设检验
-            </h3>
-            <p class="text-gray-400">
-              统计推断的重要方法，通过样本数据判断关于总体的假设是否成立，是科学研究的关键工具。
-            </p>
-            <div class="mt-6 pt-4 border-t border-gray-800">
-              <a
-                href="hypothesis_testing.html"
-                class="text-neon-blue hover:text-white transition-colors flex items-center"
-              >
-                深入了解 <i class="fa fa-arrow-right ml-2 text-sm"></i>
-              </a>
-            </div>
-          </div>
-
-          <!-- 第8章：方差分析与回归分析 -->
-          <div id="第八章-方差分析与回归分析" class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group">
-            <div class="w-14 h-14 rounded-lg bg-neon-green/10 flex items-center justify-center mb-6 group-hover:bg-neon-green/20 transition-colors">
-              <i class="fa fa-project-diagram text-neon-green text-2xl"></i>
-            </div>
-            <div class="text-xs text-gray-400 mb-2">第8章</div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">方差分析与回归分析</h3>
-            <p class="text-gray-400">单因素与双因素方差分析，简单与多元回归。</p>
-            <div class="mt-6 pt-4 border-t border-gray-800">
-              <a href="chapter8.html" class="text-neon-green hover:text-white transition-colors flex items-center">
-                进入章节 <i class="fa fa-arrow-right ml-2 text-sm"></i>
-              </a>
-            </div>
-          </div>
-
-          <!-- 附表 -->
-          <div id="附表" class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group">
-            <div class="w-14 h-14 rounded-lg bg-neon-blue/10 flex items-center justify-center mb-6 group-hover:bg-neon-blue/20 transition-colors">
-              <i class="fa fa-table text-neon-blue text-2xl"></i>
-            </div>
-            <div class="text-xs text-gray-400 mb-2">附</div>
-            <h3 class="text-xl font-future font-semibold mb-3 text-white">附表</h3>
-            <p class="text-gray-400">常用分布与临界值表，便于查阅与教学。</p>
-            <div class="mt-6 pt-4 border-t border-gray-800">
-              <a href="appendix.html" class="text-neon-blue hover:text-white transition-colors flex items-center">
-                进入附表 <i class="fa fa-arrow-right ml-2 text-sm"></i>
-              </a>
-            </div>
-          </div>
-
-        </div>
           </div>
         </div>
       </div>
@@ -1910,38 +2031,92 @@
 
           <!-- PCA降维投影 -->
           <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
-            <h3 class="text-xl font-future font-semibold mb-6 text-white flex items-center">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
               <i class="fa fa-compass text-neon-blue mr-3"></i> PCA 降维投影
             </h3>
 
             <div class="grid grid-cols-3 gap-4 mb-6">
               <div>
-                <label for="pca-samples" class="block text-gray-300 mb-2">样本数:</label>
+                <label for="pca-samples" class="block text-gray-300 mb-2"
+                  >样本数:</label
+                >
                 <div class="flex items-center">
-                  <input type="range" id="pca-samples" min="200" max="3000" step="100" value="800" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue" />
-                  <span id="pca-samples-value" class="ml-4 text-neon-blue font-bold">800</span>
+                  <input
+                    type="range"
+                    id="pca-samples"
+                    min="200"
+                    max="3000"
+                    step="100"
+                    value="800"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                  <span
+                    id="pca-samples-value"
+                    class="ml-4 text-neon-blue font-bold"
+                    >800</span
+                  >
                 </div>
               </div>
               <div>
-                <label for="pca-angle" class="block text-gray-300 mb-2">旋转角度(°):</label>
+                <label for="pca-angle" class="block text-gray-300 mb-2"
+                  >旋转角度(°):</label
+                >
                 <div class="flex items-center">
-                  <input type="range" id="pca-angle" min="0" max="180" step="1" value="30" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue" />
-                  <span id="pca-angle-value" class="ml-4 text-neon-blue font-bold">30</span>
+                  <input
+                    type="range"
+                    id="pca-angle"
+                    min="0"
+                    max="180"
+                    step="1"
+                    value="30"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                  <span
+                    id="pca-angle-value"
+                    class="ml-4 text-neon-blue font-bold"
+                    >30</span
+                  >
                 </div>
               </div>
               <div>
-                <label for="pca-noise" class="block text-gray-300 mb-2">噪声强度:</label>
+                <label for="pca-noise" class="block text-gray-300 mb-2"
+                  >噪声强度:</label
+                >
                 <div class="flex items-center">
-                  <input type="range" id="pca-noise" min="0" max="2" step="0.1" value="0.4" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue" />
-                  <span id="pca-noise-value" class="ml-4 text-neon-blue font-bold">0.4</span>
+                  <input
+                    type="range"
+                    id="pca-noise"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    value="0.4"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-blue"
+                  />
+                  <span
+                    id="pca-noise-value"
+                    class="ml-4 text-neon-blue font-bold"
+                    >0.4</span
+                  >
                 </div>
               </div>
             </div>
 
             <div class="flex justify-start gap-3 mb-4">
-              <button id="pca-generate" class="px-4 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300">生成数据</button>
+              <button
+                id="pca-generate"
+                class="px-4 py-2 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-neon-blue/80 transition-all duration-300"
+              >
+                生成数据
+              </button>
               <label class="inline-flex items-center space-x-2">
-                <input type="checkbox" id="pca-show-axes" checked class="accent-neon-blue" />
+                <input
+                  type="checkbox"
+                  id="pca-show-axes"
+                  checked
+                  class="accent-neon-blue"
+                />
                 <span class="text-gray-300">显示主轴</span>
               </label>
             </div>
@@ -1953,67 +2128,159 @@
 
           <!-- 相关矩阵热图 -->
           <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
-            <h3 class="text-xl font-future font-semibold mb-6 text-white flex items-center">
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
               <i class="fa fa-th text-neon-purple mr-3"></i> 相关矩阵热图
             </h3>
 
             <div class="grid grid-cols-3 gap-4 mb-4">
               <div>
-                <label for="heat-dim" class="block text-gray-300 mb-2">维度:</label>
+                <label for="heat-dim" class="block text-gray-300 mb-2"
+                  >维度:</label
+                >
                 <div class="flex items-center">
-                  <input type="range" id="heat-dim" min="5" max="12" step="1" value="8" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple" />
-                  <span id="heat-dim-value" class="ml-4 text-neon-purple font-bold">8</span>
+                  <input
+                    type="range"
+                    id="heat-dim"
+                    min="5"
+                    max="12"
+                    step="1"
+                    value="8"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                  />
+                  <span
+                    id="heat-dim-value"
+                    class="ml-4 text-neon-purple font-bold"
+                    >8</span
+                  >
                 </div>
               </div>
               <div class="flex items-end">
-                <button id="heat-generate" class="px-4 py-2 bg-neon-purple text-dark-bg font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300">随机生成</button>
+                <button
+                  id="heat-generate"
+                  class="px-4 py-2 bg-neon-purple text-dark-bg font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300"
+                >
+                  随机生成
+                </button>
               </div>
               <div class="flex items-end">
-                <button id="heat-cluster" class="px-4 py-2 bg-neon-purple/70 text-white font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300">聚类排序</button>
+                <button
+                  id="heat-cluster"
+                  class="px-4 py-2 bg-neon-purple/70 text-white font-bold rounded-md hover:bg-neon-purple/80 transition-all duration-300"
+                >
+                  聚类排序
+                </button>
               </div>
             </div>
 
-            <div class="relative h-72 border border-gray-800 rounded-md bg-gray-900">
+            <div
+              class="relative h-72 border border-gray-800 rounded-md bg-gray-900"
+            >
               <canvas id="heatmap-canvas" class="w-full h-full"></canvas>
-              <div id="heatmap-tooltip" class="absolute hidden bg-dark-bg/80 text-white text-xs px-2 py-1 rounded border border-gray-700"></div>
+              <div
+                id="heatmap-tooltip"
+                class="absolute hidden bg-dark-bg/80 text-white text-xs px-2 py-1 rounded border border-gray-700"
+              ></div>
             </div>
           </div>
 
           <!-- 直方图 vs KDE -->
           <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
-            <h3 class="text-xl font-future font-semibold mb-6 text-white flex items-center">
-              <i class="fa fa-chart-area text-neon-orange mr-3"></i> 直方图与KDE对比
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-chart-area text-neon-orange mr-3"></i>
+              直方图与KDE对比
             </h3>
 
             <div class="grid grid-cols-3 gap-4 mb-6">
               <div>
                 <label class="block text-gray-300 mb-2">分布:</label>
                 <div class="grid grid-cols-3 gap-2">
-                  <button class="kde-dist-btn active px-3 py-1 bg-neon-orange/20 text-neon-orange rounded-md" data-dist="normal">正态</button>
-                  <button class="kde-dist-btn px-3 py-1 bg-gray-800 text-gray-300 rounded-md" data-dist="uniform">均匀</button>
-                  <button class="kde-dist-btn px-3 py-1 bg-gray-800 text-gray-300 rounded-md" data-dist="exponential">指数</button>
+                  <button
+                    class="kde-dist-btn active px-3 py-1 bg-neon-orange/20 text-neon-orange rounded-md"
+                    data-dist="normal"
+                  >
+                    正态
+                  </button>
+                  <button
+                    class="kde-dist-btn px-3 py-1 bg-gray-800 text-gray-300 rounded-md"
+                    data-dist="uniform"
+                  >
+                    均匀
+                  </button>
+                  <button
+                    class="kde-dist-btn px-3 py-1 bg-gray-800 text-gray-300 rounded-md"
+                    data-dist="exponential"
+                  >
+                    指数
+                  </button>
                 </div>
               </div>
               <div>
-                <label for="kde-samples" class="block text-gray-300 mb-2">样本数:</label>
+                <label for="kde-samples" class="block text-gray-300 mb-2"
+                  >样本数:</label
+                >
                 <div class="flex items-center">
-                  <input type="range" id="kde-samples" min="500" max="5000" step="100" value="1000" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-orange" />
-                  <span id="kde-samples-value" class="ml-4 text-neon-orange font-bold">1000</span>
+                  <input
+                    type="range"
+                    id="kde-samples"
+                    min="500"
+                    max="5000"
+                    step="100"
+                    value="1000"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-orange"
+                  />
+                  <span
+                    id="kde-samples-value"
+                    class="ml-4 text-neon-orange font-bold"
+                    >1000</span
+                  >
                 </div>
               </div>
               <div>
-                <label for="kde-bandwidth" class="block text-gray-300 mb-2">带宽:</label>
+                <label for="kde-bandwidth" class="block text-gray-300 mb-2"
+                  >带宽:</label
+                >
                 <div class="flex items-center">
-                  <input type="range" id="kde-bandwidth" min="0.1" max="1.0" step="0.05" value="0.3" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-orange" />
-                  <span id="kde-bandwidth-value" class="ml-4 text-neon-orange font-bold">0.3</span>
+                  <input
+                    type="range"
+                    id="kde-bandwidth"
+                    min="0.1"
+                    max="1.0"
+                    step="0.05"
+                    value="0.3"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-orange"
+                  />
+                  <span
+                    id="kde-bandwidth-value"
+                    class="ml-4 text-neon-orange font-bold"
+                    >0.3</span
+                  >
                 </div>
               </div>
             </div>
 
             <div class="flex justify-start gap-3 mb-4">
-              <button id="kde-stream" class="px-4 py-2 bg-neon-orange text-dark-bg font-bold rounded-md hover:bg-neon-orange/80 transition-all duration-300">开始流式采样</button>
-              <button id="kde-stop" class="px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-gray-600 transition-all duration-300">停止</button>
-              <button id="kde-reset" class="px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-gray-600 transition-all duration-300">重置</button>
+              <button
+                id="kde-stream"
+                class="px-4 py-2 bg-neon-orange text-dark-bg font-bold rounded-md hover:bg-neon-orange/80 transition-all duration-300"
+              >
+                开始流式采样
+              </button>
+              <button
+                id="kde-stop"
+                class="px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-gray-600 transition-all duration-300"
+              >
+                停止
+              </button>
+              <button
+                id="kde-reset"
+                class="px-4 py-2 bg-gray-700 text-white font-bold rounded-md hover:bg-gray-600 transition-all duration-300"
+              >
+                重置
+              </button>
             </div>
 
             <div class="h-72">
@@ -2023,31 +2290,60 @@
 
           <!-- 比例树图 Treemap -->
           <div class="bg-dark-card rounded-xl p-6 border border-gray-800">
-            <h3 class="text-xl font-future font-semibold mb-6 text-white flex items-center">
-              <i class="fa fa-sitemap text-neon-green mr-3"></i> 比例树图 Treemap
+            <h3
+              class="text-xl font-future font-semibold mb-6 text-white flex items-center"
+            >
+              <i class="fa fa-sitemap text-neon-green mr-3"></i> 比例树图
+              Treemap
             </h3>
 
             <div class="grid grid-cols-3 gap-4 mb-4">
               <div>
-                <label for="treemap-cats" class="block text-gray-300 mb-2">类别数:</label>
+                <label for="treemap-cats" class="block text-gray-300 mb-2"
+                  >类别数:</label
+                >
                 <div class="flex items-center">
-                  <input type="range" id="treemap-cats" min="5" max="12" step="1" value="8" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green" />
-                  <span id="treemap-cats-value" class="ml-4 text-neon-green font-bold">8</span>
+                  <input
+                    type="range"
+                    id="treemap-cats"
+                    min="5"
+                    max="12"
+                    step="1"
+                    value="8"
+                    class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                  />
+                  <span
+                    id="treemap-cats-value"
+                    class="ml-4 text-neon-green font-bold"
+                    >8</span
+                  >
                 </div>
               </div>
               <div class="flex items-end">
-                <button id="treemap-randomize" class="px-4 py-2 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-neon-green/80 transition-all duration-300">随机权重</button>
+                <button
+                  id="treemap-randomize"
+                  class="px-4 py-2 bg-neon-green text-dark-bg font-bold rounded-md hover:bg-neon-green/80 transition-all duration-300"
+                >
+                  随机权重
+                </button>
               </div>
               <div>
-                <label for="treemap-mode" class="block text-gray-300 mb-2">布局模式:</label>
-                <select id="treemap-mode" class="w-full bg-gray-800 text-gray-300 rounded-md p-2 border border-gray-700">
+                <label for="treemap-mode" class="block text-gray-300 mb-2"
+                  >布局模式:</label
+                >
+                <select
+                  id="treemap-mode"
+                  class="w-full bg-gray-800 text-gray-300 rounded-md p-2 border border-gray-700"
+                >
                   <option value="slice">Slice-Dice</option>
                   <option value="slice">Squarify(简化)</option>
                 </select>
               </div>
             </div>
 
-            <div class="relative h-72 border border-gray-800 rounded-md bg-gray-900">
+            <div
+              class="relative h-72 border border-gray-800 rounded-md bg-gray-900"
+            >
               <canvas id="treemap-canvas" class="w-full h-full"></canvas>
             </div>
           </div>
@@ -2227,87 +2523,142 @@
           </div>
 
           <!-- 新增应用卡片：洪水频率分析与极值分布（概率分布页面） -->
-          <a href="probability_distributions.html#practice-applications" class="group relative overflow-hidden rounded-xl block">
+          <a
+            href="probability_distributions.html#practice-applications"
+            class="group relative overflow-hidden rounded-xl block"
+          >
             <img
               src="../static/img/cover-flood-extreme.svg"
               alt="洪水频率分析与极值分布"
               class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"></div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"
+            ></div>
             <div class="absolute bottom-0 left-0 p-6">
-              <div class="w-12 h-12 rounded-full bg-neon-blue/20 flex items-center justify-center mb-4">
+              <div
+                class="w-12 h-12 rounded-full bg-neon-blue/20 flex items-center justify-center mb-4"
+              >
                 <i class="fa fa-tint text-neon-blue text-xl"></i>
               </div>
-              <h3 class="text-xl font-future font-semibold mb-2 text-white">洪水频率分析与极值分布</h3>
-              <p class="text-gray-300 text-sm">基于极值分布进行洪水风险评估与工程设计。</p>
+              <h3 class="text-xl font-future font-semibold mb-2 text-white">
+                洪水频率分析与极值分布
+              </h3>
+              <p class="text-gray-300 text-sm">
+                基于极值分布进行洪水风险评估与工程设计。
+              </p>
             </div>
           </a>
 
           <!-- 新增应用卡片：军事分析（区间估计页面） -->
-          <a href="interval_estimation.html#practical-applications" class="group relative overflow-hidden rounded-xl block">
+          <a
+            href="interval_estimation.html#practical-applications"
+            class="group relative overflow-hidden rounded-xl block"
+          >
             <img
               src="../static/img/cover-interval-military.svg"
               alt="军事分析：寻找遗失的炮弹"
               class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"></div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"
+            ></div>
             <div class="absolute bottom-0 left-0 p-6">
-              <div class="w-12 h-12 rounded-full bg-neon-orange/20 flex items-center justify-center mb-4">
+              <div
+                class="w-12 h-12 rounded-full bg-neon-orange/20 flex items-center justify-center mb-4"
+              >
                 <i class="fa fa-crosshairs text-neon-orange text-xl"></i>
               </div>
-              <h3 class="text-xl font-future font-semibold mb-2 text-white">军事分析：寻找遗失的炮弹</h3>
-              <p class="text-gray-300 text-sm">利用置信区间搜索目标位置，动态调整搜索策略。</p>
+              <h3 class="text-xl font-future font-semibold mb-2 text-white">
+                军事分析：寻找遗失的炮弹
+              </h3>
+              <p class="text-gray-300 text-sm">
+                利用置信区间搜索目标位置，动态调整搜索策略。
+              </p>
             </div>
           </a>
 
           <!-- 新增应用卡片：游戏策略（区间估计页面） -->
-          <a href="interval_estimation.html#practical-applications" class="group relative overflow-hidden rounded-xl block">
+          <a
+            href="interval_estimation.html#practical-applications"
+            class="group relative overflow-hidden rounded-xl block"
+          >
             <img
               src="../static/img/cover-interval-game.svg"
               alt="游戏策略：末地之门定位"
               class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"></div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"
+            ></div>
             <div class="absolute bottom-0 left-0 p-6">
-              <div class="w-12 h-12 rounded-full bg-neon-purple/20 flex items-center justify-center mb-4">
+              <div
+                class="w-12 h-12 rounded-full bg-neon-purple/20 flex items-center justify-center mb-4"
+              >
                 <i class="fa fa-gamepad text-neon-purple text-xl"></i>
               </div>
-              <h3 class="text-xl font-future font-semibold mb-2 text-white">游戏策略：末地之门定位</h3>
-              <p class="text-gray-300 text-sm">用区间估计定位末地要塞，提高探索效率。</p>
+              <h3 class="text-xl font-future font-semibold mb-2 text-white">
+                游戏策略：末地之门定位
+              </h3>
+              <p class="text-gray-300 text-sm">
+                用区间估计定位末地要塞，提高探索效率。
+              </p>
             </div>
           </a>
 
           <!-- 新增应用卡片：假设检验（假设检验页面） -->
-          <a href="hypothesis_testing.html#practical-applications" class="group relative overflow-hidden rounded-xl block">
+          <a
+            href="hypothesis_testing.html#practical-applications"
+            class="group relative overflow-hidden rounded-xl block"
+          >
             <img
               src="../static/img/cover-hypothesis-hero.svg"
               alt="假设检验应用示例"
               class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"></div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"
+            ></div>
             <div class="absolute bottom-0 left-0 p-6">
-              <div class="w-12 h-12 rounded-full bg-neon-green/20 flex items-center justify-center mb-4">
+              <div
+                class="w-12 h-12 rounded-full bg-neon-green/20 flex items-center justify-center mb-4"
+              >
                 <i class="fa fa-flask text-neon-green text-xl"></i>
               </div>
-              <h3 class="text-xl font-future font-semibold mb-2 text-white">假设检验：英雄平衡与农业评估</h3>
-              <p class="text-gray-300 text-sm">将假设检验应用到游戏平衡与作物效果评估。</p>
+              <h3 class="text-xl font-future font-semibold mb-2 text-white">
+                假设检验：英雄平衡与农业评估
+              </h3>
+              <p class="text-gray-300 text-sm">
+                将假设检验应用到游戏平衡与作物效果评估。
+              </p>
             </div>
           </a>
 
           <!-- 新增应用卡片：直播打赏异常检测（大数定律页面） -->
-          <a href="law_of_large_numbers.html#practical-applications" class="group relative overflow-hidden rounded-xl block">
+          <a
+            href="law_of_large_numbers.html#practical-applications"
+            class="group relative overflow-hidden rounded-xl block"
+          >
             <img
               src="../static/img/cover-lln-streaming.svg"
               alt="直播打赏异常检测"
               class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"></div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/70 to-transparent"
+            ></div>
             <div class="absolute bottom-0 left-0 p-6">
-              <div class="w-12 h-12 rounded-full bg-neon-orange/20 flex items-center justify-center mb-4">
+              <div
+                class="w-12 h-12 rounded-full bg-neon-orange/20 flex items-center justify-center mb-4"
+              >
                 <i class="fa fa-video text-neon-orange text-xl"></i>
               </div>
-              <h3 class="text-xl font-future font-semibold mb-2 text-white">直播打赏异常检测</h3>
-              <p class="text-gray-300 text-sm">用大数定律监控打赏数据，识别异常行为。</p>
+              <h3 class="text-xl font-future font-semibold mb-2 text-white">
+                直播打赏异常检测
+              </h3>
+              <p class="text-gray-300 text-sm">
+                用大数定律监控打赏数据，识别异常行为。
+              </p>
             </div>
           </a>
         </div>
@@ -2359,7 +2710,12 @@
               role="alert"
               aria-live="polite"
               class="hidden sm:col-span-2 mt-2 text-sm rounded-md border p-3 bg-dark-bg border-gray-700 text-gray-300"
-              style="word-break:break-word;overflow-wrap:anywhere;max-height:8rem;overflow:auto;"
+              style="
+                word-break: break-word;
+                overflow-wrap: anywhere;
+                max-height: 8rem;
+                overflow: auto;
+              "
             ></div>
             <script>
               (function () {
@@ -2506,7 +2862,7 @@
     <!-- 页脚（动态引入） -->
     <div id="site-footer"></div>
     <script src="../static/js/include-footer.js" defer></script>
-    
+
     <!-- 原内联页脚已抽取为 partial -->
     <!-- 页脚 -->
     <footer class="bg-dark-card py-12 border-t border-gray-800">
@@ -2723,14 +3079,10 @@
         }
       });
 
-      
-
       // 平滑滚动
       document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         anchor.addEventListener("click", function (e) {
           e.preventDefault();
-
-          
 
           const href = this.getAttribute("href");
           if (href && href !== "#") {
@@ -3056,7 +3408,11 @@
         const error = Math.abs((piEstimate - piExact) / piExact) * 100;
 
         // 更新图表（守护：Chart缺失或未初始化则跳过图表更新）
-        if (monteCarloChart && monteCarloChart.data && typeof monteCarloChart.update === "function") {
+        if (
+          monteCarloChart &&
+          monteCarloChart.data &&
+          typeof monteCarloChart.update === "function"
+        ) {
           monteCarloChart.data.datasets[0].data = insidePoints;
           monteCarloChart.data.datasets[1].data = outsidePoints;
           monteCarloChart.update();
@@ -4289,7 +4645,10 @@
         // 起点与终点标记
         try {
           const start = walkAnimPoints[0] || { x: 0, y: 0 };
-          const end = walkAnimPoints[walkAnimPoints.length - 1] || { x: 0, y: 0 };
+          const end = walkAnimPoints[walkAnimPoints.length - 1] || {
+            x: 0,
+            y: 0,
+          };
           const sx = cx + start.x * scale;
           const sy = cy - start.y * scale;
           const ex = cx + end.x * scale;
@@ -4480,8 +4839,14 @@
         const rect = container.getBoundingClientRect();
         // 限制DPR、尺寸上限，防止极端场景下出现超大画布
         const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
-        const cssW = Math.max(1, Math.floor(rect.width || canvas.clientWidth || 600));
-        const cssH = Math.max(1, Math.floor(rect.height || canvas.clientHeight || 280));
+        const cssW = Math.max(
+          1,
+          Math.floor(rect.width || canvas.clientWidth || 600)
+        );
+        const cssH = Math.max(
+          1,
+          Math.floor(rect.height || canvas.clientHeight || 280)
+        );
         const MAX_DIM = 4096;
         // 同步CSS像素尺寸，确保布局正常
         canvas.style.width = cssW + "px";
@@ -4502,7 +4867,8 @@
 
       function generatePCAData(n, angleDeg, noise) {
         const angle = (angleDeg * Math.PI) / 180;
-        const ca = Math.cos(angle), sa = Math.sin(angle);
+        const ca = Math.cos(angle),
+          sa = Math.sin(angle);
         const pts = [];
         for (let i = 0; i < n; i++) {
           const x0 = randn() * 2 + noise * randn();
@@ -4516,15 +4882,27 @@
 
       function covariance2D(points) {
         const n = points.length;
-        let mx = 0, my = 0;
-        for (const p of points) { mx += p.x; my += p.y; }
-        mx /= n; my /= n;
-        let vx = 0, vy = 0, cxy = 0;
+        let mx = 0,
+          my = 0;
         for (const p of points) {
-          const dx = p.x - mx, dy = p.y - my;
-          vx += dx * dx; vy += dy * dy; cxy += dx * dy;
+          mx += p.x;
+          my += p.y;
         }
-        vx /= Math.max(1, n - 1); vy /= Math.max(1, n - 1); cxy /= Math.max(1, n - 1);
+        mx /= n;
+        my /= n;
+        let vx = 0,
+          vy = 0,
+          cxy = 0;
+        for (const p of points) {
+          const dx = p.x - mx,
+            dy = p.y - my;
+          vx += dx * dx;
+          vy += dy * dy;
+          cxy += dx * dy;
+        }
+        vx /= Math.max(1, n - 1);
+        vy /= Math.max(1, n - 1);
+        cxy /= Math.max(1, n - 1);
         return { mx, my, vx, vy, cxy };
       }
 
@@ -4535,8 +4913,12 @@
         const l1 = tr / 2 + disc;
         const l2 = tr / 2 - disc;
         function vecFor(lambda) {
-          let a = cxy, b = lambda - vx;
-          if (Math.abs(a) < 1e-8 && Math.abs(b) < 1e-8) { a = 1; b = 0; }
+          let a = cxy,
+            b = lambda - vx;
+          if (Math.abs(a) < 1e-8 && Math.abs(b) < 1e-8) {
+            a = 1;
+            b = 0;
+          }
           const norm = Math.hypot(a, b) || 1;
           return { x: a / norm, y: b / norm };
         }
@@ -4553,8 +4935,14 @@
           options: {
             animation: false,
             scales: {
-              x: { grid: { color: "rgba(100,100,100,0.2)" }, ticks: { color: "#AAA" } },
-              y: { grid: { color: "rgba(100,100,100,0.2)" }, ticks: { color: "#AAA" } },
+              x: {
+                grid: { color: "rgba(100,100,100,0.2)" },
+                ticks: { color: "#AAA" },
+              },
+              y: {
+                grid: { color: "rgba(100,100,100,0.2)" },
+                ticks: { color: "#AAA" },
+              },
             },
             plugins: { legend: { display: false } },
             elements: { point: { radius: 2 } },
@@ -4621,8 +5009,12 @@
       let heatOrder = [];
 
       function generateLatentCorr(dim, samples = 500, latent = 3) {
-        const Z = Array.from({ length: samples }, () => Array.from({ length: latent }, () => randn()));
-        const B = Array.from({ length: latent }, () => Array.from({ length: dim }, () => Math.random() * 2 - 1));
+        const Z = Array.from({ length: samples }, () =>
+          Array.from({ length: latent }, () => randn())
+        );
+        const B = Array.from({ length: latent }, () =>
+          Array.from({ length: dim }, () => Math.random() * 2 - 1)
+        );
         const noiseScale = 0.5;
         const X = Array.from({ length: samples }, () => Array(dim).fill(0));
         for (let i = 0; i < samples; i++) {
@@ -4640,11 +5032,13 @@
         }
         const stds = Array(dim).fill(0);
         for (let j = 0; j < dim; j++) {
-          for (let i = 0; i < samples; i++) stds[j] += Math.pow(X[i][j] - means[j], 2);
+          for (let i = 0; i < samples; i++)
+            stds[j] += Math.pow(X[i][j] - means[j], 2);
           stds[j] = Math.sqrt(stds[j] / Math.max(1, samples - 1)) || 1;
         }
         for (let j = 0; j < dim; j++) {
-          for (let i = 0; i < samples; i++) X[i][j] = (X[i][j] - means[j]) / stds[j];
+          for (let i = 0; i < samples; i++)
+            X[i][j] = (X[i][j] - means[j]) / stds[j];
         }
         const C = Array.from({ length: dim }, () => Array(dim).fill(0));
         for (let a = 0; a < dim; a++) {
@@ -4652,7 +5046,8 @@
             let s = 0;
             for (let i = 0; i < samples; i++) s += X[i][a] * X[i][b];
             const r = s / Math.max(1, samples - 1);
-            C[a][b] = r; C[b][a] = r;
+            C[a][b] = r;
+            C[b][a] = r;
           }
           C[a][a] = 1;
         }
@@ -4686,15 +5081,27 @@
         }
         ctx.strokeStyle = "rgba(100,100,100,0.4)";
         for (let k = 0; k <= n; k++) {
-          ctx.beginPath(); ctx.moveTo(0, k * cell); ctx.lineTo(n * cell, k * cell); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(k * cell, 0); ctx.lineTo(k * cell, n * cell); ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, k * cell);
+          ctx.lineTo(n * cell, k * cell);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(k * cell, 0);
+          ctx.lineTo(k * cell, n * cell);
+          ctx.stroke();
         }
         ctx.restore();
       }
 
       function clusterOrder(matrix) {
         const n = matrix.length;
-        const scores = Array.from({ length: n }, (_, i) => ({ i, s: matrix[i].reduce((a, b, j) => a + Math.abs(b) - (i === j ? 1 : 0), 0) }));
+        const scores = Array.from({ length: n }, (_, i) => ({
+          i,
+          s: matrix[i].reduce(
+            (a, b, j) => a + Math.abs(b) - (i === j ? 1 : 0),
+            0
+          ),
+        }));
         scores.sort((a, b) => b.s - a.s);
         return scores.map((o) => o.i);
       }
@@ -4727,12 +5134,16 @@
           const vi = heatOrder[i];
           const vj = heatOrder[j];
           const val = heatMatrix[vi][vj];
-          tooltip.textContent = `变量 ${vi + 1} vs ${vj + 1}: ${val.toFixed(2)}`;
+          tooltip.textContent = `变量 ${vi + 1} vs ${vj + 1}: ${val.toFixed(
+            2
+          )}`;
           tooltip.style.left = `${e.clientX - rect.left + 12}px`;
           tooltip.style.top = `${e.clientY - rect.top + 12}px`;
           tooltip.classList.remove("hidden");
         });
-        canvas.addEventListener("mouseleave", () => tooltip.classList.add("hidden"));
+        canvas.addEventListener("mouseleave", () =>
+          tooltip.classList.add("hidden")
+        );
       }
 
       // ---------- KDE 与直方图 ----------
@@ -4751,7 +5162,10 @@
       function sampleOne(dist) {
         if (dist === "normal") return randn();
         if (dist === "uniform") return Math.random() * 2 - 1;
-        if (dist === "exponential") { const lambda = 1; return -Math.log(1 - Math.random()) / lambda; }
+        if (dist === "exponential") {
+          const lambda = 1;
+          return -Math.log(1 - Math.random()) / lambda;
+        }
         return 0;
       }
 
@@ -4760,13 +5174,22 @@
         const min = Math.min(...samples);
         const max = Math.max(...samples);
         const rangePad = (max - min) * 0.05 || 0.5;
-        const a = min - rangePad, b = max + rangePad;
+        const a = min - rangePad,
+          b = max + rangePad;
         const width = (b - a) / bins;
         const counts = Array(bins).fill(0);
-        for (const x of samples) { let idx = Math.floor((x - a) / width); if (idx < 0) idx = 0; if (idx >= bins) idx = bins - 1; counts[idx] += 1; }
+        for (const x of samples) {
+          let idx = Math.floor((x - a) / width);
+          if (idx < 0) idx = 0;
+          if (idx >= bins) idx = bins - 1;
+          counts[idx] += 1;
+        }
         const n = samples.length;
         const density = counts.map((c) => c / (n * width));
-        const centers = Array.from({ length: bins }, (_, i) => a + i * width + width / 2);
+        const centers = Array.from(
+          { length: bins },
+          (_, i) => a + i * width + width / 2
+        );
         return { centers, density };
       }
 
@@ -4775,11 +5198,19 @@
         const min = Math.min(...samples);
         const max = Math.max(...samples);
         const pad = (max - min) * 0.2 + 1e-6;
-        const a = min - pad, b = max + pad;
-        const xs = Array.from({ length: grid }, (_, i) => a + (i / (grid - 1)) * (b - a));
+        const a = min - pad,
+          b = max + pad;
+        const xs = Array.from(
+          { length: grid },
+          (_, i) => a + (i / (grid - 1)) * (b - a)
+        );
         const norm = 1 / (Math.sqrt(2 * Math.PI) * h * samples.length);
         const ys = xs.map((x) => {
-          let s = 0; for (const xi of samples) { const u = (x - xi) / h; s += Math.exp(-0.5 * u * u); }
+          let s = 0;
+          for (const xi of samples) {
+            const u = (x - xi) / h;
+            s += Math.exp(-0.5 * u * u);
+          }
           return s * norm;
         });
         return { xs, ys };
@@ -4809,15 +5240,23 @@
         ctx.strokeStyle = "rgba(120,120,120,0.25)";
         ctx.lineWidth = 1;
         for (let i = 0; i <= 5; i++) {
-          const yy = (i / 5) * h; ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(w, yy); ctx.stroke();
+          const yy = (i / 5) * h;
+          ctx.beginPath();
+          ctx.moveTo(0, yy);
+          ctx.lineTo(w, yy);
+          ctx.stroke();
         }
         for (let i = 0; i <= 10; i++) {
-          const xx = (i / 10) * w; ctx.beginPath(); ctx.moveTo(xx, 0); ctx.lineTo(xx, h); ctx.stroke();
+          const xx = (i / 10) * w;
+          ctx.beginPath();
+          ctx.moveTo(xx, 0);
+          ctx.lineTo(xx, h);
+          ctx.stroke();
         }
 
         // 直方图条形
         if (centers && centers.length > 0) {
-          const binWidth = centers.length > 1 ? (centers[1] - centers[0]) : 0.1;
+          const binWidth = centers.length > 1 ? centers[1] - centers[0] : 0.1;
           const barW = w * (binWidth / (xMax - xMin || 1));
           for (let i = 0; i < centers.length; i++) {
             const x = xScale(centers[i]) - barW / 2;
@@ -4840,7 +5279,8 @@
           for (let i = 0; i < xs.length; i++) {
             const X = xScale(xs[i]);
             const Y = yScale(ys[i] || 0);
-            if (i === 0) ctx.moveTo(X, Y); else ctx.lineTo(X, Y);
+            if (i === 0) ctx.moveTo(X, Y);
+            else ctx.lineTo(X, Y);
           }
           ctx.stroke();
           ctx.shadowBlur = 0;
@@ -4849,8 +5289,14 @@
         // 轴线
         ctx.strokeStyle = "rgba(200,200,200,0.9)";
         ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.moveTo(0, h); ctx.lineTo(w, h); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, h); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+        ctx.lineTo(w, h);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, h);
+        ctx.stroke();
 
         ctx.restore();
       }
@@ -4861,21 +5307,43 @@
         const { centers, density } = computeHistogram(kdeSamples);
         const { xs, ys } = computeKDE(kdeSamples, h);
         drawKDECanvas(centers, density, xs, ys);
-        const nTarget = parseInt(document.getElementById("kde-samples").value, 10);
-        if (kdeSamples.length >= nTarget && kdeTimer) { clearInterval(kdeTimer); kdeTimer = null; }
+        const nTarget = parseInt(
+          document.getElementById("kde-samples").value,
+          10
+        );
+        if (kdeSamples.length >= nTarget && kdeTimer) {
+          clearInterval(kdeTimer);
+          kdeTimer = null;
+        }
       }
 
       function startKDEStream() {
-        const nTarget = parseInt(document.getElementById("kde-samples").value, 10);
+        const nTarget = parseInt(
+          document.getElementById("kde-samples").value,
+          10
+        );
         if (kdeTimer) return;
         kdeTimer = setInterval(() => {
-          for (let i = 0; i < 100 && kdeSamples.length < nTarget; i++) kdeSamples.push(sampleOne(kdeDist));
+          for (let i = 0; i < 100 && kdeSamples.length < nTarget; i++)
+            kdeSamples.push(sampleOne(kdeDist));
           updateKDE();
-          if (kdeSamples.length >= nTarget) { clearInterval(kdeTimer); kdeTimer = null; }
+          if (kdeSamples.length >= nTarget) {
+            clearInterval(kdeTimer);
+            kdeTimer = null;
+          }
         }, 120);
       }
-      function stopKDEStream() { if (kdeTimer) { clearInterval(kdeTimer); kdeTimer = null; } }
-      function resetKDE() { kdeSamples = []; stopKDEStream(); updateKDE(); }
+      function stopKDEStream() {
+        if (kdeTimer) {
+          clearInterval(kdeTimer);
+          kdeTimer = null;
+        }
+      }
+      function resetKDE() {
+        kdeSamples = [];
+        stopKDEStream();
+        updateKDE();
+      }
 
       // ---------- Treemap 比例树图 ----------
       let treemapRects = [];
@@ -4893,8 +5361,21 @@
       }
       function layoutSliceDice(x, y, w, h, weights, horizontal) {
         const rects = [];
-        if (horizontal) { let acc = x; for (const p of weights) { const rw = w * p; rects.push({ x: acc, y, w: rw, h }); acc += rw; } }
-        else { let acc = y; for (const p of weights) { const rh = h * p; rects.push({ x, y: acc, w, h: rh }); acc += rh; } }
+        if (horizontal) {
+          let acc = x;
+          for (const p of weights) {
+            const rw = w * p;
+            rects.push({ x: acc, y, w: rw, h });
+            acc += rw;
+          }
+        } else {
+          let acc = y;
+          for (const p of weights) {
+            const rh = h * p;
+            rects.push({ x, y: acc, w, h: rh });
+            acc += rh;
+          }
+        }
         return rects;
       }
       function drawTreemap() {
@@ -4903,15 +5384,27 @@
         const rect = canvas.getBoundingClientRect();
         ctx.clearRect(0, 0, rect.width, rect.height);
         const weights = treemapData.map((d) => d.weight);
-        const rects = layoutSliceDice(10, 10, rect.width - 20, rect.height - 20, weights, true);
+        const rects = layoutSliceDice(
+          10,
+          10,
+          rect.width - 20,
+          rect.height - 20,
+          weights,
+          true
+        );
         treemapRects = rects.map((r, i) => ({ ...r, idx: i }));
-        ctx.save(); ctx.shadowBlur = 18; ctx.shadowColor = "rgba(0,255,200,0.4)";
+        ctx.save();
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = "rgba(0,255,200,0.4)";
         for (let i = 0; i < rects.length; i++) {
           const r = rects[i];
           ctx.fillStyle = treemapPalette(i);
           ctx.fillRect(r.x, r.y, r.w, r.h);
-          ctx.strokeStyle = "rgba(255,255,255,0.25)"; ctx.lineWidth = 2; ctx.strokeRect(r.x, r.y, r.w, r.h);
-          ctx.fillStyle = "rgba(245,245,245,0.9)"; ctx.font = "12px ui-monospace, SFMono-Regular, Menlo, monospace";
+          ctx.strokeStyle = "rgba(255,255,255,0.25)";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(r.x, r.y, r.w, r.h);
+          ctx.fillStyle = "rgba(245,245,245,0.9)";
+          ctx.font = "12px ui-monospace, SFMono-Regular, Menlo, monospace";
           const label = `C${i + 1}: ${(weights[i] * 100).toFixed(1)}%`;
           ctx.fillText(label, r.x + 8, r.y + 18);
         }
@@ -4920,16 +5413,29 @@
       function randomizeTreemap() {
         const n = parseInt(document.getElementById("treemap-cats").value, 10);
         const w = randomWeights(n);
-        treemapData = Array.from({ length: n }, (_, i) => ({ name: `C${i + 1}`, weight: w[i] }));
+        treemapData = Array.from({ length: n }, (_, i) => ({
+          name: `C${i + 1}`,
+          weight: w[i],
+        }));
         drawTreemap();
       }
       function bindTreemapHover() {
         const canvas = document.getElementById("treemap-canvas");
         canvas.addEventListener("mousemove", (e) => {
-          const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-          const hit = treemapRects.find((r) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h);
-          drawTreemap(); if (!hit) return;
-          const ctx = canvas.getContext("2d"); ctx.save(); ctx.strokeStyle = "rgba(255,255,255,0.9)"; ctx.lineWidth = 3.5; ctx.strokeRect(hit.x, hit.y, hit.w, hit.h); ctx.restore();
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const hit = treemapRects.find(
+            (r) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h
+          );
+          drawTreemap();
+          if (!hit) return;
+          const ctx = canvas.getContext("2d");
+          ctx.save();
+          ctx.strokeStyle = "rgba(255,255,255,0.9)";
+          ctx.lineWidth = 3.5;
+          ctx.strokeRect(hit.x, hit.y, hit.w, hit.h);
+          ctx.restore();
         });
         canvas.addEventListener("mouseleave", drawTreemap);
       }
@@ -4939,66 +5445,142 @@
         const pcaSamples = document.getElementById("pca-samples");
         const pcaAngle = document.getElementById("pca-angle");
         const pcaNoise = document.getElementById("pca-noise");
-        document.getElementById("pca-samples-value").textContent = pcaSamples.value;
+        document.getElementById("pca-samples-value").textContent =
+          pcaSamples.value;
         document.getElementById("pca-angle-value").textContent = pcaAngle.value;
         document.getElementById("pca-noise-value").textContent = pcaNoise.value;
-        pcaSamples.addEventListener("input", () => { document.getElementById("pca-samples-value").textContent = pcaSamples.value; regeneratePCA(); });
-        pcaAngle.addEventListener("input", () => { document.getElementById("pca-angle-value").textContent = pcaAngle.value; regeneratePCA(); });
-        pcaNoise.addEventListener("input", () => { document.getElementById("pca-noise-value").textContent = pcaNoise.value; regeneratePCA(); });
-        document.getElementById("pca-generate").addEventListener("click", regeneratePCA);
-        document.getElementById("pca-show-axes").addEventListener("change", updatePCA);
+        pcaSamples.addEventListener("input", () => {
+          document.getElementById("pca-samples-value").textContent =
+            pcaSamples.value;
+          regeneratePCA();
+        });
+        pcaAngle.addEventListener("input", () => {
+          document.getElementById("pca-angle-value").textContent =
+            pcaAngle.value;
+          regeneratePCA();
+        });
+        pcaNoise.addEventListener("input", () => {
+          document.getElementById("pca-noise-value").textContent =
+            pcaNoise.value;
+          regeneratePCA();
+        });
+        document
+          .getElementById("pca-generate")
+          .addEventListener("click", regeneratePCA);
+        document
+          .getElementById("pca-show-axes")
+          .addEventListener("change", updatePCA);
 
         // Heatmap
         const heatDim = document.getElementById("heat-dim");
         document.getElementById("heat-dim-value").textContent = heatDim.value;
-        heatDim.addEventListener("input", () => { document.getElementById("heat-dim-value").textContent = heatDim.value; setupHeatmap(); });
-        document.getElementById("heat-generate").addEventListener("click", setupHeatmap);
-        document.getElementById("heat-cluster").addEventListener("click", () => { heatOrder = clusterOrder(heatMatrix); drawHeatmapCanvas(heatMatrix); });
+        heatDim.addEventListener("input", () => {
+          document.getElementById("heat-dim-value").textContent = heatDim.value;
+          setupHeatmap();
+        });
+        document
+          .getElementById("heat-generate")
+          .addEventListener("click", setupHeatmap);
+        document
+          .getElementById("heat-cluster")
+          .addEventListener("click", () => {
+            heatOrder = clusterOrder(heatMatrix);
+            drawHeatmapCanvas(heatMatrix);
+          });
         bindHeatmapTooltip();
 
         // KDE
-        document.getElementById("kde-samples-value").textContent = document.getElementById("kde-samples").value;
-        document.getElementById("kde-bandwidth-value").textContent = document.getElementById("kde-bandwidth").value;
+        document.getElementById("kde-samples-value").textContent =
+          document.getElementById("kde-samples").value;
+        document.getElementById("kde-bandwidth-value").textContent =
+          document.getElementById("kde-bandwidth").value;
         document.getElementById("kde-samples").addEventListener("input", () => {
-          document.getElementById("kde-samples-value").textContent = document.getElementById("kde-samples").value;
+          document.getElementById("kde-samples-value").textContent =
+            document.getElementById("kde-samples").value;
         });
-        document.getElementById("kde-bandwidth").addEventListener("input", () => {
-          document.getElementById("kde-bandwidth-value").textContent = document.getElementById("kde-bandwidth").value; updateKDE();
-        });
+        document
+          .getElementById("kde-bandwidth")
+          .addEventListener("input", () => {
+            document.getElementById("kde-bandwidth-value").textContent =
+              document.getElementById("kde-bandwidth").value;
+            updateKDE();
+          });
         document.querySelectorAll(".kde-dist-btn").forEach((btn) => {
           btn.addEventListener("click", () => {
-            document.querySelectorAll(".kde-dist-btn").forEach((b) => b.classList.remove("active", "bg-neon-orange/20", "text-neon-orange"));
-            btn.classList.add("active", "bg-neon-orange/20", "text-neon-orange");
+            document
+              .querySelectorAll(".kde-dist-btn")
+              .forEach((b) =>
+                b.classList.remove(
+                  "active",
+                  "bg-neon-orange/20",
+                  "text-neon-orange"
+                )
+              );
+            btn.classList.add(
+              "active",
+              "bg-neon-orange/20",
+              "text-neon-orange"
+            );
             kdeDist = btn.dataset.dist;
             resetKDE();
           });
         });
-        document.getElementById("kde-stream").addEventListener("click", () => { startKDEStream(); });
-        document.getElementById("kde-stop").addEventListener("click", () => { stopKDEStream(); });
-        document.getElementById("kde-reset").addEventListener("click", () => { resetKDE(); });
+        document.getElementById("kde-stream").addEventListener("click", () => {
+          startKDEStream();
+        });
+        document.getElementById("kde-stop").addEventListener("click", () => {
+          stopKDEStream();
+        });
+        document.getElementById("kde-reset").addEventListener("click", () => {
+          resetKDE();
+        });
 
         // 响应式：窗口尺寸变化时重绘Canvas可视化
         window.addEventListener("resize", () => {
-          try { updatePCA(); } catch (e) {}
-          try { drawHeatmapCanvas(heatMatrix); } catch (e) {}
-          try { drawTreemap(); } catch (e) {}
-          try { updateKDE(); } catch (e) {}
+          try {
+            updatePCA();
+          } catch (e) {}
+          try {
+            drawHeatmapCanvas(heatMatrix);
+          } catch (e) {}
+          try {
+            drawTreemap();
+          } catch (e) {}
+          try {
+            updateKDE();
+          } catch (e) {}
         });
 
         // Treemap
-        document.getElementById("treemap-cats").addEventListener("input", () => {
-          document.getElementById("treemap-cats-value").textContent = document.getElementById("treemap-cats").value; randomizeTreemap();
-        });
-        document.getElementById("treemap-randomize").addEventListener("click", randomizeTreemap);
-        document.getElementById("treemap-mode").addEventListener("change", drawTreemap);
+        document
+          .getElementById("treemap-cats")
+          .addEventListener("input", () => {
+            document.getElementById("treemap-cats-value").textContent =
+              document.getElementById("treemap-cats").value;
+            randomizeTreemap();
+          });
+        document
+          .getElementById("treemap-randomize")
+          .addEventListener("click", randomizeTreemap);
+        document
+          .getElementById("treemap-mode")
+          .addEventListener("change", drawTreemap);
         bindTreemapHover();
       }
 
       function initNewVisualizations() {
-        try { regeneratePCA(); } catch (e) {}
-        try { setupHeatmap(); } catch (e) {}
-        try { resetKDE(); } catch (e) {}
-        try { randomizeTreemap(); } catch (e) {}
+        try {
+          regeneratePCA();
+        } catch (e) {}
+        try {
+          setupHeatmap();
+        } catch (e) {}
+        try {
+          resetKDE();
+        } catch (e) {}
+        try {
+          randomizeTreemap();
+        } catch (e) {}
       }
 
       document.addEventListener("DOMContentLoaded", () => {
@@ -5414,8 +5996,12 @@
               // 若尚未生成路径，仅清空以匹配新尺寸
               const container = walkCanvasEl.parentElement || walkCanvasEl;
               const rect = container.getBoundingClientRect();
-              const width = Math.floor(rect.width || walkCanvasEl.clientWidth || 400);
-              const height = Math.floor(rect.height || walkCanvasEl.clientHeight || 200);
+              const width = Math.floor(
+                rect.width || walkCanvasEl.clientWidth || 400
+              );
+              const height = Math.floor(
+                rect.height || walkCanvasEl.clientHeight || 200
+              );
               const ctx = walkCanvasEl.getContext("2d");
               ctx.clearRect(0, 0, width, height);
             }
@@ -5489,7 +6075,10 @@
           document.getElementById("birthday-exact").textContent =
             exactDefault.toFixed(6);
         }
-        if (typeof Chart !== "undefined" && typeof initBirthdayChart === "function") {
+        if (
+          typeof Chart !== "undefined" &&
+          typeof initBirthdayChart === "function"
+        ) {
           initBirthdayChart(exactDefault, exactDefault);
         }
 
@@ -5665,10 +6254,12 @@
     </script>
     <script>
       (function () {
-        const tocEl = document.getElementById('toc');
+        const tocEl = document.getElementById("toc");
         if (!tocEl) return;
-        fetch('../docs/目录.md')
-          .then((r) => (r.ok ? r.text() : Promise.reject(new Error('无法读取目录.md'))))
+        fetch("../docs/目录.md")
+          .then((r) =>
+            r.ok ? r.text() : Promise.reject(new Error("无法读取目录.md"))
+          )
           .then((md) => {
             const lines = md.split(/\r?\n/).filter(Boolean);
             const chapters = [];
@@ -5682,23 +6273,23 @@
               tocEl.innerHTML = '<p class="text-gray-400">未找到章节信息。</p>';
               return;
             }
-            const header = document.createElement('h3');
-            header.className = 'text-white font-future font-semibold mb-3';
-            header.textContent = '目录';
-            const ul = document.createElement('ul');
-            ul.className = 'space-y-2';
+            const header = document.createElement("h3");
+            header.className = "text-white font-future font-semibold mb-3";
+            header.textContent = "目录";
+            const ul = document.createElement("ul");
+            ul.className = "space-y-2";
             chapters.forEach((title) => {
-              const id = title.replace(/\s+/g, '-');
-              const li = document.createElement('li');
-              const a = document.createElement('a');
+              const id = title.replace(/\s+/g, "-");
+              const li = document.createElement("li");
+              const a = document.createElement("a");
               a.href = `#${id}`;
               a.textContent = title;
-              a.className = 'block text-neon-blue hover:text-white';
-              a.addEventListener('click', (e) => {
+              a.className = "block text-neon-blue hover:text-white";
+              a.addEventListener("click", (e) => {
                 const el = document.getElementById(id);
                 if (el) {
                   e.preventDefault();
-                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  el.scrollIntoView({ behavior: "smooth", block: "start" });
                 }
               });
               li.appendChild(a);
@@ -5713,17 +6304,17 @@
           });
       })();
     </script>
-</body>
-<script>
-  window.NAV_CONFIG = {
-    active: 'index',
-    sectionLinks: [
-      { label: '核心概念', href: '#concepts' },
-      { label: '概率模拟', href: '#simulations' },
-      { label: '数据可视化', href: '#visualizations' },
-      { label: '应用场景', href: '#applications' }
-    ]
-  };
-</script>
-<script src="../static/js/include-navbar.js"></script>
+  </body>
+  <script>
+    window.NAV_CONFIG = {
+      active: "index",
+      sectionLinks: [
+        { label: "核心概念", href: "#concepts" },
+        { label: "概率模拟", href: "#simulations" },
+        { label: "数据可视化", href: "#visualizations" },
+        { label: "应用场景", href: "#applications" },
+      ],
+    };
+  </script>
+  <script src="../static/js/include-navbar.js"></script>
 </html>
