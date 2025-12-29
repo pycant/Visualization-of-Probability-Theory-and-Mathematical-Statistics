@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Chapter 3: 多维随机变量及其分布 - 交互式可视化
  * 实现联合分布、边际分布、独立性检验等概念的可视化
  */
@@ -12,6 +12,7 @@ class Chapter3Visualizer {
       (window.Noise2D && window.Noise2D.create({ seed: 1337 })) || null;
     this.bgTime = 0;
     this.bgConfig = { cols: 200, rows: 120, scale: 0.02 };
+    this.useBackgroundEffects = true;
     this.bgCanvas = null;
     this.bgCtx = null;
     this.parameters = {
@@ -41,7 +42,7 @@ class Chapter3Visualizer {
     this.generateInitialSamples();
     this.updateAllVisualizations();
     this.initializeIndependenceTest();
-    this.startBackgroundContours();
+    if (this.useBackgroundEffects) this.startBackgroundContours();
   }
 
   initializeEventListeners() {
@@ -177,7 +178,10 @@ class Chapter3Visualizer {
     });
 
     this.bgCanvas = document.getElementById("bg-noise");
-    if (this.bgCanvas) {
+    if (!this.useBackgroundEffects && this.bgCanvas) {
+      this.bgCanvas.style.display = "none";
+    }
+    if (this.bgCanvas && this.useBackgroundEffects) {
       this.bgCtx = this.bgCanvas.getContext("2d");
       this.bgLayer = document.createElement("canvas");
       this.bgLayerCtx = this.bgLayer.getContext("2d");
@@ -208,7 +212,10 @@ class Chapter3Visualizer {
     // 初始化3D图表
     this.init3DPlot();
 
-    if (this.canvases.glow) {
+    if (!this.useBackgroundEffects && this.canvases.glow) {
+      this.canvases.glow.style.display = "none";
+    }
+    if (this.canvases.glow && this.useBackgroundEffects) {
       this.glowLayer = document.createElement("canvas");
       this.glowLayerCtx = this.glowLayer.getContext("2d");
       const resizeGlow = () => {
@@ -432,7 +439,7 @@ class Chapter3Visualizer {
     this.updateMarginalPlot();
     this.update3DPlot();
     this.updateStatistics();
-    this.updateMarginalGlow();
+    if (this.useBackgroundEffects) this.updateMarginalGlow();
   }
 
   updateContourPlot() {

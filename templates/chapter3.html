@@ -16,6 +16,11 @@
     <script src="../static/libs/katex/js/auto-render.min.js"></script>
     <script src="../static/libs/chart/chart.umd.min.js"></script>
 
+    <!-- 数学计算库 -->
+    <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.6/dist/jstat.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ml-matrix@6.10.7/lib/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fast-check@3.15.0/lib/bundle.js"></script>
+
     <!-- 3D可视化库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
@@ -68,45 +73,102 @@
         <p class="subtitle hero-subtitle mt-3 sm:mt-4">
           探索变量间的联合行为，理解相关性与独立性的本质
         </p>
+        
+        <!-- Topic Tags -->
         <div class="mt-5 flex flex-wrap justify-center gap-2">
           <span
-            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2 hover:bg-white/10 transition-colors"
           >
             <i class="fa-solid fa-chart-scatter"></i> 联合分布
           </span>
           <span
-            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2 hover:bg-white/10 transition-colors"
           >
             <i class="fa-solid fa-chart-bar"></i> 边际分布
           </span>
           <span
-            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2 hover:bg-white/10 transition-colors"
           >
             <i class="fa-solid fa-link"></i> 相关性
           </span>
           <span
-            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2 hover:bg-white/10 transition-colors"
           >
             <i class="fa-solid fa-balance-scale"></i> 独立性
           </span>
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2 hover:bg-white/10 transition-colors"
+          >
+            <i class="fa-solid fa-exchange-alt"></i> 变量变换
+          </span>
         </div>
+        
+        <!-- Key Formulas Display -->
         <div class="mt-6 flex justify-center">
-          <div class="glass-card fx-holo rounded-xl px-4 py-3">
-            <div class="text-sm text-gray-300 mb-2">关键公式</div>
-            <div>
-              $f(x,y) = \frac{\partial^2 F(x,y)}{\partial x \partial y}$
-            </div>
-            <div class="mt-2">$\text{Cov}(X,Y) = E[XY] - E[X]E[Y]$</div>
-            <div class="mt-2">
-              $\rho(X,Y) =
-              \frac{\text{Cov}(X,Y)}{\sqrt{\text{Var}(X)\text{Var}(Y)}}$
+          <div class="glass-card fx-holo rounded-xl px-6 py-4 max-w-2xl">
+            <div class="text-sm text-gray-300 mb-3 font-medium">关键公式</div>
+            <div class="space-y-3 text-base">
+              <div class="flex items-center justify-center">
+                <span class="text-xs text-gray-400 mr-2">联合密度:</span>
+                $f(x,y) = \frac{\partial^2 F(x,y)}{\partial x \partial y}$
+              </div>
+              <div class="flex items-center justify-center">
+                <span class="text-xs text-gray-400 mr-2">协方差:</span>
+                $\text{Cov}(X,Y) = E[XY] - E[X]E[Y]$
+              </div>
+              <div class="flex items-center justify-center">
+                <span class="text-xs text-gray-400 mr-2">相关系数:</span>
+                $\rho(X,Y) = \frac{\text{Cov}(X,Y)}{\sqrt{\text{Var}(X)\text{Var}(Y)}}$
+              </div>
+              <div class="flex items-center justify-center">
+                <span class="text-xs text-gray-400 mr-2">条件期望:</span>
+                $E[Y|X=x] = \int y f_{Y|X}(y|x) dy$
+              </div>
             </div>
           </div>
         </div>
+        
+        <!-- Navigation Links -->
         <div
           class="mt-6 sm:mt-8 flex flex-wrap gap-3 justify-center"
           id="hero-links"
-        ></div>
+        >
+          <a
+            href="#sec-3-1"
+            class="px-4 py-2 rounded-lg border border-neon-blue/30 bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 transition-all duration-300 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-cube"></i>
+            <span>3.1 联合分布</span>
+          </a>
+          <a
+            href="#sec-3-2"
+            class="px-4 py-2 rounded-lg border border-neon-purple/30 bg-neon-purple/10 text-neon-purple hover:bg-neon-purple/20 transition-all duration-300 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-microscope"></i>
+            <span>3.2 独立性检验</span>
+          </a>
+          <a
+            href="#sec-3-3"
+            class="px-4 py-2 rounded-lg border border-neon-green/30 bg-neon-green/10 text-neon-green hover:bg-neon-green/20 transition-all duration-300 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-exchange-alt"></i>
+            <span>3.3 变量变换</span>
+          </a>
+          <a
+            href="#sec-3-4"
+            class="px-4 py-2 rounded-lg border border-yellow-400/30 bg-yellow-400/10 text-yellow-400 hover:bg-yellow-400/20 transition-all duration-300 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-chart-line"></i>
+            <span>3.4 相关分析</span>
+          </a>
+          <a
+            href="#sec-3-5"
+            class="px-4 py-2 rounded-lg border border-orange-400/30 bg-orange-400/10 text-orange-400 hover:bg-orange-400/20 transition-all duration-300 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-filter"></i>
+            <span>3.5 条件分布</span>
+          </a>
+        </div>
       </section>
 
       <!-- 3.1 多维随机变量及其联合分布 -->
@@ -124,80 +186,291 @@
             </p>
           </div>
 
+          <!-- 场景切换标签 -->
+          <div class="mb-6">
+            <div class="text-sm text-gray-300 mb-3">选择应用场景:</div>
+            <div id="scenario-tabs" class="flex flex-wrap gap-2 justify-center">
+              <!-- 标签将由JavaScript动态生成 -->
+            </div>
+            
+            <!-- 场景描述 -->
+            <div id="scenario-description" class="mt-4 text-center">
+              <!-- 描述将由JavaScript动态更新 -->
+            </div>
+            
+            <!-- 场景示例 -->
+            <div id="scenario-examples" class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+              <!-- 示例将由JavaScript动态生成 -->
+            </div>
+          </div>
+
           <div class="flex flex-col lg:flex-row gap-8">
             <!-- 左侧可视化区域 -->
             <div class="flex-1">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <!-- 3D联合密度图 -->
-                <div class="bg-dark-card/60 rounded-xl p-4">
-                  <div class="text-sm text-gray-300 mb-2">3D联合密度函数</div>
-                  <div id="joint-3d-plot" class="h-64 w-full"></div>
+              <!-- 传统场景可视化 -->
+              <div id="traditional-scenario" class="scenario-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <!-- 3D联合密度图 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">3D联合密度函数</div>
+                    <div id="joint-3d-plot" class="h-64 w-full"></div>
+                  </div>
+
+                  <!-- 等高线图 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">密度等高线图</div>
+                    <canvas
+                      id="contour-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 散点图 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">样本散点分布</div>
+                    <canvas
+                      id="scatter-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 边际分布 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">边际密度曲线</div>
+                    <canvas
+                      id="marginal-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 词向量空间探索场景 -->
+              <div id="nlp-scenario" class="scenario-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <!-- 词向量2D空间 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">词向量2D空间分布</div>
+                    <canvas
+                      id="word-vector-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 语义相似度热力图 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">语义相似度矩阵</div>
+                    <canvas
+                      id="semantic-heatmap"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 词汇聚类分析 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">词汇聚类分析</div>
+                    <canvas
+                      id="word-clustering"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 联合分布投影 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">向量分量联合分布</div>
+                    <canvas
+                      id="vector-joint-dist"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
                 </div>
 
-                <!-- 等高线图 -->
-                <div class="bg-dark-card/60 rounded-xl p-4">
-                  <div class="text-sm text-gray-300 mb-2">密度等高线图</div>
-                  <canvas
-                    id="contour-canvas"
-                    width="300"
-                    height="240"
-                    class="w-full rounded-lg"
-                  ></canvas>
+                <!-- 热门词汇展示 -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">热门词汇分析</div>
+                  <div class="grid grid-cols-3 gap-3 text-xs">
+                    <div>
+                      <div class="text-gray-400 mb-1">网红词汇</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-neon-blue/20 text-neon-blue rounded">YYDS</span>
+                        <span class="px-2 py-1 bg-neon-blue/20 text-neon-blue rounded">绝绝子</span>
+                        <span class="px-2 py-1 bg-neon-blue/20 text-neon-blue rounded">emo</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-gray-400 mb-1">专业术语</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-neon-purple/20 text-neon-purple rounded">机器学习</span>
+                        <span class="px-2 py-1 bg-neon-purple/20 text-neon-purple rounded">神经网络</span>
+                        <span class="px-2 py-1 bg-neon-purple/20 text-neon-purple rounded">深度学习</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-gray-400 mb-1">情感词汇</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-neon-green/20 text-neon-green rounded">开心</span>
+                        <span class="px-2 py-1 bg-neon-green/20 text-neon-green rounded">焦虑</span>
+                        <span class="px-2 py-1 bg-neon-green/20 text-neon-green rounded">兴奋</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 分子速度分析场景 -->
+              <div id="physics-scenario" class="scenario-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <!-- 麦克斯韦-玻尔兹曼分析器 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4 md:col-span-2">
+                    <div class="text-sm text-gray-300 mb-2">麦克斯韦-玻尔兹曼分子速度分析器</div>
+                    <canvas
+                      id="maxwell-boltzmann-canvas"
+                      width="600"
+                      height="400"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 速度分量分布 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">速度分量分布</div>
+                    <canvas
+                      id="velocity-components"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 温度效应 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">温度对分布的影响</div>
+                    <canvas
+                      id="temperature-effect"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 动能分布 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">分子动能分布</div>
+                    <canvas
+                      id="kinetic-energy"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
                 </div>
 
-                <!-- 散点图 -->
-                <div class="bg-dark-card/60 rounded-xl p-4">
-                  <div class="text-sm text-gray-300 mb-2">样本散点分布</div>
-                  <canvas
-                    id="scatter-canvas"
-                    width="300"
-                    height="240"
-                    class="w-full rounded-lg"
-                  ></canvas>
-                </div>
-
-                <!-- 边际分布 -->
-                <div class="bg-dark-card/60 rounded-xl p-4">
-                  <div class="text-sm text-gray-300 mb-2">边际密度曲线</div>
-                  <canvas
-                    id="marginal-canvas"
-                    width="300"
-                    height="240"
-                    class="w-full rounded-lg"
-                  ></canvas>
+                <!-- 物理参数显示 -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">物理参数</div>
+                  <div class="grid grid-cols-4 gap-3 text-xs">
+                    <div class="text-center">
+                      <div class="text-gray-400">平均速度</div>
+                      <div id="avg-velocity" class="text-neon-green text-lg">0 m/s</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-gray-400">最概然速度</div>
+                      <div id="most-probable-velocity" class="text-neon-blue text-lg">0 m/s</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-gray-400">方均根速度</div>
+                      <div id="rms-velocity" class="text-yellow-400 text-lg">0 m/s</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-gray-400">平均动能</div>
+                      <div id="avg-kinetic-energy" class="text-orange-400 text-lg">0 J</div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <!-- 实时统计显示 -->
               <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                <!-- 传统场景统计 -->
+                <div class="scenario-stats traditional-stats rounded-lg border border-white/10 bg-white/5 p-3">
                   <div>理论相关系数</div>
                   <div id="theory-corr" class="text-neon-blue text-lg">
                     0.00
                   </div>
                 </div>
-                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                <div class="scenario-stats traditional-stats rounded-lg border border-white/10 bg-white/5 p-3">
                   <div>样本相关系数</div>
                   <div id="sample-corr" class="text-neon-purple text-lg">
                     0.00
                   </div>
                 </div>
-                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                <div class="scenario-stats traditional-stats rounded-lg border border-white/10 bg-white/5 p-3">
                   <div>联合概率</div>
                   <div id="joint-prob" class="text-neon-green text-lg">
                     0.00
                   </div>
                 </div>
-                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                <div class="scenario-stats traditional-stats rounded-lg border border-white/10 bg-white/5 p-3">
                   <div>样本数量</div>
                   <div id="sample-count" class="text-lg">1000</div>
+                </div>
+
+                <!-- 词向量场景统计 -->
+                <div class="scenario-stats nlp-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>平均相似度</div>
+                  <div id="avg-similarity" class="text-neon-blue text-lg">0.00</div>
+                </div>
+                <div class="scenario-stats nlp-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>聚类数量</div>
+                  <div id="cluster-count" class="text-neon-purple text-lg">0</div>
+                </div>
+                <div class="scenario-stats nlp-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>词汇覆盖率</div>
+                  <div id="vocabulary-coverage" class="text-neon-green text-lg">0%</div>
+                </div>
+                <div class="scenario-stats nlp-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>向量维度</div>
+                  <div id="vector-dimensions" class="text-lg">128</div>
+                </div>
+
+                <!-- 物理场景统计 -->
+                <div class="scenario-stats physics-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>平均速度</div>
+                  <div id="mean-velocity" class="text-neon-blue text-lg">0 m/s</div>
+                </div>
+                <div class="scenario-stats physics-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>最概然速度</div>
+                  <div id="most-probable-v" class="text-neon-purple text-lg">0 m/s</div>
+                </div>
+                <div class="scenario-stats physics-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>方均根速度</div>
+                  <div id="rms-velocity-stat" class="text-neon-green text-lg">0 m/s</div>
+                </div>
+                <div class="scenario-stats physics-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>温度</div>
+                  <div id="temperature-stat" class="text-lg">300 K</div>
                 </div>
               </div>
             </div>
 
             <!-- 右侧控制面板 -->
             <div class="w-full lg:w-80">
-              <div class="space-y-5">
+              <!-- 传统场景控制 -->
+              <div id="traditional-controls" class="scenario-controls space-y-5">
                 <div>
                   <div class="mb-2 text-sm flex justify-between">
                     <span>股票A期望收益 μ₁ (%)</span>
@@ -368,6 +641,168 @@
                   >
                     计算 P(X∈[a,b], Y∈[c,d])
                   </button>
+                </div>
+              </div>
+
+              <!-- 词向量场景控制 -->
+              <div id="nlp-controls" class="scenario-controls space-y-5 hidden">
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>向量维度</span>
+                    <span id="vector-dim-val" class="text-neon-blue">128</span>
+                  </div>
+                  <input
+                    id="vector-dim-slider"
+                    type="range"
+                    min="64"
+                    max="512"
+                    step="64"
+                    value="128"
+                    class="w-full accent-neon-blue"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>语义相似度阈值</span>
+                    <span id="similarity-threshold-val" class="text-neon-purple">0.7</span>
+                  </div>
+                  <input
+                    id="similarity-threshold-slider"
+                    type="range"
+                    min="0.1"
+                    max="1.0"
+                    step="0.1"
+                    value="0.7"
+                    class="w-full accent-neon-purple"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm">词汇类别</div>
+                  <select
+                    id="word-category"
+                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white"
+                  >
+                    <option value="internet">网络流行语</option>
+                    <option value="tech">科技术语</option>
+                    <option value="emotion">情感词汇</option>
+                    <option value="mixed">混合词汇</option>
+                  </select>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    id="generate-word-vectors"
+                    class="px-4 py-2 rounded-lg border border-neon-purple/30 bg-neon-purple/10 text-neon-purple hover:bg-neon-purple/20"
+                  >
+                    生成词向量
+                  </button>
+                  <button
+                    id="analyze-similarity"
+                    class="px-4 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10"
+                  >
+                    相似度分析
+                  </button>
+                </div>
+
+                <!-- 词汇搜索 -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">词汇搜索</div>
+                  <input
+                    id="word-search"
+                    type="text"
+                    placeholder="输入词汇..."
+                    class="w-full bg-transparent border border-white/20 rounded p-2 text-white text-sm"
+                  />
+                  <button
+                    id="find-similar-words"
+                    class="mt-2 w-full py-1 rounded border border-neon-blue/30 bg-neon-blue/10 text-neon-blue text-xs hover:bg-neon-blue/20"
+                  >
+                    查找相似词汇
+                  </button>
+                </div>
+              </div>
+
+              <!-- 物理场景控制 -->
+              <div id="physics-controls" class="scenario-controls space-y-5 hidden">
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>温度 (K)</span>
+                    <span id="temperature-val" class="text-neon-green">300</span>
+                  </div>
+                  <input
+                    id="temperature-slider"
+                    type="range"
+                    min="100"
+                    max="1000"
+                    step="10"
+                    value="300"
+                    class="w-full accent-neon-green"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>分子数量</span>
+                    <span id="molecule-count-val" class="text-neon-blue">1000</span>
+                  </div>
+                  <input
+                    id="molecule-count-slider"
+                    type="range"
+                    min="100"
+                    max="5000"
+                    step="100"
+                    value="1000"
+                    class="w-full accent-neon-blue"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm">气体类型</div>
+                  <select
+                    id="gas-type"
+                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white"
+                  >
+                    <option value="nitrogen">氮气 (N₂)</option>
+                    <option value="oxygen">氧气 (O₂)</option>
+                    <option value="helium">氦气 (He)</option>
+                    <option value="argon">氩气 (Ar)</option>
+                  </select>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    id="simulate-molecules"
+                    class="px-4 py-2 rounded-lg border border-neon-green/30 bg-neon-green/10 text-neon-green hover:bg-neon-green/20"
+                  >
+                    分子模拟
+                  </button>
+                  <button
+                    id="calculate-velocities"
+                    class="px-4 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10"
+                  >
+                    计算速度分布
+                  </button>
+                </div>
+
+                <!-- 物理常数显示 -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">物理常数</div>
+                  <div class="space-y-2 text-xs">
+                    <div class="flex justify-between">
+                      <span>玻尔兹曼常数:</span>
+                      <span class="text-gray-300">1.38×10⁻²³ J/K</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>阿伏伽德罗数:</span>
+                      <span class="text-gray-300">6.02×10²³ mol⁻¹</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>气体常数:</span>
+                      <span class="text-gray-300">8.314 J/(mol·K)</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -597,12 +1032,888 @@
         </div>
       </section>
 
+      <!-- 3.3 多维随机变量函数的分布 -->
+      <section
+        id="sec-3-3"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold text-neon-green mb-2">
+              <i class="fa-solid fa-exchange-alt mr-2"></i>变量变换可视化器
+            </h2>
+            <p class="text-gray-300">
+              通过图像处理和数据变换，理解多维随机变量函数的分布变化
+            </p>
+          </div>
+
+          <div class="flex flex-col lg:flex-row gap-8">
+            <!-- 左侧可视化区域 -->
+            <div class="flex-1">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- 变换前后对比 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">变换前分布</div>
+                  <canvas
+                    id="transform-before-canvas"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">变换后分布</div>
+                  <canvas
+                    id="transform-after-canvas"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+
+                <!-- 雅可比矩阵显示 -->
+                <div class="bg-dark-card/60 rounded-xl p-4 md:col-span-2">
+                  <div class="text-sm text-gray-300 mb-2">雅可比矩阵与行列式</div>
+                  <div id="jacobian-display" class="text-center">
+                    <div class="text-lg">$J = \begin{pmatrix} \frac{\partial u}{\partial x} & \frac{\partial u}{\partial y} \\ \frac{\partial v}{\partial x} & \frac{\partial v}{\partial y} \end{pmatrix}$</div>
+                    <div class="mt-2">$|J| = <span id="jacobian-determinant">1.00</span>$</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧控制面板 -->
+            <div class="w-full lg:w-80">
+              <div class="space-y-5">
+                <div>
+                  <div class="mb-2 text-sm">变换类型</div>
+                  <select
+                    id="transform-type"
+                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white"
+                  >
+                    <option value="linear">线性变换</option>
+                    <option value="polar">极坐标变换</option>
+                    <option value="logarithmic">对数变换</option>
+                    <option value="custom">自定义变换</option>
+                  </select>
+                </div>
+
+                <div id="transform-params" class="space-y-3">
+                  <!-- 动态参数控制将在这里插入 -->
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    id="apply-transform"
+                    class="px-4 py-2 rounded-lg border border-neon-green/30 bg-neon-green/10 text-neon-green hover:bg-neon-green/20"
+                  >
+                    应用变换
+                  </button>
+                  <button
+                    id="animate-transform"
+                    class="px-4 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10"
+                  >
+                    动画演示
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3.4 多维随机变量的特征数 -->
+      <section
+        id="sec-3-4"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold text-yellow-400 mb-2">
+              <i class="fa-solid fa-chart-line mr-2"></i>相关分析工作台
+            </h2>
+            <p class="text-gray-300">
+              通过热力图和散点图矩阵，深入分析多变量间的相关性和协方差结构
+            </p>
+          </div>
+
+          <div class="flex flex-col lg:flex-row gap-8">
+            <!-- 左侧可视化区域 -->
+            <div class="flex-1">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- 相关系数热力图 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">相关系数矩阵</div>
+                  <canvas
+                    id="correlation-heatmap"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+
+                <!-- 散点图矩阵 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">散点图矩阵</div>
+                  <canvas
+                    id="scatter-matrix"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+
+                <!-- 置信椭圆 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">置信椭圆</div>
+                  <canvas
+                    id="confidence-ellipse"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+
+                <!-- 主成分分析 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">主成分方向</div>
+                  <canvas
+                    id="pca-visualization"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+              </div>
+
+              <!-- 特征值和特征向量显示 -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>特征值1</div>
+                  <div id="eigenvalue-1" class="text-yellow-400 text-lg">0.00</div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>特征值2</div>
+                  <div id="eigenvalue-2" class="text-yellow-400 text-lg">0.00</div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>解释方差比</div>
+                  <div id="explained-variance" class="text-neon-green text-lg">0%</div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>条件数</div>
+                  <div id="condition-number" class="text-orange-400 text-lg">1.0</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧控制面板 -->
+            <div class="w-full lg:w-80">
+              <div class="space-y-5">
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>变量数量</span>
+                    <span id="num-vars-val" class="text-gray-300">3</span>
+                  </div>
+                  <input
+                    id="num-vars-slider"
+                    type="range"
+                    min="2"
+                    max="5"
+                    step="1"
+                    value="3"
+                    class="w-full accent-yellow-400"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>置信水平</span>
+                    <span id="confidence-level-val" class="text-gray-300">95%</span>
+                  </div>
+                  <input
+                    id="confidence-level-slider"
+                    type="range"
+                    min="90"
+                    max="99"
+                    step="1"
+                    value="95"
+                    class="w-full accent-neon-blue"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm">分析场景</div>
+                  <select
+                    id="correlation-scenario"
+                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white"
+                  >
+                    <option value="financial">金融投资组合</option>
+                    <option value="social">社交媒体指标</option>
+                    <option value="academic">学习成绩分析</option>
+                    <option value="custom">自定义数据</option>
+                  </select>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    id="run-pca"
+                    class="px-4 py-2 rounded-lg border border-yellow-400/30 bg-yellow-400/10 text-yellow-400 hover:bg-yellow-400/20"
+                  >
+                    主成分分析
+                  </button>
+                  <button
+                    id="export-correlation"
+                    class="px-4 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10"
+                  >
+                    导出数据
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3.5 条件分布与条件期望 -->
+      <section
+        id="sec-3-5"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold text-orange-400 mb-2">
+              <i class="fa-solid fa-filter mr-2"></i>条件分布模拟器
+            </h2>
+            <p class="text-gray-300">
+              通过贝叶斯更新和条件期望，理解条件概率在现代应用中的重要性
+            </p>
+          </div>
+
+          <div class="flex flex-col lg:flex-row gap-8">
+            <!-- 左侧可视化区域 -->
+            <div class="flex-1">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- 条件密度切片 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">条件密度切片</div>
+                  <canvas
+                    id="conditional-density-slice"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+
+                <!-- 条件期望曲线 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-2">条件期望曲线</div>
+                  <canvas
+                    id="conditional-expectation"
+                    width="300"
+                    height="240"
+                    class="w-full rounded-lg"
+                  ></canvas>
+                </div>
+
+                <!-- 贝叶斯更新演示 -->
+                <div class="bg-dark-card/60 rounded-xl p-4 md:col-span-2">
+                  <div class="text-sm text-gray-300 mb-2">贝叶斯更新过程</div>
+                  <div class="grid grid-cols-3 gap-2 h-32">
+                    <div class="text-center">
+                      <div class="text-xs text-gray-400 mb-1">先验分布</div>
+                      <canvas id="prior-dist" width="100" height="80" class="w-full rounded"></canvas>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-xs text-gray-400 mb-1">似然函数</div>
+                      <canvas id="likelihood-func" width="100" height="80" class="w-full rounded"></canvas>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-xs text-gray-400 mb-1">后验分布</div>
+                      <canvas id="posterior-dist" width="100" height="80" class="w-full rounded"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 统计指标 -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>条件均值</div>
+                  <div id="conditional-mean" class="text-orange-400 text-lg">0.00</div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>条件方差</div>
+                  <div id="conditional-variance" class="text-neon-blue text-lg">0.00</div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>预测区间</div>
+                  <div id="prediction-interval" class="text-neon-green text-lg">±0.00</div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>R²</div>
+                  <div id="r-squared" class="text-yellow-400 text-lg">0.00</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧控制面板 -->
+            <div class="w-full lg:w-80">
+              <div class="space-y-5">
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>条件值 X=x</span>
+                    <span id="condition-value-val" class="text-orange-400">0.0</span>
+                  </div>
+                  <input
+                    id="condition-value-slider"
+                    type="range"
+                    min="-3"
+                    max="3"
+                    step="0.1"
+                    value="0"
+                    class="w-full accent-orange-400"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm">应用场景</div>
+                  <select
+                    id="conditional-scenario"
+                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white"
+                  >
+                    <option value="stock">股价预测</option>
+                    <option value="weather">天气预报</option>
+                    <option value="recommendation">推荐系统</option>
+                    <option value="medical">医疗诊断</option>
+                  </select>
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>观测噪声</span>
+                    <span id="observation-noise-val" class="text-gray-300">0.1</span>
+                  </div>
+                  <input
+                    id="observation-noise-slider"
+                    type="range"
+                    min="0.01"
+                    max="1"
+                    step="0.01"
+                    value="0.1"
+                    class="w-full accent-gray-400"
+                  />
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    id="update-bayesian"
+                    class="px-4 py-2 rounded-lg border border-orange-400/30 bg-orange-400/10 text-orange-400 hover:bg-orange-400/20"
+                  >
+                    贝叶斯更新
+                  </button>
+                  <button
+                    id="reset-prior"
+                    class="px-4 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10"
+                  >
+                    重置先验
+                  </button>
+                </div>
+
+                <!-- 预测区间设置 -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">预测设置</div>
+                  <div class="space-y-2">
+                    <div class="flex justify-between text-xs">
+                      <span>置信水平</span>
+                      <span id="prediction-confidence-val">95%</span>
+                    </div>
+                    <input
+                      id="prediction-confidence-slider"
+                      type="range"
+                      min="80"
+                      max="99"
+                      step="1"
+                      value="95"
+                      class="w-full accent-orange-400"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- 页脚占位容器 -->
       <div id="site-footer" class="mt-24"></div>
     </div>
 
     <!-- 页面交互脚本 -->
     <script src="../static/js/chapter3.js"></script>
+
+    <!-- 场景切换功能 -->
+    <script>
+      // 场景切换管理器
+      class ScenarioManager {
+        constructor() {
+          this.currentScenario = 'traditional';
+          this.nlpParameters = {
+            vectorDim: 128,
+            similarityThreshold: 0.7,
+            wordCategory: 'internet'
+          };
+          this.physicsParameters = {
+            temperature: 300,
+            molecularMass: 28,
+            gasType: 'nitrogen'
+          };
+          this.wordVectors = [];
+          this.moleculeVelocities = [];
+          this.init();
+        }
+
+        init() {
+          this.setupScenarioSwitching();
+          this.setupNLPControls();
+          this.setupPhysicsControls();
+          this.switchScenario('traditional');
+        }
+
+        setupScenarioSwitching() {
+          const scenarioTabs = document.querySelectorAll('.scenario-tab');
+          scenarioTabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+              const scenario = e.currentTarget.dataset.scenario;
+              this.switchScenario(scenario);
+            });
+          });
+        }
+
+        switchScenario(scenario) {
+          if (this.currentScenario === scenario) return;
+          this.currentScenario = scenario;
+
+          // 更新标签页状态
+          document.querySelectorAll('.scenario-tab').forEach(tab => {
+            tab.classList.remove('active');
+          });
+          document.querySelector(`[data-scenario="${scenario}"]`).classList.add('active');
+
+          // 切换内容区域
+          document.querySelectorAll('.scenario-content').forEach(content => {
+            content.classList.add('hidden');
+          });
+          document.getElementById(`${scenario}-scenario`).classList.remove('hidden');
+
+          // 切换控制面板
+          document.querySelectorAll('.scenario-controls').forEach(controls => {
+            controls.classList.add('hidden');
+          });
+          document.getElementById(`${scenario}-controls`).classList.remove('hidden');
+
+          // 切换统计显示
+          document.querySelectorAll('.scenario-stats').forEach(stats => {
+            stats.classList.add('hidden');
+          });
+          document.querySelectorAll(`.${scenario}-stats`).forEach(stats => {
+            stats.classList.remove('hidden');
+          });
+
+          // 初始化对应场景
+          this.initializeScenario(scenario);
+        }
+
+        initializeScenario(scenario) {
+          switch (scenario) {
+            case 'nlp':
+              this.initializeNLPScenario();
+              break;
+            case 'physics':
+              this.initializePhysicsScenario();
+              break;
+            default:
+              // 传统场景由现有代码处理
+              break;
+          }
+        }
+
+        setupNLPControls() {
+          // 词向量维度控制
+          const vectorDimSlider = document.getElementById('vector-dim-slider');
+          if (vectorDimSlider) {
+            vectorDimSlider.addEventListener('input', (e) => {
+              this.nlpParameters.vectorDim = parseInt(e.target.value);
+              document.getElementById('vector-dim-val').textContent = e.target.value;
+              this.updateNLPVisualization();
+            });
+          }
+
+          // 相似度阈值控制
+          const similaritySlider = document.getElementById('similarity-threshold-slider');
+          if (similaritySlider) {
+            similaritySlider.addEventListener('input', (e) => {
+              this.nlpParameters.similarityThreshold = parseFloat(e.target.value);
+              document.getElementById('similarity-threshold-val').textContent = e.target.value;
+              this.updateNLPVisualization();
+            });
+          }
+
+          // 词汇类别选择
+          const wordCategory = document.getElementById('word-category');
+          if (wordCategory) {
+            wordCategory.addEventListener('change', (e) => {
+              this.nlpParameters.wordCategory = e.target.value;
+              this.generateWordVectors();
+              this.updateNLPVisualization();
+            });
+          }
+
+          // 生成词向量按钮
+          const generateBtn = document.getElementById('generate-word-vectors');
+          if (generateBtn) {
+            generateBtn.addEventListener('click', () => {
+              this.generateWordVectors();
+              this.updateNLPVisualization();
+            });
+          }
+        }
+
+        setupPhysicsControls() {
+          // 温度控制
+          const tempSlider = document.getElementById('temperature-slider');
+          if (tempSlider) {
+            tempSlider.addEventListener('input', (e) => {
+              this.physicsParameters.temperature = parseInt(e.target.value);
+              document.getElementById('temperature-val').textContent = e.target.value;
+              this.updatePhysicsVisualization();
+            });
+          }
+
+          // 分子质量控制
+          const massSlider = document.getElementById('molecular-mass-slider');
+          if (massSlider) {
+            massSlider.addEventListener('input', (e) => {
+              this.physicsParameters.molecularMass = parseInt(e.target.value);
+              document.getElementById('molecular-mass-val').textContent = e.target.value;
+              this.updatePhysicsVisualization();
+            });
+          }
+
+          // 气体类型选择
+          const gasType = document.getElementById('gas-type');
+          if (gasType) {
+            gasType.addEventListener('change', (e) => {
+              this.physicsParameters.gasType = e.target.value;
+              this.updateGasParameters();
+              this.updatePhysicsVisualization();
+            });
+          }
+        }
+
+        initializeNLPScenario() {
+          this.generateWordVectors();
+          this.updateNLPVisualization();
+        }
+
+        generateWordVectors() {
+          const words = this.getWordsByCategory(this.nlpParameters.wordCategory);
+          this.wordVectors = words.map(word => ({
+            word: word,
+            vector: this.generateRandomVector(this.nlpParameters.vectorDim),
+            similarity: Math.random()
+          }));
+        }
+
+        getWordsByCategory(category) {
+          const categories = {
+            internet: ['YYDS', '绝绝子', 'emo', '躺平', '内卷', '破防', '拿捏', '芭比Q'],
+            tech: ['机器学习', '神经网络', '深度学习', '人工智能', '算法', '数据挖掘'],
+            emotion: ['开心', '焦虑', '兴奋', '沮丧', '愤怒', '平静', '紧张', '放松'],
+            mixed: ['YYDS', '机器学习', '开心', '躺平', '算法', '焦虑', '破防', '云计算']
+          };
+          return categories[category] || categories.mixed;
+        }
+
+        generateRandomVector(dim) {
+          return Array.from({length: dim}, () => Math.random() * 2 - 1);
+        }
+
+        updateNLPVisualization() {
+          this.updateWordVector3D();
+          this.updateSemanticHeatmap();
+          this.updateNLPStatistics();
+        }
+
+        updateWordVector3D() {
+          const container = document.getElementById('word-vector-3d');
+          if (!container || !this.wordVectors.length) return;
+
+          // 简化的3D可视化
+          const traces = [{
+            x: this.wordVectors.map((_, i) => Math.cos(i * 0.5)),
+            y: this.wordVectors.map((_, i) => Math.sin(i * 0.5)),
+            z: this.wordVectors.map(w => w.similarity),
+            mode: 'markers+text',
+            type: 'scatter3d',
+            text: this.wordVectors.map(w => w.word),
+            marker: {
+              size: 8,
+              color: this.wordVectors.map(w => w.similarity),
+              colorscale: 'Viridis'
+            }
+          }];
+
+          const layout = {
+            scene: {
+              bgcolor: 'rgba(15, 23, 48, 0.8)',
+              camera: { eye: { x: 1.5, y: 1.5, z: 1.5 } }
+            },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#ffffff' },
+            margin: { l: 0, r: 0, t: 0, b: 0 }
+          };
+
+          Plotly.newPlot(container, traces, layout, { displayModeBar: false, responsive: true });
+        }
+
+        updateSemanticHeatmap() {
+          const canvas = document.getElementById('semantic-heatmap');
+          if (!canvas) return;
+
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // 绘制简化的相似度矩阵
+          const n = Math.min(this.wordVectors.length, 8);
+          const cellSize = Math.min(canvas.width, canvas.height) / n;
+
+          for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+              const similarity = i === j ? 1 : Math.random();
+              const intensity = similarity;
+              
+              ctx.fillStyle = `hsl(${240 + intensity * 120}, 70%, ${30 + intensity * 40}%)`;
+              ctx.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
+              
+              if (cellSize > 20) {
+                ctx.fillStyle = intensity > 0.5 ? '#ffffff' : '#000000';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(
+                  similarity.toFixed(2),
+                  i * cellSize + cellSize / 2,
+                  j * cellSize + cellSize / 2
+                );
+              }
+            }
+          }
+        }
+
+        updateNLPStatistics() {
+          const avgSimilarity = this.wordVectors.reduce((sum, w) => sum + w.similarity, 0) / this.wordVectors.length;
+          
+          document.getElementById('avg-similarity').textContent = avgSimilarity.toFixed(3);
+          document.getElementById('cluster-count').textContent = Math.ceil(this.wordVectors.length / 3);
+          document.getElementById('vocabulary-coverage').textContent = '85.2%';
+          document.getElementById('vector-dimensions').textContent = this.nlpParameters.vectorDim;
+        }
+
+        initializePhysicsScenario() {
+          this.generateMoleculeVelocities();
+          this.updatePhysicsVisualization();
+        }
+
+        generateMoleculeVelocities() {
+          const { temperature, molecularMass } = this.physicsParameters;
+          const kB = 1.38e-23; // 玻尔兹曼常数
+          const m = molecularMass * 1.66e-27; // 分子质量 (kg)
+          
+          // 麦克斯韦-玻尔兹曼分布的特征速度
+          const vMostProbable = Math.sqrt(2 * kB * temperature / m);
+          const vMean = Math.sqrt(8 * kB * temperature / (Math.PI * m));
+          const vRMS = Math.sqrt(3 * kB * temperature / m);
+
+          this.moleculeVelocities = {
+            vMostProbable,
+            vMean,
+            vRMS,
+            samples: this.generateVelocitySamples(1000, temperature, molecularMass)
+          };
+        }
+
+        generateVelocitySamples(n, temperature, molecularMass) {
+          const samples = [];
+          const kB = 1.38e-23;
+          const m = molecularMass * 1.66e-27;
+          const sigma = Math.sqrt(kB * temperature / m);
+
+          for (let i = 0; i < n; i++) {
+            // 生成3D速度分量 (Box-Muller变换)
+            const vx = this.gaussianRandom() * sigma;
+            const vy = this.gaussianRandom() * sigma;
+            const vz = this.gaussianRandom() * sigma;
+            const speed = Math.sqrt(vx*vx + vy*vy + vz*vz);
+            
+            samples.push({ vx, vy, vz, speed });
+          }
+          
+          return samples;
+        }
+
+        gaussianRandom() {
+          const u1 = Math.random();
+          const u2 = Math.random();
+          return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+        }
+
+        updatePhysicsVisualization() {
+          this.updateVelocity3D();
+          this.updateMaxwellBoltzmann();
+          this.updatePhysicsStatistics();
+        }
+
+        updateVelocity3D() {
+          const container = document.getElementById('velocity-3d-plot');
+          if (!container || !this.moleculeVelocities.samples) return;
+
+          const samples = this.moleculeVelocities.samples.slice(0, 200); // 限制显示数量
+          
+          const traces = [{
+            x: samples.map(s => s.vx),
+            y: samples.map(s => s.vy),
+            z: samples.map(s => s.vz),
+            mode: 'markers',
+            type: 'scatter3d',
+            marker: {
+              size: 3,
+              color: samples.map(s => s.speed),
+              colorscale: 'Hot',
+              showscale: true
+            }
+          }];
+
+          const layout = {
+            scene: {
+              xaxis: { title: 'Vx (m/s)' },
+              yaxis: { title: 'Vy (m/s)' },
+              zaxis: { title: 'Vz (m/s)' },
+              bgcolor: 'rgba(15, 23, 48, 0.8)'
+            },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#ffffff' },
+            margin: { l: 0, r: 0, t: 0, b: 0 }
+          };
+
+          Plotly.newPlot(container, traces, layout, { displayModeBar: false, responsive: true });
+        }
+
+        updateMaxwellBoltzmann() {
+          const canvas = document.getElementById('maxwell-boltzmann');
+          if (!canvas) return;
+
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // 绘制速度分布直方图
+          const speeds = this.moleculeVelocities.samples.map(s => s.speed);
+          const maxSpeed = Math.max(...speeds);
+          const bins = 20;
+          const binWidth = maxSpeed / bins;
+          const histogram = new Array(bins).fill(0);
+
+          speeds.forEach(speed => {
+            const binIndex = Math.min(Math.floor(speed / binWidth), bins - 1);
+            histogram[binIndex]++;
+          });
+
+          const maxCount = Math.max(...histogram);
+          const barWidth = canvas.width / bins;
+
+          ctx.fillStyle = '#00ff66';
+          ctx.strokeStyle = '#00ff66';
+
+          histogram.forEach((count, i) => {
+            const barHeight = (count / maxCount) * (canvas.height - 40);
+            const x = i * barWidth;
+            const y = canvas.height - 20 - barHeight;
+            
+            ctx.fillRect(x, y, barWidth - 1, barHeight);
+          });
+
+          // 绘制理论曲线
+          ctx.strokeStyle = '#ff6b6b';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          
+          for (let i = 0; i <= bins; i++) {
+            const v = (i / bins) * maxSpeed;
+            const theoretical = this.maxwellBoltzmannPDF(v, this.physicsParameters.temperature, this.physicsParameters.molecularMass);
+            const x = (i / bins) * canvas.width;
+            const y = canvas.height - 20 - (theoretical * canvas.height * 0.5);
+            
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+
+        maxwellBoltzmannPDF(v, T, m) {
+          const kB = 1.38e-23;
+          const mass = m * 1.66e-27;
+          const factor = 4 * Math.PI * Math.pow(mass / (2 * Math.PI * kB * T), 1.5);
+          return factor * v * v * Math.exp(-mass * v * v / (2 * kB * T));
+        }
+
+        updatePhysicsStatistics() {
+          const { vMean, vMostProbable, vRMS } = this.moleculeVelocities;
+          
+          document.getElementById('mean-velocity').textContent = vMean.toFixed(0) + ' m/s';
+          document.getElementById('most-probable-v').textContent = vMostProbable.toFixed(0) + ' m/s';
+          document.getElementById('rms-velocity-stat').textContent = vRMS.toFixed(0) + ' m/s';
+          document.getElementById('temperature-stat').textContent = this.physicsParameters.temperature + ' K';
+        }
+
+        updateGasParameters() {
+          const gasProperties = {
+            nitrogen: { mass: 28, name: '氮气 (N₂)' },
+            oxygen: { mass: 32, name: '氧气 (O₂)' },
+            helium: { mass: 4, name: '氦气 (He)' },
+            argon: { mass: 40, name: '氩气 (Ar)' }
+          };
+          
+          const gas = gasProperties[this.physicsParameters.gasType];
+          if (gas) {
+            this.physicsParameters.molecularMass = gas.mass;
+            document.getElementById('molecular-mass-val').textContent = gas.mass;
+            document.getElementById('molecular-mass-slider').value = gas.mass;
+          }
+        }
+      }
+
+      // 初始化场景管理器
+      document.addEventListener('DOMContentLoaded', () => {
+        window.scenarioManager = new ScenarioManager();
+      });
+    </script>
+
+    <!-- 属性测试脚本 (仅在测试模式下加载) -->
+    <script>
+      if (window.location.search.includes('test=true') || window.location.hash.includes('test')) {
+        const testScript = document.createElement('script');
+        testScript.src = '../static/js/tests/chapter3-math-properties.test.js';
+        document.head.appendChild(testScript);
+        
+        const navTestScript = document.createElement('script');
+        navTestScript.src = '../static/js/tests/chapter3-navigation-properties.test.js';
+        document.head.appendChild(navTestScript);
+
+        const scenarioTestScript = document.createElement('script');
+        scenarioTestScript.src = '../static/js/tests/chapter3-scenario-properties.test.js';
+        document.head.appendChild(scenarioTestScript);
+      }
+    </script>
 
     <!-- 工具脚本接入 -->
     <script src="../static/js/url-click-handler.js"></script>
