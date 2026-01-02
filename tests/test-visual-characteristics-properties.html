@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 3 Visual Characteristics Property Tests</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin: 10px 0;
+        }
+        
+        .property-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #00ff66;
+        }
+        
+        .property-info h3 {
+            margin: 0 0 15px 0;
+            color: #00ff66;
+            font-size: 1.3em;
+        }
+        
+        .property-text {
+            font-style: italic;
+            font-size: 1.1em;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        
+        .test-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .test-btn {
+            background: linear-gradient(45deg, #00ff66, #00f3ff);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-btn:active {
+            transform: translateY(0);
+        }
+        
+        .test-output {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-output pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-pending {
+            background: #ffc107;
+        }
+        
+        .status-running {
+            background: #00ff66;
+            animation: pulse 1s infinite;
+        }
+        
+        .status-passed {
+            background: #00ff66;
+        }
+        
+        .status-failed {
+            background: #ff6b6b;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .test-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #00f3ff;
+        }
+        
+        .test-info h3 {
+            margin: 0 0 10px 0;
+            color: #00f3ff;
+        }
+        
+        .test-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .test-info li {
+            margin: 5px 0;
+        }
+        
+        .pbt-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .pbt-warning h4 {
+            color: #ffc107;
+            margin: 0 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🎨 Chapter 3 Visual Characteristics Property Tests</h1>
+            <p>Property-Based Testing for Background Animation Visual Preservation</p>
+            <p><strong>Requirements:</strong> 3.1 - Background animation preserves visual characteristics</p>
+        </div>
+        
+        <div class="property-info">
+            <h3>Property 4: Background Animation Preserves Visual Characteristics</h3>
+            <div class="property-text">
+                <strong>For any</strong> animation frame, the contour rendering should maintain smooth curves and consistent visual appearance matching the working version
+            </div>
+            <p><strong>Validates:</strong> Requirements 3.1</p>
+        </div>
+        
+        <div class="pbt-warning">
+            <h4>⚠️ Property-Based Testing Notice</h4>
+            <p>This test uses property-based testing with 100 iterations per property. Each test generates random inputs to verify universal properties hold across all valid scenarios.</p>
+        </div>
+        
+        <div class="test-info">
+            <h3>Property Test Coverage</h3>
+            <ul>
+                <li><strong>Visual Characteristics Preservation:</strong> Verifies rendering maintains expected styling properties</li>
+                <li><strong>Contour Smoothness:</strong> Ensures contour coordinates represent smooth curves without straight-line artifacts</li>
+                <li><strong>Animation Consistency:</strong> Validates animation timing remains consistent across frames</li>
+                <li><strong>Color Palette Usage:</strong> Confirms proper color application from the defined palette</li>
+                <li><strong>Canvas Operations:</strong> Verifies correct sequence of drawing operations</li>
+            </ul>
+        </div>
+        
+        <div class="test-controls">
+            <button class="test-btn" onclick="runTests()">
+                <span class="status-indicator status-pending" id="test-status"></span>
+                Run Property Tests (100 iterations each)
+            </button>
+            <button class="test-btn" onclick="clearOutput()">Clear Output</button>
+        </div>
+        
+        <div class="test-output" id="test-output">
+            <pre>Click "Run Property Tests" to verify visual characteristics preservation...</pre>
+        </div>
+    </div>
+
+    <!-- Include required dependencies -->
+    <script src="static/js/lib/noise2d.js"></script>
+    <script src="static/js/chapter3.js"></script>
+    <script src="static/js/tests/chapter3-visual-characteristics-properties.test.js"></script>
+
+    <script>
+        let testRunning = false;
+        
+        function updateStatus(status) {
+            const indicator = document.getElementById('test-status');
+            indicator.className = `status-indicator status-${status}`;
+        }
+        
+        function appendOutput(message) {
+            const output = document.getElementById('test-output');
+            const pre = output.querySelector('pre');
+            pre.textContent += message + '\n';
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function clearOutput() {
+            const output = document.getElementById('test-output');
+            const pre = output.querySelector('pre');
+            pre.textContent = 'Output cleared. Click "Run Property Tests" to start testing...\n';
+            updateStatus('pending');
+        }
+        
+        async function runTests() {
+            if (testRunning) {
+                appendOutput('Tests are already running...');
+                return;
+            }
+            
+            testRunning = true;
+            updateStatus('running');
+            
+            // Clear previous output
+            const output = document.getElementById('test-output');
+            const pre = output.querySelector('pre');
+            pre.textContent = '';
+            
+            appendOutput('Starting Chapter 3 Visual Characteristics Property Tests...');
+            appendOutput('Running 100 iterations per property...');
+            appendOutput('='.repeat(60));
+            
+            // Capture console output
+            const originalLog = console.log;
+            const originalError = console.error;
+            
+            console.log = function(...args) {
+                appendOutput(args.join(' '));
+                originalLog.apply(console, args);
+            };
+            
+            console.error = function(...args) {
+                appendOutput('ERROR: ' + args.join(' '));
+                originalError.apply(console, args);
+            };
+            
+            try {
+                // Check if Chapter3Visualizer is available
+                if (typeof Chapter3Visualizer === 'undefined') {
+                    throw new Error('Chapter3Visualizer class not found. Make sure chapter3.js is loaded.');
+                }
+                
+                // Check if test functions are available
+                if (typeof runVisualCharacteristicsPropertyTests === 'undefined') {
+                    throw new Error('Property test functions not found. Make sure the test file is loaded.');
+                }
+                
+                // Run the property tests
+                const result = runVisualCharacteristicsPropertyTests();
+                
+                if (result.success) {
+                    updateStatus('passed');
+                    appendOutput('\n🎉 All visual characteristics property tests passed!');
+                    appendOutput(`✓ ${result.passed}/${result.total} properties verified successfully`);
+                } else {
+                    updateStatus('failed');
+                    appendOutput('\n❌ Some property tests failed!');
+                    appendOutput(`✗ ${result.failed}/${result.total} properties failed`);
+                    if (result.firstFailure) {
+                        appendOutput(`First failure: ${result.firstFailure}`);
+                    }
+                }
+                
+            } catch (error) {
+                updateStatus('failed');
+                appendOutput(`\n💥 Test execution failed: ${error.message}`);
+                console.error('Test execution error:', error);
+            } finally {
+                // Restore console functions
+                console.log = originalLog;
+                console.error = originalError;
+                testRunning = false;
+                
+                appendOutput('\n' + '='.repeat(60));
+                appendOutput('Property test execution completed.');
+                appendOutput('Each property was tested with 100 random inputs.');
+            }
+        }
+        
+        // Auto-run dependency check on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                appendOutput('Page loaded. Ready to run property tests.');
+                appendOutput('Dependencies check:');
+                appendOutput(`- Noise2D: ${typeof window.Noise2D !== 'undefined' ? '✓' : '✗'}`);
+                appendOutput(`- Chapter3Visualizer: ${typeof Chapter3Visualizer !== 'undefined' ? '✓' : '✗'}`);
+                appendOutput(`- Property test functions: ${typeof runVisualCharacteristicsPropertyTests !== 'undefined' ? '✓' : '✗'}`);
+                appendOutput('\nProperty-based testing will run 100 iterations per property.');
+            }, 100);
+        });
+    </script>
+</body>
+</html>

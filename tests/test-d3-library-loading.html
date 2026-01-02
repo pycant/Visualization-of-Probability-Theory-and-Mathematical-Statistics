@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3 Library Loading Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .passed {
+            background-color: #2d5a2d;
+            border-left: 4px solid #4caf50;
+        }
+        .failed {
+            background-color: #5a2d2d;
+            border-left: 4px solid #f44336;
+        }
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #2a2a2a;
+            border-radius: 5px;
+        }
+        pre {
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>D3 Library Loading Test</h1>
+    <p>Testing the official D3 contour library loading and functionality...</p>
+    
+    <div id="test-output">
+        <p>Loading D3 library and running tests...</p>
+    </div>
+
+    <!-- Load D3 contour library (same as in chapter3.html) -->
+    <script src="https://d3js.org/d3-contour.v3.min.js"></script>
+    
+    <!-- Load our test -->
+    <script src="static/js/tests/d3-library-loading.test.js"></script>
+    
+    <script>
+        // Wait for everything to load, then run tests
+        document.addEventListener('DOMContentLoaded', function() {
+            const outputDiv = document.getElementById('test-output');
+            
+            // Override console.log to capture test output
+            const originalLog = console.log;
+            const originalError = console.error;
+            const logs = [];
+            
+            console.log = function(...args) {
+                logs.push({ type: 'log', message: args.join(' ') });
+                originalLog.apply(console, args);
+            };
+            
+            console.error = function(...args) {
+                logs.push({ type: 'error', message: args.join(' ') });
+                originalError.apply(console, args);
+            };
+            
+            // Run tests after a short delay
+            setTimeout(function() {
+                try {
+                    const results = window.D3LibraryTester.runTests();
+                    
+                    // Display results
+                    let html = '<h2>Test Results</h2>';
+                    
+                    // Show individual test results
+                    for (const detail of results.details) {
+                        const cssClass = detail.status === 'passed' ? 'passed' : 'failed';
+                        html += `<div class="test-result ${cssClass}">
+                            <strong>${detail.test}</strong>: ${detail.status.toUpperCase()}
+                            <br><small>${detail.details || detail.error || ''}</small>
+                        </div>`;
+                    }
+                    
+                    // Show summary
+                    html += `<div class="summary">
+                        <h3>Summary</h3>
+                        <p><strong>Total Tests:</strong> ${results.totalTests}</p>
+                        <p><strong>Passed:</strong> ${results.passed}</p>
+                        <p><strong>Failed:</strong> ${results.failed}</p>
+                        <p><strong>Duration:</strong> ${results.duration}ms</p>
+                    </div>`;
+                    
+                    // Show console output
+                    if (logs.length > 0) {
+                        html += '<h3>Console Output</h3><pre>';
+                        for (const log of logs) {
+                            html += log.message + '\\n';
+                        }
+                        html += '</pre>';
+                    }
+                    
+                    outputDiv.innerHTML = html;
+                    
+                    // Restore console
+                    console.log = originalLog;
+                    console.error = originalError;
+                    
+                } catch (error) {
+                    outputDiv.innerHTML = `<div class="test-result failed">
+                        <strong>Test Execution Error:</strong> ${error.message}
+                    </div>`;
+                    console.error('Test execution failed:', error);
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

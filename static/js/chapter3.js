@@ -2622,31 +2622,18 @@ class Chapter3Visualizer {
   }
 
   normalizeContourCoordinates(coordinates) {
-    let totalRings = 0;
-    let shortRings = 0;
+    // Simplified version that just extracts rings from D3 MultiPolygon format
+    // without problematic segment linking that caused straight-line artifacts
+    const polylines = [];
     coordinates.forEach((multi) => {
       multi.forEach((ring) => {
-        totalRings++;
-        if (ring.length <= 2) shortRings++;
-      });
-    });
-    const mostlyShort = shortRings / Math.max(1, totalRings) > 0.6;
-    if (!mostlyShort) {
-      const polylines = [];
-      coordinates.forEach((multi) => {
-        multi.forEach((ring) => polylines.push(ring));
-      });
-      return polylines;
-    }
-    const segs = [];
-    coordinates.forEach((multi) => {
-      multi.forEach((ring) => {
-        if (ring.length >= 2) {
-          segs.push([ring[0], ring[1]]);
+        // Only include rings with enough points to form a meaningful contour
+        if (ring.length >= 3) {
+          polylines.push(ring);
         }
       });
     });
-    return this.linkSegmentsToPolylines(segs);
+    return polylines;
   }
 
   startBackgroundContours() {
@@ -2793,30 +2780,32 @@ class Chapter3Visualizer {
         const alpha = 0.4 + 0.4 * tval;
         this.bgLayerCtx.strokeStyle = this.rgbaFromHex(hex, alpha);
         this.bgLayerCtx.lineWidth = 1.5 + idx * 0.3; // Thinner, more elegant lines
-        const polylines = this.normalizeContourCoordinates(contour.coordinates);
-        polylines.forEach((ring) => {
-          if (ring.length < 3) return; // Skip very short segments
+        // Use D3 coordinates directly without problematic normalization
+        contour.coordinates.forEach((multi) => {
+          multi.forEach((ring) => {
+            if (ring.length < 3) return; // Skip very short segments
 
-          this.bgLayerCtx.beginPath();
-          for (let p = 0; p < ring.length; p++) {
-            const gx = ring[p][0];
-            const gy = ring[p][1];
-            const x = (gx / (baseW - 1)) * W;
-            const y = (gy / (baseH - 1)) * H;
-            if (p === 0) this.bgLayerCtx.moveTo(x, y);
-            else this.bgLayerCtx.lineTo(x, y);
-          }
+            this.bgLayerCtx.beginPath();
+            for (let p = 0; p < ring.length; p++) {
+              const gx = ring[p][0];
+              const gy = ring[p][1];
+              const x = (gx / (baseW - 1)) * W;
+              const y = (gy / (baseH - 1)) * H;
+              if (p === 0) this.bgLayerCtx.moveTo(x, y);
+              else this.bgLayerCtx.lineTo(x, y);
+            }
 
-          // Check if the contour should be closed
-          const fx = (ring[0][0] / (baseW - 1)) * W;
-          const fy = (ring[0][1] / (baseH - 1)) * H;
-          const lx = (ring[ring.length - 1][0] / (baseW - 1)) * W;
-          const ly = (ring[ring.length - 1][1] / (baseH - 1)) * H;
-          const dx = fx - lx;
-          const dy = fy - ly;
-          const closed = dx * dx + dy * dy < 2.0; // Slightly more tolerant
-          if (closed) this.bgLayerCtx.closePath();
-          this.bgLayerCtx.stroke();
+            // Check if the contour should be closed
+            const fx = (ring[0][0] / (baseW - 1)) * W;
+            const fy = (ring[0][1] / (baseH - 1)) * H;
+            const lx = (ring[ring.length - 1][0] / (baseW - 1)) * W;
+            const ly = (ring[ring.length - 1][1] / (baseH - 1)) * H;
+            const dx = fx - lx;
+            const dy = fy - ly;
+            const closed = dx * dx + dy * dy < 2.0; // Slightly more tolerant
+            if (closed) this.bgLayerCtx.closePath();
+            this.bgLayerCtx.stroke();
+          });
         });
       });
       this.bgCtx.clearRect(0, 0, W, H);

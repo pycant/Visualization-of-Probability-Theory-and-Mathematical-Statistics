@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 3 Contour Styling Tests</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin: 10px 0;
+        }
+        
+        .test-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .test-btn {
+            background: linear-gradient(45deg, #00f3ff, #00ff66);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-btn:active {
+            transform: translateY(0);
+        }
+        
+        .test-output {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-output pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-pending {
+            background: #ffc107;
+        }
+        
+        .status-running {
+            background: #00f3ff;
+            animation: pulse 1s infinite;
+        }
+        
+        .status-passed {
+            background: #00ff66;
+        }
+        
+        .status-failed {
+            background: #ff6b6b;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .test-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #00f3ff;
+        }
+        
+        .test-info h3 {
+            margin: 0 0 10px 0;
+            color: #00f3ff;
+        }
+        
+        .test-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .test-info li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🎨 Chapter 3 Contour Styling Tests</h1>
+            <p>Verification of contour colors and styling properties preservation</p>
+            <p><strong>Requirements:</strong> 3.2 - Verify color palette and line styling properties are preserved</p>
+        </div>
+        
+        <div class="test-info">
+            <h3>Test Coverage</h3>
+            <ul>
+                <li><strong>Color Palette:</strong> Verifies the 5-color palette remains unchanged</li>
+                <li><strong>Thresholds:</strong> Validates contour threshold configuration</li>
+                <li><strong>Line Styling:</strong> Checks line width, alpha, and shadow properties</li>
+                <li><strong>Line Properties:</strong> Verifies line join and cap settings</li>
+            </ul>
+        </div>
+        
+        <div class="test-controls">
+            <button class="test-btn" onclick="runTests()">
+                <span class="status-indicator status-pending" id="test-status"></span>
+                Run Styling Tests
+            </button>
+            <button class="test-btn" onclick="clearOutput()">Clear Output</button>
+        </div>
+        
+        <div class="test-output" id="test-output">
+            <pre>Click "Run Styling Tests" to verify contour styling properties...</pre>
+        </div>
+    </div>
+
+    <!-- Include required dependencies -->
+    <script src="static/js/lib/noise2d.js"></script>
+    <script src="static/js/chapter3.js"></script>
+    <script src="static/js/tests/chapter3-contour-styling.test.js"></script>
+
+    <script>
+        let testRunning = false;
+        
+        function updateStatus(status) {
+            const indicator = document.getElementById('test-status');
+            indicator.className = `status-indicator status-${status}`;
+        }
+        
+        function appendOutput(message) {
+            const output = document.getElementById('test-output');
+            const pre = output.querySelector('pre');
+            pre.textContent += message + '\n';
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function clearOutput() {
+            const output = document.getElementById('test-output');
+            const pre = output.querySelector('pre');
+            pre.textContent = 'Output cleared. Click "Run Styling Tests" to start testing...\n';
+            updateStatus('pending');
+        }
+        
+        async function runTests() {
+            if (testRunning) {
+                appendOutput('Tests are already running...');
+                return;
+            }
+            
+            testRunning = true;
+            updateStatus('running');
+            
+            // Clear previous output
+            const output = document.getElementById('test-output');
+            const pre = output.querySelector('pre');
+            pre.textContent = '';
+            
+            appendOutput('Starting Chapter 3 Contour Styling Tests...');
+            appendOutput('='.repeat(50));
+            
+            // Capture console output
+            const originalLog = console.log;
+            const originalError = console.error;
+            
+            console.log = function(...args) {
+                appendOutput(args.join(' '));
+                originalLog.apply(console, args);
+            };
+            
+            console.error = function(...args) {
+                appendOutput('ERROR: ' + args.join(' '));
+                originalError.apply(console, args);
+            };
+            
+            try {
+                // Check if Chapter3Visualizer is available
+                if (typeof Chapter3Visualizer === 'undefined') {
+                    throw new Error('Chapter3Visualizer class not found. Make sure chapter3.js is loaded.');
+                }
+                
+                // Run the tests
+                const success = runContourStylingTests();
+                
+                if (success) {
+                    updateStatus('passed');
+                    appendOutput('\n🎉 All contour styling tests completed successfully!');
+                } else {
+                    updateStatus('failed');
+                    appendOutput('\n❌ Some tests failed. Check the output above for details.');
+                }
+                
+            } catch (error) {
+                updateStatus('failed');
+                appendOutput(`\n💥 Test execution failed: ${error.message}`);
+                console.error('Test execution error:', error);
+            } finally {
+                // Restore console functions
+                console.log = originalLog;
+                console.error = originalError;
+                testRunning = false;
+                
+                appendOutput('\n' + '='.repeat(50));
+                appendOutput('Test execution completed.');
+            }
+        }
+        
+        // Auto-run tests on page load for quick verification
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                appendOutput('Page loaded. Ready to run tests.');
+                appendOutput('Dependencies check:');
+                appendOutput(`- Noise2D: ${typeof window.Noise2D !== 'undefined' ? '✓' : '✗'}`);
+                appendOutput(`- Chapter3Visualizer: ${typeof Chapter3Visualizer !== 'undefined' ? '✓' : '✗'}`);
+                appendOutput(`- Test functions: ${typeof runContourStylingTests !== 'undefined' ? '✓' : '✗'}`);
+            }, 100);
+        });
+    </script>
+</body>
+</html>

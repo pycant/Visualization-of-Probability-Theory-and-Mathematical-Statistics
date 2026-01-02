@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 3 Animation Timing Tests</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin: 10px 0;
+        }
+        
+        .test-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .test-btn {
+            background: linear-gradient(45deg, #bf00ff, #00f3ff);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-btn:active {
+            transform: translateY(0);
+        }
+        
+        .test-output {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-output pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-pending {
+            background: #ffc107;
+        }
+        
+        .status-running {
+            background: #bf00ff;
+            animation: pulse 1s infinite;
+        }
+        
+        .status-passed {
+            background: #00ff66;
+        }
+        
+        .status-failed {
+            background: #ff6b6b;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .test-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #bf00ff;
+        }
+        
+        .test-info h3 {
+            margin: 0 0 10px 0;
+            color: #bf00ff;
+        }
+        
+        .test-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .test-info li {
+            margin: 5px 0;
+        }
+        
+        .timing-params {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .param-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .param-card h4 {
+            margin: 0 0 10px 0;
+            color: #00f3ff;
+        }
+        
+        .param-value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>⏱️ Chapter 3 Animation Timing Tests</h1>
+            <p>Verification of animation speed and smoothness settings preservation</p>
+            <p><strong>Requirements:</strong> 3.3 - Preserve existing animation speed and smoothness settings</p>
+        </div>
+        
+        <div class="test-info">
+            <h3>Animation Parameters Being Tested</h3>
+            <div class="timing-params">
+                <div class="param-card">
+                    <h4>Frame Rate Limit</h4>
+                    <div class="param-value">30 FPS (33.33ms)</div>
+                </div>
+                <div class="param-card">
+                    <h4>Animation Speed</h4>
+                    <div class="param-value">0.00005</div>
+                </div>
+                <div class="param-card">
+                    <h4>Edge Bars Speed</h4>
+                    <div class="param-value">0.00008</div>
+                </div>
+                <div class="param-card">
+                    <h4>Performance Threshold</h4>
+                    <div class="param-value">45ms</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-info">
+            <h3>Test Coverage</h3>
+            <ul>
+                <li><strong>Frame Rate Limiting:</strong> Verifies 30 FPS limit is maintained</li>
+                <li><strong>Animation Speed:</strong> Checks main animation timing multiplier</li>
+                <li><strong>Edge Bars Timing:</strong> Validates edge animation parameters</li>
+                <li><strong>RAF Usage:</strong> Ensures proper requestAnimationFrame implementation</li>
+                <li><strong>Performance Monitoring:</strong> Verifies performance degradation thresholds</li>
+                <li><strong>Noise Animation:</strong> Checks multi-octave noise timing parameters</li>
+            </ul>
+        </div>
+        
+        <div class="test-controls">
+            <button class="test-btn" onclick="runTests()">
+                <span class="status-indicator status-pending" id="test-status"></span>
+                Run Timing Tests
+            </button>
+            <button class="test-btn" onclick="clearOutput()">Clear Output</button>
+        </div>
+        
+        <div class="test-output" id="test-output">
+            <pre>Click "Run Timing Tests" to verify animation timing parameters...</pre>
+        </div>
+    </div>
+
+    <!-- Include required dependencies -->
+    <script src="static/js/lib/noise2d.js"></script>
+    <script src="static/js/chapter3.js"></script>
+    <script src="static/js/tests/chapter3-animation-timing.test.js"></script>
+
+    <script>
+        let testRunning = false;
+        
+        function updateStatus(status) {
+            const indicator = document.getElementById('test-status');
+            indicator.className = `status-indicator status-${status}`;
+        }
+        
+        function appendOutput(message) {
+            const output = document.getElementById('test-output');
+            const pre = output.querySelector('pre');
+            pre.textContent += message + '\n';
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function clearOutput() {
+            const output = document.getElementById('test-output');
+            const pre = output.querySelector('pre');
+            pre.textContent = 'Output cleared. Click "Run Timing Tests" to start testing...\n';
+            updateStatus('pending');
+        }
+        
+        async function runTests() {
+            if (testRunning) {
+                appendOutput('Tests are already running...');
+                return;
+            }
+            
+            testRunning = true;
+            updateStatus('running');
+            
+            // Clear previous output
+            const output = document.getElementById('test-output');
+            const pre = output.querySelector('pre');
+            pre.textContent = '';
+            
+            appendOutput('Starting Chapter 3 Animation Timing Tests...');
+            appendOutput('='.repeat(50));
+            
+            // Capture console output
+            const originalLog = console.log;
+            const originalError = console.error;
+            
+            console.log = function(...args) {
+                appendOutput(args.join(' '));
+                originalLog.apply(console, args);
+            };
+            
+            console.error = function(...args) {
+                appendOutput('ERROR: ' + args.join(' '));
+                originalError.apply(console, args);
+            };
+            
+            try {
+                // Check if Chapter3Visualizer is available
+                if (typeof Chapter3Visualizer === 'undefined') {
+                    throw new Error('Chapter3Visualizer class not found. Make sure chapter3.js is loaded.');
+                }
+                
+                // Run the tests
+                const success = runAnimationTimingTests();
+                
+                if (success) {
+                    updateStatus('passed');
+                    appendOutput('\n🎉 All animation timing tests completed successfully!');
+                } else {
+                    updateStatus('failed');
+                    appendOutput('\n❌ Some tests failed. Check the output above for details.');
+                }
+                
+            } catch (error) {
+                updateStatus('failed');
+                appendOutput(`\n💥 Test execution failed: ${error.message}`);
+                console.error('Test execution error:', error);
+            } finally {
+                // Restore console functions
+                console.log = originalLog;
+                console.error = originalError;
+                testRunning = false;
+                
+                appendOutput('\n' + '='.repeat(50));
+                appendOutput('Test execution completed.');
+            }
+        }
+        
+        // Auto-run tests on page load for quick verification
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                appendOutput('Page loaded. Ready to run tests.');
+                appendOutput('Dependencies check:');
+                appendOutput(`- Noise2D: ${typeof window.Noise2D !== 'undefined' ? '✓' : '✗'}`);
+                appendOutput(`- Chapter3Visualizer: ${typeof Chapter3Visualizer !== 'undefined' ? '✓' : '✗'}`);
+                appendOutput(`- Test functions: ${typeof runAnimationTimingTests !== 'undefined' ? '✓' : '✗'}`);
+            }, 100);
+        });
+    </script>
+</body>
+</html>

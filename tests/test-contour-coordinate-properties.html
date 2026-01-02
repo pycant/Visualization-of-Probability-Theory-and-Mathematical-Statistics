@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contour Coordinate Property Tests</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #0b132b;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(15, 23, 48, 0.7);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .test-section {
+            background: rgba(15, 23, 48, 0.7);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background: #2563eb;
+        }
+        .btn:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+        }
+        .btn.success {
+            background: #10b981;
+        }
+        .btn.error {
+            background: #ef4444;
+        }
+        .test-output {
+            background: #1f2937;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.loading {
+            background: #f59e0b;
+            color: #000;
+        }
+        .status.success {
+            background: #10b981;
+            color: #fff;
+        }
+        .status.error {
+            background: #ef4444;
+            color: #fff;
+        }
+        .dependency-check {
+            margin-bottom: 20px;
+        }
+        .dependency-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .dependency-item .name {
+            flex: 1;
+            font-weight: 500;
+        }
+        .canvas-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #bg-noise {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Contour Coordinate Property Tests</h1>
+            <p><strong>Feature:</strong> contour-line-fix</p>
+            <p><strong>Property 2:</strong> Contour coordinates maintain curve characteristics without normalization</p>
+            <p><strong>Validates:</strong> Requirements 1.3, 2.3</p>
+        </div>
+
+        <div class="test-section">
+            <h2>📋 Dependency Check</h2>
+            <div class="dependency-check">
+                <div class="dependency-item">
+                    <span class="name">D3 Library</span>
+                    <span id="d3-status" class="status loading">Checking...</span>
+                </div>
+                <div class="dependency-item">
+                    <span class="name">D3 Contours</span>
+                    <span id="d3-contours-status" class="status loading">Checking...</span>
+                </div>
+                <div class="dependency-item">
+                    <span class="name">fast-check Library</span>
+                    <span id="fastcheck-status" class="status loading">Checking...</span>
+                </div>
+                <div class="dependency-item">
+                    <span class="name">Property Test Suite</span>
+                    <span id="testsuite-status" class="status loading">Checking...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🚀 Property-Based Tests</h2>
+            <div class="test-controls">
+                <button id="run-tests" class="btn" disabled>Run Property Tests</button>
+                <button id="clear-output" class="btn">Clear Output</button>
+                <button id="run-visual-test" class="btn">Run Visual Test</button>
+            </div>
+            <div id="test-output" class="test-output">Waiting for dependencies to load...</div>
+        </div>
+
+        <div class="test-section">
+            <h2>👁️ Visual Contour Test</h2>
+            <p>This canvas shows background contours using the official D3 library to verify visual correctness:</p>
+            <div class="canvas-container">
+                <canvas id="bg-noise" width="800" height="450"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load dependencies -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3-contour.v3.min.js"></script>
+    <script src="https://unpkg.com/fast-check/lib/bundle.js"></script>
+    <script src="static/js/lib/noise2d.js"></script>
+    
+    <!-- Load test files -->
+    <script src="static/js/tests/chapter3-contour-coordinate-properties.test.js"></script>
+    <script src="static/js/tests/run-contour-coordinate-test.js"></script>
+
+    <script>
+        // Test runner UI
+        (function() {
+            'use strict';
+
+            const output = document.getElementById('test-output');
+            const runButton = document.getElementById('run-tests');
+            const clearButton = document.getElementById('clear-output');
+            const visualButton = document.getElementById('run-visual-test');
+
+            let testResults = null;
+
+            // Redirect console to output
+            const originalLog = console.log;
+            const originalError = console.error;
+            const originalWarn = console.warn;
+
+            function logToOutput(message, type = 'log') {
+                const timestamp = new Date().toLocaleTimeString();
+                const prefix = type === 'error' ? '❌' : type === 'warn' ? '⚠️' : 'ℹ️';
+                output.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+                output.scrollTop = output.scrollHeight;
+            }
+
+            console.log = function(...args) {
+                originalLog.apply(console, args);
+                logToOutput(args.join(' '), 'log');
+            };
+
+            console.error = function(...args) {
+                originalError.apply(console, args);
+                logToOutput(args.join(' '), 'error');
+            };
+
+            console.warn = function(...args) {
+                originalWarn.apply(console, args);
+                logToOutput(args.join(' '), 'warn');
+            };
+
+            // Check dependencies
+            function checkDependencies() {
+                const checks = [
+                    {
+                        id: 'd3-status',
+                        name: 'D3 Library',
+                        check: () => typeof d3 !== 'undefined'
+                    },
+                    {
+                        id: 'd3-contours-status',
+                        name: 'D3 Contours',
+                        check: () => typeof d3 !== 'undefined' && typeof d3.contours !== 'undefined'
+                    },
+                    {
+                        id: 'fastcheck-status',
+                        name: 'fast-check Library',
+                        check: () => typeof fc !== 'undefined'
+                    },
+                    {
+                        id: 'testsuite-status',
+                        name: 'Property Test Suite',
+                        check: () => typeof window.Chapter3ContourCoordinateTester !== 'undefined'
+                    }
+                ];
+
+                let allPassed = true;
+
+                checks.forEach(({ id, name, check }) => {
+                    const element = document.getElementById(id);
+                    const passed = check();
+                    
+                    element.textContent = passed ? 'Available ✅' : 'Missing ❌';
+                    element.className = `status ${passed ? 'success' : 'error'}`;
+                    
+                    if (!passed) {
+                        allPassed = false;
+                        console.error(`${name} is not available`);
+                    } else {
+                        console.log(`${name} is available`);
+                    }
+                });
+
+                runButton.disabled = !allPassed;
+                
+                if (allPassed) {
+                    output.textContent = 'All dependencies loaded successfully. Ready to run tests.\n';
+                    console.log('🎉 All dependencies loaded successfully');
+                } else {
+                    output.textContent = 'Some dependencies are missing. Please check the console for details.\n';
+                }
+
+                return allPassed;
+            }
+
+            // Run property tests
+            async function runPropertyTests() {
+                runButton.disabled = true;
+                runButton.textContent = 'Running Tests...';
+                runButton.className = 'btn loading';
+
+                try {
+                    console.log('🚀 Starting property-based tests...');
+                    
+                    if (typeof window.ContourCoordinateTestRunner !== 'undefined') {
+                        testResults = await window.ContourCoordinateTestRunner.run();
+                    } else if (typeof window.Chapter3ContourCoordinateTester !== 'undefined') {
+                        testResults = window.Chapter3ContourCoordinateTester.runTests();
+                    } else {
+                        throw new Error('No test runner available');
+                    }
+
+                    const success = testResults.success || testResults.failed === 0;
+                    
+                    runButton.textContent = success ? 'Tests Passed ✅' : 'Tests Failed ❌';
+                    runButton.className = `btn ${success ? 'success' : 'error'}`;
+                    
+                    console.log(`🎯 Tests completed: ${success ? 'PASSED' : 'FAILED'}`);
+                    
+                } catch (error) {
+                    console.error('💥 Test execution failed:', error.message);
+                    runButton.textContent = 'Test Failed ❌';
+                    runButton.className = 'btn error';
+                } finally {
+                    setTimeout(() => {
+                        runButton.disabled = false;
+                        runButton.textContent = 'Run Property Tests';
+                        runButton.className = 'btn';
+                    }, 3000);
+                }
+            }
+
+            // Visual contour test
+            function runVisualTest() {
+                console.log('🎨 Starting visual contour test...');
+                
+                const canvas = document.getElementById('bg-noise');
+                const ctx = canvas.getContext('2d');
+                
+                if (!window.Noise2D) {
+                    console.error('Noise2D library not available for visual test');
+                    return;
+                }
+
+                const noise = window.Noise2D.create({ seed: 1337 });
+                const width = 200;
+                const height = 120;
+                const scale = 0.02;
+                
+                // Generate noise data
+                const values = new Float32Array(width * height);
+                let k = 0;
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const v = noise.noise2(x * scale, y * scale);
+                        values[k++] = Math.max(0, Math.min(1, (v + 1) * 0.5));
+                    }
+                }
+
+                // Generate contours
+                const thresholds = Array.from({ length: 8 }, (_, i) => 0.2 + i * 0.08);
+                const contours = d3.contours()
+                    .size([width, height])
+                    .thresholds(thresholds)(values);
+
+                // Draw contours
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
+                
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                ctx.lineJoin = 'round';
+                ctx.lineCap = 'round';
+
+                const palette = ['#00f3ff', '#bf00ff', '#00ff66', '#ffc107', '#ff6b6b'];
+                
+                contours.forEach((contour, idx) => {
+                    const colorIndex = Math.floor((idx / contours.length) * palette.length);
+                    ctx.strokeStyle = palette[Math.min(colorIndex, palette.length - 1)];
+                    ctx.globalAlpha = 0.6 + 0.4 * (idx / contours.length);
+                    ctx.lineWidth = 1.5 + idx * 0.3;
+
+                    // Use coordinates directly (the fix)
+                    contour.coordinates.forEach(multi => {
+                        multi.forEach(ring => {
+                            if (ring.length < 3) return;
+
+                            ctx.beginPath();
+                            for (let p = 0; p < ring.length; p++) {
+                                const x = (ring[p][0] / (width - 1)) * canvasWidth;
+                                const y = (ring[p][1] / (height - 1)) * canvasHeight;
+                                
+                                if (p === 0) ctx.moveTo(x, y);
+                                else ctx.lineTo(x, y);
+                            }
+                            ctx.stroke();
+                        });
+                    });
+                });
+
+                console.log(`✅ Visual test completed. Drew ${contours.length} contours.`);
+            }
+
+            // Event listeners
+            runButton.addEventListener('click', runPropertyTests);
+            clearButton.addEventListener('click', () => {
+                output.textContent = '';
+                console.log('Output cleared');
+            });
+            visualButton.addEventListener('click', runVisualTest);
+
+            // Initialize
+            setTimeout(() => {
+                checkDependencies();
+                
+                // Auto-run visual test
+                setTimeout(runVisualTest, 1000);
+            }, 500);
+
+        })();
+    </script>
+</body>
+</html>
