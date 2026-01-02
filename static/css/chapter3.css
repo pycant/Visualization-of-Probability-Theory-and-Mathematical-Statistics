@@ -10,8 +10,8 @@
   inset: 0;
   pointer-events: none;
   z-index: 6;
-  backdrop-filter: blur(var(--global-bg-blur, 15px));
-  background-color: rgba(128, 128, 128, var(--global-bg-tint, 0.90));
+  backdrop-filter: blur(var(--global-bg-blur, 12px));
+  background-color: rgba(128, 128, 128, var(--global-bg-tint, 0.12));
   mix-blend-mode: multiply;
 }
 
@@ -134,6 +134,8 @@
   background: rgba(15, 23, 48, 0.8);
   border-radius: 8px;
   overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .joint-prob-table table {
@@ -155,7 +157,7 @@
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 0.875rem;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .joint-prob-table td:hover {
@@ -172,6 +174,102 @@
   background: rgba(0, 255, 102, 0.1);
   color: #00ff66;
   font-weight: 700;
+}
+
+/* Enhanced interactive table styles */
+.joint-prob-container {
+  background: rgba(15, 23, 48, 0.6);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.editable-cell {
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.editable-cell:hover {
+  background: rgba(34, 211, 238, 0.1) !important;
+  border-color: rgba(34, 211, 238, 0.3);
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.2);
+}
+
+.editable-cell.editing {
+  background: rgba(34, 211, 238, 0.2) !important;
+  border-color: rgba(34, 211, 238, 0.5);
+}
+
+.prob-input {
+  background: rgba(15, 23, 48, 0.9);
+  border: 1px solid rgba(34, 211, 238, 0.5);
+  border-radius: 4px;
+  color: white;
+  font-size: 0.875rem;
+  padding: 2px 4px;
+}
+
+.prob-input:focus {
+  outline: none;
+  border-color: rgba(34, 211, 238, 0.8);
+  box-shadow: 0 0 4px rgba(34, 211, 238, 0.3);
+}
+
+.validation-info {
+  background: rgba(15, 23, 48, 0.4);
+  border-radius: 6px;
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.table-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+/* Visual highlighting for probability relationships */
+.prob-highlight-row {
+  background: rgba(34, 211, 238, 0.15) !important;
+}
+
+.prob-highlight-col {
+  background: rgba(167, 139, 250, 0.15) !important;
+}
+
+.prob-highlight-cell {
+  background: rgba(0, 255, 102, 0.2) !important;
+  border-color: rgba(0, 255, 102, 0.5) !important;
+  box-shadow: 0 0 12px rgba(0, 255, 102, 0.3);
+}
+
+/* Standardized residual highlighting */
+.prob-highlight-low {
+  background: rgba(0, 255, 102, 0.1) !important;
+  border-color: rgba(0, 255, 102, 0.3) !important;
+}
+
+.prob-highlight-medium {
+  background: rgba(255, 193, 7, 0.15) !important;
+  border-color: rgba(255, 193, 7, 0.4) !important;
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.2);
+}
+
+.prob-highlight-high {
+  background: rgba(255, 102, 102, 0.2) !important;
+  border-color: rgba(255, 102, 102, 0.5) !important;
+  box-shadow: 0 0 12px rgba(255, 102, 102, 0.3);
+  animation: pulse-highlight 2s ease-in-out infinite;
+}
+
+@keyframes pulse-highlight {
+  0%,
+  100% {
+    box-shadow: 0 0 12px rgba(255, 102, 102, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 102, 102, 0.6);
+  }
 }
 
 /* 统计仪表盘样式 */
@@ -230,13 +328,7 @@
   line-height: 1.2;
 }
 
-/* 参数控制面板样式 */
-.param-control {
-  background: rgba(15, 23, 48, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 1rem;
-}
+/* 参数控制面板样式 - Enhanced */
 
 .param-control .param-label {
   display: flex;
@@ -252,7 +344,7 @@
   font-family: "Courier New", monospace;
 }
 
-/* 自定义滑动条样式 */
+/* 自定义滑动条样式 - Enhanced */
 .param-slider {
   -webkit-appearance: none;
   appearance: none;
@@ -261,11 +353,18 @@
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.2);
   outline: none;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .param-slider:hover {
   background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.3);
+}
+
+.param-slider:focus {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.5);
 }
 
 .param-slider::-webkit-slider-thumb {
@@ -287,6 +386,17 @@
   transform: scale(1.1);
 }
 
+.param-slider::-webkit-slider-thumb:active {
+  transform: scale(1.2);
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.6);
+}
+
+.param-slider:focus::-webkit-slider-thumb {
+  border-color: #00f3ff;
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.4),
+    0 0 0 3px rgba(34, 211, 238, 0.2);
+}
+
 .param-slider::-moz-range-thumb {
   width: 18px;
   height: 18px;
@@ -295,6 +405,32 @@
   border: 2px solid rgba(34, 211, 238, 0.5);
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.param-slider::-moz-range-thumb:hover {
+  border-color: #00f3ff;
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.4);
+  transform: scale(1.1);
+}
+
+/* Enhanced parameter control styling */
+.param-control {
+  background: rgba(15, 23, 48, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+.param-control:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(15, 23, 48, 0.8);
+}
+
+.param-control:focus-within {
+  border-color: rgba(34, 211, 238, 0.3);
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.2);
 }
 
 /* 按钮样式增强 */
@@ -397,10 +533,115 @@
   animation: data-flow 2s ease-in-out infinite;
 }
 
-/* 响应式设计 */
+/* Enhanced Responsive Design System */
+
+/* Mobile-first approach with progressive enhancement */
+@media (max-width: 480px) {
+  /* Extra small devices (phones) */
+  .hero-title {
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+
+  .hero-subtitle {
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  /* Single column layout for mobile */
+  .flex.flex-col.lg\\:flex-row {
+    flex-direction: column;
+  }
+
+  /* Stack visualization grids vertically */
+  .grid.grid-cols-1.md\\:grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Reduce padding on mobile */
+  .glass-card {
+    padding: 1rem;
+  }
+
+  /* Smaller parameter controls */
+  .param-control {
+    padding: 0.75rem;
+  }
+
+  /* Compact statistics dashboard */
+  .stats-dashboard {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .stat-card {
+    padding: 0.5rem;
+    text-align: left;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1.25rem;
+  }
+
+  /* Touch-friendly controls */
+  .param-slider {
+    height: 8px;
+  }
+
+  .param-slider::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+    margin-top: -8px;
+  }
+
+  .param-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Compact joint probability table */
+  .joint-prob-table {
+    font-size: 0.625rem;
+  }
+
+  .joint-prob-table th,
+  .joint-prob-table td {
+    padding: 4px 6px;
+  }
+
+  /* Canvas size optimization for mobile */
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Scenario tabs - vertical stack on mobile */
+  #scenario-tabs {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .scenario-tab {
+    width: 100%;
+    text-align: center;
+  }
+}
+
 @media (max-width: 768px) {
+  /* Small devices (tablets) */
+  .hero-title {
+    font-size: 2.25rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  /* Two-column grid for tablets */
   .stats-dashboard {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 
   .joint-prob-table {
@@ -418,6 +659,145 @@
 
   .stat-card .stat-value {
     font-size: 1rem;
+  }
+
+  /* Responsive visualization containers */
+  .visualization-3d,
+  .plot-container {
+    min-height: 200px;
+  }
+
+  /* Touch-friendly parameter controls */
+  .param-slider {
+    height: 6px;
+  }
+
+  .param-slider::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+    margin-top: -7px;
+  }
+
+  .param-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Compact control panels */
+  .param-control {
+    padding: 0.875rem;
+  }
+
+  /* Responsive scenario switching */
+  #scenario-tabs {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .scenario-tab {
+    flex: 1;
+    min-width: 120px;
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Medium devices (small laptops) */
+  .hero-title {
+    font-size: 2.75rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.125rem;
+  }
+
+  /* Three-column grid for medium screens */
+  .stats-dashboard {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Optimal visualization sizes */
+  .visualization-3d,
+  .plot-container {
+    min-height: 250px;
+  }
+}
+
+@media (min-width: 1025px) {
+  /* Large devices (desktops) */
+  .hero-title {
+    font-size: 3.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+  }
+
+  /* Four-column grid for large screens */
+  .stats-dashboard {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Full-size visualizations */
+  .visualization-3d,
+  .plot-container {
+    min-height: 300px;
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+
+  .glass-card {
+    backdrop-filter: blur(12px);
+  }
+}
+
+/* Landscape orientation optimizations for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.875rem;
+  }
+
+  /* Horizontal layout for landscape */
+  .grid.grid-cols-1.md\\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Compact vertical spacing */
+  .glass-card {
+    padding: 0.75rem;
+  }
+
+  .param-control {
+    padding: 0.5rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .glass-card {
+    background: white;
+    color: black;
+    border: 1px solid #ccc;
+  }
+
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .param-slider,
+  button {
+    display: none;
   }
 }
 
@@ -518,17 +898,17 @@
     flex-direction: column;
     align-items: center;
   }
-  
+
   #hero-links a {
     width: 100%;
     max-width: 280px;
     justify-content: center;
   }
-  
+
   .hero-subtitle + div {
     gap: 0.5rem;
   }
-  
+
   .hero-subtitle + div span {
     font-size: 0.75rem;
     padding: 0.25rem 0.75rem;
@@ -662,7 +1042,7 @@ input[type="number"]:focus {
 
 /* 物理场景特殊样式 */
 .physics-constant {
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.8);
 }
@@ -688,7 +1068,11 @@ input[type="number"]:focus {
 /* 3D可视化容器增强 */
 .visualization-3d {
   position: relative;
-  background: radial-gradient(circle at center, rgba(15, 23, 48, 0.9), rgba(15, 23, 48, 0.7));
+  background: radial-gradient(
+    circle at center,
+    rgba(15, 23, 48, 0.9),
+    rgba(15, 23, 48, 0.7)
+  );
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   overflow: hidden;
@@ -698,9 +1082,16 @@ input[type="number"]:focus {
   content: "";
   position: absolute;
   inset: 0;
-  background: 
-    radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.1), transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(167, 139, 250, 0.1), transparent 40%);
+  background: radial-gradient(
+      circle at 20% 20%,
+      rgba(34, 211, 238, 0.1),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(167, 139, 250, 0.1),
+      transparent 40%
+    );
   pointer-events: none;
   z-index: 1;
 }
@@ -740,7 +1131,8 @@ input[type="number"]:focus {
 }
 
 @keyframes pulse-border {
-  0%, 100% {
+  0%,
+  100% {
     border-color: rgba(34, 211, 238, 0.3);
   }
   50% {
@@ -760,7 +1152,7 @@ input[type="number"]:focus {
     padding: 0.75rem 0.5rem;
     font-size: 0.875rem;
   }
-  
+
   .scenario-tab i {
     display: block;
     margin-bottom: 0.25rem;
@@ -803,19 +1195,531 @@ input[type="number"]:focus {
   margin-right: 0.5rem;
 }
 
-/* 错误状态样式 */
-.scenario-error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  color: rgba(255, 102, 102, 0.8);
-  font-size: 0.875rem;
-  text-align: center;
-  padding: 1rem;
+/* Touch Controls and Mobile Interactions */
+.touch .param-slider {
+  min-height: 44px;
+  padding: 12px 0;
 }
 
-.scenario-error i {
-  margin-right: 0.5rem;
-  font-size: 1.25rem;
+.touch .param-slider::-webkit-slider-thumb {
+  width: 28px;
+  height: 28px;
+  margin-top: -12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.touch .param-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.touch-active {
+  transform: scale(1.05);
+  transition: transform 0.1s ease;
+}
+
+.touch button,
+.touch .scenario-tab {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 16px;
+}
+
+.touch .joint-prob-table td.editable-cell {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 8px;
+}
+
+/* Canvas Touch Interactions */
+canvas.touch-enabled {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Swipe Gesture Indicators */
+.swipe-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.swipe-indicator.left {
+  left: 10px;
+}
+
+.swipe-indicator.right {
+  right: 10px;
+}
+
+.swipe-indicator:hover {
+  opacity: 0.7;
+}
+
+/* Touch Feedback */
+.touch-feedback {
+  position: relative;
+  overflow: hidden;
+}
+
+.touch-feedback::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+  pointer-events: none;
+}
+
+.touch-feedback.active::after {
+  width: 100px;
+  height: 100px;
+}
+
+/* Responsive Canvas Containers */
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.canvas-container canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Mobile-Optimized Visualizations */
+@media (max-width: 768px) {
+  .visualization-3d,
+  .plot-container {
+    min-height: 200px;
+    max-height: 300px;
+  }
+
+  .canvas-container {
+    min-height: 180px;
+  }
+
+  /* Simplified contour plots for mobile */
+  .mobile .contour-plot {
+    filter: blur(0.5px);
+  }
+
+  /* Reduced scatter plot density */
+  .mobile .scatter-plot {
+    opacity: 0.8;
+  }
+}
+
+/* Orientation-specific styles */
+@media (max-width: 768px) and (orientation: landscape) {
+  .hero-section {
+    padding: 1rem 0;
+  }
+
+  .glass-card {
+    padding: 0.75rem;
+  }
+
+  .visualization-3d,
+  .plot-container {
+    min-height: 150px;
+    max-height: 200px;
+  }
+}
+
+/* High DPI Display Optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+
+  .glass-card {
+    backdrop-filter: blur(12px);
+  }
+
+  .param-slider::-webkit-slider-thumb {
+    border-width: 2px;
+  }
+}
+
+/* Accessibility Enhancements for Touch */
+.touch .focus-visible {
+  outline: 3px solid rgba(34, 211, 238, 0.6);
+  outline-offset: 2px;
+}
+
+.touch .param-slider:focus {
+  outline: 3px solid rgba(34, 211, 238, 0.6);
+  outline-offset: 4px;
+}
+
+/* Loading States for Touch Devices */
+.touch .loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.touch .loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: rgba(34, 211, 238, 0.8);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Performance Optimization Indicators */
+.performance-notification {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.webgl-fallback-message {
+  margin: 1rem 0;
+}
+
+.performance-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+}
+
+.performance-indicator.good {
+  background: rgba(34, 197, 94, 0.2);
+  color: rgb(34, 197, 94);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.performance-indicator.warning {
+  background: rgba(251, 191, 36, 0.2);
+  color: rgb(251, 191, 36);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.performance-indicator.critical {
+  background: rgba(239, 68, 68, 0.2);
+  color: rgb(239, 68, 68);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  animation: pulse-critical 2s infinite;
+}
+
+@keyframes pulse-critical {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Frame Rate Monitor */
+.fps-monitor {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+  z-index: 1000;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.fps-monitor:hover {
+  opacity: 1;
+}
+
+.fps-monitor.hidden {
+  display: none;
+}
+
+/* Memory Usage Indicator */
+.memory-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.memory-bar {
+  width: 60px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.memory-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+/* Quality Settings */
+.quality-selector {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.quality-option {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.375rem;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.quality-option:hover {
+  border-color: rgba(34, 211, 238, 0.5);
+  color: rgba(34, 211, 238, 0.9);
+}
+
+.quality-option.active {
+  background: rgba(34, 211, 238, 0.2);
+  border-color: rgba(34, 211, 238, 0.5);
+  color: rgb(34, 211, 238);
+}
+
+/* Performance Metrics Dashboard */
+.performance-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Historical Information Styles */
+.historical-item {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.historical-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.modern-app-item {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.modern-app-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.timeline-item {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.timeline-item:hover {
+  transform: scale(1.02);
+}
+
+.timeline-content {
+  transition: all 0.3s ease;
+}
+
+.timeline-modern {
+  transition: all 0.3s ease;
+}
+
+/* Historical Modal Styles */
+#historical-modal,
+#mathematician-modal {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Interactive Timeline Styles */
+.timeline-item[data-year] {
+  position: relative;
+}
+
+.timeline-item[data-year]:hover::before {
+  content: attr(data-year);
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 48, 0.95);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* Concept Highlighting */
+.concept-highlight {
+  animation: conceptPulse 2s ease-in-out;
+}
+
+@keyframes conceptPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(34, 211, 238, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.6);
+    transform: scale(1.05);
+  }
+}
+
+/* Responsive Historical Info */
+@media (max-width: 768px) {
+  .historical-item,
+  .modern-app-item {
+    padding: 0.75rem;
+  }
+
+  .historical-item .flex {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .modern-app-item .flex {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .timeline-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .timeline-item .w-1\/2 {
+    width: 100%;
+    padding: 0.5rem 0;
+  }
+
+  .timeline-item .w-4 {
+    margin: 0.5rem auto;
+  }
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(15, 23, 48, 0.6);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.performance-metric {
+  text-align: center;
+}
+
+.performance-metric-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.25rem;
+}
+
+.performance-metric-value {
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.performance-metric-value.good {
+  color: rgb(34, 197, 94);
+}
+
+.performance-metric-value.warning {
+  color: rgb(251, 191, 36);
+}
+
+.performance-metric-value.critical {
+  color: rgb(239, 68, 68);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .performance-indicator.critical {
+    animation: none;
+  }
+
+  .performance-loading::after {
+    animation: none;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .performance-indicator {
+    border-width: 2px;
+  }
+
+  .quality-option {
+    border-width: 2px;
+  }
 }

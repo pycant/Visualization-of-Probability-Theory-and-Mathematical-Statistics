@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="../static/css/chapter1.css" />
     <link rel="stylesheet" href="../static/css/chapter3.css" />
     <script src="../static/js/lib/noise2d.js"></script>
-    <script src="https://d3js.org/d3-contour.v3.min.js"></script>
+    <script src="../static/js/lib/d3-contour-lite.js"></script>
 
     <style type="text/tailwindcss">
       .gap-8 {
@@ -169,6 +169,283 @@
             <span>3.5 条件分布</span>
           </a>
         </div>
+        
+        <!-- Historical Information and Modern Connections Section -->
+        <div class="mt-8 flex justify-center">
+          <button
+            id="toggle-historical-info"
+            class="px-6 py-3 rounded-lg border border-purple-400/30 bg-purple-400/10 text-purple-400 hover:bg-purple-400/20 transition-all duration-300 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-history"></i>
+            <span>历史脉络与现代应用</span>
+            <i class="fa-solid fa-chevron-down transition-transform duration-300" id="historical-chevron"></i>
+          </button>
+        </div>
+        
+        <!-- Historical Information Panel -->
+        <div id="historical-info-panel" class="mt-6 mx-auto max-w-6xl px-6 sm:px-8 hidden">
+          <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              
+              <!-- Historical Timeline -->
+              <div class="space-y-6">
+                <h3 class="text-xl font-bold text-purple-400 mb-4 flex items-center gap-2">
+                  <i class="fa-solid fa-timeline"></i>
+                  历史发展脉络
+                </h3>
+                
+                <div class="space-y-4">
+                  <!-- Galton -->
+                  <div class="historical-item p-4 rounded-lg border border-purple-400/20 bg-purple-400/5 hover:bg-purple-400/10 transition-all duration-300">
+                    <div class="flex items-start gap-3">
+                      <div class="w-12 h-12 rounded-full bg-purple-400/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-user text-purple-400"></i>
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                          <h4 class="font-semibold text-purple-300">弗朗西斯·高尔顿 (Francis Galton)</h4>
+                          <span class="text-xs bg-purple-400/20 text-purple-300 px-2 py-1 rounded">1822-1911</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">
+                          首次提出"相关性"概念，研究父子身高的关系，奠定了多变量统计分析的基础
+                        </p>
+                        <div class="text-xs text-purple-400 flex items-center gap-2">
+                          <i class="fa-solid fa-arrow-right"></i>
+                          <span>现代应用: 推荐算法中的协同过滤</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Pearson -->
+                  <div class="historical-item p-4 rounded-lg border border-blue-400/20 bg-blue-400/5 hover:bg-blue-400/10 transition-all duration-300">
+                    <div class="flex items-start gap-3">
+                      <div class="w-12 h-12 rounded-full bg-blue-400/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-user text-blue-400"></i>
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                          <h4 class="font-semibold text-blue-300">卡尔·皮尔逊 (Karl Pearson)</h4>
+                          <span class="text-xs bg-blue-400/20 text-blue-300 px-2 py-1 rounded">1857-1936</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">
+                          发展了皮尔逊相关系数，建立了现代统计学的数学基础，创立了卡方检验
+                        </p>
+                        <div class="text-xs text-blue-400 flex items-center gap-2">
+                          <i class="fa-solid fa-arrow-right"></i>
+                          <span>现代应用: A/B测试与用户行为分析</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Fisher -->
+                  <div class="historical-item p-4 rounded-lg border border-green-400/20 bg-green-400/5 hover:bg-green-400/10 transition-all duration-300">
+                    <div class="flex items-start gap-3">
+                      <div class="w-12 h-12 rounded-full bg-green-400/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-user text-green-400"></i>
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                          <h4 class="font-semibold text-green-300">罗纳德·费舍尔 (Ronald Fisher)</h4>
+                          <span class="text-xs bg-green-400/20 text-green-300 px-2 py-1 rounded">1890-1962</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">
+                          发展了最大似然估计和方差分析，为多变量统计推断奠定了理论基础
+                        </p>
+                        <div class="text-xs text-green-400 flex items-center gap-2">
+                          <i class="fa-solid fa-arrow-right"></i>
+                          <span>现代应用: 机器学习模型参数优化</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Hotelling -->
+                  <div class="historical-item p-4 rounded-lg border border-yellow-400/20 bg-yellow-400/5 hover:bg-yellow-400/10 transition-all duration-300">
+                    <div class="flex items-start gap-3">
+                      <div class="w-12 h-12 rounded-full bg-yellow-400/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-user text-yellow-400"></i>
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                          <h4 class="font-semibold text-yellow-300">哈罗德·霍特林 (Harold Hotelling)</h4>
+                          <span class="text-xs bg-yellow-400/20 text-yellow-300 px-2 py-1 rounded">1895-1973</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-2">
+                          发展了主成分分析(PCA)和典型相关分析，开创了多变量数据降维的先河
+                        </p>
+                        <div class="text-xs text-yellow-400 flex items-center gap-2">
+                          <i class="fa-solid fa-arrow-right"></i>
+                          <span>现代应用: 深度学习特征提取与降维</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Modern Applications -->
+              <div class="space-y-6">
+                <h3 class="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                  <i class="fa-solid fa-rocket"></i>
+                  现代科技应用
+                </h3>
+                
+                <div class="space-y-4">
+                  <!-- AI/ML -->
+                  <div class="modern-app-item p-4 rounded-lg border border-cyan-400/20 bg-cyan-400/5 hover:bg-cyan-400/10 transition-all duration-300">
+                    <div class="flex items-start gap-3">
+                      <div class="w-12 h-12 rounded-full bg-cyan-400/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-brain text-cyan-400"></i>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="font-semibold text-cyan-300 mb-2">人工智能与机器学习</h4>
+                        <p class="text-sm text-gray-300 mb-2">
+                          多变量分析是现代AI的核心：神经网络权重优化、特征选择、模型评估
+                        </p>
+                        <div class="flex flex-wrap gap-1 text-xs">
+                          <span class="bg-cyan-400/20 text-cyan-300 px-2 py-1 rounded">ChatGPT</span>
+                          <span class="bg-cyan-400/20 text-cyan-300 px-2 py-1 rounded">推荐系统</span>
+                          <span class="bg-cyan-400/20 text-cyan-300 px-2 py-1 rounded">图像识别</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Finance -->
+                  <div class="modern-app-item p-4 rounded-lg border border-green-400/20 bg-green-400/5 hover:bg-green-400/10 transition-all duration-300">
+                    <div class="flex items-start gap-3">
+                      <div class="w-12 h-12 rounded-full bg-green-400/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-chart-line text-green-400"></i>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="font-semibold text-green-300 mb-2">金融科技与风险管理</h4>
+                        <p class="text-sm text-gray-300 mb-2">
+                          投资组合优化、风险评估、算法交易都依赖多变量统计分析
+                        </p>
+                        <div class="flex flex-wrap gap-1 text-xs">
+                          <span class="bg-green-400/20 text-green-300 px-2 py-1 rounded">量化交易</span>
+                          <span class="bg-green-400/20 text-green-300 px-2 py-1 rounded">风控模型</span>
+                          <span class="bg-green-400/20 text-green-300 px-2 py-1 rounded">信用评分</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Social Media -->
+                  <div class="modern-app-item p-4 rounded-lg border border-pink-400/20 bg-pink-400/5 hover:bg-pink-400/10 transition-all duration-300">
+                    <div class="flex items-start gap-3">
+                      <div class="w-12 h-12 rounded-full bg-pink-400/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-share-nodes text-pink-400"></i>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="font-semibold text-pink-300 mb-2">社交媒体与内容分析</h4>
+                        <p class="text-sm text-gray-300 mb-2">
+                          用户行为分析、内容推荐、情感分析、病毒传播预测
+                        </p>
+                        <div class="flex flex-wrap gap-1 text-xs">
+                          <span class="bg-pink-400/20 text-pink-300 px-2 py-1 rounded">抖音算法</span>
+                          <span class="bg-pink-400/20 text-pink-300 px-2 py-1 rounded">微博热搜</span>
+                          <span class="bg-pink-400/20 text-pink-300 px-2 py-1 rounded">B站推荐</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Gaming -->
+                  <div class="modern-app-item p-4 rounded-lg border border-orange-400/20 bg-orange-400/5 hover:bg-orange-400/10 transition-all duration-300">
+                    <div class="flex items-start gap-3">
+                      <div class="w-12 h-12 rounded-full bg-orange-400/20 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-gamepad text-orange-400"></i>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="font-semibold text-orange-300 mb-2">游戏与电竞分析</h4>
+                        <p class="text-sm text-gray-300 mb-2">
+                          游戏平衡性设计、玩家匹配算法、电竞数据分析、虚拟经济建模
+                        </p>
+                        <div class="flex flex-wrap gap-1 text-xs">
+                          <span class="bg-orange-400/20 text-orange-300 px-2 py-1 rounded">王者荣耀</span>
+                          <span class="bg-orange-400/20 text-orange-300 px-2 py-1 rounded">英雄联盟</span>
+                          <span class="bg-orange-400/20 text-orange-300 px-2 py-1 rounded">原神</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Interactive Timeline -->
+            <div class="mt-8 pt-6 border-t border-white/10">
+              <h4 class="text-lg font-semibold text-white mb-4 text-center">互动时间线</h4>
+              <div class="relative">
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-purple-400 via-blue-400 via-green-400 via-yellow-400 to-cyan-400 rounded-full"></div>
+                <div class="space-y-8">
+                  <div class="timeline-item flex items-center" data-year="1888">
+                    <div class="w-1/2 pr-8 text-right">
+                      <div class="timeline-content p-3 rounded-lg bg-purple-400/10 border border-purple-400/20">
+                        <div class="font-semibold text-purple-300">1888年</div>
+                        <div class="text-sm text-gray-300">高尔顿发表相关性理论</div>
+                      </div>
+                    </div>
+                    <div class="w-4 h-4 bg-purple-400 rounded-full border-4 border-dark-bg z-10"></div>
+                    <div class="w-1/2 pl-8">
+                      <div class="timeline-modern p-3 rounded-lg bg-purple-400/5 border border-purple-400/10">
+                        <div class="text-sm text-purple-300">→ 现代推荐算法基础</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="timeline-item flex items-center" data-year="1901">
+                    <div class="w-1/2 pr-8 text-right">
+                      <div class="timeline-modern p-3 rounded-lg bg-blue-400/5 border border-blue-400/10">
+                        <div class="text-sm text-blue-300">A/B测试与统计显著性 ←</div>
+                      </div>
+                    </div>
+                    <div class="w-4 h-4 bg-blue-400 rounded-full border-4 border-dark-bg z-10"></div>
+                    <div class="w-1/2 pl-8">
+                      <div class="timeline-content p-3 rounded-lg bg-blue-400/10 border border-blue-400/20">
+                        <div class="font-semibold text-blue-300">1901年</div>
+                        <div class="text-sm text-gray-300">皮尔逊发展卡方检验</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="timeline-item flex items-center" data-year="1933">
+                    <div class="w-1/2 pr-8 text-right">
+                      <div class="timeline-content p-3 rounded-lg bg-green-400/10 border border-green-400/20">
+                        <div class="font-semibold text-green-300">1933年</div>
+                        <div class="text-sm text-gray-300">霍特林提出主成分分析</div>
+                      </div>
+                    </div>
+                    <div class="w-4 h-4 bg-green-400 rounded-full border-4 border-dark-bg z-10"></div>
+                    <div class="w-1/2 pl-8">
+                      <div class="timeline-modern p-3 rounded-lg bg-green-400/5 border border-green-400/10">
+                        <div class="text-sm text-green-300">→ 深度学习降维技术</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="timeline-item flex items-center" data-year="2024">
+                    <div class="w-1/2 pr-8 text-right">
+                      <div class="timeline-modern p-3 rounded-lg bg-cyan-400/5 border border-cyan-400/10">
+                        <div class="text-sm text-cyan-300">多模态AI与大语言模型 ←</div>
+                      </div>
+                    </div>
+                    <div class="w-4 h-4 bg-cyan-400 rounded-full border-4 border-dark-bg z-10"></div>
+                    <div class="w-1/2 pl-8">
+                      <div class="timeline-content p-3 rounded-lg bg-cyan-400/10 border border-cyan-400/20">
+                        <div class="font-semibold text-cyan-300">2024年</div>
+                        <div class="text-sm text-gray-300">AI时代的多变量分析</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- 3.1 多维随机变量及其联合分布 -->
@@ -212,7 +489,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <!-- 3D联合密度图 -->
                   <div class="bg-dark-card/60 rounded-xl p-4">
-                    <div class="text-sm text-gray-300 mb-2">3D联合密度函数</div>
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="text-sm text-gray-300">3D联合密度函数</div>
+                      <div id="plot-quality-selector" class="quality-selector">
+                        <button class="quality-option" data-quality="low">低</button>
+                        <button class="quality-option active" data-quality="medium">中</button>
+                        <button class="quality-option" data-quality="high">高</button>
+                      </div>
+                    </div>
                     <div id="joint-3d-plot" class="h-64 w-full"></div>
                   </div>
 
@@ -403,6 +687,86 @@
                 </div>
               </div>
 
+              <!-- 游戏角色属性分析场景 -->
+              <div id="game-character-scenario" class="scenario-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <!-- 角色属性散点图 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">攻击力 vs 防御力分布</div>
+                    <canvas
+                      id="game-attack-defense-plot"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 角色职业分布 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">职业属性特征分析</div>
+                    <canvas
+                      id="game-class-distribution"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 属性相关性热力图 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">属性相关性矩阵</div>
+                    <canvas
+                      id="game-correlation-heatmap"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 平衡性分析 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">游戏平衡性分析</div>
+                    <canvas
+                      id="game-balance-analysis"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+                </div>
+
+                <!-- 热门角色展示 -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">热门角色属性分析</div>
+                  <div class="grid grid-cols-3 gap-3 text-xs">
+                    <div>
+                      <div class="text-gray-400 mb-1">坦克角色</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-blue-400/20 text-blue-400 rounded">盖伦</span>
+                        <span class="px-2 py-1 bg-blue-400/20 text-blue-400 rounded">石头人</span>
+                        <span class="px-2 py-1 bg-blue-400/20 text-blue-400 rounded">钟无艳</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-gray-400 mb-1">输出角色</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-red-400/20 text-red-400 rounded">亚索</span>
+                        <span class="px-2 py-1 bg-red-400/20 text-red-400 rounded">后羿</span>
+                        <span class="px-2 py-1 bg-red-400/20 text-red-400 rounded">胡桃</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-gray-400 mb-1">辅助角色</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-green-400/20 text-green-400 rounded">蔡文姬</span>
+                        <span class="px-2 py-1 bg-green-400/20 text-green-400 rounded">风女</span>
+                        <span class="px-2 py-1 bg-green-400/20 text-green-400 rounded">芭芭拉</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <!-- 实时统计显示 -->
               <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                 <!-- 传统场景统计 -->
@@ -464,6 +828,24 @@
                   <div>温度</div>
                   <div id="temperature-stat" class="text-lg">300 K</div>
                 </div>
+
+                <!-- 游戏角色场景统计 -->
+                <div class="scenario-stats game-character-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>平均攻击力</div>
+                  <div id="avg-attack-stat" class="text-neon-blue text-lg">0</div>
+                </div>
+                <div class="scenario-stats game-character-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>平均防御力</div>
+                  <div id="avg-defense-stat" class="text-neon-purple text-lg">0</div>
+                </div>
+                <div class="scenario-stats game-character-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>平均敏捷</div>
+                  <div id="avg-agility-stat" class="text-neon-green text-lg">0</div>
+                </div>
+                <div class="scenario-stats game-character-stats hidden rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div>平衡指数</div>
+                  <div id="balance-index-stat" class="text-yellow-400 text-lg">85%</div>
+                </div>
               </div>
             </div>
 
@@ -471,176 +853,464 @@
             <div class="w-full lg:w-80">
               <!-- 传统场景控制 -->
               <div id="traditional-controls" class="scenario-controls space-y-5">
-                <div>
-                  <div class="mb-2 text-sm flex justify-between">
-                    <span>股票A期望收益 μ₁ (%)</span>
-                    <span id="mu1-val" class="text-neon-blue">5.0%</span>
+                <!-- Enhanced Parameter Controls with Real-time Updates -->
+                <div class="param-control">
+                  <div class="mb-2 text-sm flex justify-between items-center">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-chart-line text-neon-blue"></i>
+                      股票A期望收益 μ₁ (%)
+                    </span>
+                    <span id="mu1-val" class="text-neon-blue font-mono font-bold">5.0%</span>
                   </div>
                   <input
                     id="mu1-slider"
                     type="range"
-                    min="-10"
-                    max="20"
-                    step="0.5"
+                    min="-50"
+                    max="50"
+                    step="0.1"
                     value="5"
-                    class="w-full accent-neon-blue"
+                    class="param-slider w-full"
+                    data-param="mu1"
+                    title="期望收益率: 影响分布的中心位置"
+                    aria-label="股票A期望收益率"
+                    aria-describedby="mu1-val"
+                    role="slider"
+                    aria-valuemin="-50"
+                    aria-valuemax="50"
+                    aria-valuenow="5"
+                    aria-valuetext="5.0%"
                   />
+                  <div class="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>-50%</span>
+                    <span>50%</span>
+                  </div>
                 </div>
 
-                <div>
-                  <div class="mb-2 text-sm flex justify-between">
-                    <span>股票B期望收益 μ₂ (%)</span>
-                    <span id="mu2-val" class="text-neon-purple">8.0%</span>
+                <div class="param-control">
+                  <div class="mb-2 text-sm flex justify-between items-center">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-chart-line text-neon-purple"></i>
+                      股票B期望收益 μ₂ (%)
+                    </span>
+                    <span id="mu2-val" class="text-neon-purple font-mono font-bold">8.0%</span>
                   </div>
                   <input
                     id="mu2-slider"
                     type="range"
-                    min="-10"
-                    max="20"
-                    step="0.5"
+                    min="-50"
+                    max="50"
+                    step="0.1"
                     value="8"
-                    class="w-full accent-neon-purple"
+                    class="param-slider w-full"
+                    data-param="mu2"
+                    title="期望收益率: 影响分布的中心位置"
+                    aria-label="股票B期望收益率"
+                    aria-describedby="mu2-val"
+                    role="slider"
+                    aria-valuemin="-50"
+                    aria-valuemax="50"
+                    aria-valuenow="8"
+                    aria-valuetext="8.0%"
                   />
+                  <div class="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>-50%</span>
+                    <span>50%</span>
+                  </div>
                 </div>
 
-                <div>
-                  <div class="mb-2 text-sm flex justify-between">
-                    <span>股票A波动率 σ₁ (%)</span>
-                    <span id="sigma1-val" class="text-neon-green">15.0%</span>
+                <div class="param-control">
+                  <div class="mb-2 text-sm flex justify-between items-center">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-wave-square text-neon-green"></i>
+                      股票A波动率 σ₁ (%)
+                    </span>
+                    <span id="sigma1-val" class="text-neon-green font-mono font-bold">15.0%</span>
                   </div>
                   <input
                     id="sigma1-slider"
                     type="range"
-                    min="5"
-                    max="50"
-                    step="1"
+                    min="0.1"
+                    max="100"
+                    step="0.1"
                     value="15"
-                    class="w-full accent-neon-green"
+                    class="param-slider w-full"
+                    data-param="sigma1"
+                    title="标准差: 控制分布的离散程度"
+                    aria-label="股票A波动率"
+                    aria-describedby="sigma1-val"
+                    role="slider"
+                    aria-valuemin="0.1"
+                    aria-valuemax="100"
+                    aria-valuenow="15"
+                    aria-valuetext="15.0%"
                   />
+                  <div class="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>0.1%</span>
+                    <span>100%</span>
+                  </div>
                 </div>
 
-                <div>
-                  <div class="mb-2 text-sm flex justify-between">
-                    <span>股票B波动率 σ₂ (%)</span>
-                    <span id="sigma2-val" class="text-neon-green">20.0%</span>
+                <div class="param-control">
+                  <div class="mb-2 text-sm flex justify-between items-center">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-wave-square text-neon-green"></i>
+                      股票B波动率 σ₂ (%)
+                    </span>
+                    <span id="sigma2-val" class="text-neon-green font-mono font-bold">20.0%</span>
                   </div>
                   <input
                     id="sigma2-slider"
                     type="range"
-                    min="5"
-                    max="50"
-                    step="1"
+                    min="0.1"
+                    max="100"
+                    step="0.1"
                     value="20"
-                    class="w-full accent-neon-green"
+                    class="param-slider w-full"
+                    data-param="sigma2"
+                    title="标准差: 控制分布的离散程度"
+                    aria-label="股票B波动率"
+                    aria-describedby="sigma2-val"
+                    role="slider"
+                    aria-valuemin="0.1"
+                    aria-valuemax="100"
+                    aria-valuenow="20"
+                    aria-valuetext="20.0%"
                   />
+                  <div class="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>0.1%</span>
+                    <span>100%</span>
+                  </div>
                 </div>
 
-                <div>
-                  <div class="mb-2 text-sm flex justify-between">
-                    <span>相关系数 ρ</span>
-                    <span id="rho-val" class="text-yellow-400">0.3</span>
+                <div class="param-control">
+                  <div class="mb-2 text-sm flex justify-between items-center">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-link text-yellow-400"></i>
+                      相关系数 ρ
+                    </span>
+                    <span id="rho-val" class="text-yellow-400 font-mono font-bold">0.30</span>
                   </div>
                   <input
                     id="rho-slider"
                     type="range"
-                    min="-0.9"
-                    max="0.9"
-                    step="0.1"
+                    min="-0.99"
+                    max="0.99"
+                    step="0.01"
                     value="0.3"
-                    class="w-full accent-yellow-400"
+                    class="param-slider w-full"
+                    data-param="rho"
+                    title="相关系数: -1(完全负相关) 到 +1(完全正相关)"
+                    aria-label="相关系数"
+                    aria-describedby="rho-val rho-interpretation"
+                    role="slider"
+                    aria-valuemin="-0.99"
+                    aria-valuemax="0.99"
+                    aria-valuenow="0.3"
+                    aria-valuetext="0.30 中等正相关"
                   />
+                  <div class="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>-0.99</span>
+                    <span class="text-center">0</span>
+                    <span>+0.99</span>
+                  </div>
+                  <div class="mt-1 text-xs text-center" id="rho-interpretation">
+                    <span class="text-gray-400">中等正相关</span>
+                  </div>
                 </div>
 
-                <div>
-                  <div class="mb-2 text-sm flex justify-between">
-                    <span>样本数量</span>
-                    <span id="n-samples-val" class="text-gray-300">1000</span>
+                <!-- Enhanced Sample Size Control with Performance Monitoring (Requirements 7.5, 7.7) -->
+                <div class="param-control">
+                  <div class="mb-2 text-sm flex justify-between items-center">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-database text-gray-300"></i>
+                      样本数量
+                      <span id="performance-indicator" class="ml-2 text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">
+                        <i class="fa-solid fa-tachometer-alt"></i> 流畅
+                      </span>
+                    </span>
+                    <span id="n-samples-val" class="text-gray-300 font-mono font-bold">1,000</span>
                   </div>
                   <input
                     id="n-samples-slider"
                     type="range"
                     min="100"
-                    max="5000"
+                    max="10000"
                     step="100"
                     value="1000"
-                    class="w-full accent-white"
+                    class="param-slider w-full"
+                    data-param="nSamples"
+                    title="样本数量: 影响估计精度和计算性能"
+                    aria-label="样本数量"
+                    aria-describedby="n-samples-val performance-indicator"
                   />
+                  <div class="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>100</span>
+                    <span class="text-center">5,000</span>
+                    <span>10,000</span>
+                  </div>
+                  
+                  <!-- Performance Monitoring and Recommendations -->
+                  <div class="mt-2 text-xs">
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-gray-400">性能状态:</span>
+                      <span id="sample-size-recommendation" class="text-neon-blue">推荐范围</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-1 mt-1 mb-2">
+                      <div id="performance-bar" class="bg-green-400 h-1 rounded-full transition-all duration-300" style="width: 20%"></div>
+                    </div>
+                    
+                    <!-- Performance Metrics Display -->
+                    <div class="grid grid-cols-3 gap-2 p-2 bg-dark-card/20 rounded border border-white/5">
+                      <div class="text-center">
+                        <div class="text-gray-500 text-xs">渲染时间</div>
+                        <div id="render-time" class="text-neon-green text-xs font-mono">~50ms</div>
+                      </div>
+                      <div class="text-center">
+                        <div class="text-gray-500 text-xs">内存使用</div>
+                        <div id="memory-usage" class="text-neon-blue text-xs font-mono">~2MB</div>
+                      </div>
+                      <div class="text-center">
+                        <div class="text-gray-500 text-xs">帧率</div>
+                        <div id="frame-rate" class="text-yellow-400 text-xs font-mono">60fps</div>
+                      </div>
+                    </div>
+                    
+                    <!-- Adaptive Quality Settings -->
+                    <div class="mt-2 flex items-center justify-between">
+                      <span class="text-gray-400 text-xs">自适应质量:</span>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="adaptive-quality" class="sr-only peer" checked>
+                        <div class="w-9 h-5 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-neon-blue"></div>
+                      </label>
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <div class="mb-2 text-sm">分布类型</div>
+                <!-- Distribution Type Selector with Core Options (Requirements 2.6, 7.5, 7.7) -->
+                <div class="param-control">
+                  <div class="mb-2 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-shapes text-neon-purple"></i>
+                    <span>分布类型</span>
+                    <span class="ml-auto text-xs text-gray-400" id="dist-complexity-indicator">
+                      <i class="fa-solid fa-info-circle"></i>
+                    </span>
+                  </div>
                   <select
                     id="dist-type"
-                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white"
+                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-3 text-white hover:border-neon-purple/50 focus:border-neon-purple focus:ring-2 focus:ring-neon-purple/20 transition-all duration-200"
+                    aria-label="选择概率分布类型"
                   >
-                    <option value="normal">二维正态分布</option>
-                    <option value="uniform">二维均匀分布</option>
-                    <option value="exponential">二维指数分布</option>
+                    <option value="normal" data-description="经典的钟形分布，适用于大多数自然现象" data-complexity="medium">二维正态分布 (Normal)</option>
+                    <option value="uniform" data-description="在指定区域内均匀分布，所有点等概率" data-complexity="low">二维均匀分布 (Uniform)</option>
+                    <option value="exponential" data-description="指数衰减分布，常用于生存分析和可靠性工程" data-complexity="high">二维指数分布 (Exponential)</option>
                   </select>
+                  <div id="dist-description" class="mt-2 text-xs text-gray-400 italic">
+                    经典的钟形分布，适用于大多数自然现象
+                  </div>
+                  
+                  <!-- Distribution Properties Display -->
+                  <div id="dist-properties" class="mt-3 p-3 bg-dark-card/30 rounded-lg border border-white/5">
+                    <div class="text-xs font-medium text-gray-300 mb-2">分布特性</div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">计算复杂度:</span>
+                        <span id="complexity-level" class="text-yellow-400">中等</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">支持相关性:</span>
+                        <span id="correlation-support" class="text-green-400">是</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">参数数量:</span>
+                        <span id="param-count" class="text-neon-blue">5个</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">推荐样本数:</span>
+                        <span id="recommended-samples" class="text-neon-purple">1000-5000</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
+                <!-- Enhanced Action Buttons with Comprehensive Reset (Requirements 7.7) -->
                 <div class="flex flex-wrap gap-2">
                   <button
                     id="generate-samples"
-                    class="px-4 py-2 rounded-lg border border-neon-blue/30 bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20"
+                    class="action-button px-4 py-2 rounded-lg border border-neon-blue/30 bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 transition-all duration-300"
+                    title="重新生成当前参数下的随机样本"
                   >
+                    <i class="fa-solid fa-refresh mr-2"></i>
                     重新生成样本
                   </button>
+                  
+                  <!-- Enhanced Reset Options -->
+                  <div class="relative">
+                    <button
+                      id="reset-params"
+                      class="action-button px-4 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10 transition-all duration-300"
+                      title="重置所有参数到默认值"
+                    >
+                      <i class="fa-solid fa-undo mr-2"></i>
+                      重置参数
+                    </button>
+                    
+                    <!-- Reset Options Dropdown -->
+                    <div id="reset-options" class="absolute top-full left-0 mt-1 bg-dark-card border border-white/20 rounded-lg shadow-lg hidden z-10 min-w-48">
+                      <button
+                        id="reset-all"
+                        class="w-full px-3 py-2 text-left text-sm hover:bg-white/10 rounded-t-lg flex items-center gap-2"
+                      >
+                        <i class="fa-solid fa-refresh text-neon-blue"></i>
+                        重置所有参数
+                      </button>
+                      <button
+                        id="reset-distribution-only"
+                        class="w-full px-3 py-2 text-left text-sm hover:bg-white/10 flex items-center gap-2"
+                      >
+                        <i class="fa-solid fa-shapes text-neon-purple"></i>
+                        仅重置分布参数
+                      </button>
+                      <button
+                        id="reset-to-preset"
+                        class="w-full px-3 py-2 text-left text-sm hover:bg-white/10 rounded-b-lg flex items-center gap-2"
+                      >
+                        <i class="fa-solid fa-bookmark text-neon-green"></i>
+                        恢复预设配置
+                      </button>
+                    </div>
+                  </div>
+                  
                   <button
-                    id="reset-params"
-                    class="px-4 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10"
+                    id="export-data"
+                    class="action-button px-4 py-2 rounded-lg border border-neon-green/30 bg-neon-green/10 text-neon-green hover:bg-neon-green/20 transition-all duration-300"
+                    title="导出当前样本数据和参数配置"
                   >
-                    重置参数
+                    <i class="fa-solid fa-download mr-2"></i>
+                    导出数据
                   </button>
                 </div>
 
-                <!-- 联合概率计算器 -->
-                <div
-                  class="bg-dark-bg/50 rounded-xl p-4 border border-white/10"
-                >
-                  <div class="text-sm font-medium mb-3">联合概率计算器</div>
-                  <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div>
-                      <label>X范围: [</label>
-                      <input
-                        id="x-min"
-                        type="number"
-                        value="-5"
-                        class="w-12 bg-transparent border-b border-white/20 text-center"
-                      />
-                      <span>, </span>
-                      <input
-                        id="x-max"
-                        type="number"
-                        value="5"
-                        class="w-12 bg-transparent border-b border-white/20 text-center"
-                      />
-                      <span>]</span>
+                <!-- Enhanced Joint Probability Calculator -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-neon-green"></i>
+                    联合概率计算器
+                  </div>
+                  
+                  <!-- Region Definition -->
+                  <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="space-y-2">
+                        <label class="text-xs text-gray-400 flex items-center gap-1">
+                          <i class="fa-solid fa-arrows-alt-h text-neon-blue"></i>
+                          X 范围
+                        </label>
+                        <div class="flex items-center gap-1 text-xs">
+                          <span>[</span>
+                          <input
+                            id="x-min"
+                            type="number"
+                            value="-5"
+                            step="0.1"
+                            class="w-16 bg-dark-card border border-white/20 rounded px-2 py-1 text-center focus:border-neon-blue focus:ring-1 focus:ring-neon-blue/20"
+                          />
+                          <span>,</span>
+                          <input
+                            id="x-max"
+                            type="number"
+                            value="5"
+                            step="0.1"
+                            class="w-16 bg-dark-card border border-white/20 rounded px-2 py-1 text-center focus:border-neon-blue focus:ring-1 focus:ring-neon-blue/20"
+                          />
+                          <span>]</span>
+                        </div>
+                      </div>
+                      
+                      <div class="space-y-2">
+                        <label class="text-xs text-gray-400 flex items-center gap-1">
+                          <i class="fa-solid fa-arrows-alt-v text-neon-purple"></i>
+                          Y 范围
+                        </label>
+                        <div class="flex items-center gap-1 text-xs">
+                          <span>[</span>
+                          <input
+                            id="y-min"
+                            type="number"
+                            value="-5"
+                            step="0.1"
+                            class="w-16 bg-dark-card border border-white/20 rounded px-2 py-1 text-center focus:border-neon-purple focus:ring-1 focus:ring-neon-purple/20"
+                          />
+                          <span>,</span>
+                          <input
+                            id="y-max"
+                            type="number"
+                            value="5"
+                            step="0.1"
+                            class="w-16 bg-dark-card border border-white/20 rounded px-2 py-1 text-center focus:border-neon-purple focus:ring-1 focus:ring-neon-purple/20"
+                          />
+                          <span>]</span>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <label>Y范围: [</label>
-                      <input
-                        id="y-min"
-                        type="number"
-                        value="-5"
-                        class="w-12 bg-transparent border-b border-white/20 text-center"
-                      />
-                      <span>, </span>
-                      <input
-                        id="y-max"
-                        type="number"
-                        value="5"
-                        class="w-12 bg-transparent border-b border-white/20 text-center"
-                      />
-                      <span>]</span>
+
+                    <!-- Calculation Method Selection -->
+                    <div class="space-y-2">
+                      <label class="text-xs text-gray-400">计算方法</label>
+                      <select id="calc-method" class="w-full bg-dark-card border border-white/20 rounded px-2 py-1 text-xs">
+                        <option value="sample">样本估计 (快速)</option>
+                        <option value="numerical">数值积分 (精确)</option>
+                        <option value="both">两种方法对比</option>
+                      </select>
+                    </div>
+
+                    <!-- Calculate Button -->
+                    <button
+                      id="calc-joint-prob"
+                      class="w-full py-2 rounded-lg border border-neon-green/30 bg-neon-green/10 text-neon-green hover:bg-neon-green/20 transition-all duration-300 text-sm font-medium"
+                    >
+                      <i class="fa-solid fa-play mr-2"></i>
+                      计算 P(X∈[a,b], Y∈[c,d])
+                    </button>
+
+                    <!-- Results Display -->
+                    <div id="prob-results" class="space-y-2 hidden">
+                      <div class="bg-dark-card/50 rounded-lg p-3 border border-white/10">
+                        <div class="text-xs text-gray-400 mb-2">计算结果</div>
+                        
+                        <div id="sample-result" class="flex justify-between items-center mb-1">
+                          <span class="text-xs">样本估计:</span>
+                          <span id="sample-prob" class="font-mono text-neon-blue">-</span>
+                        </div>
+                        
+                        <div id="numerical-result" class="flex justify-between items-center mb-1 hidden">
+                          <span class="text-xs">数值积分:</span>
+                          <span id="numerical-prob" class="font-mono text-neon-green">-</span>
+                        </div>
+                        
+                        <div id="error-estimate" class="flex justify-between items-center text-xs text-gray-400 hidden">
+                          <span>估计误差:</span>
+                          <span id="error-value" class="font-mono">-</span>
+                        </div>
+                      </div>
+
+                      <!-- Visual Region Indicator -->
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-gray-400">区域面积:</span>
+                        <span id="region-area" class="font-mono text-yellow-400">-</span>
+                      </div>
+                      
+                      <div class="flex items-center gap-2">
+                        <button id="highlight-region" class="flex-1 py-1 px-2 rounded border border-yellow-400/30 bg-yellow-400/10 text-yellow-400 text-xs hover:bg-yellow-400/20">
+                          <i class="fa-solid fa-eye mr-1"></i>
+                          高亮区域
+                        </button>
+                        <button id="clear-highlight" class="flex-1 py-1 px-2 rounded border border-white/20 bg-white/5 text-xs hover:bg-white/10">
+                          <i class="fa-solid fa-eye-slash mr-1"></i>
+                          清除高亮
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <button
-                    id="calc-joint-prob"
-                    class="mt-2 w-full py-1 rounded border border-white/20 bg-white/5 text-xs hover:bg-white/10"
-                  >
-                    计算 P(X∈[a,b], Y∈[c,d])
-                  </button>
                 </div>
               </div>
 
@@ -805,6 +1475,109 @@
                   </div>
                 </div>
               </div>
+
+              <!-- 游戏角色场景控制 -->
+              <div id="game-character-controls" class="scenario-controls space-y-5 hidden">
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>样本角色数量</span>
+                    <span id="character-count-val" class="text-neon-blue">2000</span>
+                  </div>
+                  <input
+                    id="character-count-slider"
+                    type="range"
+                    min="500"
+                    max="5000"
+                    step="100"
+                    value="2000"
+                    class="w-full accent-neon-blue"
+                  />
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm">游戏主题</div>
+                  <select
+                    id="game-theme-selector"
+                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white"
+                  >
+                    <option value="lol">英雄联盟 (League of Legends)</option>
+                    <option value="genshin">原神 (Genshin Impact)</option>
+                    <option value="honor">王者荣耀 (Honor of Kings)</option>
+                    <option value="dota">DOTA 2</option>
+                  </select>
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm">角色职业过滤</div>
+                  <select
+                    id="character-class-filter"
+                    class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white"
+                  >
+                    <option value="all">所有职业</option>
+                    <option value="tank">坦克 (Tank)</option>
+                    <option value="dps">输出 (DPS)</option>
+                    <option value="support">辅助 (Support)</option>
+                    <option value="assassin">刺客 (Assassin)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <div class="mb-2 text-sm flex justify-between">
+                    <span>属性平衡度</span>
+                    <span id="balance-factor-val" class="text-neon-purple">0.7</span>
+                  </div>
+                  <input
+                    id="balance-factor-slider"
+                    type="range"
+                    min="0.1"
+                    max="1.0"
+                    step="0.1"
+                    value="0.7"
+                    class="w-full accent-neon-purple"
+                  />
+                  <div class="text-xs text-gray-400 mt-1">
+                    调整游戏平衡性设计的强度
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    id="generate-characters"
+                    class="px-4 py-2 rounded-lg border border-neon-green/30 bg-neon-green/10 text-neon-green hover:bg-neon-green/20"
+                  >
+                    生成角色数据
+                  </button>
+                  <button
+                    id="analyze-balance"
+                    class="px-4 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10"
+                  >
+                    平衡性分析
+                  </button>
+                </div>
+
+                <!-- 游戏设计原则显示 -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">游戏设计原则</div>
+                  <div class="space-y-2 text-xs">
+                    <div class="flex justify-between">
+                      <span>攻防平衡:</span>
+                      <span class="text-gray-300">高攻击 ↔ 低防御</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>敏捷特化:</span>
+                      <span class="text-gray-300">高敏捷 ↔ 高攻击</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>职业差异:</span>
+                      <span class="text-gray-300">明确的角色定位</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span>多样性:</span>
+                      <span class="text-gray-300">避免同质化设计</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -844,6 +1617,25 @@
             </p>
           </div>
 
+          <!-- Section 3.2 Scenario Tabs -->
+          <div class="mb-6">
+            <div class="text-sm text-gray-300 mb-3">选择分析场景:</div>
+            <div id="section-3-2-tabs" class="flex flex-wrap gap-2 justify-center">
+              <button id="tab-streamer" class="scenario-tab-3-2 px-4 py-2 rounded-lg border border-neon-purple/30 bg-neon-purple/20 text-neon-purple transition-all duration-300 active">
+                <i class="fa-solid fa-video mr-2"></i>
+                <span class="hidden sm:inline">网红直播分析</span>
+              </button>
+              <button id="tab-game-character" class="scenario-tab-3-2 px-4 py-2 rounded-lg border border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500 transition-all duration-300">
+                <i class="fa-solid fa-gamepad mr-2"></i>
+                <span class="hidden sm:inline">游戏角色分析</span>
+              </button>
+              <button id="tab-social-media" class="scenario-tab-3-2 px-4 py-2 rounded-lg border border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500 transition-all duration-300">
+                <i class="fa-solid fa-share-alt mr-2"></i>
+                <span class="hidden sm:inline">社交媒体分析</span>
+              </button>
+            </div>
+          </div>
+
           <div class="flex flex-col lg:flex-row gap-8">
             <!-- 左侧可视化区域 -->
             <div class="flex-1">
@@ -865,8 +1657,403 @@
                   ></canvas>
                 </div>
 
+                <!-- 网红直播数据分析器 -->
+                <div id="streamer-analytics-lab" class="bg-dark-card/60 rounded-xl p-4 md:col-span-2 hidden">
+                  <div class="text-sm text-gray-300 mb-4 flex items-center justify-between">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-video text-neon-purple"></i>
+                      网红直播数据分析器 (Streamer Analytics Lab)
+                    </span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs text-gray-400">实时数据</span>
+                      <div id="live-indicator" class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    </div>
+                  </div>
+                  
+                  <!-- 主播选择器 -->
+                  <div class="mb-4">
+                    <div class="text-xs text-gray-400 mb-2">选择主播类型</div>
+                    <div class="grid grid-cols-3 gap-2">
+                      <button id="streamer-gaming" class="streamer-type-btn px-3 py-2 rounded-lg border border-neon-blue/30 bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 text-xs active">
+                        <i class="fa-solid fa-gamepad mr-1"></i>游戏主播
+                      </button>
+                      <button id="streamer-beauty" class="streamer-type-btn px-3 py-2 rounded-lg border border-neon-purple/30 bg-neon-purple/10 text-neon-purple hover:bg-neon-purple/20 text-xs">
+                        <i class="fa-solid fa-heart mr-1"></i>颜值主播
+                      </button>
+                      <button id="streamer-talent" class="streamer-type-btn px-3 py-2 rounded-lg border border-neon-green/30 bg-neon-green/10 text-neon-green hover:bg-neon-green/20 text-xs">
+                        <i class="fa-solid fa-music mr-1"></i>才艺主播
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 实时数据可视化 -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <!-- 弹幕数量趋势 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-comments text-neon-blue"></i>
+                        弹幕数量/分钟
+                      </div>
+                      <canvas id="danmu-trend-chart" width="200" height="100" class="w-full"></canvas>
+                    </div>
+
+                    <!-- 礼物价值分布 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-gift text-neon-purple"></i>
+                        礼物价值分布
+                      </div>
+                      <canvas id="gift-value-chart" width="200" height="100" class="w-full"></canvas>
+                    </div>
+
+                    <!-- 观看时长分析 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-clock text-neon-green"></i>
+                        观看时长分布
+                      </div>
+                      <canvas id="viewing-duration-chart" width="200" height="100" class="w-full"></canvas>
+                    </div>
+
+                    <!-- 相关性热力图 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-area text-yellow-400"></i>
+                        变量相关性矩阵
+                      </div>
+                      <canvas id="correlation-heatmap" width="200" height="100" class="w-full"></canvas>
+                    </div>
+                  </div>
+
+                  <!-- 热门话题标签 -->
+                  <div class="mb-4">
+                    <div class="text-xs text-gray-400 mb-2">当前热门话题</div>
+                    <div id="trending-topics" class="flex flex-wrap gap-2">
+                      <!-- 动态生成的热门话题标签 -->
+                    </div>
+                  </div>
+
+                  <!-- 独立性检验结果 -->
+                  <div class="bg-dark-bg/30 rounded-lg p-3">
+                    <div class="text-xs text-gray-400 mb-2">独立性检验结果</div>
+                    <div class="grid grid-cols-3 gap-3 text-xs">
+                      <div class="text-center">
+                        <div class="text-gray-500">弹幕 ↔ 礼物</div>
+                        <div id="danmu-gift-correlation" class="text-neon-blue font-bold">0.00</div>
+                        <div id="danmu-gift-pvalue" class="text-xs text-gray-400">(p=0.000)</div>
+                      </div>
+                      <div class="text-center">
+                        <div class="text-gray-500">弹幕 ↔ 时长</div>
+                        <div id="danmu-duration-correlation" class="text-neon-purple font-bold">0.00</div>
+                        <div id="danmu-duration-pvalue" class="text-xs text-gray-400">(p=0.000)</div>
+                      </div>
+                      <div class="text-center">
+                        <div class="text-gray-500">礼物 ↔ 时长</div>
+                        <div id="gift-duration-correlation" class="text-neon-green font-bold">0.00</div>
+                        <div id="gift-duration-pvalue" class="text-xs text-gray-400">(p=0.000)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 社交媒体行为模式分析 (Social Media Behavior Analyzer) -->
+                <div id="social-media-analyzer" class="bg-dark-card/60 rounded-xl p-4 md:col-span-2 hidden">
+                  <div class="text-sm text-gray-300 mb-4 flex items-center justify-between">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-share-alt text-neon-green"></i>
+                      社交媒体行为模式分析 (Social Media Behavior Analyzer)
+                    </span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs text-gray-400">实时分析</span>
+                      <div id="social-media-indicator" class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    </div>
+                  </div>
+                  
+                  <!-- 平台选择器 -->
+                  <div class="mb-4">
+                    <div class="text-xs text-gray-400 mb-2">选择社交媒体平台</div>
+                    <div class="grid grid-cols-3 gap-2">
+                      <button id="platform-weibo" class="social-platform-btn px-3 py-2 rounded-lg border border-neon-blue/30 bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 text-xs active">
+                        <i class="fa-solid fa-comment mr-1"></i>微博
+                      </button>
+                      <button id="platform-douyin-social" class="social-platform-btn px-3 py-2 rounded-lg border border-neon-purple/30 bg-neon-purple/10 text-neon-purple hover:bg-neon-purple/20 text-xs">
+                        <i class="fa-solid fa-video mr-1"></i>抖音
+                      </button>
+                      <button id="platform-bilibili-social" class="social-platform-btn px-3 py-2 rounded-lg border border-neon-green/30 bg-neon-green/10 text-neon-green hover:bg-neon-green/20 text-xs">
+                        <i class="fa-solid fa-tv mr-1"></i>B站
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 用户类型选择器 -->
+                  <div class="mb-4">
+                    <div class="text-xs text-gray-400 mb-2">用户类型分析</div>
+                    <div class="grid grid-cols-4 gap-2">
+                      <button id="user-kol" class="user-type-btn px-2 py-1 rounded border border-yellow-400/30 bg-yellow-400/10 text-yellow-400 hover:bg-yellow-400/20 text-xs active">
+                        <i class="fa-solid fa-star mr-1"></i>KOL
+                      </button>
+                      <button id="user-ordinary" class="user-type-btn px-2 py-1 rounded border border-blue-400/30 bg-blue-400/10 text-blue-400 hover:bg-blue-400/20 text-xs">
+                        <i class="fa-solid fa-user mr-1"></i>普通用户
+                      </button>
+                      <button id="user-brand" class="user-type-btn px-2 py-1 rounded border border-purple-400/30 bg-purple-400/10 text-purple-400 hover:bg-purple-400/20 text-xs">
+                        <i class="fa-solid fa-building mr-1"></i>品牌方
+                      </button>
+                      <button id="user-bot" class="user-type-btn px-2 py-1 rounded border border-red-400/30 bg-red-400/10 text-red-400 hover:bg-red-400/20 text-xs">
+                        <i class="fa-solid fa-robot mr-1"></i>机器人
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 行为数据可视化 -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <!-- 发帖频率分析 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-edit text-neon-blue"></i>
+                        发帖频率 (次/天)
+                      </div>
+                      <canvas id="posting-frequency-chart" width="200" height="100" class="w-full"></canvas>
+                    </div>
+
+                    <!-- 互动率分析 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-heart text-neon-purple"></i>
+                        互动率 (%)
+                      </div>
+                      <canvas id="engagement-rate-chart" width="200" height="100" class="w-full"></canvas>
+                    </div>
+
+                    <!-- 内容类型分布 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-neon-green"></i>
+                        内容类型分布
+                      </div>
+                      <canvas id="content-type-chart" width="200" height="100" class="w-full"></canvas>
+                    </div>
+
+                    <!-- 时间段活跃度 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-clock text-yellow-400"></i>
+                        时间段活跃度
+                      </div>
+                      <canvas id="time-activity-chart" width="200" height="100" class="w-full"></canvas>
+                    </div>
+                  </div>
+
+                  <!-- 热门话题和标签 -->
+                  <div class="mb-4">
+                    <div class="text-xs text-gray-400 mb-2">当前热门话题</div>
+                    <div id="trending-hashtags" class="flex flex-wrap gap-2">
+                      <!-- 动态生成的热门话题标签 -->
+                    </div>
+                  </div>
+
+                  <!-- 病毒传播分析 -->
+                  <div class="mb-4">
+                    <div class="text-xs text-gray-400 mb-2">病毒传播模式分析</div>
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <canvas id="viral-spread-chart" width="400" height="150" class="w-full"></canvas>
+                    </div>
+                  </div>
+
+                  <!-- 独立性检验结果 -->
+                  <div class="bg-dark-bg/30 rounded-lg p-3">
+                    <div class="text-xs text-gray-400 mb-2">行为独立性检验结果</div>
+                    <div class="grid grid-cols-3 gap-3 text-xs">
+                      <div class="text-center">
+                        <div class="text-gray-500">发帖 ↔ 互动</div>
+                        <div id="posting-engagement-correlation" class="text-neon-blue font-bold">0.00</div>
+                        <div id="posting-engagement-pvalue" class="text-xs text-gray-400">(p=0.000)</div>
+                        <div id="posting-engagement-independence" class="text-xs text-green-400">独立</div>
+                      </div>
+                      <div class="text-center">
+                        <div class="text-gray-500">时间 ↔ 活跃度</div>
+                        <div id="time-activity-correlation" class="text-neon-purple font-bold">0.00</div>
+                        <div id="time-activity-pvalue" class="text-xs text-gray-400">(p=0.000)</div>
+                        <div id="time-activity-independence" class="text-xs text-green-400">独立</div>
+                      </div>
+                      <div class="text-center">
+                        <div class="text-gray-500">内容 ↔ 传播</div>
+                        <div id="content-viral-correlation" class="text-neon-green font-bold">0.00</div>
+                        <div id="content-viral-pvalue" class="text-xs text-gray-400">(p=0.000)</div>
+                        <div id="content-viral-independence" class="text-xs text-green-400">独立</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 平台特性分析 -->
+                  <div class="mt-4 bg-dark-bg/30 rounded-lg p-3">
+                    <div class="text-xs text-gray-400 mb-2">平台特性分析</div>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">算法推荐影响:</span>
+                        <span id="algorithm-influence" class="text-yellow-400 font-bold">78%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">用户粘性指数:</span>
+                        <span id="user-stickiness" class="text-neon-blue font-bold">85%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">内容多样性:</span>
+                        <span id="content-diversity" class="text-neon-purple font-bold">92%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">传播速度系数:</span>
+                        <span id="spread-velocity" class="text-neon-green font-bold">0.73</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 游戏角色属性独立性检验 (Game Character Stats Analyzer) -->
+                <div id="game-character-analyzer" class="bg-dark-card/60 rounded-xl p-4 md:col-span-2 hidden">
+                  <div class="text-sm text-gray-300 mb-4 flex items-center justify-between">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-gamepad text-neon-green"></i>
+                      游戏角色属性独立性检验 (Game Character Stats Analyzer)
+                    </span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs text-gray-400">实时分析</span>
+                      <div id="game-analysis-indicator" class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    </div>
+                  </div>
+                  
+                  <!-- 游戏主题选择器 -->
+                  <div class="mb-4">
+                    <div class="text-xs text-gray-400 mb-2">选择游戏主题</div>
+                    <div class="grid grid-cols-3 gap-2">
+                      <button id="game-lol" class="game-theme-btn px-3 py-2 rounded-lg border border-neon-blue/30 bg-neon-blue/10 text-neon-blue hover:bg-neon-blue/20 text-xs active">
+                        <i class="fa-solid fa-sword mr-1"></i>英雄联盟
+                      </button>
+                      <button id="game-genshin" class="game-theme-btn px-3 py-2 rounded-lg border border-neon-purple/30 bg-neon-purple/10 text-neon-purple hover:bg-neon-purple/20 text-xs">
+                        <i class="fa-solid fa-magic mr-1"></i>原神
+                      </button>
+                      <button id="game-honor" class="game-theme-btn px-3 py-2 rounded-lg border border-neon-green/30 bg-neon-green/10 text-neon-green hover:bg-neon-green/20 text-xs">
+                        <i class="fa-solid fa-crown mr-1"></i>王者荣耀
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 角色职业选择器 -->
+                  <div class="mb-4">
+                    <div class="text-xs text-gray-400 mb-2">角色职业分析</div>
+                    <div class="grid grid-cols-4 gap-2">
+                      <button id="class-tank" class="character-class-btn px-2 py-1 rounded border border-blue-400/30 bg-blue-400/10 text-blue-400 hover:bg-blue-400/20 text-xs active">
+                        <i class="fa-solid fa-shield mr-1"></i>坦克
+                      </button>
+                      <button id="class-dps" class="character-class-btn px-2 py-1 rounded border border-red-400/30 bg-red-400/10 text-red-400 hover:bg-red-400/20 text-xs">
+                        <i class="fa-solid fa-sword mr-1"></i>输出
+                      </button>
+                      <button id="class-support" class="character-class-btn px-2 py-1 rounded border border-green-400/30 bg-green-400/10 text-green-400 hover:bg-green-400/20 text-xs">
+                        <i class="fa-solid fa-heart mr-1"></i>辅助
+                      </button>
+                      <button id="class-assassin" class="character-class-btn px-2 py-1 rounded border border-purple-400/30 bg-purple-400/10 text-purple-400 hover:bg-purple-400/20 text-xs">
+                        <i class="fa-solid fa-user-ninja mr-1"></i>刺客
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 属性分布可视化 -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <!-- 攻击力vs防御力散点图 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-scatter text-neon-blue"></i>
+                        攻击力 vs 防御力
+                      </div>
+                      <canvas id="attack-defense-scatter" width="200" height="120" class="w-full"></canvas>
+                    </div>
+
+                    <!-- 攻击力vs敏捷散点图 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-scatter text-neon-purple"></i>
+                        攻击力 vs 敏捷
+                      </div>
+                      <canvas id="attack-agility-scatter" width="200" height="120" class="w-full"></canvas>
+                    </div>
+
+                    <!-- 防御力vs敏捷散点图 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-scatter text-neon-green"></i>
+                        防御力 vs 敏捷
+                      </div>
+                      <canvas id="defense-agility-scatter" width="200" height="120" class="w-full"></canvas>
+                    </div>
+
+                    <!-- 属性相关性热力图 -->
+                    <div class="bg-dark-bg/30 rounded-lg p-3">
+                      <div class="text-xs text-gray-400 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-th text-yellow-400"></i>
+                        属性相关性矩阵
+                      </div>
+                      <canvas id="stats-correlation-matrix" width="200" height="120" class="w-full"></canvas>
+                    </div>
+                  </div>
+
+                  <!-- 热门角色展示 -->
+                  <div class="mb-4">
+                    <div class="text-xs text-gray-400 mb-2">热门角色属性分析</div>
+                    <div id="popular-characters" class="grid grid-cols-3 gap-2 text-xs">
+                      <!-- 动态生成的热门角色 -->
+                    </div>
+                  </div>
+
+                  <!-- 独立性检验结果 -->
+                  <div class="bg-dark-bg/30 rounded-lg p-3">
+                    <div class="text-xs text-gray-400 mb-2">属性独立性检验结果</div>
+                    <div class="grid grid-cols-3 gap-3 text-xs">
+                      <div class="text-center">
+                        <div class="text-gray-500">攻击 ↔ 防御</div>
+                        <div id="attack-defense-correlation" class="text-neon-blue font-bold">0.00</div>
+                        <div id="attack-defense-pvalue" class="text-xs text-gray-400">(p=0.000)</div>
+                        <div id="attack-defense-independence" class="text-xs text-green-400">独立</div>
+                      </div>
+                      <div class="text-center">
+                        <div class="text-gray-500">攻击 ↔ 敏捷</div>
+                        <div id="attack-agility-correlation" class="text-neon-purple font-bold">0.00</div>
+                        <div id="attack-agility-pvalue" class="text-xs text-gray-400">(p=0.000)</div>
+                        <div id="attack-agility-independence" class="text-xs text-green-400">独立</div>
+                      </div>
+                      <div class="text-center">
+                        <div class="text-gray-500">防御 ↔ 敏捷</div>
+                        <div id="defense-agility-correlation" class="text-neon-green font-bold">0.00</div>
+                        <div id="defense-agility-pvalue" class="text-xs text-gray-400">(p=0.000)</div>
+                        <div id="defense-agility-independence" class="text-xs text-green-400">独立</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 角色平衡性分析 -->
+                  <div class="mt-4 bg-dark-bg/30 rounded-lg p-3">
+                    <div class="text-xs text-gray-400 mb-2">角色平衡性分析</div>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">平衡指数:</span>
+                        <span id="balance-index" class="text-yellow-400 font-bold">85%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">多样性指数:</span>
+                        <span id="diversity-index" class="text-neon-blue font-bold">92%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">职业特化度:</span>
+                        <span id="specialization-degree" class="text-neon-purple font-bold">78%</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-400">属性离散度:</span>
+                        <span id="attribute-variance" class="text-neon-green font-bold">0.65</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- 独立性测试仪表盘 -->
-                <div class="bg-dark-card/60 rounded-xl p-4 md:col-span-2">
+                <div id="general-independence-dashboard" class="bg-dark-card/60 rounded-xl p-4 md:col-span-2">
                   <div class="text-sm text-gray-300 mb-2">独立性检验结果</div>
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                     <div class="text-center">
@@ -919,6 +2106,9 @@
                     <option value="social">社交媒体行为</option>
                     <option value="shopping">购物行为</option>
                     <option value="learning">学习习惯</option>
+                    <option value="streamer">网红直播数据</option>
+                    <option value="gaming">游戏角色属性</option>
+                    <option value="socialmedia">社交媒体行为模式</option>
                     <option value="custom">自定义场景</option>
                   </select>
                 </div>
@@ -1000,6 +2190,129 @@
                   </button>
                 </div>
 
+                <!-- 网红直播数据分析器控制面板 -->
+                <div id="streamer-controls" class="bg-dark-bg/50 rounded-xl p-4 border border-white/10 hidden">
+                  <div class="text-sm font-medium mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-video text-neon-purple"></i>
+                    直播数据控制
+                  </div>
+                  
+                  <!-- 主播人设选择 -->
+                  <div class="mb-3">
+                    <div class="text-xs text-gray-400 mb-2">主播人设</div>
+                    <select id="streamer-persona" class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white text-sm">
+                      <option value="gaming-pro">电竞大神 (高技术)</option>
+                      <option value="gaming-funny">搞笑游戏主播</option>
+                      <option value="beauty-sweet">甜美颜值主播</option>
+                      <option value="beauty-cool">酷飒御姐主播</option>
+                      <option value="talent-singer">歌手主播</option>
+                      <option value="talent-dancer">舞蹈主播</option>
+                    </select>
+                  </div>
+
+                  <!-- 直播时段 -->
+                  <div class="mb-3">
+                    <div class="text-xs text-gray-400 mb-2">直播时段</div>
+                    <select id="streaming-time" class="w-full bg-dark-bg border border-white/20 rounded-lg p-2 text-white text-sm">
+                      <option value="morning">上午 (9:00-12:00)</option>
+                      <option value="afternoon">下午 (14:00-17:00)</option>
+                      <option value="evening" selected>晚上 (19:00-22:00)</option>
+                      <option value="night">深夜 (22:00-02:00)</option>
+                    </select>
+                  </div>
+
+                  <!-- 平台选择 -->
+                  <div class="mb-3">
+                    <div class="text-xs text-gray-400 mb-2">直播平台</div>
+                    <div class="grid grid-cols-2 gap-2">
+                      <button id="platform-douyin" class="platform-btn px-2 py-1 rounded border border-neon-blue/30 bg-neon-blue/10 text-neon-blue text-xs active">
+                        <i class="fa-solid fa-music mr-1"></i>抖音
+                      </button>
+                      <button id="platform-bilibili" class="platform-btn px-2 py-1 rounded border border-neon-purple/30 bg-neon-purple/10 text-neon-purple text-xs">
+                        <i class="fa-solid fa-tv mr-1"></i>B站
+                      </button>
+                      <button id="platform-kuaishou" class="platform-btn px-2 py-1 rounded border border-neon-green/30 bg-neon-green/10 text-neon-green text-xs">
+                        <i class="fa-solid fa-video mr-1"></i>快手
+                      </button>
+                      <button id="platform-xiaohongshu" class="platform-btn px-2 py-1 rounded border border-red-400/30 bg-red-400/10 text-red-400 text-xs">
+                        <i class="fa-solid fa-heart mr-1"></i>小红书
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 实时数据模拟控制 -->
+                  <div class="mb-3">
+                    <div class="text-xs text-gray-400 mb-2 flex justify-between">
+                      <span>弹幕活跃度</span>
+                      <span id="danmu-activity-val" class="text-neon-blue">中等</span>
+                    </div>
+                    <input
+                      id="danmu-activity-slider"
+                      type="range"
+                      min="1"
+                      max="5"
+                      step="1"
+                      value="3"
+                      class="w-full accent-neon-blue"
+                    />
+                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                      <span>冷清</span>
+                      <span>火爆</span>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <div class="text-xs text-gray-400 mb-2 flex justify-between">
+                      <span>礼物频率</span>
+                      <span id="gift-frequency-val" class="text-neon-purple">正常</span>
+                    </div>
+                    <input
+                      id="gift-frequency-slider"
+                      type="range"
+                      min="1"
+                      max="5"
+                      step="1"
+                      value="3"
+                      class="w-full accent-neon-purple"
+                    />
+                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                      <span>稀少</span>
+                      <span>土豪</span>
+                    </div>
+                  </div>
+
+                  <!-- 热门事件触发器 -->
+                  <div class="mb-3">
+                    <div class="text-xs text-gray-400 mb-2">热门事件</div>
+                    <div class="grid grid-cols-2 gap-2">
+                      <button id="trigger-viral" class="px-2 py-1 rounded border border-yellow-400/30 bg-yellow-400/10 text-yellow-400 text-xs hover:bg-yellow-400/20">
+                        <i class="fa-solid fa-fire mr-1"></i>爆火时刻
+                      </button>
+                      <button id="trigger-controversy" class="px-2 py-1 rounded border border-red-400/30 bg-red-400/10 text-red-400 text-xs hover:bg-red-400/20">
+                        <i class="fa-solid fa-exclamation mr-1"></i>争议事件
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 数据导出 -->
+                  <div class="flex gap-2">
+                    <button
+                      id="export-streamer-data"
+                      class="flex-1 px-3 py-2 rounded-lg border border-neon-green/30 bg-neon-green/10 text-neon-green hover:bg-neon-green/20 text-xs"
+                    >
+                      <i class="fa-solid fa-download mr-1"></i>
+                      导出数据
+                    </button>
+                    <button
+                      id="reset-streamer-simulation"
+                      class="flex-1 px-3 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10 text-xs"
+                    >
+                      <i class="fa-solid fa-refresh mr-1"></i>
+                      重置模拟
+                    </button>
+                  </div>
+                </div>
+
                 <!-- 边际分布提取器 -->
                 <div
                   class="bg-dark-bg/50 rounded-xl p-4 border border-white/10"
@@ -1026,6 +2339,22 @@
                     </button>
                   </div>
                 </div>
+
+                <!-- 场景特定控制面板 -->
+                <div id="scenario-specific-controls" class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">场景参数</div>
+                  <div id="scenario-controls-content">
+                    <!-- 动态内容将由JavaScript生成 -->
+                  </div>
+                </div>
+
+                <!-- 场景描述 -->
+                <div id="scenario-description-panel" class="bg-dark-bg/30 rounded-xl p-4 border border-white/5">
+                  <div class="text-sm font-medium mb-2">场景说明</div>
+                  <div id="scenario-description-text" class="text-xs text-gray-300">
+                    <!-- 动态内容将由JavaScript生成 -->
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1050,34 +2379,261 @@
           <div class="flex flex-col lg:flex-row gap-8">
             <!-- 左侧可视化区域 -->
             <div class="flex-1">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <!-- 变换前后对比 -->
-                <div class="bg-dark-card/60 rounded-xl p-4">
-                  <div class="text-sm text-gray-300 mb-2">变换前分布</div>
-                  <canvas
-                    id="transform-before-canvas"
-                    width="300"
-                    height="240"
-                    class="w-full rounded-lg"
-                  ></canvas>
+              <!-- 场景切换标签 -->
+              <div class="mb-6">
+                <div class="text-sm text-gray-300 mb-3">选择应用场景:</div>
+                <div class="flex flex-wrap gap-2 justify-center">
+                  <button id="transform-tab-traditional" class="scenario-tab-transform px-4 py-2 rounded-lg border border-neon-green/30 bg-neon-green/20 text-neon-green transition-all duration-300 active">
+                    <i class="fa-solid fa-chart-scatter mr-2"></i>传统变换
+                  </button>
+                  <button id="transform-tab-cnn" class="scenario-tab-transform px-4 py-2 rounded-lg border border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500 transition-all duration-300">
+                    <i class="fa-solid fa-brain mr-2"></i>CNN卷积对比
+                  </button>
+                  <button id="transform-tab-image" class="scenario-tab-transform px-4 py-2 rounded-lg border border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500 transition-all duration-300">
+                    <i class="fa-solid fa-image mr-2"></i>图像处理实验室
+                  </button>
+                  <button id="transform-tab-crypto" class="scenario-tab-transform px-4 py-2 rounded-lg border border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500 transition-all duration-300">
+                    <i class="fa-solid fa-coins mr-2"></i>加密货币分析
+                  </button>
+                </div>
+              </div>
+
+              <!-- 传统变换场景 -->
+              <div id="traditional-transform-content" class="transform-scenario-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <!-- 变换前后对比 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">变换前分布</div>
+                    <canvas
+                      id="transform-before-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">变换后分布</div>
+                    <canvas
+                      id="transform-after-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 雅可比矩阵显示 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4 md:col-span-2">
+                    <div class="text-sm text-gray-300 mb-2">雅可比矩阵与行列式</div>
+                    <div id="jacobian-display" class="text-center">
+                      <div class="text-lg">$J = \begin{pmatrix} \frac{\partial u}{\partial x} & \frac{\partial u}{\partial y} \\ \frac{\partial v}{\partial x} & \frac{\partial v}{\partial y} \end{pmatrix}$</div>
+                      <div class="mt-2">$|J| = <span id="jacobian-determinant">1.00</span>$</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CNN卷积对比场景 -->
+              <div id="cnn-convolution-content" class="transform-scenario-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <!-- CNN卷积操作 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">CNN卷积操作</div>
+                    <canvas
+                      id="cnn-convolution-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 数学卷积 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">数学卷积公式</div>
+                    <canvas
+                      id="math-convolution-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 卷积核设计 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">卷积核设计</div>
+                    <div id="kernel-designer" class="grid grid-cols-3 gap-1 max-w-32 mx-auto">
+                      <!-- 3x3 kernel inputs will be generated here -->
+                    </div>
+                  </div>
+
+                  <!-- 卷积动画 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">卷积过程动画</div>
+                    <canvas
+                      id="convolution-animation-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
                 </div>
 
-                <div class="bg-dark-card/60 rounded-xl p-4">
-                  <div class="text-sm text-gray-300 mb-2">变换后分布</div>
-                  <canvas
-                    id="transform-after-canvas"
-                    width="300"
-                    height="240"
-                    class="w-full rounded-lg"
-                  ></canvas>
+                <!-- CNN架构示例 -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">经典CNN架构示例</div>
+                  <div class="grid grid-cols-3 gap-3 text-xs">
+                    <div>
+                      <div class="text-gray-400 mb-1">ResNet风格</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-blue-400/20 text-blue-400 rounded">残差连接</span>
+                        <span class="px-2 py-1 bg-blue-400/20 text-blue-400 rounded">批归一化</span>
+                        <span class="px-2 py-1 bg-blue-400/20 text-blue-400 rounded">跳跃连接</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-gray-400 mb-1">VGG风格</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-purple-400/20 text-purple-400 rounded">深层网络</span>
+                        <span class="px-2 py-1 bg-purple-400/20 text-purple-400 rounded">小卷积核</span>
+                        <span class="px-2 py-1 bg-purple-400/20 text-purple-400 rounded">池化层</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-gray-400 mb-1">现代架构</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-green-400/20 text-green-400 rounded">注意力机制</span>
+                        <span class="px-2 py-1 bg-green-400/20 text-green-400 rounded">Transformer</span>
+                        <span class="px-2 py-1 bg-green-400/20 text-green-400 rounded">自适应池化</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 图像处理实验室场景 -->
+              <div id="image-processing-content" class="transform-scenario-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <!-- 原始图像 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">原始图像</div>
+                    <canvas
+                      id="original-image-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 变换后图像 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">变换后图像</div>
+                    <canvas
+                      id="transformed-image-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 概率分布变化 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">像素分布变化</div>
+                    <canvas
+                      id="pixel-distribution-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 滤镜效果 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">Instagram风格滤镜</div>
+                    <canvas
+                      id="filter-effects-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
                 </div>
 
-                <!-- 雅可比矩阵显示 -->
-                <div class="bg-dark-card/60 rounded-xl p-4 md:col-span-2">
-                  <div class="text-sm text-gray-300 mb-2">雅可比矩阵与行列式</div>
-                  <div id="jacobian-display" class="text-center">
-                    <div class="text-lg">$J = \begin{pmatrix} \frac{\partial u}{\partial x} & \frac{\partial u}{\partial y} \\ \frac{\partial v}{\partial x} & \frac{\partial v}{\partial y} \end{pmatrix}$</div>
-                    <div class="mt-2">$|J| = <span id="jacobian-determinant">1.00</span>$</div>
+                <!-- 滤镜选择 -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">Instagram风格滤镜</div>
+                  <div class="grid grid-cols-4 gap-2 text-xs">
+                    <button class="filter-btn px-3 py-2 bg-gradient-to-r from-pink-500 to-yellow-500 text-white rounded" data-filter="vintage">复古</button>
+                    <button class="filter-btn px-3 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded" data-filter="cool">冷色调</button>
+                    <button class="filter-btn px-3 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded" data-filter="warm">暖色调</button>
+                    <button class="filter-btn px-3 py-2 bg-gradient-to-r from-gray-500 to-gray-700 text-white rounded" data-filter="bw">黑白</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 加密货币分析场景 -->
+              <div id="crypto-analysis-content" class="transform-scenario-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <!-- 原始价格数据 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">原始价格分布</div>
+                    <canvas
+                      id="crypto-price-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 对数变换后 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">对数变换后分布</div>
+                    <canvas
+                      id="crypto-log-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 波动率分析 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">波动率分析</div>
+                    <canvas
+                      id="crypto-volatility-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 风险评估 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">风险评估模型</div>
+                    <canvas
+                      id="crypto-risk-canvas"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+                </div>
+
+                <!-- 加密货币选择 -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">热门加密货币</div>
+                  <div class="grid grid-cols-4 gap-2 text-xs">
+                    <button class="crypto-btn px-3 py-2 bg-orange-500/20 border border-orange-500/30 text-orange-400 rounded active" data-crypto="bitcoin">
+                      <i class="fab fa-bitcoin mr-1"></i>Bitcoin
+                    </button>
+                    <button class="crypto-btn px-3 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded" data-crypto="ethereum">
+                      <i class="fab fa-ethereum mr-1"></i>Ethereum
+                    </button>
+                    <button class="crypto-btn px-3 py-2 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 rounded" data-crypto="dogecoin">
+                      🐕 Dogecoin
+                    </button>
+                    <button class="crypto-btn px-3 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded" data-crypto="shiba">
+                      🚀 SHIB
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1138,75 +2694,425 @@
             </p>
           </div>
 
-          <div class="flex flex-col lg:flex-row gap-8">
+          <!-- 场景切换标签 -->
+          <div class="mb-6">
+            <div class="text-sm text-gray-300 mb-3">选择分析场景:</div>
+            <div class="flex flex-wrap gap-2 justify-center">
+              <button
+                id="correlation-tab-traditional"
+                class="scenario-tab-3-4 px-4 py-2 rounded-lg border border-yellow-400/30 bg-yellow-400/20 text-yellow-400 transition-all duration-300 active"
+              >
+                <i class="fa-solid fa-chart-bar mr-2"></i>传统分析
+              </button>
+              <button
+                id="correlation-tab-viral-video"
+                class="scenario-tab-3-4 px-4 py-2 rounded-lg border border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500 transition-all duration-300"
+              >
+                <i class="fa-solid fa-video mr-2"></i>短视频爆款预测
+              </button>
+              <button
+                id="correlation-tab-esports"
+                class="scenario-tab-3-4 px-4 py-2 rounded-lg border border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500 transition-all duration-300"
+              >
+                <i class="fa-solid fa-gamepad mr-2"></i>电竞选手分析
+              </button>
+              <button
+                id="correlation-tab-ai-model"
+                class="scenario-tab-3-4 px-4 py-2 rounded-lg border border-gray-600 bg-gray-800/50 text-gray-300 hover:border-gray-500 transition-all duration-300"
+              >
+                <i class="fa-solid fa-robot mr-2"></i>AI模型性能
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex>
             <!-- 左侧可视化区域 -->
             <div class="flex-1">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <!-- 相关系数热力图 -->
-                <div class="bg-dark-card/60 rounded-xl p-4">
-                  <div class="text-sm text-gray-300 mb-2">相关系数矩阵</div>
-                  <canvas
-                    id="correlation-heatmap"
-                    width="300"
-                    height="240"
-                    class="w-full rounded-lg"
-                  ></canvas>
+              <!-- 传统相关分析场景 -->
+              <div id=
+>
+                  <!-- 相关系数热力图>
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">相关系数矩阵</dv>
+                    <canvas
+                      id="correlation-heat
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canva
+                  </di
+
+ -->
+                  <div class="bg-">
+                    <div class="text-sm text-gray-300 mb-2">散点图矩阵</div>
+                    <canvas
+                      id="scatter
+                      width="300"
+                      "240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 置信椭圆 -->
+                  <div class="bg-dl p-4">
+                    <div class="text-sm text-gray-300 mb-2">置信椭圆</div>
+                    <cs
+                      id="confidence-ellipse"
+                      width="300
+                      height="240"
+                      "
+                    
+                  div>
+
+                  <!-- 主成分分>
+                  <div class="bg-dark-ca">
+                    <div class="text-向</div>
+                    <canvas
+                      id="pca-visualization"
+                      width="300"
+                      height="240"
+                      cl-lg"
+                    ></c>
+                  </div>
                 </div>
 
-                <!-- 散点图矩阵 -->
-                <div class="bg-dark-card/60 rounded-xl p-4">
-                  <div class="text-sm text-gray-300 mb-2">散点图矩阵</div>
-                  <canvas
-                    id="scatter-matrix"
-                    width="300"
-                    height="240"
-                    class="w-full rounded-lg"
-                  ></canvas>
-                </div>
+                <!-- 特征值和特征
+                <div class=">
+                  <div class=/5 p-3">
+                    <div>特征值1</div>
+                    </div>
+                  </di>
 
-                <!-- 置信椭圆 -->
-                <div class="bg-dark-card/60 rounded-xl p-4">
-                  <div class="text-sm text-gray-300 mb-2">置信椭圆</div>
-                  <canvas
-                    id="confidence-ellipse"
-                    width="300"
-                    height="240"
-                    class="w-full rounded-lg"
-                  ></canvas>
-                </div>
-
-                <!-- 主成分分析 -->
-                <div class="bg-dark-card/60 rounded-xl p-4">
-                  <div class="text-sm text-gray-300 mb-2">主成分方向</div>
-                  <canvas
-                    id="pca-visualization"
-                    width="300"
-                    height="240"
-                    class="w-full rounded-lg"
-                  ></canvas>
+                    <>
+                    <div id="eigenvalue-2" class="text-yellow-400
+                  </div>
+                  <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                    <divv>
+                    <divv>
+                  </div>
+                  <div class="ro">
+                    <div>条件数div>
+                    <div id=1.0</div>
+                  </div>
                 </div>
               </div>
 
-              <!-- 特征值和特征向量显示 -->
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
-                  <div>特征值1</div>
-                  <div id="eigenvalue-1" class="text-yellow-400 text-lg">0.00</div>
+              <!-- 短视频-->
+>
+                <div ">
+                  <!-- 视频特征相关性热力图 -->
+                  <div cl>
+                    <div class="text-sm text-
+                    <canvas
+                   "
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+ -->
+                  <div class="bg-dark-card/60 roun-xl p-4">
+                    <div 模型</div>
+                    <canvas
+                      id="viral-prediction-plot"
+                   
+                      hei"240"
+                      classd-lg"
+                    ></ca
+                  </div>
+
+                  <>
+                  <div c-xl p-4">
+                    <div cliv>
+                    <canvas
+                    art"
+                  
+                
+              d-lg"
+                >
+</div>
+
+               -->
+                  <dl p-4">
+                    <div class="text-sm text-gray-300 mb-2">平台算法影响
+       as
+                      id="algorithm-impact-chart"
+                      width="
+                      height="240"
+                      class="w-full rounded-lg"
+                 as>
+                  </div>
                 </div>
-                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
-                  <div>特征值2</div>
-                  <div id="eigenvalue-2" class="text-yellow-400 text-lg">0.00</div>
+
+                标展示 -->
+
+                  <div class="text-sm font-medium mb-3"iv>
+                  <div class-xs">
+                    <div class="
+                      <div class="text-gray-400">病毒系数</div>
+                      <div id="5</div>
+                    </div>
+                    <div class="text-center">
+                      <di
+                      <div id="spread-velocity" clv>
+                    </div>
+                    <div class="
+                      <div class="text-gray-4
+                      <div iv>
+                    </div>
+enter">
+                      <div clas</div>
+                      <div id="algorithm-score" class="text-v>
+                    </div>
+                  </div>
                 </div>
-                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
-                  <div>解释方差比</div>
-                  <div id="explained-variance" class="text-neon-green text-lg">0%</div>
-                </div>
-                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
-                  <div>条件数</div>
-                  <div id="condition-number" class="text-orange-400 text-lg">1.0</div>
+
+                <!-- 热门视频类型展示 -->
+                <div class="mt-4 bg-dark-bg/5
+                  <div classv>
+                  <div
+
+                      <div class
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-red-400/20 text-red-4
+                        <span class="px-2 py-1 bg-red-400/2n>
+                        <span class="px-2 py-配音</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-gray-4/div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-blue-400/20 text-blue-400 rounded">科普解说</span>
+                        <sspan>
+                        <span class="px-2 py-an>
+                      </div>
+                    </div>
+                    <div>
+                      <dv>
+                      1">
+                    span>
+
+                        <spspan>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+
+              <!-- 电竞选手表现分析场景 -->
+              <div id="esports-performance" class="correlation-scenario-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <!-- 选手技能相关性 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">选手技能相关性</div>
+                    <canvas
+                      id="esports-correlation-heatmap"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 团队协作分析 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">团队协作分析</div>
+                    <canvas
+                      id="team-synergy-plot"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 比赛表现趋势 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">比赛表现趋势</div>
+                    <canvas
+                      id="performance-trend-chart"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 职业选手对比 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">职业选手对比</div>
+                    <canvas
+                      id="pro-player-comparison"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+                </div>
+
+                <!-- 电竞数据控制面板 -->
+                <div class="bg-dark-card/60 rounded-xl p-4 mb-4">
+                  <div class="text-sm text-gray-300 mb-3">游戏选择与控制</div>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- 游戏选择 -->
+                    <div>
+                      <div class="text-xs text-gray-400 mb-2">游戏类型</div>
+                      <div class="flex flex-wrap gap-2">
+                        <button id="game-lol" class="game-theme-btn px-3 py-1 bg-blue-400/20 text-blue-400 rounded active">LOL</button>
+                        <button id="game-honor" class="game-theme-btn px-3 py-1 bg-green-400/20 text-green-400 rounded">王者荣耀</button>
+                        <button id="game-dota2" class="game-theme-btn px-3 py-1 bg-red-400/20 text-red-400 rounded">DOTA2</button>
+                      </div>
+                    </div>
+
+                    <!-- 位置选择 -->
+                    <div>
+                      <div class="text-xs text-gray-400 mb-2">位置角色</div>
+                      <div class="flex flex-wrap gap-2">
+                        <button id="pos-top" class="position-btn px-3 py-1 bg-purple-400/20 text-purple-400 rounded">上单</button>
+                        <button id="pos-jungle" class="position-btn px-3 py-1 bg-yellow-400/20 text-yellow-400 rounded">打野</button>
+                        <button id="pos-mid" class="position-btn px-3 py-1 bg-orange-400/20 text-orange-400 rounded active">中单</button>
+                        <button id="pos-adc" class="position-btn px-3 py-1 bg-pink-400/20 text-pink-400 rounded">ADC</button>
+                        <button id="pos-support" class="position-btn px-3 py-1 bg-cyan-400/20 text-cyan-400 rounded">辅助</button>
+                      </div>
+                    </div>
+
+                    <!-- 数据生成控制 -->
+                    <div>
+                      <div class="text-xs text-gray-400 mb-2">数据控制</div>
+                      <div class="flex flex-wrap gap-2">
+                        <button id="generate-esports-data" class="px-3 py-1 bg-neon-purple/20 text-neon-purple rounded border border-neon-purple/30">生成数据</button>
+                        <button id="analyze-esports-balance" class="px-3 py-1 bg-neon-blue/20 text-neon-blue rounded border border-neon-blue/30">分析平衡性</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 电竞数据指标显示 -->
+                <div class="bg-dark-card/60 rounded-xl p-4">
+                  <div class="text-sm text-gray-300 mb-3">实时电竞数据指标</div>
+                  <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
+                    <div class="border border-white/10 bg-white/5 rounded-lg p-3">
+                      <div class="text-gray-400">技能相关性</div>
+                      <div id="correlation-strength" class="text-lg text-green-400">85.2%</div>
+                    </div>
+                    <div class="border border-white/10 bg-white/5 rounded-lg p-3">
+                      <div class="text-gray-400">团队协作度</div>
+                      <div id="team-synergy-score" class="text-lg text-yellow-400">78.5%</div>
+                    </div>
+                    <div class="border border-white/10 bg-white/5 rounded-lg p-3">
+                      <div class="text-gray-400">表现趋势</div>
+                      <div id="performance-trend" class="text-lg text-orange-400">↗️ 192.3</div>
+                    </div>
+                    <div class="border border-white/10 bg-white/5 rounded-lg p-3">
+                      <div class="text-gray-400">版本变动</div>
+                      <div id="meta-shift-indicator" class="text-lg text-red-400">中等变动</div>
+                    </div>
+                    <div class="border border-white/10 bg-white/5 rounded-lg p-3">
+                      <div class="text-gray-400">活跃玩家</div>
+                      <div id="active-player-count" class="text-lg text-cyan-400">1.2M</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AI模型性能相关性分析场景 -->
+              <div id="ai-model-performance" class="scenario-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <!-- 模型参数相关性 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">模型参数相关性矩阵</div>
+                    <canvas
+                      id="model-parameter-correlation"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 性能指标散点图 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">性能指标分析</div>
+                    <canvas
+                      id="performance-metrics-plot"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 过拟合检测 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">过拟合检测</div>
+                    <canvas
+                      id="overfitting-detection"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+
+                  <!-- 超参数优化 -->
+                  <div class="bg-dark-card/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-300 mb-2">超参数优化</div>
+                    <canvas
+                      id="hyperparameter-optimization"
+                      width="300"
+                      height="240"
+                      class="w-full rounded-lg"
+                    ></canvas>
+                  </div>
+                </div>
+
+                <!-- AI模型信息展示 -->
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3">AI模型分析</div>
+                  <div class="grid grid-cols-3 gap-3 text-xs">
+                    <div>
+                      <div class="text-gray-400 mb-1">GPT系列</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-red-400/20 text-red-400 rounded">GPT-3</span>
+                        <span class="px-2 py-1 bg-red-400/20 text-red-400 rounded">GPT-4</span>
+                        <span class="px-2 py-1 bg-red-400/20 text-red-400 rounded">ChatGPT</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-gray-400 mb-1">BERT系列</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-teal-400/20 text-teal-400 rounded">BERT</span>
+                        <span class="px-2 py-1 bg-teal-400/20 text-teal-400 rounded">RoBERTa</span>
+                        <span class="px-2 py-1 bg-teal-400/20 text-teal-400 rounded">ALBERT</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-gray-400 mb-1">ResNet系列</div>
+                      <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-blue-400/20 text-blue-400 rounded">ResNet-50</span>
+                        <span class="px-2 py-1 bg-blue-400/20 text-blue-400 rounded">ResNet-101</span>
+                        <span class="px-2 py-1 bg-blue-400/20 text-blue-400 rounded">ResNet-152</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- AI模型性能统计 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm mt-4">
+                  <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                    <div>当前模型</div>
+                    <div id="current-model-type" class="text-red-400 text-lg">GPT系列</div>
+                  </div>
+                  <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                    <div>相关性强度</div>
+                    <div id="ai-correlation-strength" class="text-teal-400 text-lg">0%</div>
+                  </div>
+                  <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                    <div>拟合状态</div>
+                    <div id="fitting-status" class="text-green-400 text-lg">normal</div>
+                  </div>
+                  <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                    <div>优化进度</div>
+                    <div id="optimization-progress" class="text-blue-400 text-lg">0%</div>
+                  </div>
+                </div>
+              </div>
+            </div>/canv0optimizarparameter-超参数优">00 mb-2ray-3-sm text-gxt">l p-4优化 --v>>过拟合检测</di0 mb-2"xt-gray-30xt-sm tess="tediv cla    <                unded-xl p/60 ro-card"bg-darklass= c->测 -div>/rounded-lg0"t="24ghe-metricrmancfo"pernvas <caxl p-4">ed-ndrd/60 rou指标散点图 -/div>  <                /cull rounded-"w-f  class=0n"orrelatio-param-c型参数相关性</dmb-2">模t-gray-300 "text-sm tex=4"unded-xl p-/60 rocard-dark-mb-4gap-4 2 ls-cod-rid:g-cols-1 mrid gridss="genddntent hicoscenario-lation-orre="c" classncedel-performamoi->                canva/ed-lg"ull round="w-f职业选手对2">gray-300 mb--sm text-textdiv class=" <</canlgll rounded--fuclass="w                      t="24heighdth="30  wi表现趋势</d mb-2">比赛300ay--grextext-sm t="t-xl p60 roundedg-dark-card/s="banvun"w-full roass=>团队 mb-2"ay-300ext-grsm tded-rd/60 roun分析 --</canva><"w-full rouclass=ded-xl rouncard/60 dark- mb-4"-4gapid-cols-2 ols-1 md:grd grid-cs="grilas宠日常</ounded">萌00 ren-4t-gre0/20 texen-40bg-gre-1 2 py"px-ss=an claspan>log</nded">旅行v0 roureen-40 text-g/20n-400-greebg py-1 lass="px-2an c    <sp                    制作</>美食0 rounded"ext-green-40-400/20 ty-1 bg-greenx-2 pclass="p  <span   p-p galex flex-wraass="f<div cl/di>生活类<-400 mb-1"-grays="textclasiv 揭秘</sp">历史 roundedt-blue-4000 texg-blue-400/21 bed">技能教学</round-blue-400  textblue-400/20py-1 bg-"px-2  class=pan识类<1">知0 mb-0">搞笑0 rounded40 text-red--red-400/201 bg">反转剧情</spa0 rounded-red-40 text0>日常</spanrounded">沙雕00 v>/di笑类< mb-1">搞00text-gray-4="div>       <             >s"xt-xs-3 gap-3 tecolid-="grid gr class</di型分析-3">热门视频类dium mbnt-meext-sm fo="twhite/10">rder border--xl p-4 boounded0 rg">92</din-400 text-lgree">算法推荐度0ray-40xt-g="tesass="text-c <div cl                   8%</dilg">6-400 text-text-yellowclass="s" tickinesd="user-sv>">用户粘性</di00xt-center">te">72/h</di400 text-lgnge-raxt-oass="te></divy-400">传播速度s="text-grav clasxt-lg">0.800 teext-red-4lass="tnt" ccoefficieviral-ter">t-centex3 textls-4 gap-rid-coid ggr=">爆款预测指标</d">10e/r-whitorde-4 border bunded-xl pg/50 ro"bg-dark-bv class=     <di           款指- 爆!-< ></canv  "300 <canv            </div>ed-xd/60 roundbg-dark-carass="iv cl分析算法影响平台    <!--                   </canvas    >full roundes="w-   clas     ht="240"     heig 00""3dth=  wi  topics-ch="trending- id ">热门话题趋势</d300 mb-2-gray-textext-sm "tass=ndedrourk-card/60 s="bg-dalas-- 热门话题趋势 --!nvas>ll rounde="w-fut=gh"th="300  wid -2">爆款预测-300 mbay-sm text-gr"textclass=ded散点图  <!-- 爆款预测                tmaption-hearrela"video-co   id=div>频特征相关性</ mb-2">视gray-300d-xl p-4"0 rounded/6k-cardar"bg-ss=a mb-4-4gapols-2 1 md:grid-cols-d grid-css="gricla hidden"ntentnario-coscen-"correlatioss=laredictor" cvideo-p"viral- id=iv  <d            爆款预测器场景 -lg">0 texte-40ng"text-ora class=n-number"tiondi"co</ite/5 p-3ite/10 bg-whr border-whd-lg bordeunde-lg">0%</din-green text"text-neoclass=variance" explained- id="比</di释方差>解>0.00</div>t-lg" texdiviv>特征值2</de/5 p-3">10 bg-whitorder-white/order bded-lg boun"r= class  <div                v">0.00xt-lgow-400 te-yellss="text" claalue-1="eigenvv id<dibg-whiteite/10 er border-wh bordlg"rounded-ext-sm"-3 t-4 gapolsd:grid-cols-2 mgrid grid-c>量显示 --向anvasnded-full rouass="wb-2">主成分方y-300 m text-grasm-xl p-4/60 roundedrd析 --</
 
             <!-- 右侧控制面板 -->
             <div class="w-full lg:w-80">
@@ -1452,6 +3358,7 @@
 
     <!-- 页面交互脚本 -->
     <script src="../static/js/chapter3.js"></script>
+    <script src="../static/js/chapter3-ai-model-analysis.js"></script>
 
     <!-- 场景切换功能 -->
     <script>
@@ -1912,6 +3819,10 @@
         const scenarioTestScript = document.createElement('script');
         scenarioTestScript.src = '../static/js/tests/chapter3-scenario-properties.test.js';
         document.head.appendChild(scenarioTestScript);
+
+        const statisticalTestScript = document.createElement('script');
+        statisticalTestScript.src = '../static/js/tests/chapter3-statistical-test-properties.test.js';
+        document.head.appendChild(statisticalTestScript);
       }
     </script>
 
@@ -1936,6 +3847,592 @@
           console.warn("KaTeX render init failed:", e);
         }
       });
+    </script>
+
+    <!-- Streamer Analytics Lab Implementation -->
+    <script>
+      // Streamer Analytics Lab functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize streamer analytics when scenario changes
+        const scenarioSelect = document.getElementById('scenario-select');
+        if (scenarioSelect) {
+          scenarioSelect.addEventListener('change', function(e) {
+            if (e.target.value === 'streamer') {
+              showStreamerAnalyticsLab();
+              initializeStreamerData();
+            } else {
+              hideStreamerAnalyticsLab();
+            }
+          });
+        }
+
+        // Initialize streamer type buttons
+        initializeStreamerTypeButtons();
+        initializeStreamerControls();
+        initializeRealTimeSimulation();
+      });
+
+      function showStreamerAnalyticsLab() {
+        const lab = document.getElementById('streamer-analytics-lab');
+        const controls = document.getElementById('streamer-controls');
+        const generalDashboard = document.getElementById('general-independence-dashboard');
+        
+        if (lab) lab.classList.remove('hidden');
+        if (controls) controls.classList.remove('hidden');
+        if (generalDashboard) generalDashboard.classList.add('hidden');
+      }
+
+      function hideStreamerAnalyticsLab() {
+        const lab = document.getElementById('streamer-analytics-lab');
+        const controls = document.getElementById('streamer-controls');
+        const generalDashboard = document.getElementById('general-independence-dashboard');
+        
+        if (lab) lab.classList.add('hidden');
+        if (controls) controls.classList.add('hidden');
+        if (generalDashboard) generalDashboard.classList.remove('hidden');
+      }
+
+      function initializeStreamerTypeButtons() {
+        const buttons = document.querySelectorAll('.streamer-type-btn');
+        buttons.forEach(button => {
+          button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            buttons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Update streamer type and regenerate data
+            const streamerType = this.id.replace('streamer-', '');
+            updateStreamerType(streamerType);
+          });
+        });
+      }
+
+      function initializeStreamerControls() {
+        // Platform buttons
+        const platformButtons = document.querySelectorAll('.platform-btn');
+        platformButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            platformButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            updatePlatformMetrics();
+          });
+        });
+
+        // Streamer persona selector
+        const personaSelect = document.getElementById('streamer-persona');
+        if (personaSelect) {
+          personaSelect.addEventListener('change', function() {
+            updateStreamerPersona(this.value);
+          });
+        }
+
+        // Streaming time selector
+        const timeSelect = document.getElementById('streaming-time');
+        if (timeSelect) {
+          timeSelect.addEventListener('change', function() {
+            updateStreamingTime(this.value);
+          });
+        }
+
+        // Activity sliders
+        const danmuSlider = document.getElementById('danmu-activity-slider');
+        if (danmuSlider) {
+          danmuSlider.addEventListener('input', function() {
+            updateDanmuActivity(this.value);
+          });
+        }
+
+        const giftSlider = document.getElementById('gift-frequency-slider');
+        if (giftSlider) {
+          giftSlider.addEventListener('input', function() {
+            updateGiftFrequency(this.value);
+          });
+        }
+
+        // Event trigger buttons
+        const viralBtn = document.getElementById('trigger-viral');
+        if (viralBtn) {
+          viralBtn.addEventListener('click', function() {
+            triggerViralEvent();
+          });
+        }
+
+        const controversyBtn = document.getElementById('trigger-controversy');
+        if (controversyBtn) {
+          controversyBtn.addEventListener('click', function() {
+            triggerControversyEvent();
+          });
+        }
+      }
+
+      function initializeStreamerData() {
+        // Generate initial streamer data
+        const streamerData = generateStreamerAnalyticsData();
+        updateStreamerVisualizations(streamerData);
+        updateTrendingTopics();
+        updateCorrelationResults(streamerData);
+      }
+
+      function generateStreamerAnalyticsData() {
+        const sampleSize = 1000;
+        const data = {
+          danmuCount: [],
+          giftValues: [],
+          viewingDurations: [],
+          timestamps: []
+        };
+
+        // Generate realistic streaming data based on current settings
+        for (let i = 0; i < sampleSize; i++) {
+          // Simulate correlated data for streaming metrics
+          const baseEngagement = Math.random();
+          
+          // 弹幕数量 (comments per minute) - influenced by engagement
+          const danmuCount = Math.max(0, Math.floor(
+            (baseEngagement * 50 + Math.random() * 20) * getDanmuMultiplier()
+          ));
+          
+          // 礼物价值 (gift value in yuan) - correlated with engagement and danmu
+          const giftValue = Math.max(0, 
+            (baseEngagement * 100 + danmuCount * 0.5 + Math.random() * 30) * getGiftMultiplier()
+          );
+          
+          // 观看时长 (viewing duration in minutes) - influenced by content quality
+          const viewingDuration = Math.max(1, Math.floor(
+            (baseEngagement * 60 + giftValue * 0.1 + Math.random() * 30) * getDurationMultiplier()
+          ));
+
+          data.danmuCount.push(danmuCount);
+          data.giftValues.push(giftValue);
+          data.viewingDurations.push(viewingDuration);
+          data.timestamps.push(new Date(Date.now() - (sampleSize - i) * 60000));
+        }
+
+        return data;
+      }
+
+      function getDanmuMultiplier() {
+        const activeStreamerType = document.querySelector('.streamer-type-btn.active');
+        const activePlatform = document.querySelector('.platform-btn.active');
+        
+        let multiplier = 1.0;
+        
+        // Adjust based on streamer type
+        if (activeStreamerType) {
+          const type = activeStreamerType.id;
+          if (type.includes('gaming')) multiplier *= 1.5;
+          if (type.includes('beauty')) multiplier *= 1.2;
+          if (type.includes('talent')) multiplier *= 1.3;
+        }
+        
+        // Adjust based on platform
+        if (activePlatform) {
+          const platform = activePlatform.id;
+          if (platform.includes('douyin')) multiplier *= 1.4;
+          if (platform.includes('bilibili')) multiplier *= 1.1;
+        }
+        
+        return multiplier;
+      }
+
+      function getGiftMultiplier() {
+        const persona = document.getElementById('streamer-persona')?.value || 'gaming-pro';
+        const time = document.getElementById('streaming-time')?.value || 'evening';
+        
+        let multiplier = 1.0;
+        
+        // Adjust based on persona
+        if (persona.includes('beauty')) multiplier *= 2.0;
+        if (persona.includes('talent')) multiplier *= 1.5;
+        
+        // Adjust based on time (evening has more gifts)
+        if (time === 'evening') multiplier *= 1.8;
+        if (time === 'night') multiplier *= 1.3;
+        
+        return multiplier;
+      }
+
+      function getDurationMultiplier() {
+        const time = document.getElementById('streaming-time')?.value || 'evening';
+        
+        let multiplier = 1.0;
+        
+        // Evening and night have longer viewing durations
+        if (time === 'evening') multiplier *= 1.5;
+        if (time === 'night') multiplier *= 1.2;
+        
+        return multiplier;
+      }
+
+      function updateStreamerVisualizations(data) {
+        // Update danmu trend chart
+        updateDanmuTrendChart(data.danmuCount, data.timestamps);
+        
+        // Update gift value distribution
+        updateGiftValueChart(data.giftValues);
+        
+        // Update viewing duration chart
+        updateViewingDurationChart(data.viewingDurations);
+        
+        // Update correlation heatmap
+        updateCorrelationHeatmap(data);
+      }
+
+      function updateDanmuTrendChart(danmuData, timestamps) {
+        const canvas = document.getElementById('danmu-trend-chart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Simple line chart for danmu trend
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        const maxDanmu = Math.max(...danmuData.slice(-50)); // Last 50 data points
+        const recentData = danmuData.slice(-50);
+        
+        recentData.forEach((count, index) => {
+          const x = (index / (recentData.length - 1)) * canvas.width;
+          const y = canvas.height - (count / maxDanmu) * canvas.height;
+          
+          if (index === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+        
+        ctx.stroke();
+        
+        // Add current value text
+        ctx.fillStyle = '#3b82f6';
+        ctx.font = '12px Arial';
+        ctx.fillText(`当前: ${recentData[recentData.length - 1]}/分钟`, 5, 15);
+      }
+
+      function updateGiftValueChart(giftData) {
+        const canvas = document.getElementById('gift-value-chart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Create histogram of gift values
+        const bins = 10;
+        const maxGift = Math.max(...giftData);
+        const binSize = maxGift / bins;
+        const histogram = new Array(bins).fill(0);
+        
+        giftData.forEach(value => {
+          const binIndex = Math.min(Math.floor(value / binSize), bins - 1);
+          histogram[binIndex]++;
+        });
+        
+        const maxCount = Math.max(...histogram);
+        
+        // Draw histogram bars
+        ctx.fillStyle = '#8b5cf6';
+        histogram.forEach((count, index) => {
+          const barWidth = canvas.width / bins;
+          const barHeight = (count / maxCount) * canvas.height;
+          const x = index * barWidth;
+          const y = canvas.height - barHeight;
+          
+          ctx.fillRect(x, y, barWidth - 1, barHeight);
+        });
+        
+        // Add average value text
+        const avgGift = giftData.reduce((a, b) => a + b, 0) / giftData.length;
+        ctx.fillStyle = '#8b5cf6';
+        ctx.font = '12px Arial';
+        ctx.fillText(`平均: ¥${avgGift.toFixed(1)}`, 5, 15);
+      }
+
+      function updateViewingDurationChart(durationData) {
+        const canvas = document.getElementById('viewing-duration-chart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Create histogram of viewing durations
+        const bins = 8;
+        const maxDuration = Math.max(...durationData);
+        const binSize = maxDuration / bins;
+        const histogram = new Array(bins).fill(0);
+        
+        durationData.forEach(value => {
+          const binIndex = Math.min(Math.floor(value / binSize), bins - 1);
+          histogram[binIndex]++;
+        });
+        
+        const maxCount = Math.max(...histogram);
+        
+        // Draw histogram bars
+        ctx.fillStyle = '#10b981';
+        histogram.forEach((count, index) => {
+          const barWidth = canvas.width / bins;
+          const barHeight = (count / maxCount) * canvas.height;
+          const x = index * barWidth;
+          const y = canvas.height - barHeight;
+          
+          ctx.fillRect(x, y, barWidth - 1, barHeight);
+        });
+        
+        // Add average duration text
+        const avgDuration = durationData.reduce((a, b) => a + b, 0) / durationData.length;
+        ctx.fillStyle = '#10b981';
+        ctx.font = '12px Arial';
+        ctx.fillText(`平均: ${avgDuration.toFixed(1)}分钟`, 5, 15);
+      }
+
+      function updateCorrelationHeatmap(data) {
+        const canvas = document.getElementById('correlation-heatmap');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Calculate correlations
+        const correlations = {
+          danmuGift: calculateCorrelation(data.danmuCount, data.giftValues),
+          danmuDuration: calculateCorrelation(data.danmuCount, data.viewingDurations),
+          giftDuration: calculateCorrelation(data.giftValues, data.viewingDurations)
+        };
+        
+        // Draw correlation matrix
+        const cellSize = canvas.width / 3;
+        const labels = ['弹幕', '礼物', '时长'];
+        const matrix = [
+          [1.0, correlations.danmuGift, correlations.danmuDuration],
+          [correlations.danmuGift, 1.0, correlations.giftDuration],
+          [correlations.danmuDuration, correlations.giftDuration, 1.0]
+        ];
+        
+        matrix.forEach((row, i) => {
+          row.forEach((corr, j) => {
+            const x = j * cellSize;
+            const y = i * cellSize;
+            
+            // Color based on correlation strength
+            const intensity = Math.abs(corr);
+            const color = corr > 0 ? 
+              `rgba(59, 130, 246, ${intensity})` : 
+              `rgba(239, 68, 68, ${intensity})`;
+            
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, cellSize - 1, cellSize - 1);
+            
+            // Add correlation value
+            ctx.fillStyle = intensity > 0.5 ? 'white' : 'black';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(corr.toFixed(2), x + cellSize/2, y + cellSize/2 + 3);
+          });
+        });
+        
+        return correlations;
+      }
+
+      function calculateCorrelation(x, y) {
+        const n = x.length;
+        const sumX = x.reduce((a, b) => a + b, 0);
+        const sumY = y.reduce((a, b) => a + b, 0);
+        const sumXY = x.reduce((sum, xi, i) => sum + xi * y[i], 0);
+        const sumX2 = x.reduce((sum, xi) => sum + xi * xi, 0);
+        const sumY2 = y.reduce((sum, yi) => sum + yi * yi, 0);
+        
+        const numerator = n * sumXY - sumX * sumY;
+        const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+        
+        return denominator === 0 ? 0 : numerator / denominator;
+      }
+
+      function updateCorrelationResults(data) {
+        const correlations = {
+          danmuGift: calculateCorrelation(data.danmuCount, data.giftValues),
+          danmuDuration: calculateCorrelation(data.danmuCount, data.viewingDurations),
+          giftDuration: calculateCorrelation(data.giftValues, data.viewingDurations)
+        };
+        
+        // Update correlation display elements
+        const danmuGiftCorr = document.getElementById('danmu-gift-correlation');
+        const danmuDurationCorr = document.getElementById('danmu-duration-correlation');
+        const giftDurationCorr = document.getElementById('gift-duration-correlation');
+        
+        if (danmuGiftCorr) danmuGiftCorr.textContent = correlations.danmuGift.toFixed(3);
+        if (danmuDurationCorr) danmuDurationCorr.textContent = correlations.danmuDuration.toFixed(3);
+        if (giftDurationCorr) giftDurationCorr.textContent = correlations.giftDuration.toFixed(3);
+        
+        // Update p-values (simplified calculation)
+        const n = data.danmuCount.length;
+        const danmuGiftPValue = calculatePValue(correlations.danmuGift, n);
+        const danmuDurationPValue = calculatePValue(correlations.danmuDuration, n);
+        const giftDurationPValue = calculatePValue(correlations.giftDuration, n);
+        
+        const danmuGiftP = document.getElementById('danmu-gift-pvalue');
+        const danmuDurationP = document.getElementById('danmu-duration-pvalue');
+        const giftDurationP = document.getElementById('gift-duration-pvalue');
+        
+        if (danmuGiftP) danmuGiftP.textContent = `(p=${danmuGiftPValue.toFixed(3)})`;
+        if (danmuDurationP) danmuDurationP.textContent = `(p=${danmuDurationPValue.toFixed(3)})`;
+        if (giftDurationP) giftDurationP.textContent = `(p=${giftDurationPValue.toFixed(3)})`;
+      }
+
+      function calculatePValue(correlation, n) {
+        // Simplified p-value calculation for correlation
+        const t = correlation * Math.sqrt((n - 2) / (1 - correlation * correlation));
+        // Approximate p-value (this is a simplification)
+        return Math.max(0.001, Math.min(0.999, 2 * (1 - Math.abs(t) / 10)));
+      }
+
+      function updateTrendingTopics() {
+        const topics = [
+          '王者荣耀', '原神', 'YYDS', '绝绝子', 'emo',
+          '直播带货', '网红经济', '粉丝经济', '流量密码', '爆款',
+          '双十一', '618', '黑五', '年货节', '秒杀'
+        ];
+        
+        const container = document.getElementById('trending-topics');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        // Randomly select and display trending topics
+        const selectedTopics = topics.sort(() => 0.5 - Math.random()).slice(0, 8);
+        
+        selectedTopics.forEach(topic => {
+          const tag = document.createElement('span');
+          tag.className = 'px-2 py-1 bg-neon-purple/20 text-neon-purple rounded text-xs';
+          tag.textContent = `#${topic}`;
+          container.appendChild(tag);
+        });
+      }
+
+      function updateStreamerType(type) {
+        // Regenerate data based on new streamer type
+        const data = generateStreamerAnalyticsData();
+        updateStreamerVisualizations(data);
+        updateCorrelationResults(data);
+      }
+
+      function updatePlatformMetrics() {
+        // Update metrics based on selected platform
+        const data = generateStreamerAnalyticsData();
+        updateStreamerVisualizations(data);
+        updateCorrelationResults(data);
+      }
+
+      function updateStreamerPersona(persona) {
+        // Update data based on streamer persona
+        const data = generateStreamerAnalyticsData();
+        updateStreamerVisualizations(data);
+        updateCorrelationResults(data);
+      }
+
+      function updateStreamingTime(time) {
+        // Update data based on streaming time
+        const data = generateStreamerAnalyticsData();
+        updateStreamerVisualizations(data);
+        updateCorrelationResults(data);
+      }
+
+      function updateDanmuActivity(level) {
+        const levelText = ['很低', '低', '中等', '高', '很高'][level - 1] || '中等';
+        const valueDisplay = document.getElementById('danmu-activity-val');
+        if (valueDisplay) {
+          valueDisplay.textContent = levelText;
+        }
+        
+        // Regenerate data with new activity level
+        const data = generateStreamerAnalyticsData();
+        updateStreamerVisualizations(data);
+        updateCorrelationResults(data);
+      }
+
+      function updateGiftFrequency(level) {
+        const levelText = ['稀少', '较少', '正常', '频繁', '土豪'][level - 1] || '正常';
+        const valueDisplay = document.getElementById('gift-frequency-val');
+        if (valueDisplay) {
+          valueDisplay.textContent = levelText;
+        }
+        
+        // Regenerate data with new gift frequency
+        const data = generateStreamerAnalyticsData();
+        updateStreamerVisualizations(data);
+        updateCorrelationResults(data);
+      }
+
+      function triggerViralEvent() {
+        // Simulate a viral moment with increased engagement
+        const data = generateStreamerAnalyticsData();
+        
+        // Boost all metrics for viral effect
+        data.danmuCount = data.danmuCount.map(count => count * (1.5 + Math.random()));
+        data.giftValues = data.giftValues.map(value => value * (2 + Math.random()));
+        data.viewingDurations = data.viewingDurations.map(duration => duration * (1.3 + Math.random() * 0.5));
+        
+        updateStreamerVisualizations(data);
+        updateCorrelationResults(data);
+        
+        // Show notification
+        showEventNotification('🔥 爆火时刻触发！所有指标飙升！', 'yellow');
+      }
+
+      function triggerControversyEvent() {
+        // Simulate a controversy with mixed effects
+        const data = generateStreamerAnalyticsData();
+        
+        // Increase danmu (people commenting) but decrease gifts and duration
+        data.danmuCount = data.danmuCount.map(count => count * (2 + Math.random()));
+        data.giftValues = data.giftValues.map(value => value * (0.3 + Math.random() * 0.4));
+        data.viewingDurations = data.viewingDurations.map(duration => duration * (0.7 + Math.random() * 0.3));
+        
+        updateStreamerVisualizations(data);
+        updateCorrelationResults(data);
+        
+        // Show notification
+        showEventNotification('⚠️ 争议事件发生！弹幕激增但礼物减少', 'red');
+      }
+
+      function showEventNotification(message, color) {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-20 right-4 bg-${color}-500/20 border border-${color}-500/50 text-${color}-400 px-4 py-2 rounded-lg z-50 transition-all duration-300`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+          notification.style.transform = 'translateX(100%)';
+          notification.style.opacity = '0';
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.parentNode.removeChild(notification);
+            }
+          }, 300);
+        }, 3000);
+      }
+
+      function initializeRealTimeSimulation() {
+        // Start real-time data simulation
+        setInterval(() => {
+          const scenarioSelect = document.getElementById('scenario-select');
+          if (scenarioSelect && scenarioSelect.value === 'streamer') {
+            // Update trending topics periodically
+            if (Math.random() < 0.1) { // 10% chance to update topics
+              updateTrendingTopics();
+            }
+            
+            // Simulate live indicator pulsing
+            const liveIndicator = document.getElementById('live-indicator');
+            if (liveIndicator) {
+              liveIndicator.style.opacity = Math.random() > 0.5 ? '1' : '0.5';
+            }
+          }
+        }, 2000);
+      }
     </script>
   </body>
 </html>

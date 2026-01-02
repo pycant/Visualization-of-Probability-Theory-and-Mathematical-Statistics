@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>背景等高线测试</title>
+  <link rel="stylesheet" href="../static/css/chapter3.css" />
+  <style>
+    body { background:#0b132b; color:#fff; font-family:system-ui,Arial; }
+    .panel { max-width: 960px; margin: 24px auto; padding: 16px; background: rgba(15,23,48,0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; }
+    .row { display:flex; gap:12px; align-items:center; margin-bottom:10px; }
+    .row label { width:140px; color:#cbd5e1; }
+    .row input[type="range"] { flex:1; }
+    .row select { flex:1; background:#0b132b; color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:6px; }
+    .canvas-wrap { position:relative; max-width: 960px; margin: 0 auto 24px; }
+    .metrics { font-family:monospace; font-size:12px; color:#a3e635; }
+    .btn { padding:6px 10px; border:1px solid rgba(255,255,255,0.2); border-radius:6px; background:transparent; color:#fff; cursor:pointer; }
+    .btn:active { transform: scale(0.98); }
+  </style>
+  <script src="../static/js/lib/noise2d.js"></script>
+  <script src="../static/js/lib/d3-contour-lite.js"></script>
+</head>
+<body>
+  <div class="panel">
+    <div class="row">
+      <label>渲染器</label>
+      <select id="renderer">
+        <option value="segments">两点段</option>
+        <option value="linked" selected>段链接</option>
+        <option value="smoothed">段链接+平滑</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>网格宽度</label>
+      <input id="grid-w" type="range" min="60" max="320" step="20" value="200" />
+      <span id="grid-w-val">200</span>
+    </div>
+    <div class="row">
+      <label>网格高度</label>
+      <input id="grid-h" type="range" min="40" max="240" step="20" value="120" />
+      <span id="grid-h-val">120</span>
+    </div>
+    <div class="row">
+      <label>噪声尺度</label>
+      <input id="scale" type="range" min="0.005" max="0.06" step="0.005" value="0.02" />
+      <span id="scale-val">0.02</span>
+    </div>
+    <div class="row">
+      <label>阈值数量</label>
+      <input id="thcnt" type="range" min="6" max="30" step="1" value="15" />
+      <span id="thcnt-val">15</span>
+    </div>
+    <div class="row">
+      <label>平滑次数</label>
+      <input id="smooth-iters" type="range" min="0" max="6" step="1" value="2" />
+      <span id="smooth-iters-val">2</span>
+    </div>
+    <div class="row">
+      <button id="pause" class="btn">暂停</button>
+      <button id="resume" class="btn">继续</button>
+      <button id="redraw" class="btn">重绘</button>
+    </div>
+    <div class="metrics" id="metrics"></div>
+  </div>
+  <div class="canvas-wrap">
+    <canvas id="ct-canvas"></canvas>
+  </div>
+  <script>
+    var Noise = window.Noise2D && window.Noise2D.create({ seed: 1337 });
+    var canvas = document.getElementById("ct-canvas");
+    var ctx = canvas.getContext("2d", { willReadFrequently: true });
+    var rendererSel = document.getElementById("renderer");
+    var gw = document.getElementById("grid-w");
+    var gh = document.getElementById("grid-h");
+    var scl = document.getElementById("scale");
+    var thcnt = document.getElementById("thcnt");
+    var siters = document.getElementById("smooth-iters");
+    var metrics = document.getElementById("metrics");
+    var paused = false;
+    function fmt(n){ return Math.round(n*1000)/1000; }
+    function resize(){
+      var dpr = Math.max(1, Math.min(window.devicePixelRatio||1, 2));
+      var W = Math.min(960, window.innerWidth - 24);
+      var H = Math.round(W * 0.56);
+      canvas.width = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      canvas.style.width = W + "px";
+      canvas.style.height = H + "px";
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "medium";
+    }
+    resize();
+    window.addEventListener("resize", resize);
+    function thresholds(n){
+      var arr = [];
+      for (var i=0;i<n;i++){
+        var v = 0.12 + i*0.05;
+        arr.push(Math.min(0.98, v));
+      }
+      return arr;
+    }
+    function values(baseW, baseH, scale, t){
+      var vals = new Float32Array(baseW*baseH);
+      var k = 0;
+      for (var y=0;y<baseH;y++){
+        for (var x=0;x<baseW;x++){
+          var v = Noise ? Noise.noise2(x*scale, y*scale + t) : 0;
+          vals[k++] = Math.max(0, Math.min(1, (v+1)*0.5));
+        }
+      }
+      return vals;
+    }
+    function genSegments(vals, baseW, baseH, thr){
+      var sets=[];
+      for (var ti=0; ti<thr.length; ti++){
+        var t = thr[ti];
+        var segs=[];
+        for (var y=0;y<baseH-1;y++){
+          for (var x=0;x<baseW-1;x++){
+            var i00=y*baseW+x, i10=y*baseW+(x+1), i01=(y+1)*baseW+x, i11=(y+1)*baseW+(x+1);
+            var v00=vals[i00], v10=vals[i10], v01=vals[i01], v11=vals[i11];
+            var e=[];
+            if ((v00<t)!==(v10<t)){ var r=(t-v00)/Math.max(1e-6,v10-v00); e.push([x+r,y]); }
+            if ((v10<t)!==(v11<t)){ var r2=(t-v10)/Math.max(1e-6,v11-v10); e.push([x+1,y+r2]); }
+            if ((v01<t)!==(v11<t)){ var r3=(t-v01)/Math.max(1e-6,v11-v01); e.push([x+r3,y+1]); }
+            if ((v00<t)!==(v01<t)){ var r4=(t-v00)/Math.max(1e-6,v01-v00); e.push([x,y+r4]); }
+            if (e.length===2){ segs.push([e[0],e[1]]); }
+            else if (e.length===4){ segs.push([e[0],e[1]]); segs.push([e[2],e[3]]); }
+          }
+        }
+        sets.push({ value:t, coordinates: segs });
+      }
+      return sets;
+    }
+    function key(p, tol){ return (Math.round(p[0]*tol)/tol)+","+(Math.round(p[1]*tol)/tol); }
+    function link(segs, tol){
+      var adj = new Map();
+      var used = new Array(segs.length).fill(false);
+      for (var i=0;i<segs.length;i++){
+        var a=segs[i][0], b=segs[i][1];
+        var ka=key(a,tol), kb=key(b,tol);
+        if (!adj.has(ka)) adj.set(ka,[]);
+        if (!adj.has(kb)) adj.set(kb,[]);
+        adj.get(ka).push({i:i, end:0});
+        adj.get(kb).push({i:i, end:1});
+      }
+      var lines=[];
+      for (var s=0;s<segs.length;s++){
+        if (used[s]) continue;
+        used[s]=true;
+        var line=[segs[s][0],segs[s][1]];
+        var head=key(line[line.length-1],tol);
+        while(true){
+          var ns=adj.get(head)||[]; var nxt=null;
+          for (var k=0;k<ns.length;k++){ if (!used[ns[k].i]){ nxt=ns[k]; break; } }
+          if (!nxt) break;
+          used[nxt.i]=true;
+          var ss=segs[nxt.i]; var p0=ss[0], p1=ss[1];
+          var k0=key(p0,tol), k1=key(p1,tol);
+          if (k0===head){ line.push(p1); head=k1; } else { line.push(p0); head=k0; }
+        }
+        var tail=key(line[0],tol);
+        while(true){
+          var ns2=adj.get(tail)||[]; var prv=null;
+          for (var k2=0;k2<ns2.length;k2++){ if (!used[ns2[k2].i]){ prv=ns2[k2]; break; } }
+          if (!prv) break;
+          used[prv.i]=true;
+          var ss2=segs[prv.i]; var q0=ss2[0], q1=ss2[1];
+          var j0=key(q0,tol), j1=key(q1,tol);
+          if (j0===tail){ line.unshift(q1); tail=j1; } else { line.unshift(q0); tail=j0; }
+        }
+        lines.push(line);
+      }
+      return lines;
+    }
+    function chaikin(points, iters){
+      var pts = points.slice();
+      for (var n=0;n<iters;n++){
+        var out=[];
+        for (var i=0;i<pts.length-1;i++){
+          var p=pts[i], q=pts[i+1];
+          var p1=[ p[0]*0.75 + q[0]*0.25, p[1]*0.75 + q[1]*0.25 ];
+          var p2=[ p[0]*0.25 + q[0]*0.75, p[1]*0.25 + q[1]*0.75 ];
+          out.push(p1); out.push(p2);
+        }
+        pts = out;
+      }
+      return pts;
+    }
+    function draw(){
+      var baseW = parseInt(gw.value,10);
+      var baseH = parseInt(gh.value,10);
+      var scale = parseFloat(scl.value);
+      var nthr = parseInt(thcnt.value,10);
+      var smi = parseInt(siters.value,10);
+      document.getElementById("grid-w-val").textContent = baseW;
+      document.getElementById("grid-h-val").textContent = baseH;
+      document.getElementById("scale-val").textContent = fmt(scale);
+      document.getElementById("thcnt-val").textContent = nthr;
+      document.getElementById("smooth-iters-val").textContent = smi;
+      var W = canvas.width / (ctx.getTransform().a||1);
+      var H = canvas.height / (ctx.getTransform().a||1);
+      ctx.clearRect(0,0,W,H);
+      var t = performance.now()*0.00008;
+      var vals = values(baseW, baseH, scale, t);
+      var thr = thresholds(nthr);
+      var sets;
+      var mode = rendererSel.value;
+      if (typeof d3!=="undefined" && d3.contours && mode==="segments"){
+        var gen = d3.contours().size([baseW,baseH]).thresholds(thr);
+        sets = gen(vals).map(function(c){ return { value:c.value, coordinates:c.coordinates };});
+      } else {
+        var ssets = genSegments(vals, baseW, baseH, thr);
+        if (mode==="segments"){
+          sets = ssets.map(function(c){ return { value:c.value, coordinates: c.coordinates.map(function(seg){ return [seg]; }) };});
+        } else {
+          sets = ssets.map(function(c){
+            var lines = link(c.coordinates, 1000);
+            if (mode==="smoothed"){
+              lines = lines.map(function(line){ return chaikin(line, smi); });
+            }
+            return { value:c.value, coordinates: lines.map(function(line){ return [line]; }) };
+          });
+        }
+      }
+      var palette = ["#00f3ff","#bf00ff","#00ff66","#ffc107","#ff6b6b"];
+      var minV = thr[0];
+      var maxV = thr[thr.length-1];
+      var segCount=0, ringCount=0;
+      ctx.lineJoin="round"; ctx.lineCap="round";
+      for (var si=0; si<sets.length; si++){
+        var contour=sets[si];
+        var v = contour.value || minV;
+        var tval = Math.max(0, Math.min(1, (v-minV)/Math.max(1e-6, maxV-minV)));
+        var col = palette[Math.min(palette.length-1, Math.floor(tval*palette.length))];
+        var alpha = 0.5 + 0.3*tval;
+        ctx.strokeStyle = col;
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = 1.5 + si*0.4;
+        for (var mi=0; mi<contour.coordinates.length; mi++){
+          var ring = contour.coordinates[mi][0];
+          ringCount++;
+          segCount += Math.max(0, ring.length - 1);
+          ctx.beginPath();
+          for (var p=0;p<ring.length;p++){
+            var gx=ring[p][0], gy=ring[p][1];
+            var x=(gx/(baseW-1))*W;
+            var y=(gy/(baseH-1))*H;
+            if (p===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+          }
+          var fx=(ring[0][0]/(baseW-1))*W, fy=(ring[0][1]/(baseH-1))*H;
+          var lx=(ring[ring.length-1][0]/(baseW-1))*W, ly=(ring[ring.length-1][1]/(baseH-1))*H;
+          var dx=fx-lx, dy=fy-ly;
+          var closed = dx*dx+dy*dy < 1.0;
+          if (closed) ctx.closePath();
+          ctx.stroke();
+        }
+      }
+      metrics.textContent = "rings="+ringCount+" segs="+segCount+" base="+baseW+"x"+baseH+" thresholds="+thr.length+" mode="+mode;
+    }
+    var rafId=0;
+    function loop(){
+      if (!paused) draw();
+      rafId = requestAnimationFrame(loop);
+    }
+    loop();
+    document.getElementById("pause").onclick=function(){ paused=true; };
+    document.getElementById("resume").onclick=function(){ paused=false; };
+    document.getElementById("redraw").onclick=function(){ draw(); };
+  </script>
+</body>
+</html>

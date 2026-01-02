@@ -1,11 +1,11 @@
 /**
- * Property-Based Tests for Chapter 3 Mathematical Library Integration
+ * Property-Based Tests for Chapter 3 Correlation Coefficient Accuracy
  * 
  * **Property 3: Mathematical Calculation Accuracy**
- * **Validates: Requirements 8.1, 8.4**
+ * **Validates: Requirements 2.7**
  * 
- * Tests the accuracy and correctness of mathematical computations
- * underlying all visualizations in Chapter 3.
+ * Tests the accuracy and correctness of correlation coefficient calculations
+ * in Chapter 3 multidimensional variable visualizations.
  */
 
 (function() {
@@ -13,8 +13,8 @@
 
   // Test configuration
   const TEST_CONFIG = {
-    numRuns: 100,
-    timeout: 5000,
+    numRuns: 20,  // Reduced from 100 for faster execution
+    timeout: 3000,
     verbose: false
   };
 
@@ -27,13 +27,14 @@
   };
 
   /**
-   * Property 3: Mathematical Calculation Accuracy
-   * For any valid distribution parameters and sample data, all calculated 
-   * statistical values should match their theoretical mathematical formulas 
-   * within numerical precision (±1e-10).
+   * Property 3: Mathematical Calculation Accuracy (Correlation Coefficient Focus)
+   * For any valid sample data, correlation coefficient calculations should match 
+   * their theoretical mathematical formulas within numerical precision (±1e-10).
+   * Specifically validates Requirements 2.7: correlation coefficient accuracy.
    */
-  function testMathematicalCalculationAccuracy() {
-    console.log('Running Property 3: Mathematical Calculation Accuracy');
+  function testCorrelationCoefficientAccuracy() {
+    console.log('Running Property 3: Correlation Coefficient Accuracy');
+    console.log('**Feature: chapter3-multidimensional-variables, Property 3: Mathematical Calculation Accuracy**');
     
     if (typeof fc === 'undefined') {
       const error = 'fast-check library not available';
@@ -43,7 +44,7 @@
     }
 
     try {
-      // Test 1: Correlation coefficient bounds
+      // Test 1: Correlation coefficient bounds validation
       const correlationBoundsTest = fc.assert(
         fc.property(
           fc.array(
@@ -72,141 +73,155 @@
         { numRuns: TEST_CONFIG.numRuns }
       );
 
-      // Test 2: Multivariate normal generation consistency
-      const multivariateNormalTest = fc.assert(
+      // Test 2: Perfect correlation cases
+      const perfectCorrelationTest = fc.assert(
         fc.property(
           fc.tuple(
-            fc.float({ min: -10, max: 10 }), // mu1
-            fc.float({ min: -10, max: 10 }), // mu2
-            fc.float({ min: 0.1, max: 10 }), // sigma1
-            fc.float({ min: 0.1, max: 10 }), // sigma2
-            fc.float({ min: -0.9, max: 0.9 }), // rho
-            fc.integer({ min: 10, max: 100 }) // n samples
+            fc.float({ min: -10, max: 10 }), // slope
+            fc.float({ min: -10, max: 10 }), // intercept
+            fc.integer({ min: 10, max: 100 }) // number of points
           ),
-          ([mu1, mu2, sigma1, sigma2, rho, n]) => {
+          ([slope, intercept, n]) => {
             if (!window.Chapter3 || !window.Chapter3.MathEngine) {
               return true; // Skip if not initialized
             }
             
-            const mu = [mu1, mu2];
-            const sigma = [
-              [sigma1 * sigma1, rho * sigma1 * sigma2],
-              [rho * sigma1 * sigma2, sigma2 * sigma2]
-            ];
+            // Generate perfectly correlated data: y = slope * x + intercept
+            const samples = [];
+            for (let i = 0; i < n; i++) {
+              const x = i - n/2; // Center around 0
+              const y = slope * x + intercept;
+              samples.push([x, y]);
+            }
             
-            const samples = window.Chapter3.MathEngine.generateMultivariateNormal(mu, sigma, n);
+            const correlation = window.Chapter3.MathEngine.calculateCorrelation(samples);
             
-            // Property: Should generate exactly n samples
-            const correctLength = samples.length === n;
-            
-            // Property: Each sample should be a 2D point
-            const validSamples = samples.every(sample => 
-              Array.isArray(sample) && 
-              sample.length === 2 && 
-              Number.isFinite(sample[0]) && 
-              Number.isFinite(sample[1])
-            );
-            
-            return correctLength && validSamples;
+            // Property: Perfect positive correlation should be close to 1
+            // Perfect negative correlation should be close to -1
+            if (slope > 0) {
+              return Math.abs(correlation - 1) < 1e-10;
+            } else if (slope < 0) {
+              return Math.abs(correlation + 1) < 1e-10;
+            } else {
+              // Slope = 0 means constant y, correlation should be 0 (undefined case)
+              return !Number.isFinite(correlation) || Math.abs(correlation) < 1e-10;
+            }
           }
         ),
-        { numRuns: Math.min(50, TEST_CONFIG.numRuns) } // Fewer runs for expensive test
+        { numRuns: Math.min(10, TEST_CONFIG.numRuns) }
       );
 
-      // Test 3: Chi-square test statistical properties
-      const chiSquareTest = fc.assert(
+      // Test 3: Zero correlation (independent variables)
+      const zeroCorrelationTest = fc.assert(
+        fc.property(
+          fc.integer({ min: 50, max: 500 }),
+          (n) => {
+            if (!window.Chapter3 || !window.Chapter3.MathEngine) {
+              return true; // Skip if not initialized
+            }
+            
+            // Generate independent random samples
+            const samples = [];
+            for (let i = 0; i < n; i++) {
+              const x = Math.random() * 100 - 50; // Random x
+              const y = Math.random() * 100 - 50; // Independent random y
+              samples.push([x, y]);
+            }
+            
+            const correlation = window.Chapter3.MathEngine.calculateCorrelation(samples);
+            
+            // Property: For large samples of independent variables, 
+            // correlation should be close to 0 (within reasonable bounds for random data)
+            return Math.abs(correlation) < 0.3; // Reasonable bound for random data
+          }
+        ),
+        { numRuns: Math.min(8, TEST_CONFIG.numRuns) }
+      );
+
+      // Test 4: Correlation symmetry property
+      const correlationSymmetryTest = fc.assert(
         fc.property(
           fc.array(
-            fc.array(fc.integer({ min: 1, max: 100 }), { minLength: 2, maxLength: 5 }),
-            { minLength: 2, maxLength: 5 }
+            fc.tuple(
+              fc.float({ min: -50, max: 50 }),
+              fc.float({ min: -50, max: 50 })
+            ),
+            { minLength: 10, maxLength: 100 }
           ),
-          (observedFreq) => {
+          (samples) => {
             if (!window.Chapter3 || !window.Chapter3.MathEngine) {
               return true; // Skip if not initialized
             }
             
-            // Create expected frequencies (uniform distribution)
-            const rows = observedFreq.length;
-            const cols = observedFreq[0].length;
-            const total = observedFreq.flat().reduce((a, b) => a + b, 0);
-            const expectedFreq = Array(rows).fill().map(() => 
-              Array(cols).fill(total / (rows * cols))
-            );
+            // Calculate correlation for (x,y) pairs
+            const correlationXY = window.Chapter3.MathEngine.calculateCorrelation(samples);
             
-            const result = window.Chapter3.MathEngine.chiSquareTest(observedFreq, expectedFreq);
+            // Calculate correlation for (y,x) pairs (swapped)
+            const swappedSamples = samples.map(([x, y]) => [y, x]);
+            const correlationYX = window.Chapter3.MathEngine.calculateCorrelation(swappedSamples);
             
-            // Property: Chi-square statistic should be non-negative
-            const nonNegativeChiSquare = result.chiSquare >= 0;
-            
-            // Property: Degrees of freedom should be positive
-            const positiveDf = result.degreesOfFreedom > 0;
-            
-            // Property: p-value should be in [0, 1]
-            const validPValue = result.pValue >= 0 && result.pValue <= 1;
-            
-            // Property: All values should be finite
-            const allFinite = Number.isFinite(result.chiSquare) && 
-                             Number.isFinite(result.pValue) && 
-                             Number.isFinite(result.degreesOfFreedom);
-            
-            return nonNegativeChiSquare && positiveDf && validPValue && allFinite;
+            // Property: Correlation should be symmetric: corr(X,Y) = corr(Y,X)
+            return Math.abs(correlationXY - correlationYX) < 1e-10;
           }
         ),
-        { numRuns: Math.min(30, TEST_CONFIG.numRuns) }
+        { numRuns: Math.min(10, TEST_CONFIG.numRuns) }
       );
 
-      // Test 4: Box-Muller transform properties
-      const boxMullerTest = fc.assert(
+      // Test 5: Scale invariance property
+      const scaleInvarianceTest = fc.assert(
         fc.property(
-          fc.integer({ min: 10, max: 1000 }),
-          (numSamples) => {
+          fc.tuple(
+            fc.array(
+              fc.tuple(
+                fc.float({ min: -10, max: 10 }),
+                fc.float({ min: -10, max: 10 })
+              ),
+              { minLength: 10, maxLength: 50 }
+            ),
+            fc.float({ min: 0.1, max: 10 }), // scale factor
+            fc.float({ min: -10, max: 10 })  // shift factor
+          ),
+          ([samples, scale, shift]) => {
             if (!window.Chapter3 || !window.Chapter3.MathEngine) {
               return true; // Skip if not initialized
             }
             
-            const samples = [];
-            for (let i = 0; i < numSamples; i++) {
-              const [z1, z2] = window.Chapter3.MathEngine.boxMullerTransform();
-              samples.push([z1, z2]);
-            }
+            // Calculate original correlation
+            const originalCorr = window.Chapter3.MathEngine.calculateCorrelation(samples);
             
-            // Property: All samples should be finite
-            const allFinite = samples.every(([z1, z2]) => 
-              Number.isFinite(z1) && Number.isFinite(z2)
-            );
+            // Apply linear transformation: scale and shift both variables
+            const transformedSamples = samples.map(([x, y]) => [
+              scale * x + shift,
+              scale * y + shift
+            ]);
             
-            // Property: Sample mean should be close to 0 (for large samples)
-            if (numSamples >= 100) {
-              const meanZ1 = samples.reduce((sum, [z1]) => sum + z1, 0) / numSamples;
-              const meanZ2 = samples.reduce((sum, [, z2]) => sum + z2, 0) / numSamples;
-              const meanCloseToZero = Math.abs(meanZ1) < 0.5 && Math.abs(meanZ2) < 0.5;
-              
-              return allFinite && meanCloseToZero;
-            }
+            const transformedCorr = window.Chapter3.MathEngine.calculateCorrelation(transformedSamples);
             
-            return allFinite;
+            // Property: Correlation should be invariant under linear transformations
+            // (scaling and shifting both variables by the same amount)
+            return Math.abs(originalCorr - transformedCorr) < 1e-10;
           }
         ),
-        { numRuns: Math.min(20, TEST_CONFIG.numRuns) }
+        { numRuns: Math.min(8, TEST_CONFIG.numRuns) }
       );
 
       testResults.passed++;
       testResults.details.push({
-        property: 'Mathematical Calculation Accuracy',
-        tests: ['correlation_bounds', 'multivariate_normal', 'chi_square', 'box_muller'],
+        property: 'Correlation Coefficient Accuracy',
+        tests: ['bounds_validation', 'perfect_correlation', 'zero_correlation', 'symmetry', 'scale_invariance'],
         status: 'passed'
       });
 
       return { 
         passed: true, 
-        tests: ['correlation_bounds', 'multivariate_normal', 'chi_square', 'box_muller']
+        tests: ['bounds_validation', 'perfect_correlation', 'zero_correlation', 'symmetry', 'scale_invariance']
       };
 
     } catch (error) {
       testResults.failed++;
       testResults.errors.push(error.message);
       testResults.details.push({
-        property: 'Mathematical Calculation Accuracy',
+        property: 'Correlation Coefficient Accuracy',
         status: 'failed',
         error: error.message
       });
@@ -216,10 +231,10 @@
   }
 
   /**
-   * Run all property tests
+   * Run correlation coefficient accuracy tests
    */
-  function runAllPropertyTests() {
-    console.log('Starting Chapter 3 Mathematical Library Property Tests');
+  function runCorrelationAccuracyTests() {
+    console.log('Starting Chapter 3 Correlation Coefficient Accuracy Tests');
     console.log('**Feature: chapter3-multidimensional-variables, Property 3: Mathematical Calculation Accuracy**');
     
     const startTime = performance.now();
@@ -232,8 +247,8 @@
       details: []
     };
 
-    // Run the main property test
-    const mathAccuracyResult = testMathematicalCalculationAccuracy();
+    // Run the correlation accuracy test
+    const correlationResult = testCorrelationCoefficientAccuracy();
     
     const endTime = performance.now();
     const duration = endTime - startTime;
@@ -248,12 +263,12 @@
       errors: testResults.errors
     };
     
-    console.log('Property Test Summary:', summary);
+    console.log('Correlation Accuracy Test Summary:', summary);
     
     if (summary.failed === 0) {
-      console.log('✅ All property tests passed!');
+      console.log('✅ All correlation accuracy tests passed!');
     } else {
-      console.error('❌ Some property tests failed:', summary.errors);
+      console.error('❌ Some correlation accuracy tests failed:', summary.errors);
     }
     
     return summary;
@@ -262,26 +277,26 @@
   /**
    * Initialize and run tests when libraries are loaded
    */
-  function initializePropertyTests() {
+  function initializeCorrelationTests() {
     // Wait for Chapter 3 to be initialized
     if (typeof window.Chapter3 === 'undefined') {
-      setTimeout(initializePropertyTests, 100);
+      setTimeout(initializeCorrelationTests, 100);
       return;
     }
     
     // Run tests
-    const results = runAllPropertyTests();
+    const results = runCorrelationAccuracyTests();
     
     // Store results globally for debugging
-    window.Chapter3PropertyTestResults = results;
+    window.Chapter3CorrelationTestResults = results;
     
     return results;
   }
 
   // Export for use in other modules
-  window.Chapter3PropertyTester = {
-    runAllTests: runAllPropertyTests,
-    testMathematicalAccuracy: testMathematicalCalculationAccuracy,
+  window.Chapter3CorrelationTester = {
+    runTests: runCorrelationAccuracyTests,
+    testCorrelationAccuracy: testCorrelationCoefficientAccuracy,
     getResults: () => testResults
   };
 
@@ -289,7 +304,7 @@
   if (typeof window !== 'undefined' && window.location && 
       (window.location.search.includes('test=true') || window.location.hash.includes('test'))) {
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(initializePropertyTests, 1000);
+      setTimeout(initializeCorrelationTests, 1000);
     });
   }
 

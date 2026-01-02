@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 3 Integration Tests</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- KaTeX for LaTeX rendering -->
+    <link rel="stylesheet" href="static/libs/katex/css/katex.min.css">
+    <script src="static/libs/katex/js/katex.min.js"></script>
+    <script src="static/libs/katex/js/auto-render.min.js"></script>
+    
+    <!-- Chart.js for visualizations -->
+    <script src="static/libs/chart/chart.umd.min.js"></script>
+    
+    <!-- Mathematical libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.6/dist/jstat.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ml-matrix@6.10.7/lib/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fast-check@3.15.0/lib/bundle.js"></script>
+    
+    <!-- 3D visualization libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+    
+    <!-- D3 for contours -->
+    <script src="https://d3js.org/d3-contour.v3.min.js"></script>
+    
+    <!-- Noise library -->
+    <script src="static/js/lib/noise2d.js"></script>
+    
+    <!-- Chapter 3 CSS -->
+    <link rel="stylesheet" href="static/css/chapter1.css">
+    <link rel="stylesheet" href="static/css/chapter3.css">
+    
+    <style>
+        .test-console {
+            background: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 20px;
+            border-radius: 8px;
+            height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .test-status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .test-status.running {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+        
+        .test-status.passed {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        
+        .test-status.failed {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Hidden canvases for Chapter 3 -->
+    <canvas id="bg-noise" style="display: none;"></canvas>
+    <canvas id="marginal-glow" style="display: none;"></canvas>
+    
+    <div class="container mx-auto px-6 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-400 mb-4">
+                <i class="fa-solid fa-flask mr-3"></i>
+                Chapter 3 Integration Tests
+            </h1>
+            <p class="text-gray-300">
+                Comprehensive testing of cross-component communication and data flow
+            </p>
+        </div>
+        
+        <!-- Test Status -->
+        <div id="test-status" class="test-status running">
+            <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+            Initializing tests...
+        </div>
+        
+        <!-- Test Progress -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Test Progress</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-gray-700 rounded p-4">
+                    <div class="text-2xl font-bold text-blue-400" id="total-tests">0</div>
+                    <div class="text-sm text-gray-300">Total Tests</div>
+                </div>
+                <div class="bg-gray-700 rounded p-4">
+                    <div class="text-2xl font-bold text-green-400" id="passed-tests">0</div>
+                    <div class="text-sm text-gray-300">Passed</div>
+                </div>
+                <div class="bg-gray-700 rounded p-4">
+                    <div class="text-2xl font-bold text-red-400" id="failed-tests">0</div>
+                    <div class="text-sm text-gray-300">Failed</div>
+                </div>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="mt-4">
+                <div class="bg-gray-600 rounded-full h-2">
+                    <div id="progress-bar" class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <div class="text-sm text-gray-400 mt-1" id="progress-text">0% complete</div>
+            </div>
+        </div>
+        
+        <!-- Test Console -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Test Console</h2>
+            <div id="test-console" class="test-console"></div>
+        </div>
+        
+        <!-- Test Results -->
+        <div id="test-results" class="bg-gray-800 rounded-lg p-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Test Results</h2>
+            <div id="results-content"></div>
+        </div>
+        
+        <!-- Control Buttons -->
+        <div class="text-center">
+            <button id="run-tests-btn" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold mr-4">
+                <i class="fa-solid fa-play mr-2"></i>
+                Run Tests
+            </button>
+            <button id="clear-console-btn" class="bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold">
+                <i class="fa-solid fa-trash mr-2"></i>
+                Clear Console
+            </button>
+        </div>
+    </div>
+    
+    <!-- Hidden Chapter 3 elements for testing -->
+    <div style="display: none;">
+        <div id="joint-3d-plot"></div>
+        <canvas id="contour-canvas" width="300" height="240"></canvas>
+        <canvas id="scatter-canvas" width="300" height="240"></canvas>
+        <canvas id="marginal-canvas" width="300" height="240"></canvas>
+        
+        <!-- Parameter controls -->
+        <input type="range" id="mu1-slider" min="-50" max="50" step="0.1" value="5">
+        <input type="range" id="mu2-slider" min="-50" max="50" step="0.1" value="8">
+        <input type="range" id="sigma1-slider" min="0.1" max="100" step="0.1" value="15">
+        <input type="range" id="sigma2-slider" min="0.1" max="100" step="0.1" value="20">
+        <input type="range" id="rho-slider" min="-0.99" max="0.99" step="0.01" value="0.3">
+        <input type="range" id="n-samples-slider" min="100" max="10000" step="100" value="1000">
+        
+        <!-- Display elements -->
+        <span id="mu1-val">5.0%</span>
+        <span id="mu2-val">8.0%</span>
+        <span id="sigma1-val">15.0%</span>
+        <span id="sigma2-val">20.0%</span>
+        <span id="rho-val">0.30</span>
+        <span id="n-samples-val">1,000</span>
+        
+        <!-- Joint probability calculator -->
+        <input type="number" id="x-min" value="-10">
+        <input type="number" id="x-max" value="20">
+        <input type="number" id="y-min" value="-12">
+        <input type="number" id="y-max" value="28">
+    </div>
+    
+    <!-- Load Chapter 3 and test scripts -->
+    <script src="static/js/chapter3.js"></script>
+    <script src="static/js/tests/chapter3-integration-tests.js"></script>
+    <script src="static/js/tests/chapter3-math-properties.test.js"></script>
+    <script src="static/js/tests/chapter3-navigation-properties.test.js"></script>
+    <script src="static/js/tests/chapter3-test-runner.js"></script>
+    
+    <script>
+        // Test UI management
+        let testConsole = document.getElementById('test-console');
+        let testStatus = document.getElementById('test-status');
+        let totalTestsEl = document.getElementById('total-tests');
+        let passedTestsEl = document.getElementById('passed-tests');
+        let failedTestsEl = document.getElementById('failed-tests');
+        let progressBar = document.getElementById('progress-bar');
+        let progressText = document.getElementById('progress-text');
+        
+        // Override console.log to capture test output
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        const originalConsoleWarn = console.warn;
+        
+        function appendToConsole(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'warn' ? '⚠️' : 'ℹ️';
+            testConsole.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            testConsole.scrollTop = testConsole.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            appendToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalConsoleError.apply(console, args);
+            appendToConsole(args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalConsoleWarn.apply(console, args);
+            appendToConsole(args.join(' '), 'warn');
+        };
+        
+        // Update test progress
+        function updateProgress(results) {
+            if (results) {
+                totalTestsEl.textContent = results.totalTests || 0;
+                passedTestsEl.textContent = results.totalPassed || 0;
+                failedTestsEl.textContent = results.totalFailed || 0;
+                
+                const total = results.totalTests || 1;
+                const completed = (results.totalPassed || 0) + (results.totalFailed || 0);
+                const percentage = Math.round((completed / total) * 100);
+                
+                progressBar.style.width = percentage + '%';
+                progressText.textContent = percentage + '% complete';
+                
+                // Update status
+                if (completed === total) {
+                    if (results.totalFailed === 0) {
+                        testStatus.className = 'test-status passed';
+                        testStatus.innerHTML = '<i class="fa-solid fa-check mr-2"></i>All tests passed!';
+                    } else {
+                        testStatus.className = 'test-status failed';
+                        testStatus.innerHTML = `<i class="fa-solid fa-times mr-2"></i>${results.totalFailed} tests failed`;
+                    }
+                }
+            }
+        }
+        
+        // Run tests function
+        async function runTests() {
+            testStatus.className = 'test-status running';
+            testStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Running tests...';
+            
+            try {
+                console.log('🚀 Starting Chapter 3 Integration Tests...');
+                
+                // Wait for Chapter 3 to initialize
+                if (typeof window.chapter3Visualizer === 'undefined') {
+                    console.log('⏳ Waiting for Chapter 3 to initialize...');
+                    
+                    // Initialize Chapter 3
+                    window.chapter3Visualizer = new Chapter3Visualizer();
+                    
+                    // Wait a bit for initialization
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+                
+                // Run the comprehensive test suite
+                if (typeof window.Chapter3TestRunner !== 'undefined') {
+                    const results = await window.Chapter3TestRunner.runAllTests();
+                    updateProgress(results.summary);
+                    
+                    // Display detailed results
+                    displayDetailedResults(results);
+                } else {
+                    throw new Error('Test runner not loaded');
+                }
+                
+            } catch (error) {
+                console.error('Test execution failed:', error.message);
+                testStatus.className = 'test-status failed';
+                testStatus.innerHTML = '<i class="fa-solid fa-times mr-2"></i>Test execution failed';
+            }
+        }
+        
+        // Display detailed results
+        function displayDetailedResults(results) {
+            const resultsDiv = document.getElementById('test-results');
+            const contentDiv = document.getElementById('results-content');
+            
+            let html = '<div class="space-y-4">';
+            
+            // Summary
+            html += `
+                <div class="bg-gray-700 rounded p-4">
+                    <h3 class="text-lg font-semibold mb-2">Summary</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>Duration: ${results.metadata.duration}ms</div>
+                        <div>Browser: ${results.metadata.browser.browser}</div>
+                        <div>Success Rate: ${results.summary.successRate}</div>
+                        <div>Status: ${results.summary.overallStatus}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Test suites
+            html += '<div class="bg-gray-700 rounded p-4">';
+            html += '<h3 class="text-lg font-semibold mb-2">Test Suites</h3>';
+            
+            for (const [name, suite] of Object.entries(results.suites)) {
+                const statusIcon = suite.status === 'passed' ? '✅' : '❌';
+                const statusColor = suite.status === 'passed' ? 'text-green-400' : 'text-red-400';
+                
+                html += `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-600 last:border-b-0">
+                        <span>${statusIcon} ${name}</span>
+                        <span class="${statusColor}">${suite.duration}ms</span>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            
+            // Recommendations
+            if (results.recommendations && results.recommendations.length > 0) {
+                html += '<div class="bg-gray-700 rounded p-4">';
+                html += '<h3 class="text-lg font-semibold mb-2">Recommendations</h3>';
+                
+                for (const rec of results.recommendations) {
+                    const priorityColor = rec.priority === 'high' ? 'text-red-400' : 
+                                        rec.priority === 'medium' ? 'text-yellow-400' : 'text-green-400';
+                    
+                    html += `
+                        <div class="py-2 border-b border-gray-600 last:border-b-0">
+                            <div class="flex items-start gap-2">
+                                <span class="${priorityColor} font-semibold">[${rec.type.toUpperCase()}]</span>
+                                <span class="text-sm">${rec.message}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            
+            contentDiv.innerHTML = html;
+            resultsDiv.classList.remove('hidden');
+        }
+        
+        // Event listeners
+        document.getElementById('run-tests-btn').addEventListener('click', runTests);
+        document.getElementById('clear-console-btn').addEventListener('click', () => {
+            testConsole.textContent = '';
+        });
+        
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 1000);
+        });
+    </script>
+</body>
+</html>

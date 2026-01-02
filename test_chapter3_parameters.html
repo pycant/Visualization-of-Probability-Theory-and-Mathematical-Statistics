@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 3 Parameter Controls Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="static/css/chapter3.css" />
+</head>
+<body class="bg-gray-900 text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Chapter 3 Parameter Controls Test</h1>
+        
+        <!-- Test the enhanced parameter controls -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Parameter Controls -->
+            <div class="space-y-4">
+                <h2 class="text-lg font-semibold">Enhanced Parameter Controls</h2>
+                
+                <!-- μ₁ Control -->
+                <div class="param-control">
+                  <div class="mb-2 text-sm flex justify-between items-center">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-chart-line text-neon-blue"></i>
+                      期望收益 μ₁ (%)
+                    </span>
+                    <span id="mu1-val" class="text-neon-blue font-mono font-bold">5.0%</span>
+                  </div>
+                  <input
+                    id="mu1-slider"
+                    type="range"
+                    min="-50"
+                    max="50"
+                    step="0.1"
+                    value="5"
+                    class="param-slider w-full"
+                    data-param="mu1"
+                  />
+                  <div class="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>-50%</span>
+                    <span>50%</span>
+                  </div>
+                </div>
+
+                <!-- ρ Control -->
+                <div class="param-control">
+                  <div class="mb-2 text-sm flex justify-between items-center">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-link text-yellow-400"></i>
+                      相关系数 ρ
+                    </span>
+                    <span id="rho-val" class="text-yellow-400 font-mono font-bold">0.30</span>
+                  </div>
+                  <input
+                    id="rho-slider"
+                    type="range"
+                    min="-0.99"
+                    max="0.99"
+                    step="0.01"
+                    value="0.3"
+                    class="param-slider w-full"
+                    data-param="rho"
+                  />
+                  <div class="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>-0.99</span>
+                    <span class="text-center">0</span>
+                    <span>+0.99</span>
+                  </div>
+                  <div class="mt-1 text-xs text-center" id="rho-interpretation">
+                    <span class="text-gray-400">中等正相关</span>
+                  </div>
+                </div>
+
+                <!-- Sample Size Control -->
+                <div class="param-control">
+                  <div class="mb-2 text-sm flex justify-between items-center">
+                    <span class="flex items-center gap-2">
+                      <i class="fa-solid fa-database text-gray-300"></i>
+                      样本数量
+                      <span id="performance-indicator" class="ml-2 text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">
+                        <i class="fa-solid fa-tachometer-alt"></i> 流畅
+                      </span>
+                    </span>
+                    <span id="n-samples-val" class="text-gray-300 font-mono font-bold">1,000</span>
+                  </div>
+                  <input
+                    id="n-samples-slider"
+                    type="range"
+                    min="100"
+                    max="10000"
+                    step="100"
+                    value="1000"
+                    class="param-slider w-full"
+                    data-param="nSamples"
+                  />
+                  <div class="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>100</span>
+                    <span class="text-center">5,000</span>
+                    <span>10,000</span>
+                  </div>
+                  <div class="mt-2 text-xs">
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-400">性能建议:</span>
+                      <span id="sample-size-recommendation" class="text-neon-blue">推荐范围</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-1 mt-1">
+                      <div id="performance-bar" class="bg-green-400 h-1 rounded-full transition-all duration-300" style="width: 20%"></div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <!-- Joint Probability Calculator -->
+            <div class="space-y-4">
+                <h2 class="text-lg font-semibold">Joint Probability Calculator</h2>
+                
+                <div class="bg-dark-bg/50 rounded-xl p-4 border border-white/10">
+                  <div class="text-sm font-medium mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-neon-green"></i>
+                    联合概率计算器
+                  </div>
+                  
+                  <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="space-y-2">
+                        <label class="text-xs text-gray-400 flex items-center gap-1">
+                          <i class="fa-solid fa-arrows-alt-h text-neon-blue"></i>
+                          X 范围
+                        </label>
+                        <div class="flex items-center gap-1 text-xs">
+                          <span>[</span>
+                          <input id="x-min" type="number" value="-5" step="0.1" class="w-16 bg-dark-card border border-white/20 rounded px-2 py-1 text-center" />
+                          <span>,</span>
+                          <input id="x-max" type="number" value="5" step="0.1" class="w-16 bg-dark-card border border-white/20 rounded px-2 py-1 text-center" />
+                          <span>]</span>
+                        </div>
+                      </div>
+                      
+                      <div class="space-y-2">
+                        <label class="text-xs text-gray-400 flex items-center gap-1">
+                          <i class="fa-solid fa-arrows-alt-v text-neon-purple"></i>
+                          Y 范围
+                        </label>
+                        <div class="flex items-center gap-1 text-xs">
+                          <span>[</span>
+                          <input id="y-min" type="number" value="-5" step="0.1" class="w-16 bg-dark-card border border-white/20 rounded px-2 py-1 text-center" />
+                          <span>,</span>
+                          <input id="y-max" type="number" value="5" step="0.1" class="w-16 bg-dark-card border border-white/20 rounded px-2 py-1 text-center" />
+                          <span>]</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="space-y-2">
+                      <label class="text-xs text-gray-400">计算方法</label>
+                      <select id="calc-method" class="w-full bg-dark-card border border-white/20 rounded px-2 py-1 text-xs">
+                        <option value="sample">样本估计 (快速)</option>
+                        <option value="numerical">数值积分 (精确)</option>
+                        <option value="both">两种方法对比</option>
+                      </select>
+                    </div>
+
+                    <button id="calc-joint-prob" class="w-full py-2 rounded-lg border border-neon-green/30 bg-neon-green/10 text-neon-green hover:bg-neon-green/20 transition-all duration-300 text-sm font-medium">
+                      <i class="fa-solid fa-play mr-2"></i>
+                      计算 P(X∈[a,b], Y∈[c,d])
+                    </button>
+
+                    <div id="prob-results" class="space-y-2 hidden">
+                      <div class="bg-dark-card/50 rounded-lg p-3 border border-white/10">
+                        <div class="text-xs text-gray-400 mb-2">计算结果</div>
+                        <div id="sample-result" class="flex justify-between items-center mb-1">
+                          <span class="text-xs">样本估计:</span>
+                          <span id="sample-prob" class="font-mono text-neon-blue">-</span>
+                        </div>
+                        <div id="numerical-result" class="flex justify-between items-center mb-1 hidden">
+                          <span class="text-xs">数值积分:</span>
+                          <span id="numerical-prob" class="font-mono text-neon-green">-</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <p class="text-gray-400">Test the parameter controls above to verify functionality</p>
+        </div>
+    </div>
+
+    <script>
+        // Simple test implementation
+        class TestParameterControls {
+            constructor() {
+                this.parameters = {
+                    mu1: 5,
+                    rho: 0.3,
+                    nSamples: 1000
+                };
+                this.init();
+            }
+
+            init() {
+                // Add event listeners for sliders
+                ['mu1-slider', 'rho-slider', 'n-samples-slider'].forEach(id => {
+                    const slider = document.getElementById(id);
+                    if (slider) {
+                        slider.addEventListener('input', (e) => {
+                            this.updateParameter(id, e.target.value);
+                        });
+                    }
+                });
+
+                // Initialize displays
+                this.updateParameterDisplay('mu1', this.parameters.mu1);
+                this.updateParameterDisplay('rho', this.parameters.rho);
+                this.updateParameterDisplay('nSamples', this.parameters.nSamples);
+            }
+
+            updateParameter(sliderId, value) {
+                const paramMap = {
+                    'mu1-slider': 'mu1',
+                    'rho-slider': 'rho',
+                    'n-samples-slider': 'nSamples'
+                };
+
+                const param = paramMap[sliderId];
+                if (param) {
+                    this.parameters[param] = parseFloat(value);
+                    this.updateParameterDisplay(param, value);
+                }
+            }
+
+            updateParameterDisplay(param, value) {
+                const displayMap = {
+                    mu1: 'mu1-val',
+                    rho: 'rho-val',
+                    nSamples: 'n-samples-val'
+                };
+
+                const displayId = displayMap[param];
+                const displayElement = document.getElementById(displayId);
+
+                if (displayElement) {
+                    let displayValue = value;
+                    
+                    if (param === 'mu1') {
+                        displayValue = `${parseFloat(value).toFixed(1)}%`;
+                    } else if (param === 'rho') {
+                        displayValue = parseFloat(value).toFixed(2);
+                        this.updateCorrelationInterpretation(parseFloat(value));
+                    } else if (param === 'nSamples') {
+                        displayValue = Math.floor(value).toLocaleString();
+                        this.updatePerformanceIndicator(Math.floor(value));
+                    }
+                    
+                    displayElement.textContent = displayValue;
+                }
+            }
+
+            updateCorrelationInterpretation(rho) {
+                const interpretationElement = document.getElementById('rho-interpretation');
+                if (!interpretationElement) return;
+
+                const absRho = Math.abs(rho);
+                let interpretation = '';
+                let colorClass = '';
+
+                if (absRho >= 0.9) {
+                    interpretation = rho > 0 ? '极强正相关' : '极强负相关';
+                    colorClass = 'text-red-400';
+                } else if (absRho >= 0.7) {
+                    interpretation = rho > 0 ? '强正相关' : '强负相关';
+                    colorClass = 'text-orange-400';
+                } else if (absRho >= 0.5) {
+                    interpretation = rho > 0 ? '中等正相关' : '中等负相关';
+                    colorClass = 'text-yellow-400';
+                } else if (absRho >= 0.3) {
+                    interpretation = rho > 0 ? '弱正相关' : '弱负相关';
+                    colorClass = 'text-neon-blue';
+                } else {
+                    interpretation = '几乎无相关';
+                    colorClass = 'text-gray-400';
+                }
+
+                interpretationElement.innerHTML = `<span class="${colorClass}">${interpretation}</span>`;
+            }
+
+            updatePerformanceIndicator(sampleSize) {
+                const indicator = document.getElementById('performance-indicator');
+                const recommendation = document.getElementById('sample-size-recommendation');
+                const performanceBar = document.getElementById('performance-bar');
+
+                if (!indicator || !recommendation || !performanceBar) return;
+
+                let status, color, barWidth, recText;
+
+                if (sampleSize <= 1000) {
+                    status = '流畅';
+                    color = 'bg-green-500/20 text-green-400';
+                    barWidth = '20%';
+                    recText = '推荐范围';
+                } else if (sampleSize <= 3000) {
+                    status = '良好';
+                    color = 'bg-yellow-500/20 text-yellow-400';
+                    barWidth = '50%';
+                    recText = '可接受';
+                } else if (sampleSize <= 5000) {
+                    status = '较慢';
+                    color = 'bg-orange-500/20 text-orange-400';
+                    barWidth = '75%';
+                    recText = '可能较慢';
+                } else {
+                    status = '慢';
+                    color = 'bg-red-500/20 text-red-400';
+                    barWidth = '100%';
+                    recText = '性能影响';
+                }
+
+                indicator.className = `ml-2 text-xs px-2 py-1 rounded-full ${color}`;
+                indicator.innerHTML = `<i class="fa-solid fa-tachometer-alt"></i> ${status}`;
+                recommendation.textContent = recText;
+                performanceBar.style.width = barWidth;
+            }
+        }
+
+        // Initialize test when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new TestParameterControls();
+        });
+    </script>
+</body>
+</html>
