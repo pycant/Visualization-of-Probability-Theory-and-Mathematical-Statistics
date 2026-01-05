@@ -9,10 +9,10 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
       rel="stylesheet"
     />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
-    <script src="../static/js/url-click-handler.js"></script>
+    <script src="../static/libs/chart/chart.umd.min.js" defer></script>
+    <script src="../static/libs/three/three.min.js" defer></script>
+    <script src="../static/libs/gsap/gsap.min.js" defer></script>
+    <script src="../static/js/url-click-handler.js" defer></script>
 
     <!-- Markdown和LaTeX渲染库 -->
     <script src="../static/libs/marked/marked.min.js"></script>
@@ -389,24 +389,19 @@
                 class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
               >
                 <div
-                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  class="relative overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  style="aspect-ratio: 16/9"
                   data-target-url="chapter1.html"
                   aria-label="打开第1章页面"
                   role="button"
                 >
-                  <iframe
-                    src="chapter1.html"
-                    class="pointer-events-none"
-                    style="
-                      position: absolute;
-                      left: 50%;
-                      top: 50%;
-                      transform: translate(-50%, -50%) scale(0.25);
-                      transform-origin: center center;
-                      width: 1600px;
-                      height: 900px;
-                    "
-                  ></iframe>
+                  <img
+                    data-slug="chapter1"
+                    src="../static/img/quantum-physics.svg"
+                    alt="随机事件与概率预览"
+                    class="absolute inset-0 w-full h-full object-cover"
+                    style="object-position: top center"
+                  />
                   <div
                     class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
                   >
@@ -441,24 +436,19 @@
               >
                 <!-- 微缩预览：随机变量 -->
                 <div
-                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  class="relative overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  style="aspect-ratio: 16/9"
                   data-target-url="random_variables.html"
                   aria-label="打开随机变量页面"
                   role="button"
                 >
-                  <iframe
-                    src="random_variables.html"
-                    class="pointer-events-none"
-                    style="
-                      position: absolute;
-                      left: 50%;
-                      top: 50%;
-                      transform: translate(-50%, -50%) scale(0.25);
-                      transform-origin: center center;
-                      width: 1600px;
-                      height: 900px;
-                    "
-                  ></iframe>
+                  <img
+                    data-slug="random_variables"
+                    src="../static/img/machine-learning.svg"
+                    alt="随机变量预览"
+                    class="absolute inset-0 w-full h-full object-cover"
+                    style="object-position: top center"
+                  />
                   <div
                     class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
                   >
@@ -493,24 +483,19 @@
               >
                 <!-- 微缩预览：概率分布 -->
                 <div
-                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  class="relative overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  style="aspect-ratio: 16/9"
                   data-target-url="probability_distributions.html"
                   aria-label="打开概率分布页面"
                   role="button"
                 >
-                  <iframe
-                    src="probability_distributions.html"
-                    class="pointer-events-none"
-                    style="
-                      position: absolute;
-                      left: 50%;
-                      top: 50%;
-                      transform: translate(-50%, -50%) scale(0.25);
-                      transform-origin: center center;
-                      width: 1600px;
-                      height: 900px;
-                    "
-                  ></iframe>
+                  <img
+                    data-slug="probability_distributions"
+                    src="../static/img/cosmology.svg"
+                    alt="概率分布预览"
+                    class="absolute inset-0 w-full h-full object-cover"
+                    style="object-position: top center"
+                  />
                   <div
                     class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
                   >
@@ -546,24 +531,19 @@
               >
                 <!-- 微缩预览：期望与方差 -->
                 <div
-                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  class="relative overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  style="aspect-ratio: 16/9"
                   data-target-url="expectation_variance.html"
                   aria-label="打开期望与方差页面"
                   role="button"
                 >
-                  <iframe
-                    src="expectation_variance.html"
-                    class="pointer-events-none"
-                    style="
-                      position: absolute;
-                      left: 50%;
-                      top: 50%;
-                      transform: translate(-50%, -50%) scale(0.25);
-                      transform-origin: center center;
-                      width: 1600px;
-                      height: 900px;
-                    "
-                  ></iframe>
+                  <img
+                    data-slug="expectation_variance"
+                    src="../static/img/weather-forecast.svg"
+                    alt="期望与方差预览"
+                    class="absolute inset-0 w-full h-full object-cover"
+                    style="object-position: top center"
+                  />
                   <div
                     class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
                   >
@@ -599,24 +579,19 @@
               >
                 <!-- 微缩预览：第3章 -->
                 <div
-                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  class="relative overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  style="aspect-ratio: 16/9"
                   data-target-url="chapter3.html"
                   aria-label="打开第3章页面"
                   role="button"
                 >
-                  <iframe
-                    src="chapter3.html"
-                    class="pointer-events-none"
-                    style="
-                      position: absolute;
-                      left: 50%;
-                      top: 50%;
-                      transform: translate(-50%, -50%) scale(0.25);
-                      transform-origin: center center;
-                      width: 1600px;
-                      height: 900px;
-                    "
-                  ></iframe>
+                  <img
+                    data-slug="chapter3"
+                    src="../static/img/cosmology.svg"
+                    alt="第3章预览"
+                    class="absolute inset-0 w-full h-full object-cover"
+                    style="object-position: top center"
+                  />
                   <div
                     class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
                   >
@@ -651,24 +626,19 @@
               >
                 <!-- 微缩预览：大数定律 -->
                 <div
-                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  class="relative overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  style="aspect-ratio: 16/9"
                   data-target-url="law_of_large_numbers.html"
                   aria-label="打开大数定律页面"
                   role="button"
                 >
-                  <iframe
-                    src="law_of_large_numbers.html"
-                    class="pointer-events-none"
-                    style="
-                      position: absolute;
-                      left: 50%;
-                      top: 50%;
-                      transform: translate(-50%, -50%) scale(0.25);
-                      transform-origin: center center;
-                      width: 1600px;
-                      height: 900px;
-                    "
-                  ></iframe>
+                  <img
+                    data-slug="law_of_large_numbers"
+                    src="../static/img/cover-lln-streaming.svg"
+                    alt="大数定律预览"
+                    class="absolute inset-0 w-full h-full object-cover"
+                    style="object-position: top center"
+                  />
                   <div
                     class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
                   >
@@ -730,24 +700,19 @@
               >
                 <!-- 微缩预览：区间估计 -->
                 <div
-                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  class="relative overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  style="aspect-ratio: 16/9"
                   data-target-url="interval_estimation.html"
                   aria-label="打开区间估计页面"
                   role="button"
                 >
-                  <iframe
-                    src="interval_estimation.html"
-                    class="pointer-events-none"
-                    style="
-                      position: absolute;
-                      left: 50%;
-                      top: 50%;
-                      transform: translate(-50%, -50%) scale(0.25);
-                      transform-origin: center center;
-                      width: 1600px;
-                      height: 900px;
-                    "
-                  ></iframe>
+                  <img
+                    data-slug="interval_estimation"
+                    src="../static/img/cover-interval-game.svg"
+                    alt="区间估计预览"
+                    class="absolute inset-0 w-full h-full object-cover"
+                    style="object-position: top center"
+                  />
                   <div
                     class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
                   >
@@ -782,24 +747,19 @@
               >
                 <!-- 微缩预览：假设检验 -->
                 <div
-                  class="relative h-[225px] overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  class="relative overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
+                  style="aspect-ratio: 16/9"
                   data-target-url="hypothesis_testing.html"
                   aria-label="打开假设检验页面"
                   role="button"
                 >
-                  <iframe
-                    src="hypothesis_testing.html"
-                    class="pointer-events-none"
-                    style="
-                      position: absolute;
-                      left: 50%;
-                      top: 50%;
-                      transform: translate(-50%, -50%) scale(0.25);
-                      transform-origin: center center;
-                      width: 1600px;
-                      height: 900px;
-                    "
-                  ></iframe>
+                  <img
+                    data-slug="hypothesis_testing"
+                    src="../static/img/cover-hypothesis-hero.svg"
+                    alt="假设检验预览"
+                    class="absolute inset-0 w-full h-full object-cover"
+                    style="object-position: top center"
+                  />
                   <div
                     class="absolute bottom-2 left-2 bg-dark-card/70 px-3 py-1 rounded text-sm text-gray-300"
                   >
@@ -935,6 +895,21 @@
       }
 
       document.addEventListener("DOMContentLoaded", setupConceptPreviewCards);
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var imgs = document.querySelectorAll(".concept-preview img[data-slug]");
+        imgs.forEach(function (img) {
+          var slug = img.getAttribute("data-slug") || "";
+          if (!slug) return;
+          var url = "../static/img/covers/" + slug + ".png";
+          var probe = new Image();
+          probe.onload = function () {
+            img.src = url;
+          };
+          probe.src = url;
+        });
+      });
     </script>
 
     <!-- 概率模拟部分 -->
