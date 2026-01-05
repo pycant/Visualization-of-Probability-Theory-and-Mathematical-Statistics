@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>视频课程 | Video Courses</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.11.4/dist/gsap.min.js"></script>
+
+    <!-- 配置Tailwind自定义颜色和字体 (Reference index.html) -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "neon-blue": "#00f3ff",
+              "neon-purple": "#bf00ff",
+              "neon-green": "#00ff66",
+              "neon-orange": "#ff8c00",
+              "dark-bg": "#050a1a",
+              "dark-card": "#0f1730",
+            },
+            fontFamily: {
+              future: ["Orbitron", "sans-serif"],
+              data: ["Rajdhani", "sans-serif"],
+            },
+            animation: {
+              "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              glow: "glow 2s ease-in-out infinite alternate",
+            },
+            keyframes: {
+              glow: {
+                "0%": {
+                  textShadow:
+                    "0 0 5px #fff, 0 0 10px #00f3ff, 0 0 15px #00f3ff",
+                },
+                "100%": {
+                  textShadow:
+                    "0 0 10px #fff, 0 0 20px #00f3ff, 0 0 30px #00f3ff, 0 0 40px #00f3ff",
+                },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .text-shadow-neon {
+          text-shadow: 0 0 10px rgba(0, 243, 255, 0.7),
+            0 0 20px rgba(0, 243, 255, 0.5);
+        }
+        .border-glow {
+          box-shadow: 0 0 5px theme("colors.neon-blue"),
+            0 0 10px theme("colors.neon-blue/30");
+        }
+        .bg-grid {
+          background-image: linear-gradient(
+              rgba(0, 243, 255, 0.1) 1px,
+              transparent 1px
+            ),
+            linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+          background-size: 20px 20px;
+        }
+        .glass-effect {
+          backdrop-filter: blur(10px);
+          background-color: rgba(15, 23, 48, 0.6);
+        }
+      }
+    </style>
+
+    <!-- 引入Google字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-dark-bg text-gray-200 font-data min-h-screen flex flex-col">
+    <!-- 粒子背景容器 -->
+    <div
+      id="particles-container"
+      class="fixed inset-0 z-0 opacity-30 pointer-events-none"
+    ></div>
+
+    <!-- 导航由 partials/navbar.html 动态注入 -->
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-24 pb-12 relative z-10 flex-grow">
+      <header class="text-center mb-12">
+        <h1 class="text-3xl md:text-4xl font-future font-bold text-white mb-4">
+          <span class="text-neon-purple">视频</span>课程
+        </h1>
+        <p class="text-gray-400 max-w-2xl mx-auto">
+          按章节系统学习概率论与数理统计，结合可视化演示深入理解
+        </p>
+      </header>
+
+      <!-- 视频播放区 -->
+      <section id="video-section" class="mb-12">
+        <div
+          class="bg-dark-card rounded-xl border border-gray-700 overflow-hidden shadow-2xl max-w-4xl mx-auto"
+        >
+          <div class="aspect-w-16 aspect-h-9 bg-black relative">
+            <!-- 视频占位符/Iframe -->
+            <iframe
+              id="course-video-player"
+              class="w-full h-[400px] md:h-[500px]"
+              src=""
+              frameborder="0"
+              allow="autoplay; encrypted-media"
+              allowfullscreen
+              style="display: none"
+            ></iframe>
+            <div
+              id="video-placeholder"
+              class="w-full h-[400px] md:h-[500px] flex flex-col items-center justify-center text-gray-500"
+            >
+              <i
+                class="fa fa-play-circle text-6xl mb-4 text-neon-purple opacity-50"
+              ></i>
+              <p class="text-xl">请选择下方章节开始学习</p>
+            </div>
+          </div>
+          <div class="p-6 border-t border-gray-700">
+            <h2 id="video-title" class="text-2xl font-bold text-neon-blue mb-2">
+              课程介绍
+            </h2>
+            <p id="video-desc" class="text-gray-400">
+              选择章节以加载对应视频课程。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 章节列表 -->
+      <section
+        id="chapters-container"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        <!-- 章节卡片将由 toolbox.js 动态生成 -->
+        <div class="col-span-full text-center py-12">
+          <i
+            class="fas fa-circle-notch fa-spin text-neon-blue text-3xl mb-4"
+          ></i>
+          <p class="text-gray-400">正在加载课程目录...</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- 页脚占位，实际内容由 partials/footer.html 注入 -->
+    <div id="site-footer"></div>
+
+    <!-- 工具箱与脚本 -->
+    <script src="../static/js/toolbox.js"></script>
+    <script>
+      window.NAV_CONFIG = {
+        active: "video-courses",
+        sectionLinks: [
+          { label: "课程介绍", href: "#video-section" },
+          { label: "章节列表", href: "#chapters-container" },
+        ],
+      };
+    </script>
+    <script src="../static/js/include-navbar.js"></script>
+    <script src="../static/js/include-footer.js" defer></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // 调用 toolbox.js 中的方法加载章节
+        const tb = window.probabilityToolbox || window.toolbox;
+        if (tb && tb.loadChapterVideos) {
+          tb.loadChapterVideos("../docs/目录.md");
+        } else {
+          console.error(
+            "Toolbox loadChapterVideos method not found. Available objects:",
+            {
+              probabilityToolbox: window.probabilityToolbox,
+              toolbox: window.toolbox,
+            }
+          );
+        }
+      });
+    </script>
+  </body>
+</html>

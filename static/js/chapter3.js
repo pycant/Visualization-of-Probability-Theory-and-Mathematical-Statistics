@@ -12,7 +12,7 @@ class Chapter3Visualizer {
       (window.Noise2D && window.Noise2D.create({ seed: 1337 })) || null;
     this.bgTime = 0;
     this.bgConfig = { cols: 150, rows: 90, scale: 0.015 };
-    this.useBackgroundEffects = true;
+    this.useBackgroundEffects = false;
     this.bgCanvas = null;
     this.bgCtx = null;
     this.plot3DQuality = "medium";

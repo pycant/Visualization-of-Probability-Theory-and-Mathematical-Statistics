@@ -3380,6 +3380,99 @@ class ProbabilityToolbox {
       resultDiv.innerHTML = statusHtml;
     }, 500);
   }
+
+  async loadChapterVideos(mdPath) {
+    const container = document.getElementById("chapters-container");
+    if (!container) return;
+
+    try {
+      const response = await fetch(mdPath);
+      if (!response.ok) throw new Error("无法加载目录文件");
+      const text = await response.text();
+
+      const chapters = [];
+      const lines = text.split("\n");
+      let currentChapter = null;
+
+      lines.forEach((line) => {
+        const match = line.match(/^##\s+(.+)/);
+        if (match) {
+          if (currentChapter) chapters.push(currentChapter);
+          currentChapter = {
+            title: match[1].trim(),
+            description: "",
+            sections: [],
+          };
+        } else if (currentChapter) {
+          if (line.trim().startsWith("-") || line.trim().match(/^\d+\./)) {
+            currentChapter.sections.push(line.trim());
+          } else if (
+            line.trim() &&
+            !line.startsWith("---") &&
+            currentChapter.sections.length === 0
+          ) {
+            currentChapter.description += line.trim() + " ";
+          }
+        }
+      });
+      if (currentChapter) chapters.push(currentChapter);
+
+      container.innerHTML = "";
+      chapters.forEach((chapter, index) => {
+        const card = document.createElement("div");
+        card.className =
+          "bg-dark-card rounded-lg p-6 border border-gray-700 hover:border-neon-blue transition-all duration-300 cursor-pointer group";
+        card.onclick = () => {
+          const player = document.getElementById("course-video-player");
+          const placeholder = document.getElementById("video-placeholder");
+          const title = document.getElementById("video-title");
+          const desc = document.getElementById("video-desc");
+
+          // 模拟视频播放
+          if (player && placeholder) {
+            // 实际项目中应替换为真实视频URL
+            // player.src = "static/videos/chapter" + (index + 1) + ".mp4";
+            // player.style.display = "block";
+            // placeholder.style.display = "none";
+          }
+
+          if (title) title.textContent = chapter.title;
+          if (desc)
+            desc.textContent =
+              chapter.description ||
+              "本章包含 " + chapter.sections.length + " 个小节";
+
+          // 滚动到顶部
+          const videoSection = document.getElementById("video-section");
+          if (videoSection) videoSection.scrollIntoView({ behavior: "smooth" });
+        };
+
+        card.innerHTML = `
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 rounded-full bg-neon-blue/10 flex items-center justify-center group-hover:bg-neon-blue/20 transition-colors">
+                    <span class="text-neon-blue font-future font-bold text-xl">${
+                      index + 1
+                    }</span>
+                </div>
+                <i class="fa fa-play-circle text-gray-600 group-hover:text-neon-blue text-2xl transition-colors"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2 group-hover:text-neon-blue transition-colors">${
+              chapter.title
+            }</h3>
+            <p class="text-gray-400 text-sm line-clamp-3 mb-4">${
+              chapter.description || "暂无简介"
+            }</p>
+            <div class="text-xs text-gray-500 border-t border-gray-700 pt-3">
+                ${chapter.sections.length} 个小节
+            </div>
+        `;
+        container.appendChild(card);
+      });
+    } catch (e) {
+      console.error("加载课程目录失败:", e);
+      container.innerHTML = `<div class="col-span-full text-center text-red-400">加载课程目录失败: ${e.message}</div>`;
+    }
+  }
 }
 
 // 全局LaTeX渲染函数，可在其他页面中调用

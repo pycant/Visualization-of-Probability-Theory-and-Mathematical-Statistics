@@ -296,51 +296,7 @@
     <!-- 粒子背景容器 -->
     <div id="particles-container" class="fixed inset-0 z-0 opacity-30"></div>
 
-    <!-- 导航栏 -->
-    <nav
-      class="glass-effect fixed w-full z-50 transition-all duration-300"
-      id="main-nav"
-    >
-      <div
-        class="container mx-auto px-4 py-3 flex justify-between items-center"
-      >
-        <div class="flex items-center space-x-2">
-          <div
-            class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center"
-          >
-            <i class="fa fa-calculator text-white text-xl"></i>
-          </div>
-          <h1 class="text-xl md:text-2xl font-future font-bold text-white">
-            <span class="text-neon-blue">概率</span
-            ><span class="text-white">维度</span>
-          </h1>
-        </div>
-
-        <!-- 桌面导航 -->
-        <div class="hidden md:flex items-center space-x-8">
-          <a
-            href="#concepts"
-            class="hover:text-neon-blue transition-colors duration-300"
-            >核心概念</a
-          >
-          <a
-            href="#simulations"
-            class="hover:text-neon-blue transition-colors duration-300"
-            >概率模拟</a
-          >
-          <a
-            href="#visualizations"
-            class="hover:text-neon-blue transition-colors duration-300"
-            >数据可视化</a
-          >
-          <a
-            href="#applications"
-            class="hover:text-neon-blue transition-colors duration-300"
-            >应用场景</a
-          >
-        </div>
-      </div>
-    </nav>
+    <!-- 导航由 partials/navbar.html 动态注入 -->
 
     <!-- 英雄区域 -->
     <header
@@ -383,6 +339,12 @@
             class="px-8 py-3 bg-transparent border border-neon-blue text-neon-blue font-bold rounded-md hover:bg-neon-blue/10 transition-all duration-300"
           >
             了解概念 <i class="fa fa-book ml-2"></i>
+          </a>
+          <a
+            href="video-courses.html"
+            class="px-8 py-3 bg-transparent border border-neon-purple text-neon-purple font-bold rounded-md hover:bg-neon-purple/10 transition-all duration-300"
+          >
+            视频课程 <i class="fa fa-play-circle ml-2"></i>
           </a>
         </div>
 
@@ -6304,6 +6266,7 @@
           });
       })();
     </script>
+    <div id="site-footer"></div>
   </body>
   <script>
     window.NAV_CONFIG = {
@@ -6317,4 +6280,5 @@
     };
   </script>
   <script src="../static/js/include-navbar.js"></script>
+  <script src="../static/js/include-footer.js" defer></script>
 </html>
