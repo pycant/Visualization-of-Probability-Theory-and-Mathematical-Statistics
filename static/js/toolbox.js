@@ -3,30 +3,10 @@
  * 包含AI智能助手、假设检验、分位数表等工具
  */
 
-// 轻量日志开关：通过 URL 参数 tbdebug=1 或设置 window.TOOLBOX_DEBUG=true 启用
-globalThis.TB_DEBUG =
-  /[?&]tbdebug=1/.test(location.search) || !!globalThis.TOOLBOX_DEBUG;
-globalThis.TB_LOG = function () {
-  if (globalThis.TB_DEBUG) {
-    try {
-      console.log.apply(console, arguments);
-    } catch (_) {}
-  }
-};
-globalThis.TB_WARN = function () {
-  if (globalThis.TB_DEBUG) {
-    try {
-      console.warn.apply(console, arguments);
-    } catch (_) {}
-  }
-};
-globalThis.TB_ERROR = function () {
-  if (globalThis.TB_DEBUG) {
-    try {
-      console.error.apply(console, arguments);
-    } catch (_) {}
-  }
-};
+// [Agent: vs] 调试日志 — 生产环境空操作，不产生任何输出
+globalThis.TB_LOG = function () {};
+globalThis.TB_WARN = function () {};
+globalThis.TB_ERROR = function () {};
 
 function TB_getExistingSelectors() {
   const set = new Set();

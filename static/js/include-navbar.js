@@ -1,16 +1,7 @@
 // 动态加载统一导航栏，并支持每页差异化配置与高亮
+// [Agent: vs] 移除调试代码，保留核心功能
 (function () {
-  // 调试：通过 URL 参数 ?navdebug=1 或 NAV_CONFIG.debug 开启
-  var DEBUG =
-    /[?&](navdebug|debugNav)=1/.test(location.search) ||
-    !!(window.NAV_CONFIG && window.NAV_CONFIG.debug);
-  function dlog() {
-    if (!DEBUG) return;
-    try {
-      var args = Array.prototype.slice.call(arguments);
-      console.log.apply(console, ["[NAV]"].concat(args));
-    } catch (e) {}
-  }
+  function dlog() {}
   function getPartialUrl() {
     return "/templates/partials/navbar.html";
   }
