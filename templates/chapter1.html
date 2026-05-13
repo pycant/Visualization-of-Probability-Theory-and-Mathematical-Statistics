@@ -15,6 +15,9 @@
     <script src="../static/libs/katex/js/katex.min.js"></script>
     <script src="../static/libs/katex/js/auto-render.min.js"></script>
     <script src="../static/libs/chart/chart.umd.min.js"></script>
+    <!-- [Agent: vs] 滚动动效 -->
+    <script src="../static/libs/gsap/gsap.min.js"></script>
+    <script src="../static/libs/gsap/ScrollTrigger.min.js"></script>
     <link rel="icon" href="../static/images/favicon.ico" />
     <link rel="stylesheet" href="../static/css/chapter1.css" />
     <style type="text/tailwindcss">
@@ -85,6 +88,7 @@
       <section
         id="sec-1-1"
         class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+        data-scroll-reveal="fade-up"
       >
         <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
           <div class="flex flex-col lg:flex-row gap-8">
@@ -203,6 +207,7 @@
       <section
         id="sec-1-2"
         class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+        data-scroll-reveal="fade-up"
       >
         <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
           <div class="flex flex-col lg:flex-row gap-8">
@@ -330,8 +335,9 @@
       <section
         id="sec-1-3"
         class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+        data-scroll-reveal="fade-up"
       >
-        <div class="glass-card fx-holo rounded-2xl p-3 sm:p-4 mb-4">
+  <div class="glass-card fx-holo rounded-2xl p-3 sm:p-4 mb-4">
           <div class="flex items-center gap-2">
             <button id="gacha-tab-experience" class="mode-tab active">
               抽卡体验
@@ -1089,8 +1095,9 @@
       <section
         id="sec-1-4"
         class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+        data-scroll-reveal="fade-up"
       >
-        <!-- 1.4.1 Among Us Evidence Analyzer -->
+  <!-- 1.4.1 Among Us Evidence Analyzer -->
         <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8 mb-8">
           <div class="mb-6">
             <h2 class="text-2xl font-bold text-neon-blue mb-2">
@@ -1422,6 +1429,8 @@
     <script src="../static/js/url-click-handler.js"></script>
     <script src="../static/js/toolbox.js"></script>
     <script src="../static/js/include-footer.js"></script>
+  <!-- [Agent: vs] 滚动动效引擎 -->
+  <script src="../static/js/animation.js"></script>
     <!-- 启动 KaTeX 自动渲染（参考 hypothesis_testing 页面） -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
