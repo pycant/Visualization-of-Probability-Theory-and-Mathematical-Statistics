@@ -301,7 +301,8 @@
         injectPageSelect(root);
         hoistDropdownToBody(root);
         wireDropdown(root);
-        dlog("navbar wired");
+        // [Agent: vs] 通知 animation.js 刷新 ScrollTrigger
+        document.dispatchEvent(new CustomEvent('navbar:loaded'));
       })
       .catch(function (err) {
         console.error("加载导航栏失败:", err);

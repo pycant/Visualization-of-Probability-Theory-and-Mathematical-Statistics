@@ -12,6 +12,8 @@
     <script src="../static/libs/chart/chart.umd.min.js" defer></script>
     <script src="../static/libs/three/three.min.js" defer></script>
     <script src="../static/libs/gsap/gsap.min.js" defer></script>
+    <!-- [Agent: vs] GSAP ScrollTrigger 插件 -->
+    <script src="../static/libs/gsap/ScrollTrigger.min.js" defer></script>
     <script src="../static/js/url-click-handler.js" defer></script>
 
     <!-- Markdown和LaTeX渲染库 -->
@@ -301,7 +303,7 @@
     <!-- 英雄区域 -->
     <header
       class="relative min-h-screen flex items-center justify-center overflow-hidden bg-grid pt-16"
-    >
+      data-scroll-reveal="fade-up"
       <div
         class="absolute inset-0 bg-gradient-to-b from-dark-bg/70 via-dark-bg/50 to-dark-bg"
       ></div>
@@ -382,11 +384,12 @@
             ></div>
           </aside>
           <div class="col-span-12 lg:col-span-9 order-1 lg:order-2">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-scroll-reveal="stagger">
               <!-- 第1章：随机事件与概率 -->
               <div
                 id="第一章-随机事件与概率"
                 class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
+                data-scroll-reveal>
               >
                 <div
                   class="relative overflow-hidden rounded-lg border border-gray-800 mb-4 group concept-preview cursor-pointer"
@@ -433,6 +436,7 @@
               <div
                 id="第二章-随机变量及其分布"
                 class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
+                data-scroll-reveal
               >
                 <!-- 微缩预览：随机变量 -->
                 <div
@@ -576,6 +580,7 @@
               <div
                 id="第三章-多维随机变量及其分布"
                 class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-purple transition-all duration-300 transform hover:-translate-y-2 group"
+                data-scroll-reveal
               >
                 <!-- 微缩预览：第3章 -->
                 <div
@@ -623,6 +628,7 @@
               <div
                 id="第四章-大数定律与中心极限定理"
                 class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-green transition-all duration-300 transform hover:-translate-y-2 group"
+                data-scroll-reveal
               >
                 <!-- 微缩预览：大数定律 -->
                 <div
@@ -697,6 +703,7 @@
               <div
                 id="第六章-参数估计"
                 class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-orange transition-all duration-300 transform hover:-translate-y-2 group"
+                data-scroll-reveal
               >
                 <!-- 微缩预览：区间估计 -->
                 <div
@@ -744,6 +751,7 @@
               <div
                 id="第七章-假设检验"
                 class="bg-dark-card rounded-xl p-6 border border-gray-800 hover:border-neon-blue transition-all duration-300 transform hover:-translate-y-2 group"
+                data-scroll-reveal
               >
                 <!-- 微缩预览：假设检验 -->
                 <div
@@ -916,6 +924,7 @@
     <section
       id="simulations"
       class="py-20 relative bg-gradient-to-b from-dark-bg to-dark-card/50 clip-path-slant"
+      data-scroll-reveal="fade-up"
     >
       <div class="absolute inset-0 bg-grid opacity-10"></div>
       <div class="container mx-auto px-4 relative z-10">
@@ -1705,7 +1714,7 @@
     </section>
 
     <!-- 数据可视化部分 -->
-    <section id="visualizations" class="py-20 relative">
+    <section id="visualizations" class="py-20 relative" data-scroll-reveal="fade-up">
       <div class="absolute inset-0 bg-grid opacity-20"></div>
       <div class="container mx-auto px-4 relative z-10">
         <div class="text-center mb-16">
@@ -2292,6 +2301,7 @@
     <section
       id="applications"
       class="py-20 relative bg-gradient-to-b from-dark-card/50 to-dark-bg"
+      data-scroll-reveal="fade-up"
     >
       <div class="absolute inset-0 bg-grid opacity-10"></div>
       <div class="container mx-auto px-4 relative z-10">
@@ -6256,4 +6266,6 @@
   </script>
   <script src="../static/js/include-navbar.js"></script>
   <script src="../static/js/include-footer.js" defer></script>
+  <!-- [Agent: vs] 滚动动效引擎 -->
+  <script src="../static/js/animation.js"></script>
 </html>
