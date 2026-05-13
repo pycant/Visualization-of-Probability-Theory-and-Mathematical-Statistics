@@ -1,2 +1,4 @@
 /.notebook
 /.vscode
+/test-results/
+tests/e2e/test-results/
