@@ -3,7 +3,7 @@
 (function () {
   function dlog() {}
   function getPartialUrl() {
-    return "/templates/partials/navbar.html";
+    return "/partials/navbar.html";
   }
 
   function slugFromPath() {
@@ -309,9 +309,15 @@
       });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", loadNavbar);
-  } else {
+  function ensureNavbar() {
+    if (document.querySelector("#global-nav")) return;
     loadNavbar();
+  }
+
+  // 本脚本位于文档末尾，DOM 基本就绪，立即执行；
+  // 若解析尚未完成，再在 DOMContentLoaded 兜底一次（幂等，不会重复注入）
+  ensureNavbar();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", ensureNavbar);
   }
 })();
