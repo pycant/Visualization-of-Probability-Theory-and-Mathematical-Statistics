@@ -17,10 +17,35 @@
 | favicon | `templates/favicon.ico` 上线，消除 `/favicon.ico` 404 |
 | **C-02 chapter5** | 已从骨架改造为完整交互章节：抽样模拟器 + χ²/t/F 三分布 + 对照表（2026-10-27） |
 
-### 已知但低危
+### 2026-10-27 缺陷修复批次（按优先级）
 
-- `static/images/` 目录在仓库中为空，但多个页面引用 `../static/images/favicon.ico` → 这些引用仍是 404（页面 icon 已由根级 `favicon.ico` 兜底）
-- `node_modules/` 有 2466 个文件被 git 跟踪，仓库体积因此膨胀，建议后续 `git rm -r --cached node_modules`
+| 优先级 | 问题 | 处理 |
+|--------|------|------|
+| P0 安全 | `/login.php`、`/admin_subscribers.php`、`/create_admin.php`、`/submit_email.php` 被 nginx 当静态文本公开下载，内含 MySQL 口令与 `admin123` 明文建号逻辑 | 4 个文件全部删除，现返回 404 |
+| P0 功能 | 首页订阅表单 POST 到 PHP，拿到源码文本却提示「订阅成功」 | 表单改为 mailto 订阅卡片 |
+| P0 功能 | **chapter3 的 3D 联合密度图完全不渲染**：Plotly 来自 cdnjs，国内 TLS 被重置 → `Plotly is not defined`（仅控制台报错，页面无提示） | Plotly 2.26.0 本地化 |
+| P0 性能 | 首页 `load` 事件 60s 内不触发 | 两个根因分别处理（Google Fonts 挂起 + 20MB 封面图） |
+| P1 性能 | 封面图 `img/covers/*.png` 11 张共 20MB（单张最大 1600x6839），卡片只显示顶部 16:9 | 按显示区域裁切转 WebP，20MB → 280KB |
+| P1 交互 | 拖动 chapter3 温度滑块报 `undefined.toFixed`；切换气体类型报 null 引用 | 补数据就绪判断 + `setText` 空值安全写入 |
+| P1 一致性 | chapter3 22 个滑块中 16 个是浏览器原生样式 | 全部补 `param-slider` |
+| P1 依赖 | Google Fonts（国内不可达）、cdnjs FA/Three/Plotly、jsdelivr Three | 全部本地化（Tailwind CDN 除外） |
+| P2 清理 | 7 个 0 字节 JS stub、2 个 172KB 备份 JS、153KB 旧版 chapter3 | 全部删除 |
+| P2 卫生 | 每页都预加载一个教学视频（`preload=metadata`） | 改 `preload=none` |
+| P2 SEO | 无 robots.txt / sitemap.xml；测试页可被收录 | 新增 robots + sitemap；3 个测试页加 noindex |
+
+> 回归结果：13 个页面 **0 控制台错误、0 个 4xx**；首页 `readyState=complete`（此前永不触发）。
+
+### 待办（下一批次）
+
+| 优先级 | 事项 | 说明 |
+|--------|------|------|
+| P1 | Tailwind CDN 本地化 | 14 个页面运行时编译，拖慢 FCP；需引入构建产物 |
+| P2 | `jstat` / `ml-matrix` / `fast-check` 仍走 jsdelivr | npmmirror 未收录，需另找镜像或本地打包 |
+| P2 | chapter3 双套场景系统 | `.scenario-tab`（traditional/nlp/physics…）与遗留 `#scenario-select`（social/shopping/streamer…）并存，后者含 2s 轮询定时器 |
+| P2 | `node_modules/` 仍被 git 跟踪（2466 文件） | 建议 `git rm -r --cached node_modules` |
+| P3 | `transition: all` 55 处、chapter3.js 大量 console.log | 性能与噪音清理 |
+| P3 | footer 对比度 2.45:1 未达 WCAG 4.5:1 | 无障碍 |
+| P4 | 内容缺口 chapter8 / appendix | 用户要求暂缓，优先修 bug |
 
 ### 未合并分支（需决策）
 
@@ -40,7 +65,7 @@
 | C-02 | A1-内容 | ~~**chapter5.html** 仅骨架 10KB~~ ✅ 已改造为完整交互章节 (2026-10-27) | templates/chapter5.html | 已完成 |
 | C-03 | A1-内容 | **chapter8.html** 仅骨架 9KB，"内容建设中" | templates/chapter8.html | 开发 ANOVA/回归分析内容 |
 | C-04 | A1-内容 | **appendix.html** 几乎未开始 2KB，无 navbar/footer | templates/appendix.html | 集成共享组件，填充分布表 |
-| C-05 | A2-JS | **多处 DOM 无 null 检查** (toolbox.js 3处, chapter3.js 3处) | static/js/toolbox.js, chapter3.js | 添加 null 守卫 |
+| C-05 | A2-JS | ~~**多处 DOM 无 null 检查**~~ 部分修复：chapter3 已加 setText + 数据就绪判断 (2026-10-27)；toolbox.js 待查 | static/js/toolbox.js, chapter3.js | 继续补 toolbox.js |
 | C-06 | A2-JS | **JSON.parse 无 try-catch** (localStorage 数据可能损坏) | static/js/toolbox.js:1955 | 包裹 try-catch |
 | C-07 | A3-性能 | **MathJax 1.1MB** 为 AI 侧边栏预留，当前未接入 | static/libs/mathjax/ | 后续接入 LaTeX 渲染 |
 
@@ -51,14 +76,14 @@
 | ID | Agent | 问题 | 文件 |
 |----|-------|------|------|
 | H-01 | A1 | ~~导航栏缺失 5 个页面入口~~ **已确认是设计意图**，仅主章节在导航中 | partials/navbar.html |
-| H-02 | A1 | temp_old_chapter3.html 153KB 孤立文件 | templates/ |
+| H-02 | A1 | ~~temp_old_chapter3.html 153KB 孤立文件~~ ✅ 已删除 | templates/ |
 | H-03 | A2 | `window.resize` / `mousemove` 监听器未清理 (内存泄漏) | chapter3.js |
 | H-04 | A2 | 8 个事件绑定无 null 守卫 | toolbox.js |
 | H-05 | A2 | clipboard.writeText Promise 未 catch | chapter1.js |
 | H-06 | A3 | 9 个 .mov 文件 (395MB) 无流式支持，6 个未引用 | static/videos/ |
 | H-07 | A3 | ~55 处 `transition: all` 反模式 | 多文件 |
 | H-08 | A3 | TailwindCSS CDN 运行时加载拖慢 FCP | 12 个页面 |
-| H-09 | A3 | 封面图 20MB 使用 PNG 而非 WebP | static/img/covers/ |
+| H-09 | A3 | ~~封面图 20MB 使用 PNG~~ ✅ 已转 16:9 裁切 WebP，20MB→280KB | static/img/covers/ |
 | H-10 | A4 | z-index 冲突 (导航/下拉/toast) | 多文件 |
 | H-11 | A4 | footer 颜色对比度不足 (2.45:1 < 4.5:1) | partials/footer.html |
 | H-12 | A4 | `animate-pulse-slow` 未定义 | index.html + 2 页 |
@@ -75,14 +100,14 @@
 | M-02 | A1 | contour-test / flip_card_test 测试页在生产目录 |
 | M-03 | A1 | templates/tests/ 测试文件可公网访问 |
 | M-04 | A2 | chapter3.js ~50+ 处 console.log 残留 |
-| M-05 | A2 | 7 个 0 字节 JS 空文件 stub |
+| M-05 | A2 | ~~7 个 0 字节 JS 空文件 stub~~ ✅ 已删除 |
 | M-06 | A2 | 多处 DOM 操作缺少 null 守卫 (toolbox.js) |
 | M-07 | A3 | `box-shadow`/`border-color` 动画非合成器友好 |
 | M-08 | A3 | `width`/`height` 动画触发 layout |
 | M-09 | A3 | Font Awesome 字体文件重复 1.1MB |
 | M-10 | A3 | Google Fonts 加载方式不统一 |
 | M-11 | A3 | ~20 处品牌色硬编码未使用 CSS 变量 |
-| M-12 | A3 | 视频缺少 preload/poster/懒加载 |
+| M-12 | A3 | ~~视频缺少 preload~~ 部分修复：toolbox 播放器改 preload=none；章节视频仍为 metadata |
 | M-13 | A4 | 社交图标 40x40px 不满足 WCAG 44x44px 触摸目标 |
 | M-14 | A4 | chapter3.css ~20 处 !important 滥用 |
 | M-15 | A4 | `.hidden` 类重复定义在多个 CSS 文件中 |
