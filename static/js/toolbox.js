@@ -254,7 +254,7 @@ class ProbabilityToolbox {
                                         </select>
                                     </div>
                                     <div class="bg-gray-800 rounded-lg overflow-hidden">
-                                        <video id="page-intro-video" controls class="w-full rounded-lg" preload="metadata">
+                                        <video id="page-intro-video" controls class="w-full rounded-lg" preload="none">
                                             <source id="page-intro-video-src" src="">
                                             您的浏览器不支持视频播放。
                                         </video>
