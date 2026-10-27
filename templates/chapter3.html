@@ -3891,7 +3891,6 @@ enter">
         // Initialize streamer type buttons
         initializeStreamerTypeButtons();
         initializeStreamerControls();
-        initializeRealTimeSimulation();
       });
 
       function showStreamerAnalyticsLab() {
@@ -4437,24 +4436,6 @@ enter">
         }, 3000);
       }
 
-      function initializeRealTimeSimulation() {
-        // Start real-time data simulation
-        setInterval(() => {
-          const scenarioSelect = document.getElementById('scenario-select');
-          if (scenarioSelect && scenarioSelect.value === 'streamer') {
-            // Update trending topics periodically
-            if (Math.random() < 0.1) { // 10% chance to update topics
-              updateTrendingTopics();
-            }
-            
-            // Simulate live indicator pulsing
-            const liveIndicator = document.getElementById('live-indicator');
-            if (liveIndicator) {
-              liveIndicator.style.opacity = Math.random() > 0.5 ? '1' : '0.5';
-            }
-          }
-        }, 2000);
-      }
     </script>
   </body>
 </html>

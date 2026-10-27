@@ -11,8 +11,8 @@ class Chapter3Visualizer {
     this.bgNoise =
       (window.Noise2D && window.Noise2D.create({ seed: 1337 })) || null;
     this.bgTime = 0;
-    this.bgConfig = { cols: 150, rows: 90, scale: 0.015 };
-    this.useBackgroundEffects = false;
+    this.bgConfig = { cols: 120, rows: 72, scale: 0.015 };
+    this.useBackgroundEffects = this.shouldUseBackgroundEffects();
     this.bgCanvas = null;
     this.bgCtx = null;
     this.plot3DQuality = "medium";
@@ -1106,6 +1106,35 @@ class Chapter3Visualizer {
     console.log(`Switched to section 3.2 tab: ${tabName}`);
   }
 
+  // 背景等高线是否启用：装饰性效果，只在「有能力承受 + 用户没要求降动效」时开启
+  // 关闭方式：URL 加 ?bg=0，或 localStorage.setItem('chapter3_bg','off')
+  shouldUseBackgroundEffects() {
+    try {
+      if (typeof window === "undefined") return false;
+      if (
+        window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        return false;
+      }
+      const q = (window.location && window.location.search) || "";
+      if (/[?&]bg=(0|off|false)/i.test(q)) return false;
+      if (
+        typeof localStorage !== "undefined" &&
+        localStorage.getItem("chapter3_bg") === "off"
+      ) {
+        return false;
+      }
+      // 低端设备（核数或内存不足）直接不启用，避免用户一进页面就掉帧
+      const cores = navigator.hardwareConcurrency || 4;
+      const mem = navigator.deviceMemory || 4;
+      if (cores < 4 || mem < 4) return false;
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   initializeCanvases() {
     // 获取所有画布元素
     this.canvases = {
@@ -1130,13 +1159,13 @@ class Chapter3Visualizer {
       this.bgCanvas.style.display = "none";
     }
     if (this.bgCanvas && this.useBackgroundEffects) {
-      this.bgCtx = this.bgCanvas.getContext("2d", { willReadFrequently: true });
+      // 背景是模糊化的装饰层：用 GPU 加速上下文，且不需要 willReadFrequently（会强制软件渲染）
+      this.bgCtx = this.bgCanvas.getContext("2d");
       this.bgLayer = document.createElement("canvas");
-      this.bgLayerCtx = this.bgLayer.getContext("2d", {
-        willReadFrequently: true,
-      });
+      this.bgLayerCtx = this.bgLayer.getContext("2d");
       const resizeBg = () => {
-        const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+        // 背景始终经过 blur(10px) 合成，1x 像素密度肉眼无差别，可省 4 倍像素（2x 屏）
+        const dpr = 1;
         const vw = window.innerWidth;
         const vh = window.innerHeight;
         this.bgDpr = dpr;
@@ -2654,6 +2683,11 @@ class Chapter3Visualizer {
     }
     this.bgLastRAF = 0;
     this.bgMinDt = 1000 / 30;
+    // 噪声场 + d3 等高线是这个背景的唯一重活：相位漂移极慢（t 每毫秒仅 +0.00005），
+    // 因此把「重算场」与「合成上屏」降到约 8fps，中间帧只刷新边缘光条，
+    // 视觉上分辨不出，但省掉约 3/4 的噪声采样与等高线三角化开销
+    this.bgFieldInterval = 120;
+    this.bgLastField = 0;
     this.performanceMode = "normal";
     this.bgFrameAccum = 0;
     this.bgFrameSamples = 0;
@@ -2672,28 +2706,16 @@ class Chapter3Visualizer {
       }
       const dt = this.bgLastRAF ? now - this.bgLastRAF : this.bgMinDt;
       this.bgLastRAF = now;
-      this.bgFrameAccum += dt;
-      this.bgFrameSamples += 1;
-      if (this.bgFrameSamples >= 15) {
-        const avg = this.bgFrameAccum / this.bgFrameSamples;
-        if (!this.performanceDegraded && avg > 45) {
-          this.performanceDegraded = true;
-          this.performanceMode = "degraded";
-          console.warn("Background performance degraded", {
-            averageFrameMs: avg,
-            mode: this.performanceMode,
-          });
-        } else if (this.performanceDegraded && avg < 35) {
-          this.performanceDegraded = false;
-          this.performanceMode = "normal";
-          console.info("Background performance restored", {
-            averageFrameMs: avg,
-            mode: this.performanceMode,
-          });
-        }
-        this.bgFrameAccum = 0;
-        this.bgFrameSamples = 0;
+      // 未到重算间隔：只更新边缘光条（轻量），跳过噪声场与等高线
+      if (this.bgLastField && now - this.bgLastField < this.bgFieldInterval) {
+        this.renderEdgeBars(now * 0.00005);
+        requestAnimationFrame(draw);
+        return;
       }
+      this.bgLastField = now;
+      // 用「本次重算的真实耗时」判断是否降级（旧实现量的是帧间隔，
+      // 而帧间隔被 30fps 上限钳在 33ms，导致判据永远在阈值附近抖动）
+      const heavyStart = performance.now();
       this.bgTime = now;
       const t = now * 0.00005; // Slower animation for smoother effect
       let k = 0;
@@ -2766,8 +2788,8 @@ class Chapter3Visualizer {
       this.bgLayerCtx.globalAlpha = 0.8;
       this.bgLayerCtx.lineJoin = "round";
       this.bgLayerCtx.lineCap = "round";
-      this.bgLayerCtx.shadowBlur = 2;
-      this.bgLayerCtx.shadowColor = "rgba(0, 0, 0, 0.1)";
+      // 描边不带 shadowBlur：canvas 的阴影会让每条 contour 多一次模糊绘制，
+      // 软化效果已由下面 bgCtx 的 blur 合成承担
       const minV = thresholds[0];
       const maxV = thresholds[thresholds.length - 1];
       sets.forEach((contour, idx) => {
@@ -2776,10 +2798,19 @@ class Chapter3Visualizer {
           0,
           Math.min(1, (v - minV) / Math.max(1e-6, maxV - minV))
         );
-        const hex = this.mixHexColors(palette, tval);
-        const alpha = 0.4 + 0.4 * tval;
-        this.bgLayerCtx.strokeStyle = this.rgbaFromHex(hex, alpha);
-        this.bgLayerCtx.lineWidth = 1.5 + idx * 0.3; // Thinner, more elegant lines
+        // 阈值固定 ⇒ 每层的颜色也是固定的，只在首次计算并缓存，避免每帧解析十六进制
+        if (!this._bgLevelStyles) this._bgLevelStyles = [];
+        let st = this._bgLevelStyles[idx];
+        if (!st) {
+          const hex = this.mixHexColors(palette, tval);
+          st = {
+            style: this.rgbaFromHex(hex, 0.4 + 0.4 * tval),
+            width: 1.5 + idx * 0.3,
+          };
+          this._bgLevelStyles[idx] = st;
+        }
+        this.bgLayerCtx.strokeStyle = st.style;
+        this.bgLayerCtx.lineWidth = st.width; // Thinner, more elegant lines
         // Use D3 coordinates directly without problematic normalization
         contour.coordinates.forEach((multi) => {
           multi.forEach((ring) => {
@@ -2818,14 +2849,39 @@ class Chapter3Visualizer {
       this.bgCtx.globalCompositeOperation = "source-over";
       this.bgCtx.drawImage(this.bgLayer, 0, 0, W, H);
       this.renderEdgeBars(t);
+      // 一次重算的真实耗时（含噪声采样、等高线三角化、描边与模糊合成）
+      this.noteBackgroundWork(performance.now() - heavyStart);
       requestAnimationFrame(draw);
     };
     requestAnimationFrame(draw);
   }
 
+  // 以指数滑动平均跟踪背景重算耗时，超预算就降档（拉长重算间隔 + 减小模糊半径）
+  noteBackgroundWork(ms) {
+    if (!ms || ms < 0) return;
+    this._bgWorkAvg = this._bgWorkAvg ? this._bgWorkAvg * 0.7 + ms * 0.3 : ms;
+    const avg = this._bgWorkAvg;
+    if (!this.performanceDegraded && avg > 40) {
+      this.performanceDegraded = true;
+      this.performanceMode = "degraded";
+      this.bgFieldInterval = 260;
+      console.info("[bg] 降档为 degraded，重算平均耗时 " + avg.toFixed(1) + "ms");
+    } else if (this.performanceDegraded && avg < 20) {
+      this.performanceDegraded = false;
+      this.performanceMode = "normal";
+      this.bgFieldInterval = 120;
+      console.info("[bg] 恢复 normal，重算平均耗时 " + avg.toFixed(1) + "ms");
+    }
+  }
+
   renderEdgeBars(t) {
     const canvas = this.canvases.glow;
     if (!canvas || !this.bgNoise) return;
+    // 边缘光条包含上百个渐变对象与两次全屏模糊合成，没必要跑满 30fps，
+    // 8~12fps 完全看不出差别
+    const nowMs = performance.now();
+    if (this._glowLast && nowMs - this._glowLast < 90) return;
+    this._glowLast = nowMs;
     const ctx = canvas.ctx;
     const layer = this.glowLayerCtx || ctx;
     const W = this.bgViewW || window.innerWidth;
@@ -2876,7 +2932,8 @@ class Chapter3Visualizer {
     const nbottom = this.normalizeArray(bottomVals, 1.4, 1.25);
     const nleft = this.normalizeArray(leftVals, 1.4, 1.25);
     const nright = this.normalizeArray(rightVals, 1.4, 1.25);
-    ctx.shadowBlur = 18;
+    // 不再给可见画布加 shadow（阴影会让每次 drawImage 多一遍模糊，发光已由 blur 合成提供）
+    ctx.shadowBlur = 0;
     const lenTopArr = ntop.map((n) => minLenV + n * (maxLenV - minLenV));
     const lenBottomArr = nbottom.map((n) => minLenV + n * (maxLenV - minLenV));
     const lenTopSm = this.smoothArray(lenTopArr, 5, 2);
