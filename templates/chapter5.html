@@ -9,310 +9,479 @@
       rel="stylesheet"
       href="../static/libs/fontawesome/font-awesome.min.css"
     />
-    <link rel="icon" href="../static/images/favicon.ico" />
-    <style>
-      .min-h-screen {
-        --accent: #f59e0b; /* amber-500 */
-        --accent-2: #f472b6; /* pink-400 */
-        --accent-ghost: rgba(245, 158, 11, 0.12);
-        --accent-glow: rgba(244, 114, 182, 0.18);
-      }
-      .min-h-screen {
-        position: relative;
-        overflow: hidden;
-      }
-      .min-h-screen::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: radial-gradient(
-            1000px 400px at 14% 0%,
-            var(--accent-ghost),
-            transparent
-          ),
-          radial-gradient(
-            900px 360px at 86% 0%,
-            rgba(244, 114, 182, 0.12),
-            transparent
-          );
-        mix-blend-mode: screen;
-        opacity: 0.9;
-      }
-      .min-h-screen::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: -25%;
-        width: 40%;
-        pointer-events: none;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(244, 114, 182, 0.18),
-          transparent
-        );
-        transform: translateX(-100%);
-        animation: sweepBeam5 10s ease-in-out infinite;
-        mix-blend-mode: screen;
-      }
-      @keyframes sweepBeam5 {
-        0% {
-          transform: translateX(-120%);
-        }
-        50% {
-          transform: translateX(120%);
-        }
-        100% {
-          transform: translateX(-120%);
-        }
-      }
-      .bg-dark-card {
-        border-color: rgba(255, 255, 255, 0.1);
-        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35),
-          0 10px 28px var(--accent-glow);
-      }
-      .bg-dark-card:hover {
-        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.4),
-          0 16px 40px var(--accent-glow);
-        transform: translateY(-2px);
-        transition: all 0.2s ease;
-      }
-      .bg-dark-card {
-        position: relative;
-      }
-      .bg-dark-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: 16px;
-        padding: 1px;
-        background: linear-gradient(180deg, var(--accent), var(--accent-2));
-        -webkit-mask: linear-gradient(#000 0 0) content-box,
-          linear-gradient(#000 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-      }
-      h2,
-      h3 {
-        background: linear-gradient(90deg, var(--accent), var(--accent-2));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-      }
-      h3::after {
-        content: "";
-        display: block;
-        height: 2px;
-        margin-top: 6px;
-        width: 0;
-        background: linear-gradient(90deg, var(--accent), var(--accent-2));
-        box-shadow: 0 0 10px var(--accent-2);
-        transition: width 0.25s ease;
-      }
-      section:hover h3::after {
-        width: 64px;
-      }
-      .rounded-lg.bg-neon-orange\/10 {
-        box-shadow: 0 0 14px var(--accent-ghost);
-      }
-      section:nth-of-type(2n + 1) .bg-dark-bg\/50 {
-        background: radial-gradient(
-            600px 200px at 8% 0%,
-            rgba(245, 158, 11, 0.12),
-            transparent
-          ),
-          rgba(17, 24, 39, 0.6);
-      }
-      .text-neon-orange {
-        color: var(--accent);
-      }
-      .text-neon-purple {
-        color: #a78bfa;
-      }
-      .text-neon-green {
-        color: #22c55e;
-      }
-      body.text-white {
-        color: #e6edf7;
-      }
-      .bg-dark-card {
-        background: radial-gradient(
-            1200px 460px at 8% 0%,
-            var(--accent-ghost),
-            transparent
-          ),
-          rgba(17, 24, 39, 0.65);
-      }
-      .bg-dark-bg\/50 {
-        background: radial-gradient(
-            700px 240px at 10% 0%,
-            var(--accent-ghost),
-            transparent
-          ),
-          rgba(31, 41, 55, 0.6);
-        backdrop-filter: blur(2px);
-      }
-      main p {
-        color: #e6edf7;
-      }
-      main li {
-        color: #d1d9e6;
-      }
-      .text-gray-300 {
-        color: #e6edf7 !important;
-      }
-      .text-gray-400 {
-        color: #cbd5e1 !important;
-      }
-      .text-gray-500 {
-        color: #94a3b8 !important;
-      }
-      html,
-      body {
-        background-color: #0f172a;
-      }
-      .bg-dark-bg {
-        background-color: #0f172a !important;
-      }
-      .min-h-screen {
-        background: linear-gradient(
-          180deg,
-          #0f172a 0%,
-          #0b1220 40%,
-          #111827 100%
-        );
-      }
-    </style>
+
+    <!-- KaTeX 样式与脚本（用于 LaTeX 公式渲染） -->
+    <link rel="stylesheet" href="../static/libs/katex/css/katex.min.css" />
+    <script src="../static/libs/katex/js/katex.min.js"></script>
+    <script src="../static/libs/katex/js/auto-render.min.js"></script>
+    <link rel="icon" href="favicon.ico" />
+    <!-- 复用全站基础设计令牌（glass-card / title-gradient / bg-grid 等） -->
+    <link rel="stylesheet" href="../static/css/chapter1.css" />
+    <link rel="stylesheet" href="../static/css/chapter5.css" />
+    <script>
+      // 为导航注入页面级锚点链接（在导航脚本加载前定义）
+      window.NAV_CONFIG = {
+        active: "chapter5",
+        sectionLinks: [
+          { href: "#sec-5-1", label: "5.1 从总体到样本" },
+          { href: "#sec-5-2", label: "5.2 三大抽样分布" },
+          { href: "#sec-5-3", label: "5.3 分布视频" },
+          { href: "#sec-5-4", label: "5.4 小结" },
+        ],
+      };
+    </script>
   </head>
   <body class="bg-dark-bg text-white">
-    <div class="min-h-screen bg-gradient-to-b from-dark-bg to-dark-card/50">
-      <main class="container mx-auto px-4">
-        <section class="bg-dark-card border border-gray-800 rounded-2xl p-8">
-          <div class="flex items-center mb-6">
-            <div
-              class="w-14 h-14 rounded-lg bg-neon-orange/10 flex items-center justify-center mr-4"
+    <!-- 通过脚本动态注入统一导航栏 -->
+    <script src="../static/js/include-navbar.js"></script>
+
+    <div
+      class="min-h-screen bg-gradient-to-b from-dark-bg to-dark-card/50 pt-20 bg-overlay"
+    >
+      <!-- ============ Hero ============ -->
+      <section
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 text-center py-20 clip-path-slant"
+      >
+        <div class="absolute inset-0 bg-grid opacity-10"></div>
+        <h1 class="title-gradient hero-title font-extrabold leading-tight">
+          第5章 统计量及其分布
+        </h1>
+        <p class="subtitle hero-subtitle mt-3 sm:mt-4">
+          样本能告诉我们多少关于总体的事？——从一次抽样出发，看见统计量的分布。
+        </p>
+        <div class="mt-5 flex flex-wrap justify-center gap-2">
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-layer-group"></i> 样本均值
+          </span>
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-chi"></i> 卡方分布 χ²
+          </span>
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-t"></i> t 分布
+          </span>
+          <span
+            class="px-3 py-1 rounded-full border border-white/15 bg-white/5 text-gray-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-f"></i> F 分布
+          </span>
+        </div>
+        <div class="mt-6 flex justify-center">
+          <div class="glass-card fx-holo rounded-xl px-4 py-3">
+            <div class="text-sm text-gray-300 mb-2">核心结论</div>
+            <div>$$\bar X \sim N\!\left(\mu,\ \frac{\sigma^2}{n}\right),\quad
+              \frac{(n-1)S^2}{\sigma^2}\sim\chi^2(n-1)$$</div>
+            <div class="mt-2">$$T=\frac{\bar X-\mu}{S/\sqrt{n}}\sim
+              t(n-1),\quad F=\frac{S_1^2}{S_2^2}\sim F(n_1-1,\ n_2-1)$$</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 5.1 从总体到样本 ============ -->
+      <section
+        id="sec-5-1"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="flex items-center gap-3 mb-2">
+            <span
+              class="w-9 h-9 rounded-lg bg-neon-blue/10 flex items-center justify-center"
             >
-              <i class="fa fa-chart-bar text-neon-orange text-2xl"></i>
-            </div>
-            <div>
-              <div class="text-xs text-gray-400">第5章</div>
-              <h2 class="text-2xl font-bold">统计量及其分布</h2>
-            </div>
+              <i class="fa-solid fa-vial text-neon-blue"></i>
+            </span>
+            <h2 class="text-2xl font-bold text-neon-blue">5.1 从总体到样本</h2>
           </div>
-          <p class="text-gray-300">
-            本章节覆盖样本统计量及三大抽样分布（t、卡方、F分布），为参数估计和检验奠定基础。
+          <p class="text-gray-300 mb-6 max-w-3xl">
+            质检员无法测完全部电池，只能抽检 <em>n</em> 节算平均寿命。
+            每一次抽样得到的 <span class="text-neon-blue">样本均值 x̄</span>
+            都是一个随机变量——重复抽样，它就会形成自己的分布，这就是
+            <strong>抽样分布</strong>。下面的模拟器把这件事画出来给你看。
           </p>
-          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
-              <h3 class="font-semibold mb-3">内容建设中</h3>
-              <ul class="text-gray-400 space-y-2 text-sm">
-                <li>• 样本均值与样本方差</li>
-                <li>• t分布、卡方分布、F分布</li>
-                <li>• 抽样分布的推导与应用</li>
-              </ul>
+
+          <div class="flex flex-col lg:flex-row gap-8">
+            <!-- 画布 -->
+            <div class="flex-1 min-w-0">
+              <canvas
+                id="ch5-sampling"
+                width="720"
+                height="400"
+                class="w-full rounded-xl bg-dark-card/60"
+              ></canvas>
+              <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div class="text-gray-400 text-xs">抽样次数 m</div>
+                  <div id="v-trials" class="text-neon-blue text-lg">0</div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div class="text-gray-400 text-xs">x̄ 的平均值</div>
+                  <div id="v-mean" class="text-neon-purple text-lg">—</div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div class="text-gray-400 text-xs">
+                    x̄ 的标准差<span class="text-gray-500">（实测）</span>
+                  </div>
+                  <div id="v-sd-obs" class="text-neon-green text-lg">—</div>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/5 p-3">
+                  <div class="text-gray-400 text-xs">
+                    σ/√n<span class="text-gray-500">（理论标准误）</span>
+                  </div>
+                  <div id="v-se" class="text-neon-green text-lg">—</div>
+                </div>
+              </div>
             </div>
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
-              <h3 class="font-semibold mb-3">学习建议</h3>
-              <p class="text-gray-400 text-sm">
-                配合区间估计与假设检验章节，理解抽样分布在推断中的作用。
-              </p>
+
+            <!-- 控制面板 -->
+            <div class="w-full lg:w-80 shrink-0">
+              <div class="space-y-6">
+                <div>
+                  <div class="flex items-center justify-between mb-2 text-sm">
+                    <span>样本量 n</span>
+                    <span id="v-n" class="param-val">5</span>
+                  </div>
+                  <input
+                    id="sl-n"
+                    type="range"
+                    min="2"
+                    max="50"
+                    step="1"
+                    value="5"
+                    class="w-full accent-neon-blue"
+                  />
+                  <div class="text-xs text-gray-500 mt-1">
+                    n 越大，x̄ 越集中，分布越像正态
+                  </div>
+                </div>
+
+                <div>
+                  <div class="text-sm mb-2">总体分布</div>
+                  <div class="grid grid-cols-2 gap-2" id="pop-switch">
+                    <button
+                      data-pop="exponential"
+                      class="seg-btn seg-btn-active"
+                    >
+                      指数（偏斜）
+                    </button>
+                    <button data-pop="normal" class="seg-btn">正态</button>
+                  </div>
+                  <div class="text-xs text-gray-500 mt-1">
+                    指数总体下，n 小则 x̄ 仍偏斜
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                  <button id="btn-sample1" class="act-btn act-btn-primary">
+                    抽 1 次
+                  </button>
+                  <button id="btn-sample200" class="act-btn act-btn-primary">
+                    抽 200 次
+                  </button>
+                  <button id="btn-reset" class="act-btn col-span-2">
+                    清空重来
+                  </button>
+                </div>
+
+                <div
+                  class="rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-gray-400 leading-relaxed"
+                >
+                  <div class="text-gray-200 mb-1">
+                    <i class="fa-solid fa-lightbulb text-amber-400"></i>
+                    观察要点
+                  </div>
+                  把 n 从 2 拉到 50，注意直方图的形状与宽度：形状由偏斜变对称（中心极限定理），宽度按
+                  1/√n 收窄。
+                </div>
+              </div>
             </div>
           </div>
-        </section>
-        <section
-          id="overview"
-          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
-        >
-          <h3 class="text-xl font-semibold mb-4 text-white">概述</h3>
-          <p class="text-gray-300">
-            本章围绕样本统计量及三大抽样分布展开，阐述样本均值与样本方差的性质，并介绍
-            t、卡方与 F 分布在参数估计与检验中的作用。
+        </div>
+      </section>
+
+      <!-- ============ 5.2 三大抽样分布 ============ -->
+      <section
+        id="sec-5-2"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="flex items-center gap-3 mb-2">
+            <span
+              class="w-9 h-9 rounded-lg bg-neon-purple/10 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-chart-area text-neon-purple"></i>
+            </span>
+            <h2 class="text-2xl font-bold text-neon-purple">
+              5.2 三大抽样分布
+            </h2>
+          </div>
+          <p class="text-gray-300 mb-6 max-w-3xl">
+            样本均值与样本方差之所以能做推断，是因为在正态总体下它们服从三个确定的分布。
+            拖动自由度，观察曲线的形状变化——自由度本质上就是「信息的份数」。
           </p>
-        </section>
-        <section
-          id="key-topics"
-          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
-        >
-          <h3 class="text-xl font-semibold mb-4 text-white">核心要点</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
-              <ul class="text-gray-400 space-y-2 text-sm">
-                <li>• 样本均值与样本方差</li>
-                <li>• t 分布与小样本推断</li>
-                <li>• 卡方分布与方差估计</li>
-              </ul>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 卡方 -->
+            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div class="flex items-baseline justify-between mb-1">
+                <h3 class="font-semibold text-neon-purple">χ² 卡方分布</h3>
+                <span id="v-chi-df" class="param-val">4</span>
+              </div>
+              <div class="text-xs text-gray-400 mb-2">
+                样本方差的分布：(n−1)S²/σ² ~ χ²(n−1)
+              </div>
+              <canvas
+                id="ch5-chi"
+                width="360"
+                height="220"
+                class="w-full rounded-lg bg-dark-card/50"
+              ></canvas>
+              <input
+                id="sl-chi"
+                type="range"
+                min="1"
+                max="30"
+                step="1"
+                value="4"
+                class="w-full mt-3 accent-neon-purple"
+              />
+              <div class="mt-2 text-xs text-gray-500">
+                E = <span id="v-chi-e">4.0</span> · Var =
+                <span id="v-chi-v">8.0</span> · 右偏，k 增大趋近正态
+              </div>
             </div>
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-6">
-              <ul class="text-gray-400 space-y-2 text-sm">
-                <li>• F 分布与方差分析</li>
-                <li>• 抽样分布推导与应用</li>
-                <li>• 与区间估计、假设检验的关系</li>
-              </ul>
+
+            <!-- t -->
+            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div class="flex items-baseline justify-between mb-1">
+                <h3 class="font-semibold text-neon-blue">t 分布</h3>
+                <span id="v-t-df" class="param-val">3</span>
+              </div>
+              <div class="text-xs text-gray-400 mb-2">
+                σ 未知时用 S 替代：(X̄−μ)/(S/√n) ~ t(n−1)
+              </div>
+              <canvas
+                id="ch5-t"
+                width="360"
+                height="220"
+                class="w-full rounded-lg bg-dark-card/50"
+              ></canvas>
+              <input
+                id="sl-t"
+                type="range"
+                min="1"
+                max="40"
+                step="1"
+                value="3"
+                class="w-full mt-3 accent-neon-blue"
+              />
+              <div class="mt-2 text-xs text-gray-500">
+                灰色为标准正态 · 自由度越小尾巴越厚
+              </div>
+            </div>
+
+            <!-- F -->
+            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+              <div class="flex items-baseline justify-between mb-1">
+                <h3 class="font-semibold text-neon-green">F 分布</h3>
+                <span id="v-f-df" class="param-val">5, 10</span>
+              </div>
+              <div class="text-xs text-gray-400 mb-2">
+                两方差之比：S₁²/S₂² ~ F(n₁−1, n₂−1)
+              </div>
+              <canvas
+                id="ch5-f"
+                width="360"
+                height="220"
+                class="w-full rounded-lg bg-dark-card/50"
+              ></canvas>
+              <input
+                id="sl-f1"
+                type="range"
+                min="2"
+                max="20"
+                step="1"
+                value="5"
+                class="w-full mt-3 accent-neon-green"
+              />
+              <input
+                id="sl-f2"
+                type="range"
+                min="2"
+                max="30"
+                step="1"
+                value="10"
+                class="w-full mt-1 accent-neon-green"
+              />
+              <div class="mt-2 text-xs text-gray-500">
+                上排 df₁（分子）· 下排 df₂（分母）
+              </div>
             </div>
           </div>
-        </section>
-        <section
-          id="videos"
-          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
-        >
-          <h3 class="text-xl font-semibold mb-4 text-white">分布视频</h3>
+
+          <!-- 对照表 -->
+          <div class="mt-8 overflow-x-auto">
+            <table class="stats-table w-full text-sm">
+              <thead>
+                <tr class="text-left text-gray-300 border-b border-white/10">
+                  <th class="py-2 pr-4">统计量</th>
+                  <th class="py-2 pr-4">适用条件</th>
+                  <th class="py-2 pr-4">分布</th>
+                  <th class="py-2">典型用途</th>
+                </tr>
+              </thead>
+              <tbody class="text-gray-400">
+                <tr class="border-b border-white/5">
+                  <td class="py-2 pr-4 text-gray-200">x̄ 样本均值</td>
+                  <td class="py-2 pr-4">σ 已知</td>
+                  <td class="py-2 pr-4">N(μ, σ²/n)</td>
+                  <td class="py-2">标准误、置信区间</td>
+                </tr>
+                <tr class="border-b border-white/5">
+                  <td class="py-2 pr-4 text-gray-200">S² 样本方差</td>
+                  <td class="py-2 pr-4">总体正态</td>
+                  <td class="py-2 pr-4">χ²(n−1)</td>
+                  <td class="py-2">方差估计、拟合优度</td>
+                </tr>
+                <tr class="border-b border-white/5">
+                  <td class="py-2 pr-4 text-gray-200">T</td>
+                  <td class="py-2 pr-4">σ 未知、总体正态</td>
+                  <td class="py-2 pr-4">t(n−1)</td>
+                  <td class="py-2">小样本均值检验</td>
+                </tr>
+                <tr>
+                  <td class="py-2 pr-4 text-gray-200">F</td>
+                  <td class="py-2 pr-4">两正态总体独立</td>
+                  <td class="py-2 pr-4">F(n₁−1, n₂−1)</td>
+                  <td class="py-2">方差齐性、方差分析</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 5.3 视频 ============ -->
+      <section
+        id="sec-5-3"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="flex items-center gap-3 mb-4">
+            <span
+              class="w-9 h-9 rounded-lg bg-neon-green/10 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-play text-neon-green"></i>
+            </span>
+            <h2 class="text-2xl font-bold text-neon-green">5.3 分布视频</h2>
+          </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-4">
+            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
               <video
-                class="w-full rounded"
+                class="w-full rounded aspect-video bg-black/40"
                 controls
+                preload="none"
                 src="../static/videos/t分布.mp4"
               ></video>
               <p class="mt-2 text-gray-400 text-sm">t 分布</p>
             </div>
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-4">
+            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
               <video
                 class="w-full rounded"
                 controls
+                preload="none"
                 src="../static/videos/卡方分布.mp4"
               ></video>
               <p class="mt-2 text-gray-400 text-sm">卡方分布</p>
             </div>
-            <div class="bg-dark-bg/50 border border-gray-800 rounded-xl p-4">
+            <div class="rounded-xl border border-white/10 bg-white/5 p-4">
               <video
                 class="w-full rounded"
                 controls
+                preload="none"
                 src="../static/videos/F分布.mp4"
               ></video>
               <p class="mt-2 text-gray-400 text-sm">F 分布</p>
             </div>
           </div>
-        </section>
-        <section
-          id="learn-tips"
-          class="bg-dark-card border border-gray-800 rounded-2xl p-8 mt-8"
-        >
-          <h3 class="text-xl font-semibold mb-4 text-white">学习建议</h3>
-          <p class="text-gray-400 text-sm">
-            建议与区间估计与假设检验章节配合学习，体会抽样分布在置信区间与显著性检验中的关键作用。
-          </p>
-        </section>
-      </main>
-    </div>
-    <div id="site-footer">
-      <p style="text-align:center;padding:16px 12px;font-size:12px;">
+        </div>
+      </section>
+
+      <!-- ============ 5.4 小结 ============ -->
+      <section
+        id="sec-5-4"
+        class="relative z-10 mx-auto max-w-6xl px-6 sm:px-8 mt-16 mb-24"
+      >
+        <div class="glass-card fx-holo rounded-2xl p-6 sm:p-8">
+          <div class="flex items-center gap-3 mb-4">
+            <span
+              class="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-book-open text-amber-400"></i>
+            </span>
+            <h2 class="text-2xl font-bold text-amber-400">5.4 小结</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold mb-3 text-gray-200">三句话记住本章</h3>
+              <ul class="list-disc pl-6 space-y-2 text-gray-300 text-sm">
+                <li>
+                  统计量是<strong>样本的函数</strong>，不含任何未知参数，因此它自身也是随机变量。
+                </li>
+                <li>
+                  抽样分布的<strong>中心</strong>等于总体参数（无偏），
+                  <strong>宽度</strong>按 1/√n 收窄。
+                </li>
+                <li>
+                  χ²、t、F 三个分布把「方差未知」「两方差比较」这些现实障碍，变成了可以查表的确定问题。
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-3 text-gray-200">学习建议</h3>
+              <p class="text-gray-400 text-sm mb-3">
+                先把 5.1 的模拟器玩到「n 变大 → 直方图收窄且变对称」成为直觉，
+                再进入 5.2 的公式推导，最后用区间估计与假设检验章节把这些分布用起来。
+              </p>
+              <div class="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-gray-400">
+                <i class="fa-solid fa-route text-amber-400"></i>
+                推荐路径：5.1 抽样模拟 → 5.2 拖动自由度 → 第6章 区间估计 → 第7章 假设检验
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 页脚占位容器，将由 partial 注入 -->
+      <div id="site-footer" class="mt-24">
+        <p style="text-align:center;padding:16px 12px;font-size:12px;">
           <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" style="color:#9ca3af;text-decoration:underline;">赣ICP备2026027726号</a>
         </p>
+      </div>
     </div>
-    <script>
-      window.NAV_CONFIG = {
-        sectionLinks: [
-          { label: "概述", href: "#overview" },
-          { label: "核心要点", href: "#key-topics" },
-          { label: "分布视频", href: "#videos" },
-          { label: "学习建议", href: "#learn-tips" },
-        ],
-      };
-    </script>
-    <script src="../static/js/include-navbar.js"></script>
+
+    <script src="../static/js/chapter5.js"></script>
+    <script src="../static/js/url-click-handler.js"></script>
     <script src="../static/js/toolbox.js"></script>
-    <script src="../static/js/include-footer.js" defer></script>
+    <script src="../static/js/include-footer.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        try {
+          renderMathInElement(document.body, {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "\\(", right: "\\)", display: false },
+              { left: "$", right: "$", display: false },
+            ],
+            throwOnError: false,
+          });
+        } catch (e) {
+          console.warn("KaTeX render init failed:", e);
+        }
+      });
+    </script>
   </body>
 </html>

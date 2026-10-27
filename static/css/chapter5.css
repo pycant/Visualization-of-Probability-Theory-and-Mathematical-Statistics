@@ -1,0 +1,76 @@
+/* ============================================================
+   第5章 统计量及其分布 — 页面级样式
+   基础设计令牌（glass-card / title-gradient / bg-grid /
+   accent-* / param-val / stats-table）复用 chapter1.css
+   ============================================================ */
+
+/* 画布统一观感：内描边 + 轻微内发光 */
+#ch5-sampling,
+#ch5-chi,
+#ch5-t,
+#ch5-f {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 40px rgba(34, 211, 238, 0.04);
+  touch-action: pan-y;
+}
+
+/* 分段切换按钮（总体分布） */
+.seg-btn {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+  transition: background-color 0.18s ease, border-color 0.18s ease,
+    color 0.18s ease;
+}
+.seg-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e6edf7;
+}
+.seg-btn-active {
+  background: rgba(34, 211, 238, 0.14);
+  border-color: rgba(34, 211, 238, 0.45);
+  color: #67e8f9;
+}
+
+/* 动作按钮 */
+.act-btn {
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: #e6edf7;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+  cursor: pointer;
+}
+.act-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.act-btn:active {
+  transform: translateY(1px);
+}
+.act-btn-primary {
+  background: rgba(34, 211, 238, 0.12);
+  border-color: rgba(34, 211, 238, 0.38);
+  color: #a5f3fc;
+}
+.act-btn-primary:hover {
+  background: rgba(34, 211, 238, 0.2);
+  border-color: rgba(34, 211, 238, 0.55);
+}
+
+/* 滑块焦点可见性（无障碍） */
+#sec-5-1 input[type="range"]:focus-visible,
+#sec-5-2 input[type="range"]:focus-visible {
+  outline: 2px solid rgba(103, 232, 249, 0.6);
+  outline-offset: 3px;
+}
+
+/* 对照表斑马纹 */
+.stats-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
