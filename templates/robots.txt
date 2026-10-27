@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# 个人笔记（Trilium 实例，不需要被搜索引擎收录）
+Disallow: /notes/
+
+# 开发阶段的测试页
+Disallow: /tests/
+Disallow: /contour-test.html
+Disallow: /flip_card_test.html
+
+Sitemap: https://cuili.space/sitemap.xml
