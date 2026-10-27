@@ -35,6 +35,22 @@
 
 > 回归结果：13 个页面 **0 控制台错误、0 个 4xx**；首页 `readyState=complete`（此前永不触发）。
 
+### chapter3 背景等高线：性能优化 + 移除 2 秒轮询（2026-10-27 追加）
+
+- 事实核对：`useBackgroundEffects` 在 `8478004`(2026-01-05) 被从 `true` 改为 `false`，背景**一直是关闭的**。
+  临时开启实测：本地帧率 120fps → **19.5fps**（平均 51.2ms/帧），且立刻进 `degraded` 档。
+- 优化项：去掉 `willReadFrequently`（会强制软件渲染）、背景/光条固定 1x DPR、噪声网格 150×90→120×72、
+  噪声场+d3 三角化+模糊合成降至 ~8fps（中间帧只刷光条）、去掉描边与合成上的 `shadowBlur`、
+  颜色按阈值缓存、光条限 ~11fps、降级判据改为「真实重算耗时」（原判据被 30fps 上限钳在 33ms 永远抖动）。
+- 结果：**19.5fps / 51.2ms → 110~112fps / 8.9ms，稳定 normal 档**；线上实测 110.3fps。
+- 启用改为能力判断（`prefers-reduced-motion`、核数<4 或内存<4 关闭），`?bg=0` / localStorage 可关；
+  `chapter3.css` 里把背景压到 0.42、光条 0.4 透明度，避免抢内容。
+- 移除 `chapter3.html` 的 `initializeRealTimeSimulation`（19 行）：其 2 秒轮询做的两件事都已有替代——
+  话题轮播由 `chapter3.js` 的 `setupTrendingTopicsRotation`（5 秒）覆盖，`#live-indicator` 本身已带
+  Tailwind `animate-pulse`（JS 反而用内联 opacity 覆盖了它）。
+- 顺带：Plotly(3.4MB)/Three(0.58MB) 由 head 同步阻塞改为 `defer`，首屏 commit 从 40s+ 降到 210ms；
+  等高线依赖的 `d3-contour` 从 d3js.org 外链改为本地（5.7KB），避免退化为 fallback 渲染器。
+
 ### 待办（下一批次）
 
 | 优先级 | 事项 | 说明 |
@@ -44,6 +60,7 @@
 | P2 | chapter3 双套场景系统 | `.scenario-tab`（traditional/nlp/physics…）与遗留 `#scenario-select`（social/shopping/streamer…）并存，后者含 2s 轮询定时器 |
 | P2 | `node_modules/` 仍被 git 跟踪（2466 文件） | 建议 `git rm -r --cached node_modules` |
 | P3 | `transition: all` 55 处、chapter3.js 大量 console.log | 性能与噪音清理 |
+| P2 | Plotly 整包 3.4MB 仍偏重 | 可换 plotly 局部 bundle（只留 surface/3d）或改用轻量 3D 库，首屏还能再降 |
 | P3 | footer 对比度 2.45:1 未达 WCAG 4.5:1 | 无障碍 |
 | P4 | 内容缺口 chapter8 / appendix | 用户要求暂缓，优先修 bug |
 
