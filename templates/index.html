@@ -6,7 +6,7 @@
     <title>概率维度 | Probability Dimensions</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      href="../static/libs/fontawesome/font-awesome.min.css"
       rel="stylesheet"
     />
     <script src="../static/libs/chart/chart.umd.min.js" defer></script>
@@ -284,12 +284,6 @@
     </style>
 
     <!-- 引入Google字体 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
   </head>
 
   <body class="bg-dark-bg text-gray-200 font-data overflow-x-hidden">
@@ -2620,178 +2614,21 @@
             </p>
           </div>
 
-          <form
-            id="email-form"
-            class="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto"
-            novalidate
-          >
-            <input
-              id="email"
-              type="email"
-              required
-              placeholder="输入您的邮箱地址"
-              aria-invalid="false"
-              class="flex-1 px-4 py-3 bg-dark-bg border border-gray-700 rounded-md focus:outline-none focus:border-neon-blue text-white transition-colors"
-            />
-            <button
-              id="subscribe-btn"
-              type="submit"
-              class="px-6 py-3 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-white transition-all duration-300 whitespace-nowrap flex items-center gap-2"
+          <div class="max-w-xl mx-auto text-center">
+            <a
+              href="mailto:1291904782@qq.com?subject=%E8%AE%A2%E9%98%85%E6%A6%82%E7%8E%87%E7%BB%B4%E5%BA%A6%E6%9B%B4%E6%96%B0"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-neon-blue text-dark-bg font-bold rounded-md hover:bg-white transition-colors duration-300"
             >
-              <span>立即订阅</span>
-              <i class="fa fa-paper-plane"></i>
-              <i id="loading-icon" class="fa fa-spinner fa-spin hidden"></i>
-            </button>
-            <div
-              id="form-feedback"
-              role="alert"
-              aria-live="polite"
-              class="hidden sm:col-span-2 mt-2 text-sm rounded-md border p-3 bg-dark-bg border-gray-700 text-gray-300"
-              style="
-                word-break: break-word;
-                overflow-wrap: anywhere;
-                max-height: 8rem;
-                overflow: auto;
-              "
-            ></div>
-            <script>
-              (function () {
-                const form = document.getElementById("email-form");
-                const emailInput = document.getElementById("email");
-                const feedback = document.getElementById("form-feedback");
-                const btn = document.getElementById("subscribe-btn");
-                const loadingIcon = document.getElementById("loading-icon");
-
-                const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-
-                function setLoading(loading) {
-                  btn.disabled = loading;
-                  loadingIcon.classList.toggle("hidden", !loading);
-                  btn.classList.toggle("opacity-60", loading);
-                  btn.classList.toggle("cursor-not-allowed", loading);
-                }
-
-                function setInputValid(isValid) {
-                  emailInput.setAttribute("aria-invalid", String(!isValid));
-                  emailInput.classList.toggle("border-neon-orange", !isValid);
-                  emailInput.classList.toggle("border-gray-700", isValid);
-                }
-
-                function showFeedback(type, text) {
-                  // type: 'info' | 'error' | 'success'
-                  const base =
-                    "mt-2 text-sm rounded-md border p-3 bg-dark-bg transition-all duration-300 flex items-center gap-2";
-                  let color = "border-gray-700 text-gray-300";
-                  let icon = "fa-info-circle text-gray-300";
-                  if (type === "error") {
-                    color = "border-neon-orange text-neon-orange";
-                    icon = "fa-circle-exclamation";
-                  } else if (type === "success") {
-                    color = "border-neon-green text-neon-green";
-                    icon = "fa-circle-check";
-                  } else if (type === "info") {
-                    color = "border-neon-blue text-neon-blue";
-                    icon = "fa-info-circle";
-                  }
-                  feedback.className = base + " " + color;
-                  feedback.innerHTML = `<i class="fa ${icon}"></i><span>${text}</span>`;
-                  feedback.classList.remove("hidden");
-                }
-
-                function validateEmailValue(value) {
-                  const v = value.trim();
-                  if (!v) return { valid: false, reason: "empty" };
-                  if (!EMAIL_REGEX.test(v))
-                    return { valid: false, reason: "format" };
-                  return { valid: true };
-                }
-
-                emailInput.addEventListener("input", () => {
-                  const { valid, reason } = validateEmailValue(
-                    emailInput.value
-                  );
-                  if (!valid) {
-                    setInputValid(false);
-                    showFeedback(
-                      "error",
-                      reason === "empty"
-                        ? "邮箱地址不能为空"
-                        : "请输入有效的邮箱地址"
-                    );
-                  } else {
-                    setInputValid(true);
-                    showFeedback("info", "邮箱格式看起来不错，现在可以订阅");
-                  }
-                });
-
-                form.addEventListener("submit", async (e) => {
-                  e.preventDefault();
-                  const email = emailInput.value.trim();
-                  const { valid, reason } = validateEmailValue(email);
-                  if (!valid) {
-                    setInputValid(false);
-                    showFeedback(
-                      "error",
-                      reason === "empty"
-                        ? "邮箱地址不能为空"
-                        : "请输入有效的邮箱地址"
-                    );
-                    return;
-                  }
-
-                  try {
-                    setLoading(true);
-                    showFeedback("info", "正在检查订阅状态...");
-
-                    // 重复订阅检查
-                    const checkResp = await fetch("submit_email.php", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                      },
-                      body: `email_check=${encodeURIComponent(email)}`,
-                    });
-                    const checkText = await checkResp.text();
-
-                    if (checkText.trim() === "duplicate") {
-                      setInputValid(false);
-                      showFeedback("error", "该邮箱已订阅");
-                      setLoading(false);
-                      return;
-                    }
-
-                    // 提交订阅
-                    showFeedback("info", "正在提交订阅...");
-                    const subResp = await fetch("submit_email.php", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                      },
-                      body: `email=${encodeURIComponent(email)}`,
-                    });
-                    const subText = await subResp.text();
-
-                    if (subResp.ok) {
-                      setInputValid(true);
-                      const sanitized = (subText || "").replace(/<[^>]*>/g, "");
-                      const message = /订阅成功/.test(sanitized)
-                        ? "订阅成功"
-                        : sanitized.trim() || "订阅成功";
-                      showFeedback("success", message);
-                      emailInput.value = "";
-                    } else {
-                      showFeedback("error", "提交失败，请稍后重试");
-                    }
-                  } catch (err) {
-                    showFeedback("error", "网络异常，请稍后重试");
-                    console.error(err);
-                  } finally {
-                    setLoading(false);
-                  }
-                });
-              })();
-            </script>
-          </form>
+              <i class="fa fa-envelope"></i>
+              <span>邮件订阅更新</span>
+            </a>
+            <p class="mt-3 text-xs text-gray-500">
+              点击将打开你的邮件客户端，发送任意内容即可加入订阅列表（当前由作者人工维护）
+            </p>
+            <p class="mt-1 text-xs text-gray-600">
+              也可直接发送邮件至 1291904782@qq.com
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -6255,5 +6092,5 @@
     };
   </script>
   <script src="../static/js/include-navbar.js"></script>
-  <script src="../static/js/include-footer.js" defer></script>
+  
 </html>
