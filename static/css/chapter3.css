@@ -1731,11 +1731,11 @@ canvas.touch-enabled {
    - 需要更强/更弱时改这里的 opacity，或在 URL 加 ?bg=0 关闭
    ============================================================ */
 #bg-noise {
-  opacity: 0.42;
-  --noise-brightness: 0.7;
-  --noise-contrast: 1.02;
+  opacity: 0.34;
+  --noise-brightness: 0.72;
+  --noise-contrast: 1.04;
 }
 
 #marginal-glow {
-  opacity: 0.4;
+  opacity: 0.26;
 }

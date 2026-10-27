@@ -1129,6 +1129,8 @@ class Chapter3Visualizer {
       const cores = navigator.hardwareConcurrency || 4;
       const mem = navigator.deviceMemory || 4;
       if (cores < 4 || mem < 4) return false;
+      // 只在大屏留氛围：小窗口/平板上背景层意义不大，反而占满屏
+      if (window.innerWidth < 1024 || window.innerHeight < 600) return false;
       return true;
     } catch (_) {
       return false;
@@ -1163,8 +1165,14 @@ class Chapter3Visualizer {
       this.bgCtx = this.bgCanvas.getContext("2d");
       this.bgLayer = document.createElement("canvas");
       this.bgLayerCtx = this.bgLayer.getContext("2d");
+      // 烘焙层：把「模糊」也预先烤进图层，之后每帧只做平移贴图（GPU blit），
+      // 这样流动可以跑满帧率而不需要反复做全屏 blur
+      this.bgBlurLayer = document.createElement("canvas");
+      this.bgBlurCtx = this.bgBlurLayer.getContext("2d");
+      // 平移留白：图层比视口四周各大 margin，环绕漂移时不会露边
+      this.bgMargin = 48;
       const resizeBg = () => {
-        // 背景始终经过 blur(10px) 合成，1x 像素密度肉眼无差别，可省 4 倍像素（2x 屏）
+        // 背景始终经过 blur 合成，1x 像素密度肉眼无差别，可省 4 倍像素（2x 屏）
         const dpr = 1;
         const vw = window.innerWidth;
         const vh = window.innerHeight;
@@ -1178,11 +1186,33 @@ class Chapter3Visualizer {
         this.bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
         this.bgCtx.imageSmoothingEnabled = true;
         this.bgCtx.imageSmoothingQuality = "medium";
-        this.bgLayer.width = this.bgCanvas.width;
-        this.bgLayer.height = this.bgCanvas.height;
+        // 绘制层按「视口 + 两侧 margin」建，坐标仍用 CSS px（dpr=1）
+        const lw = Math.floor(vw + this.bgMargin * 2);
+        const lh = Math.floor(vh + this.bgMargin * 2);
+        this.bgLayerW = lw;
+        this.bgLayerH = lh;
+        this.bgLayer.width = lw;
+        this.bgLayer.height = lh;
+        this.bgBlurLayer.width = lw;
+        this.bgBlurLayer.height = lh;
         this.bgLayerCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
         this.bgLayerCtx.imageSmoothingEnabled = true;
         this.bgLayerCtx.imageSmoothingQuality = "medium";
+        this.bgBlurCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        this.bgBlurCtx.imageSmoothingEnabled = true;
+        // 尺寸变化后需要重新烘焙，标记一下
+        this.bgLastField = 0;
+        // 缩到小屏就停掉背景，回到大屏再恢复（不必刷新页面）
+        const tooSmall = vw < 1024 || vh < 600;
+        if (tooSmall && !this.bgStopped) {
+          this.bgStopped = true;
+          this.bgCanvas.style.display = "none";
+        } else if (!tooSmall && this.bgStopped) {
+          this.bgStopped = false;
+          this.bgCanvas.style.display = "block";
+          this.bgLastRAF = 0;
+          if (this._bgDraw) requestAnimationFrame(this._bgDraw);
+        }
       };
       resizeBg();
       window.addEventListener("resize", resizeBg);
@@ -2681,16 +2711,16 @@ class Chapter3Visualizer {
       this.debugBackgroundStatus();
       return;
     }
+
     this.bgLastRAF = 0;
-    this.bgMinDt = 1000 / 30;
-    // 噪声场 + d3 等高线是这个背景的唯一重活：相位漂移极慢（t 每毫秒仅 +0.00005），
-    // 因此把「重算场」与「合成上屏」降到约 8fps，中间帧只刷新边缘光条，
-    // 视觉上分辨不出，但省掉约 3/4 的噪声采样与等高线三角化开销
-    this.bgFieldInterval = 120;
+    // 每帧只做一次便宜的图层平移贴图（GPU blit），45fps 足够顺
+    this.bgMinDt = 1000 / 45;
+    // 形状演化（噪声场 + 等高线三角化 + 烘焙模糊）是低频重活，1.6s 一次即可
+    this.bgFieldInterval = 1600;
     this.bgLastField = 0;
     this.performanceMode = "normal";
-    this.bgFrameAccum = 0;
-    this.bgFrameSamples = 0;
+    if (this.bgStopped === undefined) this.bgStopped = false;
+
     const baseW = this.bgConfig.cols;
     const baseH = this.bgConfig.rows;
     const scale = this.bgConfig.scale;
@@ -2699,25 +2729,14 @@ class Chapter3Visualizer {
       (v) => Math.min(0.85, v)
     );
     const palette = ["#00f3ff", "#bf00ff", "#00ff66", "#ffc107", "#ff6b6b"];
-    const draw = (now) => {
-      if (this.bgLastRAF && now - this.bgLastRAF < this.bgMinDt) {
-        requestAnimationFrame(draw);
-        return;
-      }
-      const dt = this.bgLastRAF ? now - this.bgLastRAF : this.bgMinDt;
-      this.bgLastRAF = now;
-      // 未到重算间隔：只更新边缘光条（轻量），跳过噪声场与等高线
-      if (this.bgLastField && now - this.bgLastField < this.bgFieldInterval) {
-        this.renderEdgeBars(now * 0.00005);
-        requestAnimationFrame(draw);
-        return;
-      }
-      this.bgLastField = now;
-      // 用「本次重算的真实耗时」判断是否降级（旧实现量的是帧间隔，
-      // 而帧间隔被 30fps 上限钳在 33ms，导致判据永远在阈值附近抖动）
-      const heavyStart = performance.now();
-      this.bgTime = now;
-      const t = now * 0.00005; // Slower animation for smoother effect
+
+    // 重算「形状」：噪声场 → 等高线 → 描边到 bgLayer，再把模糊烘焙进 bgBlurLayer。
+    // 这样流动靠平移，模糊不再每帧重复做。
+    const bakeField = (now) => {
+      const t = now * 0.00005;
+      const LW = this.bgLayerW || window.innerWidth + 96;
+      const LH = this.bgLayerH || window.innerHeight + 96;
+
       let k = 0;
       for (let y = 0; y < baseH; y++) {
         for (let x = 0; x < baseW; x++) {
@@ -2731,6 +2750,7 @@ class Chapter3Visualizer {
           values[k++] = Math.max(0, Math.min(1, (combined + 1) * 0.4 + 0.1));
         }
       }
+
       let sets;
       if (typeof d3 !== "undefined" && d3.contours) {
         const gen = d3.contours().size([baseW, baseH]).thresholds(thresholds);
@@ -2744,6 +2764,7 @@ class Chapter3Visualizer {
         }
         sets = this.generateFallbackContours(values, baseW, baseH, thresholds);
       }
+
       if (!this._bgLoggedStart) {
         this._bgLoggedStart = true;
         console.info("Background contours started", {
@@ -2755,50 +2776,22 @@ class Chapter3Visualizer {
         });
         this.debugBackgroundStatus();
       }
-      const W = this.bgViewW || window.innerWidth;
-      const H = this.bgViewH || window.innerHeight;
-      if (this.bgDebug) {
-        this._bgDebugFrameCount = (this._bgDebugFrameCount || 0) + 1;
-        if (this._bgDebugFrameCount % this.bgDumpInterval === 0) {
-          let coordsCount = 0;
-          sets.forEach((c) => {
-            coordsCount += c.coordinates.length;
-          });
-          let blurOpacity = null;
-          try {
-            const el = document.getElementById("global-bg-blur");
-            if (el && window.getComputedStyle) {
-              blurOpacity = getComputedStyle(el).getPropertyValue("opacity");
-            }
-          } catch (_) {}
-          console.info("Background debug", {
-            frame: this._bgDebugFrameCount,
-            dt,
-            mode: this.performanceMode,
-            view: { W, H, dpr: this.bgDpr },
-            base: { w: baseW, h: baseH, scale },
-            thresholdsCount: thresholds.length,
-            contoursCount: sets.length,
-            totalSegments: coordsCount,
-            blurLayerOpacity: blurOpacity,
-          });
-        }
-      }
-      this.bgLayerCtx.clearRect(0, 0, W, H);
-      this.bgLayerCtx.globalAlpha = 0.8;
-      this.bgLayerCtx.lineJoin = "round";
-      this.bgLayerCtx.lineCap = "round";
-      // 描边不带 shadowBlur：canvas 的阴影会让每条 contour 多一次模糊绘制，
-      // 软化效果已由下面 bgCtx 的 blur 合成承担
+
+      const ctx = this.bgLayerCtx;
+      ctx.clearRect(0, 0, LW, LH);
+      ctx.globalAlpha = 0.8;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
       const minV = thresholds[0];
       const maxV = thresholds[thresholds.length - 1];
+
       sets.forEach((contour, idx) => {
         const v = contour.value || minV;
         const tval = Math.max(
           0,
           Math.min(1, (v - minV) / Math.max(1e-6, maxV - minV))
         );
-        // 阈值固定 ⇒ 每层的颜色也是固定的，只在首次计算并缓存，避免每帧解析十六进制
+        // 阈值固定 ⇒ 每层的颜色也固定，只在首次计算并缓存
         if (!this._bgLevelStyles) this._bgLevelStyles = [];
         let st = this._bgLevelStyles[idx];
         if (!st) {
@@ -2809,50 +2802,96 @@ class Chapter3Visualizer {
           };
           this._bgLevelStyles[idx] = st;
         }
-        this.bgLayerCtx.strokeStyle = st.style;
-        this.bgLayerCtx.lineWidth = st.width; // Thinner, more elegant lines
-        // Use D3 coordinates directly without problematic normalization
+        ctx.strokeStyle = st.style;
+        ctx.lineWidth = st.width;
+
         contour.coordinates.forEach((multi) => {
           multi.forEach((ring) => {
-            if (ring.length < 3) return; // Skip very short segments
+            if (ring.length < 3) return;
 
-            this.bgLayerCtx.beginPath();
+            ctx.beginPath();
             for (let p = 0; p < ring.length; p++) {
-              const gx = ring[p][0];
-              const gy = ring[p][1];
-              const x = (gx / (baseW - 1)) * W;
-              const y = (gy / (baseH - 1)) * H;
-              if (p === 0) this.bgLayerCtx.moveTo(x, y);
-              else this.bgLayerCtx.lineTo(x, y);
+              const x = (ring[p][0] / (baseW - 1)) * LW;
+              const y = (ring[p][1] / (baseH - 1)) * LH;
+              if (p === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
             }
-
-            // Check if the contour should be closed
-            const fx = (ring[0][0] / (baseW - 1)) * W;
-            const fy = (ring[0][1] / (baseH - 1)) * H;
-            const lx = (ring[ring.length - 1][0] / (baseW - 1)) * W;
-            const ly = (ring[ring.length - 1][1] / (baseH - 1)) * H;
+            const fx = (ring[0][0] / (baseW - 1)) * LW;
+            const fy = (ring[0][1] / (baseH - 1)) * LH;
+            const lx = (ring[ring.length - 1][0] / (baseW - 1)) * LW;
+            const ly = (ring[ring.length - 1][1] / (baseH - 1)) * LH;
             const dx = fx - lx;
             const dy = fy - ly;
-            const closed = dx * dx + dy * dy < 2.0; // Slightly more tolerant
-            if (closed) this.bgLayerCtx.closePath();
-            this.bgLayerCtx.stroke();
+            if (dx * dx + dy * dy < 2.0) ctx.closePath();
+            ctx.stroke();
           });
         });
       });
-      this.bgCtx.clearRect(0, 0, W, H);
-      this.bgCtx.globalAlpha = 1;
-      this.bgCtx.globalCompositeOperation = "lighter";
-      this.bgCtx.filter =
-        this.performanceMode === "degraded" ? "blur(6px)" : "blur(10px)";
-      this.bgCtx.drawImage(this.bgLayer, 0, 0, W, H);
-      this.bgCtx.filter = "none";
-      this.bgCtx.globalCompositeOperation = "source-over";
-      this.bgCtx.drawImage(this.bgLayer, 0, 0, W, H);
-      this.renderEdgeBars(t);
-      // 一次重算的真实耗时（含噪声采样、等高线三角化、描边与模糊合成）
-      this.noteBackgroundWork(performance.now() - heavyStart);
+
+      // 烘焙模糊：整个重算周期只做一次
+      const bctx = this.bgBlurCtx;
+      if (bctx) {
+        bctx.clearRect(0, 0, LW, LH);
+        bctx.filter =
+          this.performanceMode === "degraded" ? "blur(6px)" : "blur(11px)";
+        bctx.drawImage(this.bgLayer, 0, 0);
+        bctx.filter = "none";
+      }
+
+      if (this.bgDebug) {
+        this._bgDebugFrameCount = (this._bgDebugFrameCount || 0) + 1;
+        console.info("Background rebaked", {
+          frame: this._bgDebugFrameCount,
+          mode: this.performanceMode,
+          view: { w: this.bgViewW, h: this.bgViewH, dpr: this.bgDpr },
+          layer: { w: LW, h: LH },
+          contoursCount: sets.length,
+        });
+      }
+    };
+
+    const draw = (now) => {
+      if (this.bgStopped) return;
+      if (this.bgLastRAF && now - this.bgLastRAF < this.bgMinDt) {
+        requestAnimationFrame(draw);
+        return;
+      }
+      this.bgLastRAF = now;
+
+      // 1) 每帧：环绕漂移平移烘焙层 —— 流动感来自这里，成本只有两次 GPU 贴图
+      if (this.bgBlurLayer && this.bgLayerW && this.bgBlurCtx) {
+        const R = this.bgMargin || 48;
+        const ang = now * 0.00011;
+        const ox = R + Math.sin(ang) * R * 0.85;
+        const oy = R + Math.cos(ang * 0.83) * R * 0.85;
+        const ctx = this.bgCtx;
+        ctx.clearRect(0, 0, this.bgViewW, this.bgViewH);
+        // 辉光层
+        ctx.globalCompositeOperation = "lighter";
+        ctx.globalAlpha = 0.7;
+        ctx.drawImage(this.bgBlurLayer, -ox, -oy);
+        // 细线层：流动感要靠线本身有对比，否则只剩一团糊光
+        ctx.globalCompositeOperation = "source-over";
+        ctx.globalAlpha = 0.6;
+        ctx.drawImage(this.bgLayer, -ox, -oy);
+        ctx.globalAlpha = 1;
+      }
+
+      // 2) 边缘光条（自身有节流）
+      this.renderEdgeBars(now * 0.00005);
+
+      // 3) 低频：演化形状
+      if (!this.bgLastField || now - this.bgLastField >= this.bgFieldInterval) {
+        this.bgLastField = now;
+        const heavyStart = performance.now();
+        bakeField(now);
+        this.noteBackgroundWork(performance.now() - heavyStart);
+      }
+
       requestAnimationFrame(draw);
     };
+    // 供 resize 时按断点暂停/恢复
+    this._bgDraw = draw;
     requestAnimationFrame(draw);
   }
 
@@ -2861,15 +2900,17 @@ class Chapter3Visualizer {
     if (!ms || ms < 0) return;
     this._bgWorkAvg = this._bgWorkAvg ? this._bgWorkAvg * 0.7 + ms * 0.3 : ms;
     const avg = this._bgWorkAvg;
-    if (!this.performanceDegraded && avg > 40) {
+    // 重算现在是低频（1.6s 一次），单次 90ms 以内对体感没有影响；
+    // 超过就拉长周期并减小模糊半径，把占用压回去
+    if (!this.performanceDegraded && avg > 90) {
       this.performanceDegraded = true;
       this.performanceMode = "degraded";
-      this.bgFieldInterval = 260;
+      this.bgFieldInterval = 3200;
       console.info("[bg] 降档为 degraded，重算平均耗时 " + avg.toFixed(1) + "ms");
-    } else if (this.performanceDegraded && avg < 20) {
+    } else if (this.performanceDegraded && avg < 40) {
       this.performanceDegraded = false;
       this.performanceMode = "normal";
-      this.bgFieldInterval = 120;
+      this.bgFieldInterval = 1600;
       console.info("[bg] 恢复 normal，重算平均耗时 " + avg.toFixed(1) + "ms");
     }
   }
