@@ -394,6 +394,8 @@
                     src="../static/img/quantum-physics.svg"
                     alt="随机事件与概率预览"
                     class="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     style="object-position: top center"
                   />
                   <div
@@ -441,6 +443,8 @@
                     src="../static/img/machine-learning.svg"
                     alt="随机变量预览"
                     class="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     style="object-position: top center"
                   />
                   <div
@@ -488,6 +492,8 @@
                     src="../static/img/cosmology.svg"
                     alt="概率分布预览"
                     class="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     style="object-position: top center"
                   />
                   <div
@@ -536,6 +542,8 @@
                     src="../static/img/weather-forecast.svg"
                     alt="期望与方差预览"
                     class="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     style="object-position: top center"
                   />
                   <div
@@ -584,6 +592,8 @@
                     src="../static/img/cosmology.svg"
                     alt="第3章预览"
                     class="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     style="object-position: top center"
                   />
                   <div
@@ -631,6 +641,8 @@
                     src="../static/img/cover-lln-streaming.svg"
                     alt="大数定律预览"
                     class="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     style="object-position: top center"
                   />
                   <div
@@ -705,6 +717,8 @@
                     src="../static/img/cover-interval-game.svg"
                     alt="区间估计预览"
                     class="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     style="object-position: top center"
                   />
                   <div
@@ -752,6 +766,8 @@
                     src="../static/img/cover-hypothesis-hero.svg"
                     alt="假设检验预览"
                     class="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                     style="object-position: top center"
                   />
                   <div
@@ -896,7 +912,7 @@
         imgs.forEach(function (img) {
           var slug = img.getAttribute("data-slug") || "";
           if (!slug) return;
-          var url = "../static/img/covers/" + slug + ".png";
+          var url = "../static/img/covers/" + slug + ".webp";
           var probe = new Image();
           probe.onload = function () {
             img.src = url;
