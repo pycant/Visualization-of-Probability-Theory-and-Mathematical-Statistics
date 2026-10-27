@@ -23,8 +23,6 @@
       --accent-hypothesis: #ec4899;       /* pink-500 */
 
       background: linear-gradient(90deg, var(--nav-bg-start), var(--nav-bg-end));
-      background-size: 200% 200%;
-      animation: navGradientShift 30s linear infinite;
       backdrop-filter: blur(12px);
       box-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 6px 24px rgba(0, 255, 255, 0.08);
     }
@@ -37,23 +35,8 @@
         radial-gradient(1000px 400px at 85% 0%, rgba(167,139,250,0.06), transparent);
       mix-blend-mode: screen; opacity: 0.8; filter: blur(0.5px);
     }
-    #global-nav::after {
-      content: ""; position: absolute; top: 0; bottom: 0; left: -20%; width: 40%;
-      pointer-events: none; background: linear-gradient(90deg, transparent, rgba(167,139,250,0.12), transparent);
-      transform: translateX(-100%);
-      animation: navSweep 8s ease-in-out infinite;
-      mix-blend-mode: screen;
-    }
-    @keyframes navGradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    @keyframes navSweep {
-      0% { transform: translateX(-120%); }
-      50% { transform: translateX(120%); }
-      100% { transform: translateX(-120%); }
-    }
+    /* 注：原先这里有一条 navSweep（每 8 秒横扫一次的光带）与 30 秒的
+       navGradientShift 背景漂移，因周期性晃动干扰阅读已移除，导航栏改为静态。 */
     #global-nav .brand {
       display: inline-flex; align-items: center; gap: 8px;
       background: linear-gradient(90deg, var(--brand-grad-start), var(--brand-grad-end));

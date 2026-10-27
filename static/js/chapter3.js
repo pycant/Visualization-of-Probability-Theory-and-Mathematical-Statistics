@@ -1229,17 +1229,25 @@ class Chapter3Visualizer {
     }
     if (this.canvases.glow && this.useBackgroundEffects) {
       this.glowLayer = document.createElement("canvas");
-      this.glowLayerCtx = this.glowLayer.getContext("2d", {
-        willReadFrequently: true,
-      });
+      this.glowLayerCtx = this.glowLayer.getContext("2d");
+      // 辉光也做烘焙层：模糊只在重算时做一次，每帧只贴图（原实现每帧两次全屏 blur）
+      this.glowBlurLayer = document.createElement("canvas");
+      this.glowBlurCtx = this.glowBlurLayer.getContext("2d");
       const resizeGlow = () => {
-        const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
-        this.canvases.glow.width = Math.floor(window.innerWidth * dpr);
-        this.canvases.glow.height = Math.floor(window.innerHeight * dpr);
+        const dpr = 1;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        this.canvases.glow.width = Math.floor(vw * dpr);
+        this.canvases.glow.height = Math.floor(vh * dpr);
+        this.canvases.glow.style.width = vw + "px";
+        this.canvases.glow.style.height = vh + "px";
         this.canvases.glow.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         this.glowLayer.width = this.canvases.glow.width;
         this.glowLayer.height = this.canvases.glow.height;
         this.glowLayerCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        this.glowBlurLayer.width = this.canvases.glow.width;
+        this.glowBlurLayer.height = this.canvases.glow.height;
+        this.glowBlurCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       };
       resizeGlow();
       window.addEventListener("resize", resizeGlow);
@@ -2713,8 +2721,9 @@ class Chapter3Visualizer {
     }
 
     this.bgLastRAF = 0;
-    // 每帧只做一次便宜的图层平移贴图（GPU blit），45fps 足够顺
-    this.bgMinDt = 1000 / 45;
+    // 每帧只做两次 GPU 贴图，成本极低，直接跟随 rAF（不设上限），
+    // 让位移与页面滚动/动画同帧，消除肉眼可见的顿挫
+    this.bgMinDt = 0;
     // 形状演化（噪声场 + 等高线三角化 + 烘焙模糊）是低频重活，1.6s 一次即可
     this.bgFieldInterval = 1600;
     this.bgLastField = 0;
@@ -2838,6 +2847,9 @@ class Chapter3Visualizer {
         bctx.filter = "none";
       }
 
+      // 边缘光条与噪声场同源，随重算一起演化
+      this.renderEdgeBars(t);
+
       if (this.bgDebug) {
         this._bgDebugFrameCount = (this._bgDebugFrameCount || 0) + 1;
         console.info("Background rebaked", {
@@ -2877,8 +2889,8 @@ class Chapter3Visualizer {
         ctx.globalAlpha = 1;
       }
 
-      // 2) 边缘光条（自身有节流）
-      this.renderEdgeBars(now * 0.00005);
+      // 2) 边缘光条：只贴已烘焙的层
+      this.paintEdgeGlow(now);
 
       // 3) 低频：演化形状
       if (!this.bgLastField || now - this.bgLastField >= this.bgFieldInterval) {
@@ -2915,14 +2927,10 @@ class Chapter3Visualizer {
     }
   }
 
+  // 把四边光条画进离屏层（只在背景重算周期调用一次，不再逐帧重绘）
   renderEdgeBars(t) {
     const canvas = this.canvases.glow;
-    if (!canvas || !this.bgNoise) return;
-    // 边缘光条包含上百个渐变对象与两次全屏模糊合成，没必要跑满 30fps，
-    // 8~12fps 完全看不出差别
-    const nowMs = performance.now();
-    if (this._glowLast && nowMs - this._glowLast < 90) return;
-    this._glowLast = nowMs;
+    if (!canvas || !this.bgNoise || !canvas.ctx) return;
     const ctx = canvas.ctx;
     const layer = this.glowLayerCtx || ctx;
     const W = this.bgViewW || window.innerWidth;
@@ -2946,10 +2954,11 @@ class Chapter3Visualizer {
     const cellH = H / barsY;
     const lwTop = Math.max(2, cellW * 0.6);
     const lwSide = Math.max(2, cellH * 0.6);
-    const maxLenV = Math.min(H * 0.09, 80);
-    const minLenV = Math.max(6, H * 0.02);
-    const maxLenH = Math.min(W * 0.09, 80);
-    const minLenH = Math.max(6, W * 0.02);
+    // 光条范围收窄（原 0.09/80px），只在画面边缘留一圈很浅的光晕
+    const maxLenV = Math.min(H * 0.05, 44);
+    const minLenV = Math.max(4, H * 0.012);
+    const maxLenH = Math.min(W * 0.05, 44);
+    const minLenH = Math.max(4, W * 0.012);
     layer.shadowBlur = 0;
     const topVals = new Array(barsX);
     const bottomVals = new Array(barsX);
@@ -2996,7 +3005,7 @@ class Chapter3Visualizer {
       const len = lenTopSm[i];
       if (len <= 0) continue;
       const hex = this.mixHexColors(["#00f3ff", "#00ff66", "#ffc107"], ntop[i]);
-      const a0 = 0.5 + ntop[i] * 0.4;
+      const a0 = 0.22 + ntop[i] * 0.2;
       const grad = layer.createLinearGradient(x0, 0, x0, len);
       grad.addColorStop(0, this.rgbaFromHex(hex, a0));
       grad.addColorStop(1, this.rgbaFromHex(hex, 0));
@@ -3022,7 +3031,7 @@ class Chapter3Visualizer {
         ["#00f3ff", "#00ff66", "#ffc107"],
         nbottom[i]
       );
-      const a0 = 0.5 + nbottom[i] * 0.4;
+      const a0 = 0.22 + nbottom[i] * 0.2;
       const grad = layer.createLinearGradient(x0, H, x0, H - len);
       grad.addColorStop(0, this.rgbaFromHex(hex, a0));
       grad.addColorStop(1, this.rgbaFromHex(hex, 0));
@@ -3054,7 +3063,7 @@ class Chapter3Visualizer {
         ["#bf00ff", "#ffc107", "#ff6b6b"],
         nleft[j]
       );
-      const a0 = 0.5 + nleft[j] * 0.4;
+      const a0 = 0.22 + nleft[j] * 0.2;
       const grad = layer.createLinearGradient(0, y0, len, y0);
       grad.addColorStop(0, this.rgbaFromHex(hex, a0));
       grad.addColorStop(1, this.rgbaFromHex(hex, 0));
@@ -3080,7 +3089,7 @@ class Chapter3Visualizer {
         ["#bf00ff", "#ffc107", "#ff6b6b"],
         nright[j]
       );
-      const a0 = 0.5 + nright[j] * 0.4;
+      const a0 = 0.22 + nright[j] * 0.2;
       const grad = layer.createLinearGradient(W, y0, W - len, y0);
       grad.addColorStop(0, this.rgbaFromHex(hex, a0));
       grad.addColorStop(1, this.rgbaFromHex(hex, 0));
@@ -3088,14 +3097,30 @@ class Chapter3Visualizer {
       layer.fillRect(W - len, y0, len, H / barsY);
     }
     layer.restore();
+    // 烘焙模糊（每个重算周期一次），之后每帧只贴图
+    if (this.glowBlurCtx && this.glowLayer) {
+      this.glowBlurCtx.clearRect(0, 0, W, H);
+      this.glowBlurCtx.filter =
+        this.performanceMode === "degraded" ? "blur(5px)" : "blur(10px)";
+      this.glowBlurCtx.drawImage(this.glowLayer, 0, 0, W, H);
+      this.glowBlurCtx.filter = "none";
+    }
+    this.paintEdgeGlow(performance.now());
+  }
+
+  // 每帧：贴一次已烘焙的辉光（GPU 单次贴图），带极慢呼吸避免死板
+  paintEdgeGlow(now) {
+    const canvas = this.canvases.glow;
+    if (!canvas || !canvas.ctx || !this.glowBlurLayer) return;
+    const ctx = canvas.ctx;
+    const W = this.bgViewW || window.innerWidth;
+    const H = this.bgViewH || window.innerHeight;
     ctx.clearRect(0, 0, W, H);
     ctx.globalCompositeOperation = "lighter";
-    ctx.filter =
-      this.performanceMode === "degraded" ? "blur(6px)" : "blur(12px)";
-    ctx.drawImage(this.glowLayer || canvas, 0, 0, W, H);
-    ctx.filter = "none";
+    ctx.globalAlpha = 0.86 + 0.14 * Math.sin((now || 0) * 0.00035);
+    ctx.drawImage(this.glowBlurLayer, 0, 0, W, H);
+    ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = "source-over";
-    ctx.drawImage(this.glowLayer || canvas, 0, 0, W, H);
   }
   normalizeArray(arr, contrast, gamma) {
     let min = Infinity;
