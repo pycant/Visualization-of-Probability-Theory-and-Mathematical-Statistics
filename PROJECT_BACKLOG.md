@@ -5,12 +5,39 @@
 
 ---
 
+## 现状快照 (2026-10-27)
+
+### 已完成
+
+| 项 | 说明 |
+|----|------|
+| ICP 备案号 | 赣ICP备2026027726号 全站上线，17 个文件同步（2026-10-26 审核通过） |
+| 导航/页脚 404 | 路径 `/templates/partials/*` → `/partials/*`；脚本改为立即执行 + 幂等 |
+| 目录加载失败 | `docs/目录.md` 复制到 `templates/docs/`，`/docs/目录.md` 可访问 |
+| favicon | `templates/favicon.ico` 上线，消除 `/favicon.ico` 404 |
+| **C-02 chapter5** | 已从骨架改造为完整交互章节：抽样模拟器 + χ²/t/F 三分布 + 对照表（2026-10-27） |
+
+### 已知但低危
+
+- `static/images/` 目录在仓库中为空，但多个页面引用 `../static/images/favicon.ico` → 这些引用仍是 404（页面 icon 已由根级 `favicon.ico` 兜底）
+- `node_modules/` 有 2466 个文件被 git 跟踪，仓库体积因此膨胀，建议后续 `git rm -r --cached node_modules`
+
+### 未合并分支（需决策）
+
+| 分支 | 内容 | 建议 |
+|------|------|------|
+| `sprintC/gsap-scrolltrigger-animations-vs` | GSAP 滚动入场动效 + 冒烟/视觉回归测试 | 动效需 rebase（与 navbar 事件、index 备案号冲突） |
+| `feat/email-subscription-service-vs` | 删废弃 PHP 后端，换 Python 邮件订阅 | 落后 6 个提交，需确认需求是否仍要 |
+| `feat/mobile-adaptive-placeholder-vs` | 移动端适配计划占位（标记暂缓） | 保留，见 MOBILE_ADAPTATION.md |
+
+---
+
 ## 🔴 严重问题 (Critical)
 
 | ID | Agent | 问题 | 文件 | 建议 |
 |----|-------|------|------|------|
 | C-01 | A4-样式 | **TailwindCSS 自定义颜色全部失效**：`--neon-blue` 需改为 `--color-neon-blue`，否则 400-600 处渐变/透明度静默不生效 | 全项目 | 添加 `@theme { --color-dark-bg: ... }` 定义 |
-| C-02 | A1-内容 | **chapter5.html** 仅骨架 10KB，"内容建设中" | templates/chapter5.html | 开发完整教学内容 |
+| C-02 | A1-内容 | ~~**chapter5.html** 仅骨架 10KB~~ ✅ 已改造为完整交互章节 (2026-10-27) | templates/chapter5.html | 已完成 |
 | C-03 | A1-内容 | **chapter8.html** 仅骨架 9KB，"内容建设中" | templates/chapter8.html | 开发 ANOVA/回归分析内容 |
 | C-04 | A1-内容 | **appendix.html** 几乎未开始 2KB，无 navbar/footer | templates/appendix.html | 集成共享组件，填充分布表 |
 | C-05 | A2-JS | **多处 DOM 无 null 检查** (toolbox.js 3处, chapter3.js 3处) | static/js/toolbox.js, chapter3.js | 添加 null 守卫 |
@@ -80,13 +107,23 @@
 
 ---
 
-## Sprint 规划
+## 推进计划 (2026Q4)
 
-| Sprint | 主题 | 核心任务 | 预计 |
-|--------|------|---------|------|
-| **S1** | 🎨 **修复 TailwindCSS 颜色** | C-01: 注册 `--color-*` 变量，修复 400+ 处样式 | 1-2天 |
-| **S2** | 📄 **填充未完成章节** | C-02~C-04: chapter5/8/appendix | 2-3天 |
-| **S3** | 🛡️ **JS 健壮性** | C-05~C-06, H-03~H-05: null 守卫 + 内存泄漏 | 1天 |
-| **S4** | 📦 **清理大文件** | C-07, H-06, H-09: MathJax/视频/图片 | 1天 |
-| **S5** | ⚡ **性能优化** | H-07~H-08, H-14: transition:all/CDN/字体 | 1-2天 |
-| **S6** | ♿ **无障碍** | H-11, M-13: 对比度/触摸目标 | 1天 |
+| 优先级 | 任务 | 关键点 | 预估 |
+|--------|------|--------|------|
+| **P1** | chapter8 内容建设（C-03） | 骨架 10KB，需覆盖方差分析与线性回归；同 chapter5 模式（场景 + Canvas 交互） | 1-2 天 |
+| **P1** | appendix 补全（C-04） | 3KB 无 navbar/footer；填分布分位表 + 常用公式卡 | 半天 |
+| **P2** | chapter3 滑块统一（X-01） | 17/23 个 `accent-*` 改 `param-slider`，消除视觉割裂 | 半天 |
+| **P2** | JS 健壮性（C-05/C-06/H-03~H-05） | null 守卫、JSON.parse try-catch、resize 监听器清理 | 1 天 |
+| **P2** | 性能清理（H-07/M-04） | `transition: all` 55 处、chapter3.js 50+ console.log | 半天 |
+| **P3** | 无障碍（H-11/M-13） | footer 对比度 2.45:1 → 4.5:1、触摸目标 44px | 半天 |
+| **P3** | 仓库瘦身 | node_modules 2466 文件移出跟踪；`static/images` 空引用清理 | 1 小时 |
+| **P4** | 分支收敛 | sprintC 动效 rebase 合入 / 邮件订阅服务决策 | 按需 |
+| **P4** | 移动端适配 | 见 MOBILE_ADAPTATION.md（P0：汉堡菜单、防溢出、44px 触摸） | 2-3 天 |
+
+### 建议顺序
+
+1. **先补齐内容**（chapter8 → appendix）：评委视角下「章节空着」比「样式不统一」严重得多
+2. **再收技术债**（滑块统一 → JS 健壮性 → 性能 → 无障碍），每项都可独立验证、独立提交
+3. **最后做需求层**（动效 / 移动端 / 邮件订阅），涉及设计取舍，需明确取舍再动手
+
